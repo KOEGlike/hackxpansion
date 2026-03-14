@@ -12,7 +12,7 @@ export default {
 			fallback: null
 		}),
 		paths: {
-			base: dev ? '' : '/YOUR_REPO_NAME'
+			base: dev ? '' : '/hackxpansion'
 		}
 	},
 	extensions: ['.svelte', '.svx']
