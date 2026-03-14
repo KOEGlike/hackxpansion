@@ -1,5 +1,18 @@
-<h1>Welcome to HAckxspansion</h1>
-<p>this is a test</p>
-<h1>Test Heading</h1>
+<script lang="ts">
+	import { loadProgress, preloadImages, isLoading } from '$lib/stores/loading';
+	import { onMount } from 'svelte';
 
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+	onMount(() => {
+		preloadImages();
+	});
+</script>
+
+{#if $isLoading}
+	<div class="flex h-screen w-full flex-col items-center justify-center gap-4">
+		<h1>Loading...</h1>
+		<div class="progress-bar">
+			<div class="progress-fill" style="width: {$loadProgress}%"></div>
+		</div>
+		<p>{Math.round($loadProgress)}%</p>
+	</div>
+{/if}
