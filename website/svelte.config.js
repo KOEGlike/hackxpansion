@@ -1,19 +1,15 @@
 import adapter from '@sveltejs/adapter-static';
 
-const dev = process.env.NODE_ENV === 'development';
-
 /** @type {import('@sveltejs/kit').Config} */
-
-export default {
+const config = {
 	kit: {
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: null
+			fallback: '404.html'
 		}),
 		paths: {
-			base: dev ? '' : '/hackxpansion'
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		}
-	},
-	extensions: ['.svelte', '.svx']
+	}
 };
+
+export default config;
