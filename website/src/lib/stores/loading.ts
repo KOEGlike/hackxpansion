@@ -9,7 +9,7 @@ export async function preloadImages() {
 	let loadedCount = 0;
 
 	const promises = Array.from({ length: imageCount }, (_, i) => {
-		const filename = String(i).padStart(4, '0') + '.png';
+		const filename = String(i).padStart(4, '0') + '.webp';
 		return new Promise<void>((resolve) => {
 			const img = new Image();
 			img.onload = () => {

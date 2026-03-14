@@ -1,13 +1,19 @@
 import adapter from '@sveltejs/adapter-static';
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	kit: { adapter: adapter() },
-	vitePlugin: {
-		dynamicCompileOptions: ({ filename }) =>
-			filename.includes('node_modules') ? undefined : { runes: true }
-	},
-	runes: true
-};
+const dev = process.env.NODE_ENV === 'development';
 
-export default config;
+/** @type {import('@sveltejs/kit').Config} */
+
+export default {
+	kit: {
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: null
+		}),
+		paths: {
+			base: dev ? '' : '/YOUR_REPO_NAME'
+		}
+	},
+	extensions: ['.svelte', '.svx']
+};

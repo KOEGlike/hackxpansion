@@ -45,7 +45,7 @@
 	<div class="sticky top-0 left-0 h-screen w-screen">
 		<img
 			class="-z-10 h-screen w-screen object-cover"
-			src={`/renders/${current_frame.toString().padStart(4, '0')}.png`}
+			src={`/renders/${current_frame.toString().padStart(4, '0')}.webp`}
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
@@ -66,10 +66,10 @@
 			<!-- Step 1 -->
 			{#if current_frame < frame_events[1].end && current_frame >= frame_events[1].start}
 				<div
-					class="absolute right-20 bottom-70 flex flex-col items-center justify-start gap-0"
+					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0">
+					<div class="flex flex-col items-center gap-0 p-50">
 						<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 1</h1>
 						<h2 class="font-share-tech text-2xl font-normal text-slate-500">Design your card!</h2>
 					</div>
