@@ -13,9 +13,7 @@ type RenderVideoSource = {
 };
 
 const renderVideoSources: RenderVideoSource[] = [
-	{ path: '/renders/output_h264.mp4', type: 'video/mp4' },
-	{ path: '/renders/output_vp9.webm', type: 'video/webm; codecs=vp9' },
-	{ path: '/renders/output_av1.webm', type: 'video/webm; codecs=av01.0.08M.08' }
+	{ path: '/renders/output_h264.mp4', type: 'video/mp4' }
 ];
 
 let selectedRenderVideo = renderVideoSources[0].path;
