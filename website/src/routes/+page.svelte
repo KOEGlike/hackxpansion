@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
+	import { asset } from '$app/paths';
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -45,7 +46,7 @@
 	<div class="sticky top-0 left-0 h-screen w-screen">
 		<img
 			class="-z-10 h-screen w-screen object-cover"
-			src={`/renders/${current_frame.toString().padStart(4, '0')}.webp`}
+			src={`${asset(`/renders/${current_frame.toString().padStart(4, '0')}.webp`)}`}
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
@@ -82,7 +83,7 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-row items-center justify-center gap-10">
-						<img class="w-64" src="/ferris.png" alt="ferris" />
+						<img class="w-64" src={`${asset('/ferris.png')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
 							<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 2</h1>
 							<h2 class="font-share-tech text-2xl font-normal text-slate-500">Code a driver!</h2>

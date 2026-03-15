@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { asset } from '$app/paths';
 
 export const isLoading = writable(true);
 export const loadProgress = writable(0);
@@ -22,7 +23,7 @@ export async function preloadImages() {
 				loadProgress.set((loadedCount / imageCount) * 100);
 				resolve();
 			};
-			img.src = imageDir + filename;
+			img.src = asset(`${imageDir}${filename}`);
 		});
 	});
 
