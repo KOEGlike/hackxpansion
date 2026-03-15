@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loadProgress, preloadImages, isLoading } from '$lib/stores/loading';
+	import { loadProgress, preloadImages, isLoading, imageCount } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
@@ -9,8 +9,8 @@
 		if (!scrollY.current) {
 			return 0;
 		} else {
-			const frame = Math.floor(scrollY.current / 80);
-			return Math.min(frame, 156);
+			const frame = Math.floor(scrollY.current / 32);
+			return Math.max(0, Math.min(frame, imageCount - 1));
 		}
 	});
 
@@ -23,12 +23,12 @@
 	});
 
 	const frame_events = [
-		{ start: 0, end: 9 },
-		{ start: 16, end: 36 },
-		{ start: 54, end: 79 },
-		{ start: 93, end: 114 },
-		{ start: 130, end: 999 },
-		{ start: 155, end: 999 }
+		{ start: 0, end: 22 },
+		{ start: 40, end: 90 },
+		{ start: 135, end: 197 },
+		{ start: 232, end: 285 },
+		{ start: 325, end: imageCount },
+		{ start: 387, end: imageCount }
 	];
 </script>
 
