@@ -6,11 +6,36 @@ export const loadProgress = writable(0);
 export const frameCount = 391;
 
 const extraImages = ['/ferris.png'];
-const renderVideos = [
-	'/renders/output_h264.mp4',
-	'/renders/output_vp9.webm',
-	'/renders/output_av1.webm'
+
+type RenderVideoSource = {
+	path: string;
+	type: string;
+};
+
+const renderVideoSources: RenderVideoSource[] = [
+	{ path: '/renders/output_h264.mp4', type: 'video/mp4' },
+	{ path: '/renders/output_vp9.webm', type: 'video/webm; codecs=vp9' },
+	{ path: '/renders/output_av1.webm', type: 'video/webm; codecs=av01.0.08M.08' }
 ];
+
+let selectedRenderVideo = renderVideoSources[0].path;
+
+export function getRenderVideoPath() {
+	if (typeof document === 'undefined') {
+		return selectedRenderVideo;
+	}
+
+	const testVideo = document.createElement('video');
+
+	for (const source of renderVideoSources) {
+		if (testVideo.canPlayType(source.type)) {
+			selectedRenderVideo = source.path;
+			break;
+		}
+	}
+
+	return selectedRenderVideo;
+}
 
 function loadImage(path: string) {
 	return new Promise<void>((resolve) => {
@@ -33,7 +58,7 @@ function loadVideo(path: string) {
 }
 
 export async function preloadAssets() {
-	const assetsToLoad = [...extraImages, ...renderVideos];
+	const assetsToLoad = [...extraImages, getRenderVideoPath()];
 	let loadedCount = 0;
 
 	const promises = assetsToLoad.map((path) => {
