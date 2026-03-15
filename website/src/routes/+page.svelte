@@ -1,25 +1,80 @@
 <script lang="ts">
-	import { loadProgress, preloadImages, isLoading, imageCount } from '$lib/stores/loading';
+	import { loadProgress, preloadAssets, isLoading, frameCount } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
 	import { asset } from '$app/paths';
+
+	let heroVideo = $state<HTMLVideoElement | null>(null);
+	let videoDuration = $state(0);
+	let seekInProgress = $state(false);
+	let pendingSeekTime = $state<number | null>(null);
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
 			return 0;
 		} else {
 			const frame = Math.floor(scrollY.current / 32);
-			return Math.max(0, Math.min(frame, imageCount - 1));
+			return Math.max(0, Math.min(frame, frameCount - 1));
 		}
 	});
 
+	function flushVideoSeek() {
+		if (!heroVideo || pendingSeekTime === null) {
+			return;
+		}
+
+		const nextTime = pendingSeekTime;
+		pendingSeekTime = null;
+		seekInProgress = true;
+
+		try {
+			if (typeof heroVideo.fastSeek === 'function') {
+				heroVideo.fastSeek(nextTime);
+			} else {
+				heroVideo.currentTime = nextTime;
+			}
+		} catch {
+			heroVideo.currentTime = nextTime;
+		}
+	}
+
+	function queueVideoSeek(targetTime: number) {
+		if (!heroVideo || videoDuration <= 0) {
+			return;
+		}
+
+		const clampedTime = Math.max(0, Math.min(targetTime, videoDuration));
+		pendingSeekTime = clampedTime;
+
+		if (!seekInProgress) {
+			flushVideoSeek();
+		}
+	}
+
+	function handleVideoSeeked() {
+		seekInProgress = false;
+
+		if (pendingSeekTime !== null) {
+			flushVideoSeek();
+		}
+	}
+
 	$effect(() => {
-		console.log('frame:', current_frame);
+		if (!heroVideo || videoDuration <= 0) {
+			return;
+		}
+
+		const progress = current_frame / Math.max(frameCount - 1, 1);
+		const targetTime = progress * videoDuration;
+
+		if (Math.abs(heroVideo.currentTime - targetTime) > 0.05) {
+			queueVideoSeek(targetTime);
+		}
 	});
 
 	onMount(() => {
-		preloadImages();
+		preloadAssets();
 	});
 
 	const frame_events = [
@@ -27,8 +82,8 @@
 		{ start: 40, end: 90 },
 		{ start: 135, end: 197 },
 		{ start: 232, end: 285 },
-		{ start: 325, end: imageCount },
-		{ start: 387, end: imageCount }
+		{ start: 325, end: frameCount },
+		{ start: 387, end: frameCount }
 	];
 </script>
 
@@ -44,11 +99,24 @@
 	</div>
 {:else}
 	<div class="sticky top-0 left-0 h-screen w-screen">
-		<img
+		<video
+			bind:this={heroVideo}
 			class="-z-10 h-screen w-screen object-cover"
-			src={`${asset(`/renders/${current_frame.toString().padStart(4, '0')}.webp`)}`}
-			alt="scroll animation"
-		/>
+			onloadedmetadata={() => {
+				if (heroVideo) {
+					videoDuration = heroVideo.duration;
+					queueVideoSeek(0);
+				}
+			}}
+			onseeked={handleVideoSeeked}
+			muted
+			playsinline
+			preload="auto"
+		>
+			<source src={asset('/renders/output_h264.mp4')} type="video/mp4" />
+			<source src={asset('/renders/output_vp9.webm')} type="video/webm" />
+			<source src={asset('/renders/output_av1.webm')} type="video/webm; codecs=av01.0.08M.08" />
+		</video>
 		<div class="h-screen w-screen -translate-y-[100vh]">
 			<!-- Title -->
 			{#if current_frame < frame_events[0].end && current_frame >= frame_events[0].start}
