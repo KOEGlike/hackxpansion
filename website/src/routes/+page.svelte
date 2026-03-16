@@ -143,12 +143,13 @@
 							</h2>
 						{/if}
 					</div>
-					<button
-						class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
-						onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-					>
-						Go Up
-					</button>
+					{#if current_frame < frame_events[5].end && current_frame >= frame_events[5].start}<button
+							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
+							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+						>
+							Go Up
+						</button>
+					{/if}
 				</div>
 			{/if}
 		</div>
