@@ -14,6 +14,8 @@
 		}
 	});
 
+	// let current_frame = 60;
+
 	$effect(() => {
 		console.log('frame:', current_frame);
 	});
@@ -43,8 +45,9 @@
 		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
 	</div>
 {:else}
-	<div class="sticky top-0 left-0 h-screen w-screen">
-		<img
+	<div class="h-3400 overflow-y-scroll"></div>
+	<div class="fixed top-0 left-0 h-screen w-screen">
+		<enhanced:img
 			class="-z-10 h-screen w-screen object-cover"
 			src={`${asset(`/renders/${current_frame.toString().padStart(4, '0')}.webp`)}`}
 			alt="scroll animation"
@@ -56,9 +59,11 @@
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0 p-90">
-						<h1 class="font-share-tech text-7xl font-bold text-slate-700">Hackxpansion</h1>
-						<h2 class="font-share-tech text-2xl font-normal text-slate-500">
+					<div class="flex flex-col items-center gap-0 pt-75 sm:pt-90">
+						<h1 class="font-share-tech text-5xl font-bold text-slate-700 sm:text-7xl">
+							Hackxpansion
+						</h1>
+						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
 							Make expansion cards!
 						</h2>
 					</div>
@@ -70,9 +75,11 @@
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0 p-50">
-						<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 1</h1>
-						<h2 class="font-share-tech text-2xl font-normal text-slate-500">Design your card!</h2>
+					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
+						<h1 class=" font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 1</h1>
+						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
+							Design your card!
+						</h2>
 					</div>
 				</div>
 			{/if}
@@ -82,11 +89,13 @@
 					class="flex h-full w-full items-center justify-center gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-row items-center justify-center gap-10">
+					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
 						<img class="w-64" src={`${asset('/ferris.png')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
-							<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 2</h1>
-							<h2 class="font-share-tech text-2xl font-normal text-slate-500">Code a driver!</h2>
+							<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
+							<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
+								Code a driver!
+							</h2>
 						</div>
 					</div>
 				</div>
@@ -97,9 +106,11 @@
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0 p-50">
-						<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 3</h1>
-						<h2 class="font-share-tech text-2xl font-normal text-slate-500">Make 3 more!</h2>
+					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
+						<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 3</h1>
+						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
+							Make 3 more!
+						</h2>
 					</div>
 				</div>
 			{/if}
@@ -109,10 +120,10 @@
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0 p-30">
-						<h1 class="font-share-tech text-7xl font-bold text-slate-700">Step 4</h1>
+					<div class="flex flex-col items-center gap-0 pt-15">
+						<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
 						{#if current_frame < frame_events[5].end && current_frame >= frame_events[5].start}
-							<h2 class="font-share-tech text-2xl font-normal text-slate-500">
+							<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
 								Submit and get the console!
 							</h2>
 						{/if}
@@ -121,5 +132,10 @@
 			{/if}
 		</div>
 	</div>
-	<div class="h-3400 -translate-y-[100vh]"></div>
 {/if}
+
+<style>
+	:global(body) {
+		@apply h-screen overflow-x-hidden bg-[#c3cbd4];
+	}
+</style>
