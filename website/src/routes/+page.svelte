@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
-	import { asset } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 
 	const scrollPerFrame = 100;
 
@@ -56,6 +56,13 @@
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
+			<!-- Docs -->
+			<a
+				href={resolve('/docs')}
+				class="fixed top-4 right-4 content-box p-2 text-xl hover:content-box-hover active:content-box"
+				>Docs</a
+			>
+
 			<!-- Title -->
 			{#if current_frame < frame_events[0].end && current_frame >= frame_events[0].start}
 				<div
@@ -63,15 +70,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-75 sm:pt-90">
-						<h1 class="font-share-tech text-5xl font-bold text-slate-700 sm:text-7xl">
-							Hackxpansion
-						</h1>
-						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
-							Make expansion cards!
-						</h2>
+						<h1 class=" text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
+						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Make expansion cards!</h2>
 					</div>
 				</div>
 			{/if}
+
 			<!-- Step 1 -->
 			{#if current_frame < frame_events[1].end && current_frame >= frame_events[1].start}
 				<div
@@ -79,13 +83,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class=" font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 1</h1>
-						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
-							Design your card!
-						</h2>
+						<h1 class="  text-6xl font-bold text-slate-700 sm:text-7xl">Step 1</h1>
+						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Design your card!</h2>
 					</div>
 				</div>
 			{/if}
+
 			<!-- Step 2 -->
 			{#if current_frame < frame_events[2].end && current_frame >= frame_events[2].start}
 				<div
@@ -95,14 +98,13 @@
 					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
 						<img class="w-64" src={`${asset('/ferris.png')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
-							<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
-							<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
-								Code a driver!
-							</h2>
+							<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
+							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Code a driver!</h2>
 						</div>
 					</div>
 				</div>
 			{/if}
+
 			<!-- Step 3 -->
 			{#if current_frame < frame_events[3].end && current_frame >= frame_events[3].start}
 				<div
@@ -110,13 +112,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 3</h1>
-						<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
-							Make 3 more!
-						</h2>
+						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 3</h1>
+						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Make 3 more!</h2>
 					</div>
 				</div>
 			{/if}
+
 			<!-- Step 4 -->
 			{#if current_frame < frame_events[4].end && current_frame >= frame_events[4].start}
 				<div
@@ -124,9 +125,9 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-15">
-						<h1 class="font-share-tech text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
+						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
 						{#if current_frame < frame_events[5].end && current_frame >= frame_events[5].start}
-							<h2 class="font-share-tech text-xl font-normal text-slate-500 sm:text-2xl">
+							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
 								Submit and get the console!
 							</h2>
 						{/if}
@@ -136,9 +137,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	:global(body) {
-		@apply h-screen overflow-x-hidden bg-[#c3cbd4];
-	}
-</style>

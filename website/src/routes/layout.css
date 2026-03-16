@@ -8,3 +8,11 @@
 	/* This creates the .font-share-tech utility */
 	--font-share-tech: 'Share Tech Mono', monospace;
 }
+
+@utility content-box {
+	@apply border-3 border-solid border-slate-700 bg-slate-400/50 text-slate-700;
+}
+
+@utility content-box-hover {
+	@apply content-box hover:bg-slate-400/70;
+}
