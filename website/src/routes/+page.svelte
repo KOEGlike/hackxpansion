@@ -71,7 +71,9 @@
 				>
 					<div class="flex flex-col items-center gap-0 pt-75 sm:pt-90">
 						<h1 class=" text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
-						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Make expansion cards!</h2>
+						<h2 class=" w-80 text-center text-xl font-normal text-slate-500 sm:text-2xl">
+							Make expansion cards, get a console to use them in!
+						</h2>
 					</div>
 				</div>
 			{/if}
@@ -142,7 +144,7 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<button
-						class="mb-40 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"
+						class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
 						onclick={() => (window.scrollTo({ top: 0, behavior: 'smooth' }), (current_frame = 0))}
 					>
 						Go Up
