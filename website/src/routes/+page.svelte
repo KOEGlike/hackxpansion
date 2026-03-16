@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { loadProgress, preloadImages, isLoading } from '$lib/stores/loading';
+	import { loadProgress, preloadImages, isLoading, imageCount } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
 	import { asset } from '$app/paths';
 
+	const scrollPerFrame = 100;
+
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
 			return 0;
 		} else {
-			const frame = Math.floor(scrollY.current / 80);
-			return Math.min(frame, 156);
+			const frame = Math.floor(scrollY.current / scrollPerFrame);
+			return Math.min(frame, imageCount - 1);
 		}
 	});
-
-	// let current_frame = 60;
 
 	$effect(() => {
 		console.log('frame:', current_frame);
@@ -26,11 +26,11 @@
 
 	const frame_events = [
 		{ start: 0, end: 9 },
-		{ start: 16, end: 36 },
+		{ start: 22, end: 36 },
 		{ start: 54, end: 79 },
 		{ start: 93, end: 114 },
 		{ start: 130, end: 999 },
-		{ start: 155, end: 999 }
+		{ start: imageCount - 2, end: 999 }
 	];
 </script>
 
@@ -45,7 +45,10 @@
 		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
 	</div>
 {:else}
-	<div class="h-3400 overflow-y-scroll"></div>
+	<div
+		class="overflow-y-scroll"
+		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
+	></div>
 	<div class="fixed top-0 left-0 h-screen w-screen">
 		<enhanced:img
 			class="-z-10 h-screen w-screen object-cover"
