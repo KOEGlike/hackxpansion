@@ -1,97 +1,34 @@
 <script lang="ts">
-	import {
-		loadProgress,
-		preloadAssets,
-		isLoading,
-		frameCount,
-		getRenderVideoPath
-	} from '$lib/stores/loading';
+	import { loadProgress, preloadImages, isLoading } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
 	import { asset } from '$app/paths';
 
-	let heroVideo = $state<HTMLVideoElement | null>(null);
-	let videoDuration = $state(0);
-	let renderVideoPath = $state('/renders/output_h264.mp4');
-	let seekInProgress = $state(false);
-	let pendingSeekTime = $state<number | null>(null);
-
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
 			return 0;
 		} else {
-			const frame = Math.floor(scrollY.current / 32);
-			return Math.max(0, Math.min(frame, frameCount - 1));
+			const frame = Math.floor(scrollY.current / 80);
+			return Math.min(frame, 156);
 		}
 	});
 
-	function flushVideoSeek() {
-		if (!heroVideo || pendingSeekTime === null) {
-			return;
-		}
-
-		const nextTime = pendingSeekTime;
-		pendingSeekTime = null;
-		seekInProgress = true;
-
-		try {
-			if (typeof heroVideo.fastSeek === 'function') {
-				heroVideo.fastSeek(nextTime);
-			} else {
-				heroVideo.currentTime = nextTime;
-			}
-		} catch {
-			heroVideo.currentTime = nextTime;
-		}
-	}
-
-	function queueVideoSeek(targetTime: number) {
-		if (!heroVideo || videoDuration <= 0) {
-			return;
-		}
-
-		const clampedTime = Math.max(0, Math.min(targetTime, videoDuration));
-		pendingSeekTime = clampedTime;
-
-		if (!seekInProgress) {
-			flushVideoSeek();
-		}
-	}
-
-	function handleVideoSeeked() {
-		seekInProgress = false;
-
-		if (pendingSeekTime !== null) {
-			flushVideoSeek();
-		}
-	}
-
 	$effect(() => {
-		if (!heroVideo || videoDuration <= 0) {
-			return;
-		}
-
-		const progress = current_frame / Math.max(frameCount - 1, 1);
-		const targetTime = progress * videoDuration;
-
-		if (Math.abs(heroVideo.currentTime - targetTime) > 0.05) {
-			queueVideoSeek(targetTime);
-		}
+		console.log('frame:', current_frame);
 	});
 
 	onMount(() => {
-		renderVideoPath = getRenderVideoPath();
-		preloadAssets();
+		preloadImages();
 	});
 
 	const frame_events = [
-		{ start: 0, end: 22 },
-		{ start: 40, end: 90 },
-		{ start: 135, end: 197 },
-		{ start: 232, end: 285 },
-		{ start: 325, end: frameCount },
-		{ start: 387, end: frameCount }
+		{ start: 0, end: 9 },
+		{ start: 16, end: 36 },
+		{ start: 54, end: 79 },
+		{ start: 93, end: 114 },
+		{ start: 130, end: 999 },
+		{ start: 155, end: 999 }
 	];
 </script>
 
@@ -107,22 +44,11 @@
 	</div>
 {:else}
 	<div class="sticky top-0 left-0 h-screen w-screen">
-		<video
-			bind:this={heroVideo}
+		<img
 			class="-z-10 h-screen w-screen object-cover"
-			onloadedmetadata={() => {
-				if (heroVideo) {
-					videoDuration = heroVideo.duration;
-					queueVideoSeek(0);
-				}
-			}}
-			onseeked={handleVideoSeeked}
-			muted
-			playsinline
-			preload="auto"
-			src={asset(renderVideoPath)}
-		>
-		</video>
+			src={`${asset(`/renders/${current_frame.toString().padStart(4, '0')}.webp`)}`}
+			alt="scroll animation"
+		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
 			<!-- Title -->
 			{#if current_frame < frame_events[0].end && current_frame >= frame_events[0].start}
