@@ -132,7 +132,7 @@
 			<!-- Step 4 -->
 			{#if current_frame < frame_events[4].end && current_frame >= frame_events[4].start}
 				<div
-					class="fixed top-0 left-0 flex h-full w-full flex-col items-center justify-start gap-0"
+					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-15">
@@ -143,15 +143,6 @@
 							</h2>
 						{/if}
 					</div>
-				</div>
-			{/if}
-
-			<!-- Go Up-->
-			{#if current_frame >= imageCount - 2}
-				<div
-					class="fixed flex h-full w-full flex-col items-center justify-end gap-0"
-					transition:fade={{ duration: 100 }}
-				>
 					<button
 						class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
 						onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
