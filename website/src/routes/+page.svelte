@@ -145,7 +145,7 @@
 				>
 					<button
 						class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
-						onclick={() => (window.scrollTo({ top: 0, behavior: 'smooth' }), (current_frame = 0))}
+						onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 					>
 						Go Up
 					</button>
