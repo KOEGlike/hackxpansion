@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 
+	let hidden = $state(false);
+
 	let { children } = $props();
 </script>
 
@@ -21,70 +23,81 @@
 	</svg>
 </a>
 
-<div class="flex h-screen w-screen flex-row gap-6 p-3">
-	<div class="flex h-fit w-fit flex-col content-box p-2">
-		<a
-			class="text-2xl hover:underline"
-			href={resolve('/docs')}
-			class:underline={page.url.pathname === resolve('/docs')}
-		>
-			Documentation
-		</a>
+<div class="flex h-screen w-screen flex-row p-3 {!hidden ? ' gap-2 sm:gap-4' : 'gap-1 sm:gap-2'}">
+	{#if !hidden}
+		<div class="flex h-fit w-fit flex-col content-box p-2">
+			<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
+			<a
+				class="text-2xl hover:underline"
+				href={resolve('/docs')}
+				class:underline={page.url.pathname === resolve('/docs')}
+			>
+				Documentation
+			</a>
 
-		<br class="h-2" />
+			<br class="h-2" />
 
-		<a
-			href={resolve('/docs/quickstart')}
-			class="text-lg hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/quickstart')}
-		>
-			Getting Started
-		</a>
+			<a
+				href={resolve('/docs/quickstart')}
+				class="text-lg hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/quickstart')}
+			>
+				Getting Started
+			</a>
 
-		<a
-			href={resolve('/docs/quickstart/first-card')}
-			class="indent-4 hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/quickstart/first-card')}
-		>
-			First card
-		</a>
-		<a
-			href={resolve('/docs/quickstart/first-driver')}
-			class="indent-4 hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/quickstart/first-driver')}
-		>
-			First Driver
-		</a>
+			<a
+				href={resolve('/docs/quickstart/first-card')}
+				class="indent-4 hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/quickstart/first-card')}
+			>
+				First card
+			</a>
+			<a
+				href={resolve('/docs/quickstart/first-driver')}
+				class="indent-4 hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/quickstart/first-driver')}
+			>
+				First Driver
+			</a>
 
-		<a
-			href={resolve('/docs/detailed')}
-			class="text-lg hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/detailed')}
+			<a
+				href={resolve('/docs/detailed')}
+				class="text-lg hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/detailed')}
+			>
+				Detailed
+			</a>
+			<a
+				href={resolve('/docs/detailed/card')}
+				class="indent-4 hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/detailed/card')}
+			>
+				Card
+			</a>
+			<a
+				href={resolve('/docs/detailed/api')}
+				class="indent-4 hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/detailed/api')}
+			>
+				Driver API
+			</a>
+			<a
+				href={resolve('/docs/detailed/device')}
+				class="indent-4 hover:underline"
+				class:underline={page.url.pathname === resolve('/docs/detailed/device')}
+			>
+				Device
+			</a>
+		</div>
+	{:else}
+		<button
+			class="h-fit content-box border-dashed px-2 hover:underline"
+			style="writing-mode: vertical-lr"
+			onclick={() => (hidden = false)}
 		>
-			Detailed
-		</a>
-		<a
-			href={resolve('/docs/detailed/card')}
-			class="indent-4 hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/detailed/card')}
-		>
-			Card
-		</a>
-		<a
-			href={resolve('/docs/detailed/api')}
-			class="indent-4 hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/detailed/api')}
-		>
-			Driver API
-		</a>
-		<a
-			href={resolve('/docs/detailed/device')}
-			class="indent-4 hover:underline"
-			class:underline={page.url.pathname === resolve('/docs/detailed/device')}
-		>
-			Device
-		</a>
-	</div>
+			Open
+		</button>
+	{/if}
 	<div class="prose prose-lg prose-headings:text-slate-700 prose-p:text-slate-700">
 		{@render children()}
 	</div>
