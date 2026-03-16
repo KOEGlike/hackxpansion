@@ -45,10 +45,17 @@
 		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
 	</div>
 {:else}
-	<div
-		class="overflow-y-scroll"
-		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
-	></div>
+	<div class="overflow-y-scroll" style="height: calc({imageCount * scrollPerFrame}px + 100vh)">
+		{#each frame_events as event (event.start)}
+			<div
+				class="absolute h-[100px] w-full"
+				style="
+                top: {event.start * scrollPerFrame}px; 
+                scroll-snap-align: start;
+            "
+			></div>
+		{/each}
+	</div>
 	<div class="fixed top-0 left-0 h-screen w-screen">
 		<enhanced:img
 			class="-z-10 h-screen w-screen object-cover"
@@ -154,3 +161,14 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* Use 'proximity' instead of 'mandatory'. 
+       Mandatory forces snapping even on small scrolls, which can trap users.
+       Proximity allows free scrolling but snaps when they get close.
+    */
+	:global(html) {
+		scroll-snap-type: y proximity;
+		scroll-snap-align: start;
+	}
+</style>
