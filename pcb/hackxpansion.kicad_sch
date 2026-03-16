@@ -671,7 +671,7 @@
 	)
 	(symbol
 		(lib_id "Analog_ADC:ADS131M08xPBS")
-		(at 85.09 76.2 0)
+		(at 78.74 102.87 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -680,7 +680,7 @@
 		(fields_autoplaced yes)
 		(uuid "03df3607-9193-4328-a94c-5e4bf70731ca")
 		(property "Reference" "U1"
-			(at 89.7733 40.64 0)
+			(at 83.4233 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -689,7 +689,7 @@
 			)
 		)
 		(property "Value" "ADS131M08xPBS"
-			(at 89.7733 43.18 0)
+			(at 83.4233 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -698,7 +698,7 @@
 			)
 		)
 		(property "Footprint" "Package_QFP:TQFP-32_5x5mm_P0.5mm"
-			(at 135.89 132.08 0)
+			(at 129.54 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -708,7 +708,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/ads131m08.pdf"
-			(at 135.89 134.62 0)
+			(at 129.54 161.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -717,7 +717,7 @@
 			)
 		)
 		(property "Description" "8-channel, 24-bit, simultaneous sampling Delta-Sigma ADC, 32kSPS, G=1..128 PGA, SPI interface, integrated 1.2V reference, TQFP-32 (Texas PBS / S-PQFP-G32)"
-			(at 146.05 137.16 0)
+			(at 139.7 163.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
