@@ -28,7 +28,7 @@
 		{ start: 0, end: 9 },
 		{ start: 22, end: 36 },
 		{ start: 54, end: 79 },
-		{ start: 93, end: 114 },
+		{ start: 94, end: 114 },
 		{ start: 130, end: 999 },
 		{ start: imageCount - 2, end: 999 }
 	];
@@ -46,14 +46,16 @@
 	</div>
 {:else}
 	<div class="overflow-y-scroll" style="height: calc({imageCount * scrollPerFrame}px + 100vh)">
-		{#each frame_events as event (event.start)}
-			<div
-				class="absolute h-[100px] w-full"
-				style="
+		{#each frame_events as event, i (event.start)}
+			{#if i != 4}
+				<div
+					class="absolute h-[10px] w-full"
+					style="
                 top: {event.start * scrollPerFrame}px; 
                 scroll-snap-align: start;
             "
-			></div>
+				></div>
+			{/if}
 		{/each}
 	</div>
 	<div class="fixed top-0 left-0 h-screen w-screen">
@@ -78,7 +80,7 @@
 				>
 					<div class="flex flex-col items-center gap-0 pt-75 sm:pt-90">
 						<h1 class=" text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
-						<h2 class=" w-80 text-center text-xl font-normal text-slate-500 sm:text-2xl">
+						<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
 							Make expansion cards, get a console to use them in!
 						</h2>
 					</div>
