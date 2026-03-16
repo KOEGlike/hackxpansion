@@ -5,7 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { asset, resolve } from '$app/paths';
 
-	const scrollPerFrame = 100;
+	const scrollPerFrame = 120;
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -59,7 +59,7 @@
 			<!-- Docs -->
 			<a
 				href={resolve('/docs')}
-				class="fixed top-4 right-4 content-box p-2 text-xl hover:content-box-hover active:content-box"
+				class="fixed top-3 right-3 content-box p-2 text-xl hover:content-box-hover active:content-box"
 				>Docs</a
 			>
 
@@ -121,7 +121,7 @@
 			<!-- Step 4 -->
 			{#if current_frame < frame_events[4].end && current_frame >= frame_events[4].start}
 				<div
-					class="flex h-full w-full flex-col items-center justify-start gap-0"
+					class="fixed top-0 left-0 flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-15">
@@ -132,6 +132,21 @@
 							</h2>
 						{/if}
 					</div>
+				</div>
+			{/if}
+
+			<!-- Go Up-->
+			{#if current_frame >= imageCount - 2}
+				<div
+					class="fixed flex h-full w-full flex-col items-center justify-end gap-0"
+					transition:fade={{ duration: 100 }}
+				>
+					<button
+						class="mb-40 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"
+						onclick={() => (window.scrollTo({ top: 0, behavior: 'smooth' }), (current_frame = 0))}
+					>
+						Go Up
+					</button>
 				</div>
 			{/if}
 		</div>

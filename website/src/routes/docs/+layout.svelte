@@ -5,6 +5,22 @@
 	let { children } = $props();
 </script>
 
+<a
+	class="fixed top-3 right-3 h-12.5 w-12.5 content-box p-0.5"
+	href={resolve('/')}
+	aria-label="Home Page"
+>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 -960 960 960"
+		class="h-full w-full fill-slate-700"
+	>
+		<path
+			d="M220-180h150v-250h220v250h150v-390L480-765 220-570v390Zm-60 60v-480l320-240 320 240v480H530v-250H430v250H160Zm320-353Z"
+		/>
+	</svg>
+</a>
+
 <div class="flex h-screen w-screen flex-row gap-6 p-3">
 	<div class="flex h-fit w-fit flex-col content-box p-2">
 		<a
