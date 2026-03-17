@@ -52,7 +52,7 @@
 					class="absolute h-[10px] w-full"
 					style="
                 top: {event.start * scrollPerFrame}px; 
-                scroll-snap-align: start;
+                scroll-snap-align: end;
             "
 				></div>
 			{/if}
@@ -68,7 +68,7 @@
 			<!-- Docs -->
 			<a
 				href={resolve('/docs')}
-				class="fixed top-3 right-3 content-box p-2 text-xl hover:content-box-hover active:content-box"
+				class="fixed top-5 right-5 content-box p-2 text-xl hover:content-box-hover active:content-box"
 				>Docs</a
 			>
 
