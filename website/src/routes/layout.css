@@ -16,3 +16,7 @@
 @utility content-box-hover {
 	@apply content-box hover:bg-slate-400/70;
 }
+
+@utility adaptive-container {
+	@apply flex h-fit w-full flex-col items-center justify-center sm:flex-row sm:gap-120;
+}

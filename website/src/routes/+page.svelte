@@ -4,6 +4,8 @@
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
 	import { asset, resolve } from '$app/paths';
+	import Scroll from '$lib/components/scroll.svelte';
+	import DocsButton from '$lib/components/docs_button.svelte';
 
 	const scrollPerFrame = 120;
 
@@ -41,23 +43,15 @@
 			<div class="h-full bg-white" style="width: {$loadProgress}%"></div>
 		</div>
 		<p>{Math.round($loadProgress)}%</p>
-
+		<a href={resolve('/simple')} class="hover:underline">Not loading? Click me for simple version</a
+		>
 		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
 	</div>
 {:else}
-	<div class="overflow-y-scroll" style="height: calc({imageCount * scrollPerFrame}px + 100vh)">
-		{#each frame_events as event, i (event.start)}
-			{#if i != 4}
-				<div
-					class="absolute h-[10px] w-full"
-					style="
-                top: {event.start * scrollPerFrame}px; 
-                scroll-snap-align: end;
-            "
-				></div>
-			{/if}
-		{/each}
-	</div>
+	<div
+		class="overflow-y-scroll"
+		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
+	></div>
 	<div class="fixed top-0 left-0 h-screen w-screen">
 		<enhanced:img
 			class="-z-10 h-screen w-screen object-cover"
@@ -65,13 +59,7 @@
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
-			<!-- Docs -->
-			<a
-				href={resolve('/docs')}
-				class="fixed top-5 right-5 content-box p-2 text-xl hover:content-box-hover active:content-box"
-				>Docs</a
-			>
-
+			<DocsButton />
 			<!-- Title -->
 			{#if current_frame < frame_events[0].end && current_frame >= frame_events[0].start}
 				<div
@@ -83,6 +71,7 @@
 						<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
 							Make expansion cards, get a console to use them in!
 						</h2>
+						<Scroll extraclass="h-11 w-fit fill-slate-700 mt-100 sm:mt-85" />
 					</div>
 				</div>
 			{/if}
@@ -107,7 +96,7 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
-						<img class="w-64" src={`${asset('/ferris.png')}`} alt="ferris" />
+						<img class="w-64" src={`${asset('/ferris.webp')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
 							<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
 							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Code a driver!</h2>
@@ -163,6 +152,5 @@
     */
 	:global(html) {
 		scroll-snap-type: y proximity;
-		scroll-snap-align: start;
 	}
 </style>

@@ -5,7 +5,7 @@ export const isLoading = writable(true);
 export const loadProgress = writable(0);
 export const imageCount = 157;
 
-const extraImages = ['ferris.png'];
+const extraImages = ['ferris.webp'];
 
 export async function preloadImages() {
 	const imageDir = '/renders/';
