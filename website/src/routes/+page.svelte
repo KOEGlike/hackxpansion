@@ -7,7 +7,7 @@
 	import Scroll from '$lib/components/scroll.svelte';
 	import DocsButton from '$lib/components/docs_button.svelte';
 
-	const scrollPerFrame = 25;
+	const scrollPerFrame = 20;
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -29,7 +29,7 @@
 	const frame_events = [
 		{ start: 0, end: 12 },
 		{ start: 53, end: 97 },
-		{ start: 126, end: 184 },
+		{ start: 126, end: 193 },
 		{ start: 236, end: 281 },
 		{ start: 326, end: 999 },
 		{ start: imageCount - 2, end: 999 }
