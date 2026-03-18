@@ -34,6 +34,10 @@
 		{ start: 326, end: 999 },
 		{ start: imageCount - 2, end: 999 }
 	];
+
+	const isCurrentFrame = (index: number) => {
+		return current_frame >= frame_events[index].start && current_frame < frame_events[index].end;
+	};
 </script>
 
 {#if $isLoading}
@@ -61,23 +65,31 @@
 		<div class="h-screen w-screen -translate-y-[100vh]">
 			<DocsButton />
 			<!-- Title -->
-			{#if current_frame < frame_events[0].end && current_frame >= frame_events[0].start}
+			{#if isCurrentFrame(0)}
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-80 sm:pt-90">
-						<h1 class=" text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
+						<h1 class="text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
 						<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
-							Make expansion cards, get a console to use them in!
+							Make expansion cards, get a custom console to use them in!
 						</h2>
 					</div>
-					<Scroll extraclass="h-11 w-fit fill-slate-700 mb-20" />
+					<div class="mb-20 flex flex-col items-center justify-center">
+						<a
+							href="https://meko.fillout.com/hackxpansion"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="w-fitindent-4 pb-5 text-xl text-slate-700 hover:underline">RSVP</a
+						>
+						<Scroll extraclass="h-11 w-fit fill-slate-700" />
+					</div>
 				</div>
 			{/if}
 
 			<!-- Step 1 -->
-			{#if current_frame < frame_events[1].end && current_frame >= frame_events[1].start}
+			{#if isCurrentFrame(1)}
 				<div
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
@@ -90,7 +102,7 @@
 			{/if}
 
 			<!-- Step 2 -->
-			{#if current_frame < frame_events[2].end && current_frame >= frame_events[2].start}
+			{#if isCurrentFrame(2)}
 				<div
 					class="flex h-full w-full items-center justify-center gap-0"
 					transition:fade={{ duration: 100 }}
@@ -98,15 +110,15 @@
 					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
 						<img class="w-64" src={`${asset('/ferris.webp')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
-							<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
-							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Code a driver!</h2>
+							<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
+							<h2 class="text-xl font-normal text-slate-500 sm:text-2xl">Code a driver!</h2>
 						</div>
 					</div>
 				</div>
 			{/if}
 
 			<!-- Step 3 -->
-			{#if current_frame < frame_events[3].end && current_frame >= frame_events[3].start}
+			{#if isCurrentFrame(3)}
 				<div
 					class="flex h-full w-full flex-col items-center justify-start gap-0"
 					transition:fade={{ duration: 100 }}
@@ -119,20 +131,21 @@
 			{/if}
 
 			<!-- Step 4 -->
-			{#if current_frame < frame_events[4].end && current_frame >= frame_events[4].start}
+			{#if isCurrentFrame(4)}
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-15">
-						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
-						{#if current_frame < frame_events[5].end && current_frame >= frame_events[5].start}
+						<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
+						{#if isCurrentFrame(5)}
 							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
 								Submit and get the console!
 							</h2>
 						{/if}
 					</div>
-					{#if current_frame < frame_events[5].end && current_frame >= frame_events[5].start}<button
+					{#if isCurrentFrame(5)}
+						<button
 							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
 							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 						>
@@ -146,10 +159,6 @@
 {/if}
 
 <style>
-	/* Use 'proximity' instead of 'mandatory'. 
-       Mandatory forces snapping even on small scrolls, which can trap users.
-       Proximity allows free scrolling but snaps when they get close.
-    */
 	:global(html) {
 		scroll-snap-type: y proximity;
 	}

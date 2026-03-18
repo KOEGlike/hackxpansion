@@ -14,10 +14,18 @@
 		<div class="flex flex-col items-center justify-center gap-0 pt-75 sm:pt-90">
 			<h1 class=" text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
 			<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
-				Make expansion cards, get a console to use them in!
+				Make expansion cards, get a custom console to use them in!
 			</h2>
 		</div>
-		<Scroll extraclass="h-11 w-fit fill-slate-700 mb-20" />
+		<div class="mb-20 flex flex-col items-center justify-center">
+			<a
+				href="https://meko.fillout.com/hackxpansion"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="w-fitindent-4 pb-5 text-xl text-slate-700 hover:underline">RSVP</a
+			>
+			<Scroll extraclass="h-11 w-fit fill-slate-700" />
+		</div>
 	</div>
 	<hr class="w-full border-dashed border-slate-500" />
 	<div class="adaptive-container">
