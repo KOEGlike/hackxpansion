@@ -5,4 +5,4 @@ The goal of this event is to make 4 expansion cards, write drivers for them, and
 to use them in. And maybe event get other peopls modules.
 
 <h3>But I'm a begginer and don't know hardware</h3>
-This program is designed to guide you, and help you to make your first PCB.
+No probelm! We have guides and resource that will help you make your first module, even your first PCB!

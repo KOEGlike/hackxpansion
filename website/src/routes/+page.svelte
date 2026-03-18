@@ -24,11 +24,10 @@
 
 	onMount(() => {
 		preloadImages();
+		setTimeout(() => {
+			preloadImages();
+		}, 60 * 1000);
 	});
-
-	setTimeout(() => {
-		preloadImages();
-	}, 60 * 1000);
 
 	const frame_events = [
 		{ start: 0, end: 12 },
