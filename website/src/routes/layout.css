@@ -10,7 +10,7 @@
 }
 
 @utility content-box {
-	@apply border-3 border-solid border-slate-700 bg-slate-400/50 text-slate-700;
+	@apply border-3 border-solid border-slate-700 bg-slate-400/50 text-slate-700 backdrop-blur-md;
 }
 
 @utility content-box-hover {
@@ -19,6 +19,14 @@
 
 @utility adaptive-container {
 	@apply flex h-fit w-full flex-col items-center justify-center sm:flex-row sm:gap-120;
+}
+
+@utility writing-vertical-lr {
+	writing-mode: vertical-lr;
+}
+
+@utility writing-vertical-rl {
+	writing-mode: vertical-rl;
 }
 
 @layer utilities {

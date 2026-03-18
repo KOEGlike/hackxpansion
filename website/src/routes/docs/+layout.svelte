@@ -23,9 +23,9 @@
 	</svg>
 </a>
 
-<div class="flex h-screen w-screen flex-row p-3 {!hidden ? ' gap-2 sm:gap-4' : 'gap-1 sm:gap-2'}">
+<div class="flex h-fit w-screen flex-row p-3 {!hidden ? ' gap-2 sm:gap-4' : 'gap-1 sm:gap-2'}">
 	{#if !hidden}
-		<div class="flex h-fit w-fit flex-col content-box p-2">
+		<div class="fixed flex h-fit w-fit flex-col content-box p-2 sm:sticky sm:top-3 sm:left-0">
 			<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
 			<a
 				class="text-2xl hover:underline"
@@ -91,14 +91,15 @@
 		</div>
 	{:else}
 		<button
-			class="h-fit content-box border-dashed px-2 hover:underline"
-			style="writing-mode: vertical-lr"
+			class="fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
 			onclick={() => (hidden = false)}
 		>
 			Open
 		</button>
 	{/if}
-	<div class="prose prose-lg prose-headings:text-slate-700 prose-p:text-slate-700">
+	<div
+		class="prose prose-lg max-w-none pt-8 sm:max-w-7/12 sm:pt-0 prose-headings:text-slate-700 prose-p:text-slate-700"
+	>
 		{@render children()}
 	</div>
 </div>

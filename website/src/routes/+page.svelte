@@ -154,7 +154,7 @@
 					</div>
 					{#if isCurrentFrame(5)}
 						<button
-							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-40"
+							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"
 							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 						>
 							Go Up
