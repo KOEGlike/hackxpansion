@@ -35,8 +35,6 @@
 				Documentation
 			</a>
 
-			<br class="h-2" />
-
 			<a
 				href={resolve('/docs/quickstart')}
 				class="text-lg hover:underline"
