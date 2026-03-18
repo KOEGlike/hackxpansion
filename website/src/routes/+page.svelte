@@ -26,6 +26,10 @@
 		preloadImages();
 	});
 
+	setTimeout(() => {
+		preloadImages();
+	}, 60 * 1000);
+
 	const frame_events = [
 		{ start: 0, end: 12 },
 		{ start: 53, end: 97 },
@@ -63,14 +67,14 @@
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
-			<DocsButton>
-				<a class="anchor w-fit text-slate-700 hover:underline" href={resolve('/simple')}>
-					animated
-				</a>
-				<p class="target text-slate-500">go to simple</p>
-			</DocsButton>
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
+				<DocsButton>
+					<a class="anchor w-fit text-slate-700 hover:underline" href={resolve('/simple')}>
+						animated
+					</a>
+					<p class="target text-slate-500">go to simple</p>
+				</DocsButton>
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
@@ -78,7 +82,7 @@
 					<div class="flex flex-col items-center gap-0 pt-80 sm:pt-90">
 						<h1 class="text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
 						<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
-							Make expansion cards, get a custom console to use them in!
+							Make 4 expansion cards, get a custom console to use them in!
 						</h2>
 					</div>
 					<div class="mb-20 flex flex-col items-center justify-center">
