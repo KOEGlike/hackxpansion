@@ -9,7 +9,7 @@
 	<p class="target text-slate-500">go to animated</p>
 </DocsButton>
 
-<div class="flex h-fit w-full flex-col items-center justify-start gap-30 px-10 pb-30">
+<div class="flex h-fit w-full flex-col items-center justify-start gap-15 px-10 pb-30 sm:gap-30">
 	<div
 		class="flex h-screen w-screen flex-col items-center justify-between gap-0 bg-cover bg-center"
 		style:background-image="url({asset(`/renders/0000.webp`)})"
@@ -32,7 +32,7 @@
 	</div>
 	<hr class="w-full border-dashed border-slate-500" />
 	<div class="adaptive-container">
-		<div class="flex flex-col items-center gap-0 pt-40 sm:pt-0">
+		<div class="flex flex-col items-center gap-0">
 			<h1 class="  text-6xl font-bold text-slate-700 sm:text-7xl">Step 1</h1>
 			<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Design your card!</h2>
 		</div>
@@ -48,7 +48,7 @@
 	</div>
 	<hr class="w-full border-dashed border-slate-500" />
 	<div class="adaptive-container">
-		<div class="flex flex-col items-center gap-0 pt-40 sm:pt-0">
+		<div class="flex flex-col items-center gap-0">
 			<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 3</h1>
 			<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Make 3 more!</h2>
 		</div>
@@ -56,7 +56,7 @@
 	</div>
 	<hr class="w-full border-dashed border-slate-500" />
 	<div class="adaptive-container sm:flex-row-reverse">
-		<div class="flex flex-col items-center gap-0 pt-15">
+		<div class="flex flex-col items-center gap-0">
 			<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
 			<h2 class="text-xl font-normal text-slate-500 sm:text-2xl">Submit and get the console!</h2>
 		</div>
