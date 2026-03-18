@@ -63,7 +63,12 @@
 			alt="scroll animation"
 		/>
 		<div class="h-screen w-screen -translate-y-[100vh]">
-			<DocsButton />
+			<DocsButton>
+				<a class="anchor w-fit text-slate-700 hover:underline" href={resolve('/simple')}>
+					animated
+				</a>
+				<p class="target text-slate-500">go to simple</p>
+			</DocsButton>
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
 				<div

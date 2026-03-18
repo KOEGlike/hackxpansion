@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { asset } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import DocsButton from '$lib/components/docs_button.svelte';
 	import Scroll from '$lib/components/scroll.svelte';
 </script>
 
-<DocsButton />
+<DocsButton>
+	<a class="anchor w-fit text-slate-700 hover:underline" href={resolve('/')}> simple </a>
+	<p class="target text-slate-500">go to animated</p>
+</DocsButton>
 
 <div class="flex h-fit w-full flex-col items-center justify-start gap-30 px-10 pb-30">
 	<div

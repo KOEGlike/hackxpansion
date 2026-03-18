@@ -20,3 +20,32 @@
 @utility adaptive-container {
 	@apply flex h-fit w-full flex-col items-center justify-center sm:flex-row sm:gap-120;
 }
+
+.anchor {
+	anchor-name: --page-type;
+}
+
+.target {
+	position: absolute;
+	position-anchor: --page-type;
+
+	/* Position the target's right edge against the anchor's left edge */
+	right: anchor(left);
+
+	/* Center it vertically relative to the anchor */
+	top: anchor(center);
+	transform: translateY(-50%);
+
+	/* Add your 60px gap using margin instead of a hardcoded absolute left position */
+	margin-right: 10px;
+
+	opacity: 0;
+	transition: opacity 0.2s;
+	pointer-events: none;
+}
+
+/* Simplified the hover state. .anchor:has(:hover) is usually redundant for an <a> tag */
+.anchor:hover + .target {
+	opacity: 1;
+	pointer-events: auto;
+}
