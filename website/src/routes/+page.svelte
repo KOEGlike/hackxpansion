@@ -78,7 +78,7 @@
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
 				>
-					<div class="flex flex-col items-center gap-0 pt-80 sm:pt-90">
+					<div class="flex flex-col items-center gap-0 pt-[35vh]">
 						<h1 class="text-5xl font-bold text-slate-700 sm:text-7xl">Hackxpansion</h1>
 						<h2 class="w-80 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
 							Make 4 expansion cards, get a custom console to use them in!
