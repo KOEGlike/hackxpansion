@@ -6,7 +6,7 @@ export const loadProgress = writable(0);
 export const imageCount = 390;
 export const preloadedFrames = writable<(HTMLImageElement | null)[]>([]);
 
-const extraImages = ['ferris.webp'];
+const extraImages = [asset('/ferris.webp')];
 let preloadPromise: Promise<void> | null = null;
 let hasFinishedPreload = false;
 
