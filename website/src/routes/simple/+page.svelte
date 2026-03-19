@@ -20,7 +20,7 @@
 				Make 4 expansion cards, get a custom console to use them in!
 			</h2>
 		</div>
-		<div class="mb-[6vh] flex flex-col items-center justify-center">
+		<div class="mb-[11vh] flex flex-col items-center justify-center sm:mb-[6vh]">
 			<a
 				href="https://meko.fillout.com/hackxpansion"
 				target="_blank"
