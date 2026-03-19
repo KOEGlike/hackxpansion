@@ -32,7 +32,7 @@ jobs:
 
       - name: build
         env:
-          BASE_PATH: '/${{ github.event.repository.name }}'
+          BASE_PATH: ''
         run: |
           npm run build
         working-directory: website
@@ -53,7 +53,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: hackxpansion.dino.icu
 
     steps:
       - name: Deploy
