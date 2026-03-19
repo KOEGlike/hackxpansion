@@ -11,7 +11,8 @@
 	import { fade } from 'svelte/transition';
 	import { asset, resolve } from '$app/paths';
 	import LandingSection from '$lib/components/landing_section.svelte';
-	import DocsButton from '$lib/components/docs_button.svelte';
+	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
+	import StepHeading from '$lib/components/step_heading.svelte';
 	import { landingContent } from '$lib/content/content';
 
 	const scrollPerFrame = 25;
@@ -126,7 +127,24 @@
 	const isCurrentFrame = (index: number) => {
 		return current_frame >= frame_events[index].start && current_frame < frame_events[index].end;
 	};
+
+	const frameStepClasses = ['pt-40 sm:pt-50', '', 'pt-40 sm:pt-50', 'pt-15'] as const;
+
+	const frameStepContainers = [
+		'flex h-full w-full flex-col items-center justify-start gap-0',
+		'flex h-full w-full items-center justify-center gap-0',
+		'flex h-full w-full flex-col items-center justify-start gap-0',
+		'flex h-full w-full flex-col items-center justify-between gap-0'
+	] as const;
 </script>
+
+{#snippet animatedStep(index: 0 | 1 | 2 | 3)}
+	<StepHeading
+		title={landingContent.steps[index].title}
+		description={landingContent.steps[index].description}
+		extraClass={frameStepClasses[index]}
+	/>
+{/snippet}
 
 {#if $isLoading}
 	<div class="flex h-screen w-full flex-col items-center justify-center gap-4 bg-black text-white">
@@ -153,12 +171,7 @@
 		<div class="relative z-10 h-full w-full">
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
-				<DocsButton>
-					<a class="anchor w-fit text-slate-700 hover:underline" href={resolve('/simple')}>
-						animated
-					</a>
-					<p class="target text-slate-500">go to simple</p>
-				</DocsButton>
+				<ModeSwitchLink href="/simple" label="animated" targetText="go to simple" />
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
@@ -169,74 +182,40 @@
 
 			<!-- Step 1 -->
 			{#if isCurrentFrame(1)}
-				<div
-					class="flex h-full w-full flex-col items-center justify-start gap-0"
-					transition:fade={{ duration: 100 }}
-				>
-					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class="  text-6xl font-bold text-slate-700 sm:text-7xl">
-							{landingContent.steps[0].title}
-						</h1>
-						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
-							{landingContent.steps[0].description}
-						</h2>
-					</div>
+				<div class={frameStepContainers[0]} transition:fade={{ duration: 100 }}>
+					{@render animatedStep(0)}
 				</div>
 			{/if}
 
 			<!-- Step 2 -->
 			{#if isCurrentFrame(2)}
-				<div
-					class="flex h-full w-full items-center justify-center gap-0"
-					transition:fade={{ duration: 100 }}
-				>
+				<div class={frameStepContainers[1]} transition:fade={{ duration: 100 }}>
 					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
-						<img class="w-64" src={`${asset('/ferris.webp')}`} alt="ferris" />
-						<div class="flex flex-col items-center">
-							<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">
-								{landingContent.steps[1].title}
-							</h1>
-							<h2 class="text-xl font-normal text-slate-500 sm:text-2xl">
-								{landingContent.steps[1].description}
-							</h2>
-						</div>
+						<img class="landing-step-image" src={`${asset('/ferris.webp')}`} alt="ferris" />
+						{@render animatedStep(1)}
 					</div>
 				</div>
 			{/if}
 
 			<!-- Step 3 -->
 			{#if isCurrentFrame(3)}
-				<div
-					class="flex h-full w-full flex-col items-center justify-start gap-0"
-					transition:fade={{ duration: 100 }}
-				>
-					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">
-							{landingContent.steps[2].title}
-						</h1>
-						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
-							{landingContent.steps[2].description}
-						</h2>
-					</div>
+				<div class={frameStepContainers[2]} transition:fade={{ duration: 100 }}>
+					{@render animatedStep(2)}
 				</div>
 			{/if}
 
 			<!-- Step 4 -->
 			{#if isCurrentFrame(4)}
-				<div
-					class="flex h-full w-full flex-col items-center justify-between gap-0"
-					transition:fade={{ duration: 100 }}
-				>
-					<div class="flex flex-col items-center gap-0 pt-15">
-						<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">
-							{landingContent.steps[3].title}
-						</h1>
-						{#if isCurrentFrame(5)}
-							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
-								{landingContent.steps[3].description}
-							</h2>
-						{/if}
-					</div>
+				<div class={frameStepContainers[3]} transition:fade={{ duration: 100 }}>
+					{#if isCurrentFrame(5)}
+						{@render animatedStep(3)}
+					{:else}
+						<StepHeading
+							title={landingContent.steps[3].title}
+							description=""
+							extraClass={frameStepClasses[3]}
+						/>
+					{/if}
 					{#if isCurrentFrame(5)}
 						<button
 							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"

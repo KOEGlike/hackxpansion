@@ -21,6 +21,26 @@
 	@apply flex h-fit w-full flex-col items-center justify-center gap-10 sm:flex-row sm:gap-120;
 }
 
+@utility landing-step-heading {
+	@apply flex flex-col gap-0;
+}
+
+@utility landing-step-title {
+	@apply text-6xl font-bold text-slate-700 sm:text-7xl;
+}
+
+@utility landing-step-description {
+	@apply text-xl font-normal text-slate-500 sm:text-2xl;
+}
+
+@utility landing-step-image {
+	@apply w-64 object-cover;
+}
+
+@utility landing-section-divider {
+	@apply w-full border-dashed border-slate-500;
+}
+
 @utility writing-vertical-lr {
 	writing-mode: vertical-lr;
 }
