@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { loadProgress, preloadImages, isLoading, imageCount } from '$lib/stores/loading';
+	import {
+		loadProgress,
+		preloadImages,
+		isLoading,
+		imageCount,
+		preloadedFrames
+	} from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
@@ -8,6 +14,7 @@
 	import DocsButton from '$lib/components/docs_button.svelte';
 
 	const scrollPerFrame = 25;
+	let frameCanvas = $state<HTMLCanvasElement | null>(null);
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -18,15 +25,73 @@
 		}
 	});
 
+	let currentFrameImage = $derived($preloadedFrames[current_frame]);
+
+	const drawFrame = () => {
+		if (!frameCanvas || !currentFrameImage) {
+			return;
+		}
+
+		const context = frameCanvas.getContext('2d');
+		if (!context) {
+			return;
+		}
+
+		const viewportWidth = window.innerWidth;
+		const viewportHeight = window.innerHeight;
+		context.clearRect(0, 0, viewportWidth, viewportHeight);
+
+		const scale = Math.max(
+			viewportWidth / currentFrameImage.naturalWidth,
+			viewportHeight / currentFrameImage.naturalHeight
+		);
+		const drawWidth = currentFrameImage.naturalWidth * scale;
+		const drawHeight = currentFrameImage.naturalHeight * scale;
+		const offsetX = (viewportWidth - drawWidth) / 2;
+		const offsetY = (viewportHeight - drawHeight) / 2;
+
+		context.drawImage(currentFrameImage, offsetX, offsetY, drawWidth, drawHeight);
+	};
+
+	const resizeCanvas = () => {
+		if (!frameCanvas) {
+			return;
+		}
+
+		const viewportWidth = window.innerWidth;
+		const viewportHeight = window.innerHeight;
+		const pixelRatio = window.devicePixelRatio || 1;
+		frameCanvas.width = Math.floor(viewportWidth * pixelRatio);
+		frameCanvas.height = Math.floor(viewportHeight * pixelRatio);
+		const context = frameCanvas.getContext('2d');
+		if (!context) {
+			return;
+		}
+
+		context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+		drawFrame();
+	};
+
 	$effect(() => {
-		console.log('frame:', current_frame);
+		if (!$isLoading && frameCanvas) {
+			resizeCanvas();
+			drawFrame();
+		}
 	});
 
 	onMount(() => {
 		preloadImages();
-		setTimeout(() => {
+		const preloadRefreshTimeout = setTimeout(() => {
 			preloadImages();
 		}, 60 * 1000);
+
+		resizeCanvas();
+		window.addEventListener('resize', resizeCanvas);
+
+		return () => {
+			clearTimeout(preloadRefreshTimeout);
+			window.removeEventListener('resize', resizeCanvas);
+		};
 	});
 
 	const frame_events = [
@@ -60,12 +125,12 @@
 		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
 	></div>
 	<div class="fixed top-0 left-0 h-screen w-screen">
-		<enhanced:img
-			class="-z-10 h-screen w-screen object-cover"
-			src={`${asset(`/renders/${current_frame.toString().padStart(4, '0')}.webp`)}`}
-			alt="scroll animation"
-		/>
-		<div class="h-screen w-screen -translate-y-[100vh]">
+		<canvas
+			bind:this={frameCanvas}
+			class="absolute inset-0 z-0 h-screen w-screen"
+			aria-label="scroll animation"
+		></canvas>
+		<div class="relative z-10 h-screen w-screen">
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
 				<DocsButton>
