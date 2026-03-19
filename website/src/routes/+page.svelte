@@ -15,6 +15,7 @@
 
 	const scrollPerFrame = 25;
 	let frameCanvas = $state<HTMLCanvasElement | null>(null);
+	let resizeRaf = 0;
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -37,8 +38,9 @@
 			return;
 		}
 
-		const viewportWidth = window.innerWidth;
-		const viewportHeight = window.innerHeight;
+		const bounds = frameCanvas.getBoundingClientRect();
+		const viewportWidth = Math.max(1, Math.round(bounds.width));
+		const viewportHeight = Math.max(1, Math.round(bounds.height));
 		context.clearRect(0, 0, viewportWidth, viewportHeight);
 
 		const scale = Math.max(
@@ -58,8 +60,9 @@
 			return;
 		}
 
-		const viewportWidth = window.innerWidth;
-		const viewportHeight = window.innerHeight;
+		const bounds = frameCanvas.getBoundingClientRect();
+		const viewportWidth = Math.max(1, Math.round(bounds.width));
+		const viewportHeight = Math.max(1, Math.round(bounds.height));
 		const pixelRatio = window.devicePixelRatio || 1;
 		frameCanvas.width = Math.floor(viewportWidth * pixelRatio);
 		frameCanvas.height = Math.floor(viewportHeight * pixelRatio);
@@ -70,6 +73,17 @@
 
 		context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 		drawFrame();
+	};
+
+	const requestResizeCanvas = () => {
+		if (resizeRaf) {
+			cancelAnimationFrame(resizeRaf);
+		}
+
+		resizeRaf = requestAnimationFrame(() => {
+			resizeRaf = 0;
+			resizeCanvas();
+		});
 	};
 
 	$effect(() => {
@@ -85,12 +99,17 @@
 			preloadImages();
 		}, 60 * 1000);
 
-		resizeCanvas();
-		window.addEventListener('resize', resizeCanvas);
+		requestResizeCanvas();
+		window.addEventListener('resize', requestResizeCanvas);
+		window.addEventListener('orientationchange', requestResizeCanvas);
 
 		return () => {
 			clearTimeout(preloadRefreshTimeout);
-			window.removeEventListener('resize', resizeCanvas);
+			window.removeEventListener('resize', requestResizeCanvas);
+			window.removeEventListener('orientationchange', requestResizeCanvas);
+			if (resizeRaf) {
+				cancelAnimationFrame(resizeRaf);
+			}
 		};
 	});
 
@@ -124,13 +143,13 @@
 		class="overflow-y-scroll"
 		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
 	></div>
-	<div class="fixed top-0 left-0 h-screen w-screen">
+	<div class="fixed top-0 left-0 w-full" style="height: 100lvh;">
 		<canvas
 			bind:this={frameCanvas}
-			class="absolute inset-0 z-0 h-screen w-screen"
+			class="absolute inset-0 z-0 h-full w-full"
 			aria-label="scroll animation"
 		></canvas>
-		<div class="relative z-10 h-screen w-screen">
+		<div class="relative z-10 h-full w-full">
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
 				<DocsButton>
