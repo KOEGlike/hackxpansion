@@ -128,7 +128,7 @@
 		return current_frame >= frame_events[index].start && current_frame < frame_events[index].end;
 	};
 
-	const frameStepClasses = ['pt-40 sm:pt-50', '', 'pt-40 sm:pt-50', 'pt-15'] as const;
+	const frameStepClasses = ['pt-40 sm:pt-30', '', 'pt-40 sm:pt-30', 'pt-12'] as const;
 
 	const frameStepContainers = [
 		'flex h-full w-full flex-col items-center justify-start gap-0',
