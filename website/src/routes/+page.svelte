@@ -12,6 +12,7 @@
 	import { asset, resolve } from '$app/paths';
 	import LandingSection from '$lib/components/landing_section.svelte';
 	import DocsButton from '$lib/components/docs_button.svelte';
+	import { landingContent } from '$lib/content/content';
 
 	const scrollPerFrame = 25;
 	let frameCanvas = $state<HTMLCanvasElement | null>(null);
@@ -173,8 +174,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class="  text-6xl font-bold text-slate-700 sm:text-7xl">Step 1</h1>
-						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Design your card!</h2>
+						<h1 class="  text-6xl font-bold text-slate-700 sm:text-7xl">
+							{landingContent.steps[0].title}
+						</h1>
+						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
+							{landingContent.steps[0].description}
+						</h2>
 					</div>
 				</div>
 			{/if}
@@ -188,8 +193,12 @@
 					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
 						<img class="w-64" src={`${asset('/ferris.webp')}`} alt="ferris" />
 						<div class="flex flex-col items-center">
-							<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">Step 2</h1>
-							<h2 class="text-xl font-normal text-slate-500 sm:text-2xl">Code a driver!</h2>
+							<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">
+								{landingContent.steps[1].title}
+							</h1>
+							<h2 class="text-xl font-normal text-slate-500 sm:text-2xl">
+								{landingContent.steps[1].description}
+							</h2>
 						</div>
 					</div>
 				</div>
@@ -202,8 +211,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-40 sm:pt-50">
-						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">Step 3</h1>
-						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">Make 3 more!</h2>
+						<h1 class=" text-6xl font-bold text-slate-700 sm:text-7xl">
+							{landingContent.steps[2].title}
+						</h1>
+						<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
+							{landingContent.steps[2].description}
+						</h2>
 					</div>
 				</div>
 			{/if}
@@ -215,10 +228,12 @@
 					transition:fade={{ duration: 100 }}
 				>
 					<div class="flex flex-col items-center gap-0 pt-15">
-						<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">Step 4</h1>
+						<h1 class="text-6xl font-bold text-slate-700 sm:text-7xl">
+							{landingContent.steps[3].title}
+						</h1>
 						{#if isCurrentFrame(5)}
 							<h2 class=" text-xl font-normal text-slate-500 sm:text-2xl">
-								Submit and get the console!
+								{landingContent.steps[3].description}
 							</h2>
 						{/if}
 					</div>
