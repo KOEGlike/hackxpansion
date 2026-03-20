@@ -17,7 +17,7 @@
 	import { landingContent } from '$lib/content/content';
 
 	const scrollPerFrame = 25;
-	let frameCanvas = $state<HTMLCanvasElement | null>(null);
+	let frameCanvas = $state<HTMLCanvasElement | undefined>(undefined);
 	let frameCanvasResizer: ReturnType<typeof createWindowCanvasResizer> | null = null;
 
 	let current_frame = $derived.by(() => {
@@ -67,18 +67,13 @@
 
 	onMount(() => {
 		preloadImages();
-		const preloadRefreshTimeout = setTimeout(() => {
-			preloadImages();
-		}, 60 * 1000);
 
-		frameCanvasResizer = createWindowCanvasResizer({
-			getCanvas: () => frameCanvas,
-			onResize: () => drawFrame()
-		});
-		frameCanvasResizer.start();
+		if (frameCanvas) {
+			frameCanvasResizer = createWindowCanvasResizer({ canvas: frameCanvas });
+			frameCanvasResizer.start();
+		}
 
 		return () => {
-			clearTimeout(preloadRefreshTimeout);
 			frameCanvasResizer?.stop();
 			frameCanvasResizer = null;
 		};

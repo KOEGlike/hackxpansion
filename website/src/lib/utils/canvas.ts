@@ -6,7 +6,7 @@ export type CanvasResizeDetails = {
 };
 
 type CanvasResizerOptions = {
-	getCanvas: () => HTMLCanvasElement | null;
+	canvas: HTMLCanvasElement;
 	onResize?: (details: CanvasResizeDetails) => void;
 };
 
@@ -31,15 +31,10 @@ const resizeCanvasToViewport = (
 	onResize?.({ context, viewportWidth, viewportHeight, pixelRatio });
 };
 
-export const createWindowCanvasResizer = ({ getCanvas, onResize }: CanvasResizerOptions) => {
+export const createWindowCanvasResizer = ({ canvas, onResize }: CanvasResizerOptions) => {
 	let resizeRaf = 0;
 
 	const resizeNow = () => {
-		const canvas = getCanvas();
-		if (!canvas) {
-			return;
-		}
-
 		resizeCanvasToViewport(canvas, onResize);
 	};
 

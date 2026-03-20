@@ -2,12 +2,14 @@
 	import { onMount } from 'svelte';
 	import { createWindowCanvasResizer } from '$lib/utils/canvas';
 
-	let canvas = $state<HTMLCanvasElement | null>(null);
+	let canvas = $state<HTMLCanvasElement | undefined>(undefined);
 	let canvasResizer: ReturnType<typeof createWindowCanvasResizer> | null = null;
 
 	onMount(() => {
-		canvasResizer = createWindowCanvasResizer({ getCanvas: () => canvas });
-		canvasResizer.start();
+		if (canvas) {
+			canvasResizer = createWindowCanvasResizer({ canvas });
+			canvasResizer.start();
+		}
 
 		return () => {
 			canvasResizer?.stop();
