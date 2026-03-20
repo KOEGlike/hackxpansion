@@ -67,16 +67,22 @@
 
 	onMount(() => {
 		preloadImages();
-
-		if (frameCanvas) {
-			frameCanvasResizer = createWindowCanvasResizer({ canvas: frameCanvas });
-			frameCanvasResizer.start();
-		}
-
 		return () => {
 			frameCanvasResizer?.stop();
 			frameCanvasResizer = null;
 		};
+	});
+
+	$effect(() => {
+		if ($isLoading || !frameCanvas) {
+			return;
+		}
+
+		frameCanvasResizer = createWindowCanvasResizer({
+			canvas: frameCanvas,
+			onResize: () => drawFrame()
+		});
+		frameCanvasResizer.start();
 	});
 
 	const frame_events = [
