@@ -15,6 +15,7 @@
 	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
 	import StepHeading from '$lib/components/step_heading.svelte';
 	import { landingContent } from '$lib/content/content';
+	import Footer from '$lib/components/footer.svelte';
 
 	const scrollPerFrame = 25;
 	let frameCanvas = $state<HTMLCanvasElement | undefined>(undefined);
@@ -194,6 +195,13 @@
 							Go Up
 						</button>
 					{/if}
+				</div>
+			{/if}
+
+			<!-- Footer -->
+			{#if isCurrentFrame(5)}
+				<div class="pointer-events-auto absolute right-0 bottom-0 w-full">
+					<Footer />
 				</div>
 			{/if}
 		</div>

@@ -3,6 +3,7 @@
 	import LandingSection from '$lib/components/landing_section.svelte';
 	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
 	import StepRow from '$lib/components/step_row.svelte';
+	import Footer from '$lib/components/footer.svelte';
 	import { landingContent } from '$lib/content/content';
 
 	const simpleSteps = landingContent.steps.map((step, index) => {
@@ -35,3 +36,4 @@
 		/>
 	{/each}
 </div>
+<Footer />
