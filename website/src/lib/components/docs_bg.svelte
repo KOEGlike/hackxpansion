@@ -7,15 +7,29 @@
 
 	onMount(() => {
 		if (!canvas) {
+			console.error('Canvas element not found');
 			return;
 		}
+		const gridCanvas = canvas;
+		const parentElement = gridCanvas.parentElement;
+		let sizeObserver: ResizeObserver | null = null;
 
-		canvasResizer = createWindowCanvasResizer({ canvas });
+		canvasResizer = createWindowCanvasResizer({
+			canvas: gridCanvas,
+			onResize: () => drawGrid(gridCanvas)
+		});
 		canvasResizer.start();
 
-		drawGrid(canvas);
+		if (parentElement) {
+			sizeObserver = new ResizeObserver(() => {
+				canvasResizer?.requestResize();
+			});
+			sizeObserver.observe(parentElement);
+		}
 
 		return () => {
+			sizeObserver?.disconnect();
+			sizeObserver = null;
 			canvasResizer?.stop();
 			canvasResizer = null;
 		};
@@ -27,12 +41,12 @@
 			return;
 		}
 
-		const gridSize = 50;
+		const gridSize = 40;
 		const width = canvas.width;
 		const height = canvas.height;
 
 		ctx.clearRect(0, 0, width, height);
-		ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+		ctx.strokeStyle = 'rgba(144, 161, 185, 0.2)';
 		ctx.lineWidth = 1;
 
 		for (let x = 0; x < width; x += gridSize) {
@@ -51,4 +65,4 @@
 	};
 </script>
 
-<canvas class="fixed inset-0 h-screen w-full" bind:this={canvas}></canvas>
+<canvas class="pointer-events-none absolute inset-0 z-0 h-full w-full" bind:this={canvas}></canvas>

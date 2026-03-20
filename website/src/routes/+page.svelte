@@ -132,7 +132,7 @@
 		class="overflow-y-scroll"
 		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
 	></div>
-	<div class="fixed top-0 left-0 w-full" style="height: 100lvh;">
+	<div class="fixed inset-0 w-full" style="height: 100lvh;">
 		<canvas
 			bind:this={frameCanvas}
 			class="absolute inset-0 z-0 h-full w-full"
