@@ -10,6 +10,7 @@
 	import { scrollY } from 'svelte/reactivity/window';
 	import { fade } from 'svelte/transition';
 	import { asset, resolve } from '$app/paths';
+	import { createWindowCanvasResizer } from '$lib/utils/canvas';
 	import LandingSection from '$lib/components/landing_section.svelte';
 	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
 	import StepHeading from '$lib/components/step_heading.svelte';
@@ -17,7 +18,7 @@
 
 	const scrollPerFrame = 25;
 	let frameCanvas = $state<HTMLCanvasElement | null>(null);
-	let resizeRaf = 0;
+	let frameCanvasResizer: ReturnType<typeof createWindowCanvasResizer> | null = null;
 
 	let current_frame = $derived.by(() => {
 		if (!scrollY.current) {
@@ -57,40 +58,9 @@
 		context.drawImage(currentFrameImage, offsetX, offsetY, drawWidth, drawHeight);
 	};
 
-	const resizeCanvas = () => {
-		if (!frameCanvas) {
-			return;
-		}
-
-		const bounds = frameCanvas.getBoundingClientRect();
-		const viewportWidth = Math.max(1, Math.round(bounds.width));
-		const viewportHeight = Math.max(1, Math.round(bounds.height));
-		const pixelRatio = window.devicePixelRatio || 1;
-		frameCanvas.width = Math.floor(viewportWidth * pixelRatio);
-		frameCanvas.height = Math.floor(viewportHeight * pixelRatio);
-		const context = frameCanvas.getContext('2d');
-		if (!context) {
-			return;
-		}
-
-		context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-		drawFrame();
-	};
-
-	const requestResizeCanvas = () => {
-		if (resizeRaf) {
-			cancelAnimationFrame(resizeRaf);
-		}
-
-		resizeRaf = requestAnimationFrame(() => {
-			resizeRaf = 0;
-			resizeCanvas();
-		});
-	};
-
 	$effect(() => {
 		if (!$isLoading && frameCanvas) {
-			resizeCanvas();
+			frameCanvasResizer?.requestResize();
 			drawFrame();
 		}
 	});
@@ -101,17 +71,16 @@
 			preloadImages();
 		}, 60 * 1000);
 
-		requestResizeCanvas();
-		window.addEventListener('resize', requestResizeCanvas);
-		window.addEventListener('orientationchange', requestResizeCanvas);
+		frameCanvasResizer = createWindowCanvasResizer({
+			getCanvas: () => frameCanvas,
+			onResize: () => drawFrame()
+		});
+		frameCanvasResizer.start();
 
 		return () => {
 			clearTimeout(preloadRefreshTimeout);
-			window.removeEventListener('resize', requestResizeCanvas);
-			window.removeEventListener('orientationchange', requestResizeCanvas);
-			if (resizeRaf) {
-				cancelAnimationFrame(resizeRaf);
-			}
+			frameCanvasResizer?.stop();
+			frameCanvasResizer = null;
 		};
 	});
 
