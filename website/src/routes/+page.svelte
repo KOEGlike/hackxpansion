@@ -31,6 +31,15 @@
 	});
 
 	let currentFrameImage = $derived($preloadedFrames[current_frame]);
+	let scrollProgress = $derived.by(() => {
+		if (!scrollY.current || imageCount <= 1) {
+			return 0;
+		}
+
+		const maxScroll = (imageCount - 1) * scrollPerFrame;
+		const progress = scrollY.current / maxScroll;
+		return Math.max(0, Math.min(progress, 1));
+	});
 
 	const drawFrame = () => {
 		if (!frameCanvas || !currentFrameImage) {
@@ -139,7 +148,21 @@
 			class="absolute inset-0 z-0 h-full w-full"
 			aria-label="scroll animation"
 		></canvas>
+
 		<div class="relative z-10 h-full w-full">
+			{#if !isCurrentFrame(0)}
+				<div
+					class="pointer-events-none fixed inset-0 z-10 flex h-screen w-screen flex-col items-center justify-end p-10"
+				>
+					<div class="h-fit w-full flex-col items-center-safe justify-start">
+						<div
+							class="z-10 h-1 origin-left bg-slate-400 transition-transform duration-30 ease-linear will-change-transform"
+							style:transform={`scaleX(${scrollProgress})`}
+						></div>
+					</div>
+				</div>
+			{/if}
+
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
 				<ModeSwitchLink href="/simple" label="animated" targetText="go to simple" />

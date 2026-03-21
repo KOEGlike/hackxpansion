@@ -6,7 +6,7 @@
 
 <footer
 	transition:fade={{ duration: 100 }}
-	class="flex h-20 w-full items-end justify-end p-5 text-sm text-slate-700"
+	class="flex h-20 w-full items-end justify-end p-2 text-sm text-slate-700"
 >
 	<a href={repoURL} target="_blank" rel="noopener noreferrer " class="hover:underline"> GitHub </a>
 </footer>
