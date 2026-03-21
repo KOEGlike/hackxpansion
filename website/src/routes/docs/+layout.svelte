@@ -2,6 +2,14 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import DocsBg from '$lib/components/docs_bg.svelte';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+		if (vw < 640) {
+			hidden = true;
+		}
+	});
 
 	let hidden = $state(false);
 
