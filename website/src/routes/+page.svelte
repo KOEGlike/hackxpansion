@@ -152,7 +152,7 @@
 		<div class="relative z-10 h-full w-full">
 			{#if !isCurrentFrame(0)}
 				<div
-					class="pointer-events-none fixed inset-0 z-10 flex h-screen w-screen flex-col items-center justify-end p-10"
+					class="pointer-events-none fixed inset-0 z-10 flex h-screen w-screen flex-col items-center justify-end p-10 pb-20 sm:pb-10"
 				>
 					<div class="h-fit w-full flex-col items-center-safe justify-start">
 						<div
@@ -212,7 +212,7 @@
 					{/if}
 					{#if isCurrentFrame(5)}
 						<button
-							class="mb-20 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"
+							class="mb-25 content-box p-3 text-3xl text-slate-700 hover:content-box-hover sm:mb-20"
 							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 						>
 							Go Up
