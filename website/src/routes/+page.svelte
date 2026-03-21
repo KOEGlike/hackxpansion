@@ -12,7 +12,7 @@
 	import { asset, resolve } from '$app/paths';
 	import { createWindowCanvasResizer } from '$lib/utils/canvas';
 	import LandingSection from '$lib/components/landing_section.svelte';
-	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
+	import TopBar from '$lib/components/TopBar.svelte';
 	import StepHeading from '$lib/components/step_heading.svelte';
 	import { landingContent } from '$lib/content/content';
 	import Footer from '$lib/components/footer.svelte';
@@ -165,7 +165,7 @@
 
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
-				<ModeSwitchLink href="/simple" label="animated" targetText="go to simple" />
+				<TopBar href="/simple" label="animated" targetText="go to simple" />
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}

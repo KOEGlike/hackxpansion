@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import LandingSection from '$lib/components/landing_section.svelte';
-	import ModeSwitchLink from '$lib/components/mode_switch_link.svelte';
+	import TopBar from '$lib/components/TopBar.svelte';
 	import StepRow from '$lib/components/step_row.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import { landingContent } from '$lib/content/content';
@@ -16,7 +16,7 @@
 	});
 </script>
 
-<ModeSwitchLink href="/" label="simple" targetText="go to animated" />
+<TopBar href="/" label="simple" targetText="go to animated" />
 
 <div class="flex h-fit w-full flex-col items-center justify-start gap-15 px-10 pb-30 sm:gap-30">
 	<div
