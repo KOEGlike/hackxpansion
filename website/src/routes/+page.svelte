@@ -168,7 +168,7 @@
 
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
-				<TopBar href="/simple" label="animated" targetText="go to simple version of this website" />
+				<TopBar href="/simple" />
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}

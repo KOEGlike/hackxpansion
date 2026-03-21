@@ -16,7 +16,7 @@
 	});
 </script>
 
-<TopBar href="/" label="simple" targetText="go to animated" />
+<TopBar href="/" />
 
 <div class="flex h-fit w-full flex-col items-center justify-start gap-15 px-10 pb-30 sm:gap-30">
 	<div
