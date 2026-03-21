@@ -12,7 +12,7 @@
 </script>
 
 <div
-	class="fixed flex h-fit w-full flex-row-reverse items-start justify-between p-3"
+	class="absolute flex h-fit w-full flex-row-reverse items-start justify-between p-3"
 	transition:fade={{ duration: 100 }}
 >
 	<div class="flex h-fit w-fit flex-col items-end justify-end gap-0">
