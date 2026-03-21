@@ -12,7 +12,7 @@
 	import { asset, resolve } from '$app/paths';
 	import { createWindowCanvasResizer } from '$lib/utils/canvas';
 	import LandingSection from '$lib/components/landing_section.svelte';
-	import TopBar from '$lib/components/TopBar.svelte';
+	import TopBar from '$lib/components/top_bar.svelte';
 	import StepHeading from '$lib/components/step_heading.svelte';
 	import { landingContent } from '$lib/content/content';
 	import Footer from '$lib/components/footer.svelte';

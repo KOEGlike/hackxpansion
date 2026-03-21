@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import LandingSection from '$lib/components/landing_section.svelte';
-	import TopBar from '$lib/components/TopBar.svelte';
+	import TopBar from '$lib/components/top_bar.svelte';
 	import StepRow from '$lib/components/step_row.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import { landingContent } from '$lib/content/content';
