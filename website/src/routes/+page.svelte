@@ -204,19 +204,18 @@
 			<!-- Step 4 -->
 			{#if isCurrentFrame(4)}
 				<div class={frameStepContainers[3]} transition:fade={{ duration: 100 }}>
-					{#if isCurrentFrame(5)}
-						{@render animatedStep(3)}
-					{:else}
-						<StepHeading
-							title={landingContent.steps[3].title}
-							description=""
-							extraClass={frameStepClasses[3]}
-						/>
-					{/if}
+					<StepHeading
+						title={landingContent.steps[3].title}
+						description={landingContent.steps[3].description}
+						extraClass={frameStepClasses[3]}
+						descriptionVisible={isCurrentFrame(5)}
+					/>
+
 					{#if isCurrentFrame(5)}
 						<button
 							class="mb-25 p-3 text-3xl text-slate-600/80 underline hover:text-slate-600 active:text-slate-700"
 							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+							transition:fade={{ duration: 100 }}
 						>
 							Go Up
 						</button>
