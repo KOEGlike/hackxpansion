@@ -133,8 +133,11 @@
 			<div class="h-full bg-white" style="width: {$loadProgress}%"></div>
 		</div>
 		<p>{Math.round($loadProgress)}%</p>
-		<a href={resolve('/simple')} class="hover:underline">Not loading? Click me for simple version</a
+
+		<a href={resolve('/simple')} class="mx-10 text-center hover:underline">
+			Not loading? Please wait a little longer or click me for the simple version of this website.</a
 		>
+
 		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
 	</div>
 {:else}
@@ -165,7 +168,7 @@
 
 			<!-- Title -->
 			{#if isCurrentFrame(0)}
-				<TopBar href="/simple" label="animated" targetText="go to simple" />
+				<TopBar href="/simple" label="animated" targetText="go to simple version of this website" />
 				<div
 					class="flex h-full w-full flex-col items-center justify-between gap-0"
 					transition:fade={{ duration: 100 }}
@@ -212,7 +215,7 @@
 					{/if}
 					{#if isCurrentFrame(5)}
 						<button
-							class="mb-25 content-box p-3 text-3xl text-slate-700 hover:content-box-hover"
+							class="mb-25 p-3 text-3xl text-slate-600/80 underline hover:text-slate-600 active:text-slate-700"
 							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 						>
 							Go Up
