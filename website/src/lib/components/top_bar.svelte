@@ -21,22 +21,26 @@
 			class="content-box p-2 text-xl hover:content-box-hover active:content-box">Docs</a
 		>
 
-		<a
-			class="anchor w-fit text-slate-700/80 hover:text-slate-700"
-			class:underline={href != '/'}
-			href={resolve(href)}
-		>
-			animated
-		</a>
-
-		<p class="target text-slate-500">
-			go to
-			{#if href == '/'}
+		<div class="relative w-fit">
+			<a
+				class="peer w-fit text-slate-700/80 hover:text-slate-700"
+				class:underline={href != '/'}
+				href={resolve(href)}
+			>
 				animated
-			{:else}
-				simple
-			{/if} version of this website
-		</p>
+			</a>
+
+			<p
+				class="pointer-events-none absolute top-1/2 right-[calc(100%+10px)] w-max -translate-y-1/2 text-slate-500 opacity-0 transition-opacity duration-200 peer-hover:opacity-100"
+			>
+				go to
+				{#if href == '/'}
+					animated
+				{:else}
+					simple
+				{/if} version of this website
+			</p>
+		</div>
 	</div>
 
 	<a
