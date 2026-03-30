@@ -675,8 +675,54 @@
 		)
 	)
 	(sheet
-		(at 165.1 76.2)
-		(size 38.1 50.8)
+		(at 186.055 111.125)
+		(size 12.7 19.05)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "700f77b3-49f5-4d8a-af4e-4445c5ed1af4")
+		(property "Sheetname" "Display"
+			(at 186.055 110.4134 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "disp.kicad_sch"
+			(at 186.055 130.7596 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 166.37 85.09)
+		(size 16.51 19.05)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -691,7 +737,7 @@
 		)
 		(uuid "ebc0f140-5f94-46e7-973a-9b93e108b7ae")
 		(property "Sheetname" "ADC"
-			(at 165.1 75.4884 0)
+			(at 166.37 84.3784 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -702,7 +748,7 @@
 			)
 		)
 		(property "Sheetfile" "ADC.kicad_sch"
-			(at 165.1 127.5846 0)
+			(at 166.37 104.7246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -710,6 +756,66 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "ALERT" output
+			(at 166.37 87.63 180)
+			(uuid "0973df2e-cdb6-4523-949b-4889b0125ea0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "i2c0{I2C}" bidirectional
+			(at 166.37 90.17 180)
+			(uuid "506f1b03-3765-42ea-8bc7-be06c8725c7f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "mod0{DET}" input
+			(at 182.88 93.98 0)
+			(uuid "9fd7c463-f87a-40c8-a771-44fa5d996818")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod1{DET}" input
+			(at 182.88 96.52 0)
+			(uuid "62e3a797-916f-4a15-8637-9e27e0919fd5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod2{DET}" input
+			(at 182.88 99.06 0)
+			(uuid "f1df9df2-e941-41eb-8042-2a643a1d8152")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod3{DET}" input
+			(at 182.88 101.6 0)
+			(uuid "c2b0e444-e3a3-48ce-aff0-9fb343f9a2b8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 		(instances

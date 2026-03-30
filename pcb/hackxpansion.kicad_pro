@@ -652,6 +652,14 @@
       "sort_field": "Reference"
     },
     "bus_aliases": {
+      "DET": [
+        "MD0",
+        "MD1"
+      ],
+      "I2C": [
+        "SCL",
+        "SDA"
+      ],
       "SPI": [
         "SCLK",
         "MISO",
@@ -707,7 +715,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "J2,U3",
+    "used_designators": "J3,Q1",
     "variants": []
   },
   "sheets": [
@@ -722,6 +730,10 @@
     [
       "ebc0f140-5f94-46e7-973a-9b93e108b7ae",
       "ADC"
+    ],
+    [
+      "700f77b3-49f5-4d8a-af4e-4445c5ed1af4",
+      "Display"
     ]
   ],
   "text_variables": {},
