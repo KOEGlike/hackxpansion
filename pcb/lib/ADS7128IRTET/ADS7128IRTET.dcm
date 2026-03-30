@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP ADS7128IRTET
+D Analog to Digital Converters - ADC Small 8-ch 12-bit analog-to-digital converter (ADC) with I2C interface, GPIOs, CRC and RMS module 16-WQFN -40 to 85
+K
+F https://www.arrow.com/en/products/ads7128irtet/texas-instruments
+$ENDCMP
+#
+#End Doc Library
