@@ -1,4 +1,5 @@
 (fp_lib_table
 	(version 7)
 	(lib (name "ADS7128IRTET") (type "KiCad") (uri "${KIPRJMOD}/lib/ADS7128IRTET") (options "") (descr ""))
+	(lib (name "RP2354B_MINIMAL") (type "KiCad") (uri "${KIPRJMOD}/lib/RP2354B_MINIMAL") (options "") (descr ""))
 )

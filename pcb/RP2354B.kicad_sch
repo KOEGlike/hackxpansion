@@ -7106,7 +7106,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2350_80QFN_minimal:C_0402_1005Metric_small_pads"
+		(property "Footprint" "RP2354B_MINIMAL:C_0402_1005Metric_small_pads"
 			(at 32.7152 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -7678,7 +7678,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2350_80QFN_minimal:L_pol_2016"
+		(property "Footprint" "RP2354B_MINIMAL:L_pol_2016"
 			(at 50.8 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -9722,7 +9722,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2350_80QFN_minimal:C_0402_1005Metric_small_pads"
+		(property "Footprint" "RP2354B_MINIMAL:C_0402_1005Metric_small_pads"
 			(at 41.6052 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -10646,7 +10646,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "RP2350_80QFN_minimal:RP2350-QFN-80-1EP_10x10_P0.4mm_EP3.4x3.4mm_ThermalVias"
+		(property "Footprint" "RP2354B_MINIMAL:RP2350-QFN-80-1EP_10x10_P0.4mm_EP3.4x3.4mm_ThermalVias"
 			(at 120.65 101.6 0)
 			(hide yes)
 			(show_name no)
