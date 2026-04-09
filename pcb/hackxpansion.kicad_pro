@@ -715,7 +715,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "J3,Q1",
+    "used_designators": "A1-4,J2-6,Q1",
     "variants": []
   },
   "sheets": [
@@ -734,6 +734,22 @@
     [
       "700f77b3-49f5-4d8a-af4e-4445c5ed1af4",
       "Display"
+    ],
+    [
+      "b5240296-cec5-4b31-bcc6-a9044eb67d45",
+      "Module Bay 0"
+    ],
+    [
+      "cf2102df-4af4-4ffc-bc4a-65177869e662",
+      "Module Bay 1"
+    ],
+    [
+      "fee8b4e9-dadd-4cae-a445-acfd08390934",
+      "Module Bay 2"
+    ],
+    [
+      "e2547c36-86b3-4d0e-a874-a213420fbef7",
+      "Module Bay 3"
     ]
   ],
   "text_variables": {},
