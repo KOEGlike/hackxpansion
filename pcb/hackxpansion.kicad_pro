@@ -715,7 +715,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "",
+    "used_designators": "U1,U4,U12,D1,#PWR29-50,#PWR65,#PWR67,#PWR82,BT1,J7-8,R9-18,R28,R30,R32,R34-35,C21-23,C88,C90,C92,Q2,SW4,SW25",
     "variants": []
   },
   "sheets": [
@@ -750,6 +750,10 @@
     [
       "e2547c36-86b3-4d0e-a874-a213420fbef7",
       "Module Bay 3"
+    ],
+    [
+      "79b24e0c-a87f-41fc-9e61-2c267e8a5613",
+      "Power"
     ]
   ],
   "text_variables": {},

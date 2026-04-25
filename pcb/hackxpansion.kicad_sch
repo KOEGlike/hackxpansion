@@ -52,8 +52,8 @@
 		)
 	)
 	(sheet
-		(at 191.135 85.725)
-		(size 12.7 19.05)
+		(at 197.485 85.725)
+		(size 12.7 15.875)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -68,7 +68,7 @@
 		)
 		(uuid "700f77b3-49f5-4d8a-af4e-4445c5ed1af4")
 		(property "Sheetname" "Display"
-			(at 191.135 85.0134 0)
+			(at 197.485 85.0134 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -79,7 +79,103 @@
 			)
 		)
 		(property "Sheetfile" "disp.kicad_sch"
-			(at 191.135 105.3596 0)
+			(at 197.485 102.1846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "BACKLIGHT" input
+			(at 197.485 87.63 180)
+			(uuid "31f23145-6160-462c-81b4-3e36d3beba4e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "CS" input
+			(at 197.485 99.06 180)
+			(uuid "fb23a184-8565-4921-a9da-bd2ad54688c5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DC" input
+			(at 197.485 92.71 180)
+			(uuid "27781c7c-c762-422d-9380-0ad95052d0b1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "RESET" input
+			(at 197.485 90.17 180)
+			(uuid "aa8ada54-c331-4cfd-ad2c-ecae50ff8080")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "spi{SPI}" input
+			(at 197.485 96.52 180)
+			(uuid "8bd6b5eb-3eec-4258-b3f7-5018ba956118")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 193.675 149.86)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "79b24e0c-a87f-41fc-9e61-2c267e8a5613")
+		(property "Sheetname" "Power"
+			(at 193.675 149.1484 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "pwr.kicad_sch"
+			(at 193.675 154.2546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -92,7 +188,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94"
-					(page "4")
+					(page "9")
 				)
 			)
 		)
@@ -236,8 +332,8 @@
 		)
 	)
 	(sheet
-		(at 166.37 85.09)
-		(size 16.51 19.05)
+		(at 196.85 111.125)
+		(size 16.51 18.415)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -252,7 +348,7 @@
 		)
 		(uuid "ebc0f140-5f94-46e7-973a-9b93e108b7ae")
 		(property "Sheetname" "ADC"
-			(at 166.37 84.3784 0)
+			(at 196.85 110.4134 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -263,7 +359,7 @@
 			)
 		)
 		(property "Sheetfile" "ADC.kicad_sch"
-			(at 166.37 104.7246 0)
+			(at 196.85 130.1246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -274,7 +370,7 @@
 			)
 		)
 		(pin "ALERT" output
-			(at 166.37 87.63 180)
+			(at 196.85 113.03 180)
 			(uuid "0973df2e-cdb6-4523-949b-4889b0125ea0")
 			(effects
 				(font
@@ -284,7 +380,7 @@
 			)
 		)
 		(pin "i2c0{I2C}" bidirectional
-			(at 166.37 90.17 180)
+			(at 196.85 115.57 180)
 			(uuid "506f1b03-3765-42ea-8bc7-be06c8725c7f")
 			(effects
 				(font
@@ -294,7 +390,7 @@
 			)
 		)
 		(pin "mod0{DET}" input
-			(at 182.88 93.98 0)
+			(at 213.36 119.38 0)
 			(uuid "9fd7c463-f87a-40c8-a771-44fa5d996818")
 			(effects
 				(font
@@ -304,7 +400,7 @@
 			)
 		)
 		(pin "mod1{DET}" input
-			(at 182.88 96.52 0)
+			(at 213.36 121.92 0)
 			(uuid "62e3a797-916f-4a15-8637-9e27e0919fd5")
 			(effects
 				(font
@@ -314,7 +410,7 @@
 			)
 		)
 		(pin "mod2{DET}" input
-			(at 182.88 99.06 0)
+			(at 213.36 124.46 0)
 			(uuid "f1df9df2-e941-41eb-8042-2a643a1d8152")
 			(effects
 				(font
@@ -324,7 +420,7 @@
 			)
 		)
 		(pin "mod3{DET}" input
-			(at 182.88 101.6 0)
+			(at 213.36 127 0)
 			(uuid "c2b0e444-e3a3-48ce-aff0-9fb343f9a2b8")
 			(effects
 				(font
