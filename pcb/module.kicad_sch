@@ -5,18 +5,14 @@
 	(uuid "665b5314-04bd-412a-888a-a76a55b87952")
 	(paper "A4")
 	(lib_symbols
-		(symbol "Connector_Generic:Conn_02x07_Counter_Clockwise"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
+		(symbol "Hackxpansion:Module_Female"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at 1.27 10.16 0)
+			(property "Reference" "U"
+				(at 5.334 10.414 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -25,8 +21,8 @@
 					)
 				)
 			)
-			(property "Value" "Conn_02x07_Counter_Clockwise"
-				(at 1.27 -10.16 0)
+			(property "Value" ""
+				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -35,7 +31,7 @@
 					)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x07_P2.54mm_Horizontal"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -57,7 +53,7 @@
 					)
 				)
 			)
-			(property "Description" "Generic connector, double row, 02x07, counter clockwise pin numbering scheme (similar to DIP package numbering), script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(property "Description" ""
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -68,32 +64,10 @@
 					)
 				)
 			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_2x??_*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "Conn_02x07_Counter_Clockwise_1_1"
+			(symbol "Module_Female_1_1"
 				(rectangle
-					(start -1.27 8.89)
-					(end 3.81 -8.89)
+					(start -8.89 8.89)
+					(end 8.89 -8.89)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -102,164 +76,10 @@
 						(type background)
 					)
 				)
-				(rectangle
-					(start -1.27 7.747)
-					(end 0 7.493)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 5.207)
-					(end 0 4.953)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 2.667)
-					(end 0 2.413)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 -4.953)
-					(end 0 -5.207)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start -1.27 -7.493)
-					(end 0 -7.747)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 7.747)
-					(end 2.54 7.493)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 5.207)
-					(end 2.54 4.953)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 2.667)
-					(end 2.54 2.413)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 0.127)
-					(end 2.54 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 -2.413)
-					(end 2.54 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 -4.953)
-					(end 2.54 -5.207)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 3.81 -7.493)
-					(end 2.54 -7.747)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at -5.08 7.62 0)
+				(pin power_in line
+					(at 0 -12.7 90)
 					(length 3.81)
-					(name "Pin_1"
+					(name "GND"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -274,10 +94,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 5.08 0)
+				(pin power_in line
+					(at 0 12.7 270)
 					(length 3.81)
-					(name "Pin_2"
+					(name "3V3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -292,10 +112,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 2.54 0)
+				(pin output line
+					(at -12.7 5.08 0)
 					(length 3.81)
-					(name "Pin_3"
+					(name "MD0"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -310,10 +130,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 0 0)
+				(pin output line
+					(at -12.7 7.62 0)
 					(length 3.81)
-					(name "Pin_4"
+					(name "MD1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -328,10 +148,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 -2.54 0)
+				(pin bidirectional line
+					(at 12.7 7.62 180)
 					(length 3.81)
-					(name "Pin_5"
+					(name "GPIO0"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -346,10 +166,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 -5.08 0)
+				(pin bidirectional line
+					(at 12.7 5.08 180)
 					(length 3.81)
-					(name "Pin_6"
+					(name "GPIO1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -364,10 +184,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -5.08 -7.62 0)
+				(pin bidirectional line
+					(at 12.7 2.54 180)
 					(length 3.81)
-					(name "Pin_7"
+					(name "GPI02"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -382,10 +202,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 -7.62 180)
+				(pin bidirectional line
+					(at 12.7 0 180)
 					(length 3.81)
-					(name "Pin_8"
+					(name "GPIO3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -400,10 +220,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 -5.08 180)
+				(pin bidirectional line
+					(at 12.7 -2.54 180)
 					(length 3.81)
-					(name "Pin_9"
+					(name "GPIO4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -418,10 +238,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 -2.54 180)
+				(pin bidirectional line
+					(at 12.7 -5.08 180)
 					(length 3.81)
-					(name "Pin_10"
+					(name "GPIO5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -436,10 +256,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 0 180)
+				(pin bidirectional line
+					(at 12.7 -7.62 180)
 					(length 3.81)
-					(name "Pin_11"
+					(name "GPIO6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -454,10 +274,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 2.54 180)
+				(pin bidirectional line
+					(at -12.7 -2.54 0)
 					(length 3.81)
-					(name "Pin_12"
+					(name "GPIO7"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -472,10 +292,10 @@
 						)
 					)
 				)
-				(pin passive line
-					(at 7.62 5.08 180)
+				(pin bidirectional line
+					(at -12.7 -5.08 0)
 					(length 3.81)
-					(name "Pin_13"
+					(name "GPIO8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -491,9 +311,9 @@
 					)
 				)
 				(pin passive line
-					(at 7.62 7.62 180)
+					(at -12.7 -7.62 0)
 					(length 3.81)
-					(name "Pin_14"
+					(name "GPIO9"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -513,8 +333,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic:Conn_02x07_Counter_Clockwise")
-		(at 128.27 73.66 0)
+		(lib_id "Hackxpansion:Module_Female")
+		(at 128.27 71.12 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -522,10 +342,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "008bce25-dcf1-4672-a0c8-d00d4405990c")
-		(property "Reference" "J3"
-			(at 129.54 59.69 0)
+		(uuid "b6f9c226-4700-466c-a22a-241febd3a7ab")
+		(property "Reference" "U1"
+			(at 135.128 60.706 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -534,8 +353,8 @@
 				)
 			)
 		)
-		(property "Value" "Conn_02x07_Counter_Clockwise"
-			(at 129.54 62.23 0)
+		(property "Value" ""
+			(at 128.27 71.12 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -545,7 +364,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x07_P2.54mm_Horizontal"
-			(at 128.27 73.66 0)
+			(at 128.27 71.12 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -556,7 +375,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 128.27 73.66 0)
+			(at 128.27 71.12 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -566,8 +385,8 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, double row, 02x07, counter clockwise pin numbering scheme (similar to DIP package numbering), script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 128.27 73.66 0)
+		(property "Description" ""
+			(at 128.27 71.12 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -576,65 +395,65 @@
 					(size 1.27 1.27)
 				)
 			)
-		)
-		(pin "4"
-			(uuid "718d32e7-c45f-4b34-b6a7-1a0bf1631efb")
-		)
-		(pin "10"
-			(uuid "9169f04a-f4d1-4869-8ff6-260a52f2893a")
 		)
 		(pin "1"
-			(uuid "688dc001-4d10-434a-b8dd-0dd4173378c6")
-		)
-		(pin "11"
-			(uuid "1dac3ebf-f34b-405a-92e7-f1b0ea808e47")
+			(uuid "c8ba1996-07de-4972-b6cb-8d929340eca8")
 		)
 		(pin "3"
-			(uuid "29c6c098-b865-4502-b8e0-394ef7bed5dd")
+			(uuid "55a17ef0-ea89-48c9-8450-2b7032b13b90")
 		)
 		(pin "2"
-			(uuid "02db66a5-3950-4c1d-be13-27f0f7ae17c6")
-		)
-		(pin "7"
-			(uuid "9ee1efad-bf27-40ee-9b84-91b387114e03")
-		)
-		(pin "9"
-			(uuid "8e2618a5-914c-43bd-a642-08d0a7ffd992")
-		)
-		(pin "12"
-			(uuid "858ece73-affa-44da-a73c-4e98cce9e641")
-		)
-		(pin "14"
-			(uuid "78e4777e-b03c-498e-9c05-ddf761e65183")
-		)
-		(pin "5"
-			(uuid "187e41ff-7eab-455f-b286-6234123de785")
-		)
-		(pin "13"
-			(uuid "c1441a89-a47d-4bd4-bcd9-6bb7e5a40c51")
-		)
-		(pin "8"
-			(uuid "37475b7d-c64d-4c47-bddb-aae181e3d299")
+			(uuid "9f8169d0-65cd-4344-97c9-9d9b93d1b0e1")
 		)
 		(pin "6"
-			(uuid "fe98f7e4-2a13-42cc-b863-59adc056672f")
+			(uuid "a596d89e-a5b5-414d-9dd8-75cdc29df5d6")
+		)
+		(pin "4"
+			(uuid "ab507561-fdf1-4c1c-a6e2-f1946ad5def8")
+		)
+		(pin "5"
+			(uuid "a4da24d7-3d94-409b-8e68-31e8f850c02c")
+		)
+		(pin "7"
+			(uuid "e7cc0099-0b84-46fc-a7c1-5e8dcb07c517")
+		)
+		(pin "9"
+			(uuid "7fe869ab-6ec0-450f-8f8d-e695015674a7")
+		)
+		(pin "13"
+			(uuid "5cf29386-447b-46b2-a2f2-6d13d352d182")
+		)
+		(pin "14"
+			(uuid "3d9c9970-df53-42e8-bcbf-fedf29421968")
+		)
+		(pin "12"
+			(uuid "7b3b8741-b790-4955-aa51-df720dbdd11b")
+		)
+		(pin "11"
+			(uuid "7dec9572-85e0-488b-bd51-79447820b001")
+		)
+		(pin "10"
+			(uuid "fe624e45-6d9f-4709-b98c-c603abac2a7e")
+		)
+		(pin "8"
+			(uuid "423dcff7-7be7-41da-b57b-f759bde2c996")
 		)
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/b5240296-cec5-4b31-bcc6-a9044eb67d45"
-					(reference "J3")
+					(reference "U1")
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/cf2102df-4af4-4ffc-bc4a-65177869e662"
-					(reference "J4")
+					(reference "U3")
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/e2547c36-86b3-4d0e-a874-a213420fbef7"
-					(reference "J6")
+					(reference "U5")
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/fee8b4e9-dadd-4cae-a445-acfd08390934"
-					(reference "J5")
+					(reference "U4")
 					(unit 1)
 				)
 			)
