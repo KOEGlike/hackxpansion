@@ -5,6 +5,16 @@
 	(uuid "aaf5804d-3f78-442b-969e-39faa388db94")
 	(paper "A4")
 	(lib_symbols)
+	(text "E24 for the sensing resistors"
+		(exclude_from_sim no)
+		(at 213.106 75.184 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "24796dbb-3eeb-4346-9329-5c7e65bb2fba")
+	)
 	(sheet
 		(at 121.92 74.295)
 		(size 34.925 44.45)
