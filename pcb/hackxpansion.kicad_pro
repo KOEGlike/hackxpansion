@@ -665,6 +665,10 @@
         "MISO",
         "MOSI",
         "CS"
+      ],
+      "USB": [
+        "D+",
+        "D-"
       ]
     },
     "connection_grid_size": 50.0,
@@ -715,7 +719,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "IC2",
+    "used_designators": "USB1,#PWR37,#PWR39,#PWR43-44,R9-10,J4",
     "variants": []
   },
   "sheets": [
@@ -754,6 +758,10 @@
     [
       "79b24e0c-a87f-41fc-9e61-2c267e8a5613",
       "Power"
+    ],
+    [
+      "59c7db53-5f38-4347-9642-e6c98087e7b2",
+      "USB"
     ]
   ],
   "text_variables": {},

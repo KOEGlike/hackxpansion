@@ -2,5 +2,5 @@
 	(version 7)
 	(lib (name "ADS7128IRTET") (type "KiCad") (uri "${KIPRJMOD}/lib/ADS7128IRTET") (options "") (descr ""))
 	(lib (name "RP2354B_MINIMAL") (type "KiCad") (uri "${KIPRJMOD}/lib/RP2354B_MINIMAL") (options "") (descr ""))
-	(lib (name "TPS61097A-33DBVT") (type "KiCad") (uri "${KIPRJMOD}/lib/TPS61097A-33DBVT") (options "") (descr ""))
+	(lib (name "easyeda2kicad") (type "KiCad") (uri "${EASYEDA2KICAD}/easyeda2kicad.pretty") (options "") (descr ""))
 )

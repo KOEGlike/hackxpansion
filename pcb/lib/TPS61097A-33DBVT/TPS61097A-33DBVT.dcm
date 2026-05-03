@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP TPS61097A-33DBVT
-D 0.9Vin, 3.3Vout Boost Converter with Bypass Switch - 5nA Shutdown Current
-K
-F http://www.ti.com/lit/gpn/tps61097a-33
-$ENDCMP
-#
-#End Doc Library

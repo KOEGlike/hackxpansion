@@ -415,230 +415,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:Battery_Cell"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "BT"
-				(at 2.54 2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "Battery_Cell"
-				(at 2.54 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 1.524 90)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 1.524 90)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Single-cell battery"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Device" "V"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Type" "DC"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Pins" "1=+ 2=-"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "battery cell"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "Battery_Cell_0_1"
-				(rectangle
-					(start -2.286 1.778)
-					(end 2.286 1.524)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start -1.524 1.016)
-					(end 1.524 0.508)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 1.778) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 0.762) (xy 0 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.762 3.048) (xy 1.778 3.048)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 3.556) (xy 1.27 2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "Battery_Cell_1_1"
-				(pin passive line
-					(at 0 5.08 270)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -2.54 90)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -1278,6 +1054,198 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Regulator_Linear:SPX3819M5-L-3-3"
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -3.81 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SPX3819M5-L-3-3"
+				(at 0 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+				(at 0 8.255 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.exar.com/content/document.ashx?id=22106&languageid=1033&type=Datasheet&partnumber=SPX3819&filename=SPX3819.pdf&part=SPX3819"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "500mA Low drop-out regulator, Fixed Output 3.3V, SOT-23-5"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "REGULATOR LDO 3.3V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "SPX3819M5-L-3-3_0_1"
+				(rectangle
+					(start -5.08 4.445)
+					(end 5.08 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "SPX3819M5-L-3-3_1_1"
+				(pin power_in line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "BP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 7.62 2.54 180)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Switch:SW_DPDT_x2"
 			(pin_names
 				(offset 0)
@@ -1527,258 +1495,6 @@
 						)
 					)
 					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "TPS61097A-33DBVT:TPS61097A-33DBVT"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "IC"
-				(at 24.13 7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Value" "TPS61097A-33DBVT"
-				(at 24.13 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Footprint" "SOT95P280X145-5N"
-				(at 24.13 -94.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Datasheet" "http://www.ti.com/lit/gpn/tps61097a-33"
-				(at 24.13 -194.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Description" "0.9Vin, 3.3Vout Boost Converter with Bypass Switch - 5nA Shutdown Current"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Height" "1.45"
-				(at 24.13 -394.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Manufacturer_Name" "Texas Instruments"
-				(at 24.13 -494.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Manufacturer_Part_Number" "TPS61097A-33DBVT"
-				(at 24.13 -594.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Mouser Part Number" "595-TPS61097A-33DBVT"
-				(at 24.13 -694.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS61097A-33DBVT?qs=sU0fTKI0LukBYbTC8cJTjA%3D%3D"
-				(at 24.13 -794.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Arrow Part Number" "TPS61097A-33DBVT"
-				(at 24.13 -894.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(property "Arrow Price/Stock" "https://www.arrow.com/en/products/tps61097a-33dbvt/texas-instruments?region=nac"
-				(at 24.13 -994.92 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left top)
-				)
-			)
-			(symbol "TPS61097A-33DBVT_1_1"
-				(rectangle
-					(start 5.08 6.35)
-					(end 22.86 -7.62)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin passive line
-					(at 0 0 0)
-					(length 5.08)
-					(name "VIN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 13.97 -12.7 90)
-					(length 5.08)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -5.08 0)
-					(length 5.08)
-					(name "EN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 27.94 3.81 180)
-					(length 5.08)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 1.27 3.81 0)
-					(length 5.08)
-					(name "L"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2103,7 +1819,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "power:+BATT"
+		(symbol "power:+3V3"
 			(power global)
 			(pin_numbers
 				(hide yes)
@@ -2128,7 +1844,7 @@
 					)
 				)
 			)
-			(property "Value" "+BATT"
+			(property "Value" "+3V3"
 				(at 0 3.556 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2160,7 +1876,7 @@
 					)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"+BATT\""
+			(property "Description" "Power symbol creates a global label with name \"+3V3\""
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2171,7 +1887,7 @@
 					)
 				)
 			)
-			(property "ki_keywords" "global power battery"
+			(property "ki_keywords" "global power"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -2182,7 +1898,7 @@
 					)
 				)
 			)
-			(symbol "+BATT_0_1"
+			(symbol "+3V3_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27) (xy 0 2.54)
@@ -2220,7 +1936,7 @@
 					)
 				)
 			)
-			(symbol "+BATT_1_1"
+			(symbol "+3V3_1_1"
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
@@ -2510,22 +2226,10 @@
 		(uuid "147c2ed0-7a78-4fd6-b953-498431d0d921")
 	)
 	(junction
-		(at 140.97 88.9)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1bc46fa9-4abe-4eb0-ab11-2008ddd3ecbf")
-	)
-	(junction
 		(at 82.55 113.03)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2522fe2e-a194-484f-a50e-0ee8297591ed")
-	)
-	(junction
-		(at 57.15 55.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "32b7eb36-b272-40ba-8cd8-9edca0c2a2f6")
 	)
 	(junction
 		(at 110.49 60.96)
@@ -2546,10 +2250,10 @@
 		(uuid "6dec87b0-da8b-42ca-b2da-8a14227f0005")
 	)
 	(junction
-		(at 148.59 60.96)
+		(at 179.07 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "8b74b448-d226-4fcc-800e-08276adddf48")
+		(uuid "6fcdad21-4bc4-43e2-98c5-efd7051dc142")
 	)
 	(junction
 		(at 129.54 88.9)
@@ -2558,16 +2262,34 @@
 		(uuid "8cfa4f8b-3e93-4a91-bb81-d621295bd72e")
 	)
 	(junction
-		(at 140.97 60.96)
+		(at 57.15 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "e20d3380-5fec-4b2b-bf58-0078cb571734")
+		(uuid "91416f98-ccf3-4c0e-b3b2-eb9f639d6d50")
 	)
 	(junction
-		(at 129.54 71.12)
+		(at 157.48 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "eee756a8-7fb8-43c9-b25c-ca39b4b8d7ae")
+		(uuid "a535d953-3d5b-4a8f-beeb-5b2726da6fd0")
+	)
+	(junction
+		(at 154.94 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c492ae80-cc1e-4de9-8443-cbac68d7e805")
+	)
+	(junction
+		(at 167.64 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e68ac97a-6ede-4506-ac4b-7c38027589d5")
+	)
+	(junction
+		(at 154.94 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e69ea98b-398d-4bf0-8df4-bbefb4a62e70")
 	)
 	(junction
 		(at 76.2 88.9)
@@ -2582,22 +2304,16 @@
 		(uuid "f4dec20e-0e7c-423c-aebd-1a27303aae0b")
 	)
 	(no_connect
+		(at 175.26 63.5)
+		(uuid "239815c5-5aa9-45f8-bf8f-3d9570a09aab")
+	)
+	(no_connect
 		(at 105.41 78.74)
 		(uuid "95175700-9850-407a-a9d0-e8bacf30270b")
 	)
 	(no_connect
 		(at 80.01 68.58)
 		(uuid "9c261355-9005-4034-af5a-45577c3df825")
-	)
-	(wire
-		(pts
-			(xy 148.59 60.96) (xy 148.59 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "02fdadd9-4f02-4e44-8215-c804cc5701e8")
 	)
 	(wire
 		(pts
@@ -2631,6 +2347,16 @@
 	)
 	(wire
 		(pts
+			(xy 160.02 63.5) (xy 157.48 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0779424e-14cd-4cfd-b525-896f74f68f2f")
+	)
+	(wire
+		(pts
 			(xy 69.85 66.04) (xy 69.85 73.66)
 		)
 		(stroke
@@ -2641,17 +2367,7 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 121.92) (xy 116.84 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "161d0142-3e7f-4fe1-bba3-45ff155e5743")
-	)
-	(wire
-		(pts
-			(xy 110.49 60.96) (xy 140.97 60.96)
+			(xy 110.49 60.96) (xy 154.94 60.96)
 		)
 		(stroke
 			(width 0)
@@ -2691,6 +2407,16 @@
 	)
 	(wire
 		(pts
+			(xy 48.26 102.87) (xy 57.15 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "283c766c-aa0e-46ab-a12e-218cc58b7557")
+	)
+	(wire
+		(pts
 			(xy 69.85 66.04) (xy 80.01 66.04)
 		)
 		(stroke
@@ -2701,7 +2427,7 @@
 	)
 	(wire
 		(pts
-			(xy 57.785 110.49) (xy 60.96 110.49)
+			(xy 57.15 110.49) (xy 60.96 110.49)
 		)
 		(stroke
 			(width 0)
@@ -2711,7 +2437,17 @@
 	)
 	(wire
 		(pts
-			(xy 57.785 109.22) (xy 57.785 110.49)
+			(xy 157.48 60.96) (xy 160.02 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c45f808-629e-4ada-893f-aac8d387226c")
+	)
+	(wire
+		(pts
+			(xy 57.15 109.22) (xy 57.15 110.49)
 		)
 		(stroke
 			(width 0)
@@ -2748,6 +2484,36 @@
 			(type default)
 		)
 		(uuid "395d9b1e-ea97-4559-a9c1-3a4154ba9a15")
+	)
+	(wire
+		(pts
+			(xy 154.94 88.9) (xy 167.64 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f14697d-5ddc-4b47-99c6-9069091a3b13")
+	)
+	(wire
+		(pts
+			(xy 57.15 102.87) (xy 57.15 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "42e1f5fb-5a25-43d8-9128-9290e2013685")
+	)
+	(wire
+		(pts
+			(xy 154.94 60.96) (xy 157.48 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4642dc05-6710-416d-aa9c-aab8e7323cc3")
 	)
 	(wire
 		(pts
@@ -2791,6 +2557,26 @@
 	)
 	(wire
 		(pts
+			(xy 55.88 55.88) (xy 57.15 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "57d0393b-04d8-4344-8589-e5fce5542fc4")
+	)
+	(wire
+		(pts
+			(xy 179.07 81.28) (xy 179.07 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5cc625c4-c623-40ad-85aa-a073c31981f0")
+	)
+	(wire
+		(pts
 			(xy 107.95 71.12) (xy 129.54 71.12)
 		)
 		(stroke
@@ -2808,16 +2594,6 @@
 			(type default)
 		)
 		(uuid "67a21f86-43f1-48da-8bc3-685403928ac1")
-	)
-	(wire
-		(pts
-			(xy 148.59 60.96) (xy 160.02 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "67c47bd9-ad69-436e-a03e-8d231cf31117")
 	)
 	(wire
 		(pts
@@ -2891,13 +2667,13 @@
 	)
 	(wire
 		(pts
-			(xy 57.15 54.61) (xy 57.15 55.88)
+			(xy 167.64 71.12) (xy 167.64 88.9)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "89b92f27-6fc6-4534-8a0e-ffcd78d8a357")
+		(uuid "8bd237cf-6475-4907-b2b8-805034de7533")
 	)
 	(wire
 		(pts
@@ -2931,16 +2707,6 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 60.96) (xy 148.59 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "914ac8f2-7472-401f-b3fd-7066d226fac4")
-	)
-	(wire
-		(pts
 			(xy 96.52 118.11) (xy 90.17 118.11)
 		)
 		(stroke
@@ -2951,17 +2717,17 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 113.03) (xy 116.84 114.3)
+			(xy 175.26 60.96) (xy 179.07 60.96)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "9c8546a5-cb47-4cbe-879a-e094b1ace54f")
+		(uuid "9bf50d1c-54f8-4c0e-a0d4-17bcbe913800")
 	)
 	(wire
 		(pts
-			(xy 140.97 81.28) (xy 140.97 88.9)
+			(xy 154.94 81.28) (xy 154.94 88.9)
 		)
 		(stroke
 			(width 0)
@@ -3001,6 +2767,16 @@
 	)
 	(wire
 		(pts
+			(xy 157.48 63.5) (xy 157.48 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ae076e8f-d0bb-45d0-85bf-fa24416f5f9d")
+	)
+	(wire
+		(pts
 			(xy 110.49 68.58) (xy 110.49 76.2)
 		)
 		(stroke
@@ -3011,7 +2787,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 88.9) (xy 129.54 88.9)
+			(xy 129.54 88.9) (xy 154.94 88.9)
 		)
 		(stroke
 			(width 0)
@@ -3051,13 +2827,13 @@
 	)
 	(wire
 		(pts
-			(xy 57.785 102.87) (xy 57.785 104.14)
+			(xy 179.07 73.66) (xy 179.07 60.96)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d0c06924-1a6c-41a8-9a9b-adbb2f4e81f8")
+		(uuid "cc6aa6bc-5a14-4822-87e6-f111179e1cc3")
 	)
 	(wire
 		(pts
@@ -3081,6 +2857,16 @@
 	)
 	(wire
 		(pts
+			(xy 179.07 60.96) (xy 180.34 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9ec4a55-c821-4a0e-baf6-c95cf5e3493a")
+	)
+	(wire
+		(pts
 			(xy 67.31 88.9) (xy 76.2 88.9)
 		)
 		(stroke
@@ -3091,13 +2877,13 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 88.9) (xy 140.97 88.9)
+			(xy 179.07 88.9) (xy 167.64 88.9)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ebf0d69c-200d-4312-a97b-6dc0f4b874b5")
+		(uuid "e4bb8380-45c0-4b36-858d-b91c69056ff6")
 	)
 	(wire
 		(pts
@@ -3111,7 +2897,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 60.96) (xy 140.97 73.66)
+			(xy 154.94 60.96) (xy 154.94 73.66)
 		)
 		(stroke
 			(width 0)
@@ -3189,6 +2975,39 @@
 		)
 		(uuid "fc13bac7-9110-48d4-8c03-747e1af5b3ea")
 	)
+	(hierarchical_label "VBUS"
+		(shape input)
+		(at 55.88 55.88 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1d945708-b539-4afe-8831-a40e33b2d6e4")
+	)
+	(hierarchical_label "3V3"
+		(shape input)
+		(at 180.34 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "213779ef-8adb-406a-936d-51be4ec3e224")
+	)
+	(hierarchical_label "+BATT"
+		(shape input)
+		(at 129.54 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4c41e2b0-e80e-40a1-a670-020412be288b")
+	)
 	(hierarchical_label "VSW"
 		(shape input)
 		(at 78.74 71.12 180)
@@ -3199,6 +3018,17 @@
 			(justify right)
 		)
 		(uuid "77fbe43f-b411-4c76-9120-67269c654964")
+	)
+	(hierarchical_label "+BATT"
+		(shape input)
+		(at 48.26 102.87 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "af94b8d0-7d8a-4944-aaad-947463e2bef9")
 	)
 	(symbol
 		(lib_id "Transistor_FET:2N7002")
@@ -3310,8 +3140,99 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 179.07 77.47 0)
+		(mirror x)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0f376df1-e918-4105-a7ac-f5444fffe66c")
+		(property "Reference" "C93"
+			(at 184.404 76.708 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "4u7"
+			(at 184.404 78.486 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 180.0352 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 179.07 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 179.07 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C307423"
+			(at 179.07 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "30c9f7f8-9f5a-4de3-be27-4c27b1b5cf79")
+		)
+		(pin "2"
+			(uuid "580bd4cc-bece-4587-bcee-a7f2a79b5638")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
+					(reference "C93")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_Small")
-		(at 57.785 106.68 0)
+		(at 57.15 106.68 0)
 		(mirror y)
 		(unit 1)
 		(body_style 1)
@@ -3323,7 +3244,7 @@
 		(fields_autoplaced yes)
 		(uuid "155d9bfd-4edd-4e74-9a3e-d99a580d692c")
 		(property "Reference" "R16"
-			(at 55.245 105.4099 0)
+			(at 54.61 105.4099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3334,7 +3255,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 55.245 107.9499 0)
+			(at 54.61 107.9499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3345,7 +3266,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 57.785 106.68 0)
+			(at 57.15 106.68 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3356,7 +3277,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 57.785 106.68 0)
+			(at 57.15 106.68 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3367,7 +3288,7 @@
 			)
 		)
 		(property "Description" "Resistor, small symbol"
-			(at 57.785 106.68 0)
+			(at 57.15 106.68 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3378,7 +3299,7 @@
 			)
 		)
 		(property "Sim.Device" ""
-			(at 57.785 106.68 0)
+			(at 57.15 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3388,7 +3309,7 @@
 			)
 		)
 		(property "Sim.Pins" ""
-			(at 57.785 106.68 0)
+			(at 57.15 106.68 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3433,7 +3354,7 @@
 				)
 			)
 		)
-		(property "Value" "4uF"
+		(property "Value" "4u7"
 			(at 51.816 77.216 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3780,85 +3701,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+BATT")
-		(at 57.785 102.87 0)
-		(mirror y)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "4e7ed585-85ed-4af4-ad82-4b5a51ce116c")
-		(property "Reference" "#PWR039"
-			(at 57.785 106.68 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+BATT"
-			(at 57.785 97.79 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 57.785 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 57.785 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+BATT\""
-			(at 57.785 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d8e852bc-02b1-423b-9871-21df91fdd600")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "#PWR039")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 59.69 116.84 0)
 		(mirror y)
@@ -4017,8 +3859,8 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+BATT")
-		(at 116.84 113.03 0)
+		(lib_id "power:+3V3")
+		(at 190.5 54.61 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4026,10 +3868,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5d767a8b-0e0d-4dd4-bfcc-4402c2ba6c3c")
-		(property "Reference" "#PWR049"
-			(at 116.84 116.84 0)
+		(uuid "68b2bdc3-65f2-46db-958b-3cea031ec114")
+		(property "Reference" "#PWR036"
+			(at 190.5 58.42 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4039,8 +3880,8 @@
 				)
 			)
 		)
-		(property "Value" "+BATT"
-			(at 116.84 107.95 0)
+		(property "Value" "+3V3"
+			(at 194.31 52.832 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4050,7 +3891,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 113.03 0)
+			(at 190.5 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4061,7 +3902,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 113.03 0)
+			(at 190.5 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4071,8 +3912,8 @@
 				)
 			)
 		)
-		(property "Description" "Power symbol creates a global label with name \"+BATT\""
-			(at 116.84 113.03 0)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 190.5 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4083,12 +3924,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "759b0433-b7e4-406b-a77a-4ec381e632b3")
+			(uuid "a2143ae5-9c7a-4a00-8b27-044931112de5")
 		)
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "#PWR049")
+					(reference "#PWR036")
 					(unit 1)
 				)
 			)
@@ -4315,7 +4156,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 140.97 77.47 0)
+		(at 154.94 77.47 0)
 		(mirror x)
 		(unit 1)
 		(body_style 1)
@@ -4326,7 +4167,7 @@
 		(dnp no)
 		(uuid "86676f68-dba1-470d-851f-5349ad877c9b")
 		(property "Reference" "C92"
-			(at 146.304 76.708 0)
+			(at 160.274 76.708 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4335,8 +4176,8 @@
 				)
 			)
 		)
-		(property "Value" "4uF"
-			(at 146.304 78.486 0)
+		(property "Value" "4u7"
+			(at 160.274 78.486 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4346,7 +4187,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 141.9352 73.66 0)
+			(at 155.9052 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4357,7 +4198,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 140.97 77.47 0)
+			(at 154.94 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4368,7 +4209,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 140.97 77.47 0)
+			(at 154.94 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4379,7 +4220,7 @@
 			)
 		)
 		(property "LCSC" "C307423"
-			(at 140.97 77.47 0)
+			(at 154.94 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4399,6 +4240,95 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
 					(reference "C92")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Regulator_Linear:SPX3819M5-L-3-3")
+		(at 167.64 63.5 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8ebf7d80-1430-4eab-8e9f-658151d37dc5")
+		(property "Reference" "U7"
+			(at 167.64 54.61 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SPX3819M5-L-3-3"
+			(at 167.64 57.15 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+			(at 167.64 55.245 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.exar.com/content/document.ashx?id=22106&languageid=1033&type=Datasheet&partnumber=SPX3819&filename=SPX3819.pdf&part=SPX3819"
+			(at 167.64 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "500mA Low drop-out regulator, Fixed Output 3.3V, SOT-23-5"
+			(at 167.64 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "4"
+			(uuid "de411a27-c9cf-4c18-a501-2667a4310a50")
+		)
+		(pin "5"
+			(uuid "ab39645e-425f-46b8-92ac-ec7d3a1580e2")
+		)
+		(pin "3"
+			(uuid "27bf5bcb-6bdf-458d-9c6f-9ab4327a137b")
+		)
+		(pin "2"
+			(uuid "ef08162b-1060-4f03-a3e8-98d5402fc8d5")
+		)
+		(pin "1"
+			(uuid "37f18e4a-8bc6-43e1-adc2-1467af0367be")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
+					(reference "U7")
 					(unit 1)
 				)
 			)
@@ -4770,83 +4700,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 116.84 123.19 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "bdf837a7-097b-48c8-b239-1b5f47e23201")
-		(property "Reference" "#PWR050"
-			(at 116.84 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 116.84 127.762 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 116.84 123.19 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 116.84 123.19 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 116.84 123.19 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "38fa80ba-842e-4e2d-8967-feca216f2308")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "#PWR050")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:VBUS")
 		(at 96.52 107.95 0)
 		(mirror y)
@@ -4927,7 +4780,7 @@
 	)
 	(symbol
 		(lib_id "power:VBUS")
-		(at 57.15 54.61 0)
+		(at 44.45 48.26 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4938,7 +4791,7 @@
 		(fields_autoplaced yes)
 		(uuid "d2ff7e12-066f-4d74-bb1f-ef6b5c041959")
 		(property "Reference" "#PWR047"
-			(at 57.15 58.42 0)
+			(at 44.45 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4949,7 +4802,7 @@
 			)
 		)
 		(property "Value" "VBUS"
-			(at 57.15 49.53 0)
+			(at 44.45 43.18 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4959,7 +4812,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 57.15 54.61 0)
+			(at 44.45 48.26 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4970,7 +4823,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 57.15 54.61 0)
+			(at 44.45 48.26 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4981,7 +4834,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VBUS\""
-			(at 57.15 54.61 0)
+			(at 44.45 48.26 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4998,121 +4851,6 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
 					(reference "#PWR047")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:Battery_Cell")
-		(at 116.84 119.38 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d38afcc1-297f-4d7f-8b8b-f8f77d0609f3")
-		(property "Reference" "BT1"
-			(at 120.65 116.2684 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Battery_Cell"
-			(at 120.65 118.8084 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 116.84 117.856 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 116.84 117.856 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Single-cell battery"
-			(at 116.84 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Device" "V"
-			(at 116.84 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Type" "DC"
-			(at 116.84 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Pins" "1=+ 2=-"
-			(at 116.84 119.38 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "9ae141ca-cb91-4fbf-a284-c688050919ba")
-		)
-		(pin "2"
-			(uuid "27920522-56a9-4945-97ca-dce89b7e8242")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "BT1")
 					(unit 1)
 				)
 			)
@@ -5271,83 +5009,6 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
 					(reference "#PWR067")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+BATT")
-		(at 129.54 71.12 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f1443de7-4d40-46bf-80e9-edc650233ec4")
-		(property "Reference" "#PWR046"
-			(at 129.54 74.93 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+BATT"
-			(at 129.54 67.31 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 129.54 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 129.54 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+BATT\""
-			(at 129.54 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d87b06f0-1adf-4dc5-aafe-373982dca116")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "#PWR046")
 					(unit 1)
 				)
 			)
@@ -5517,180 +5178,6 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
 					(reference "#PWR048")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "TPS61097A-33DBVT:TPS61097A-33DBVT")
-		(at 160.02 60.96 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "feccd45d-6517-4297-8921-3105de1c1052")
-		(property "Reference" "IC2"
-			(at 173.99 50.546 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "TPS61097A-33DBVT"
-			(at 173.99 53.086 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "SOT95P280X145-5N"
-			(at 184.15 155.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Datasheet" "http://www.ti.com/lit/gpn/tps61097a-33"
-			(at 184.15 255.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Description" "0.9Vin, 3.3Vout Boost Converter with Bypass Switch - 5nA Shutdown Current"
-			(at 160.02 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Height" "1.45"
-			(at 184.15 455.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Manufacturer_Name" "Texas Instruments"
-			(at 184.15 555.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Manufacturer_Part_Number" "TPS61097A-33DBVT"
-			(at 184.15 655.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Mouser Part Number" "595-TPS61097A-33DBVT"
-			(at 184.15 755.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Texas-Instruments/TPS61097A-33DBVT?qs=sU0fTKI0LukBYbTC8cJTjA%3D%3D"
-			(at 184.15 855.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Arrow Part Number" "TPS61097A-33DBVT"
-			(at 184.15 955.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(property "Arrow Price/Stock" "https://www.arrow.com/en/products/tps61097a-33dbvt/texas-instruments?region=nac"
-			(at 184.15 1055.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "5"
-			(uuid "3531724d-29d9-482e-9988-2ae3ee347077")
-		)
-		(pin "3"
-			(uuid "ee6cc77c-fead-4b1b-94fc-8b4bf5589a1f")
-		)
-		(pin "1"
-			(uuid "61d27dc3-6f23-48aa-abaa-1df3eb91e8c6")
-		)
-		(pin "4"
-			(uuid "ff331b82-b06f-43f4-95d8-c02505ac33dd")
-		)
-		(pin "2"
-			(uuid "09a7efa6-d867-4026-85c6-cad038db13bb")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79b24e0c-a87f-41fc-9e61-2c267e8a5613"
-					(reference "IC2")
 					(unit 1)
 				)
 			)
