@@ -726,7 +726,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "E24 for the sensing resistors"
+	(text "E24 for the module detect resistors"
 		(exclude_from_sim no)
 		(at 167.894 100.33 0)
 		(effects

@@ -675,8 +675,7 @@
       "SPI": [
         "SCLK",
         "MISO",
-        "MOSI",
-        "CS"
+        "MOSI"
       ],
       "USB": [
         "D+",

@@ -497,6 +497,26 @@
 	)
 	(wire
 		(pts
+			(xy 137.16 74.93) (xy 156.21 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5197af3e-ce6c-433f-8ec9-0af29abc3e1b")
+	)
+	(wire
+		(pts
+			(xy 137.16 69.85) (xy 156.21 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "58efe765-b0f1-4e00-a747-d25dc121c422")
+	)
+	(wire
+		(pts
 			(xy 98.425 140.97) (xy 98.425 142.24)
 		)
 		(stroke
@@ -504,6 +524,16 @@
 			(type default)
 		)
 		(uuid "6597814d-538b-4057-9068-a199ca886eac")
+	)
+	(bus
+		(pts
+			(xy 137.16 93.98) (xy 191.77 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "69507757-3d12-4116-8751-72da4cf25de1")
 	)
 	(wire
 		(pts
@@ -515,6 +545,16 @@
 		)
 		(uuid "69a41b17-6000-45c7-8fff-4b7324d3497f")
 	)
+	(wire
+		(pts
+			(xy 137.16 81.28) (xy 156.21 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d9e873b-1b1e-4c6d-afd3-2e8885ca6736")
+	)
 	(bus
 		(pts
 			(xy 172.72 114.3) (xy 181.61 114.3)
@@ -524,6 +564,16 @@
 			(type default)
 		)
 		(uuid "745a131b-33a6-40b0-a21d-b14570a3744f")
+	)
+	(bus
+		(pts
+			(xy 137.16 78.74) (xy 156.21 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8038d41b-89ef-44aa-b06b-0c2d994a1e33")
 	)
 	(bus
 		(pts
@@ -614,6 +664,16 @@
 			(type default)
 		)
 		(uuid "fbb16811-fb0a-450b-83e8-d55c095c8372")
+	)
+	(wire
+		(pts
+			(xy 137.16 91.44) (xy 191.77 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ffd5fe19-1da6-4b1d-b23f-5032b578d3f7")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -961,6 +1021,66 @@
 				(justify right)
 			)
 		)
+		(pin "ADC_ALERT" input
+			(at 137.16 91.44 0)
+			(uuid "3fc0c6ef-30fc-4e10-bed8-efbc2dcfe2d3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "adc{I2C}" bidirectional
+			(at 137.16 93.98 0)
+			(uuid "bd2b3c49-da53-495e-84d3-0c3ae039869c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DISP_BACKLIGHT" output
+			(at 137.16 69.85 0)
+			(uuid "c3a78fba-2b24-48d2-b259-da4f1c65c4d2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DISP_CS" output
+			(at 137.16 81.28 0)
+			(uuid "25138257-14f9-492a-963a-5c830b3ef038")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DISP_DC" output
+			(at 137.16 74.93 0)
+			(uuid "527a2ca8-88d3-4969-a249-06e34690a7e5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "disp{SPI}" bidirectional
+			(at 137.16 78.74 0)
+			(uuid "da111e08-630c-47f7-997d-93edf38b5f03")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94"
@@ -1047,9 +1167,9 @@
 				(justify left)
 			)
 		)
-		(pin "spi{SPI}" input
+		(pin "{SPI}" bidirectional
 			(at 156.21 78.74 180)
-			(uuid "8bd6b5eb-3eec-4258-b3f7-5018ba956118")
+			(uuid "64341c51-f2c9-441f-83cf-6f382df8d482")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1368,7 +1488,7 @@
 			)
 		)
 		(pin "ALERT" output
-			(at 191.77 90.805 180)
+			(at 191.77 91.44 180)
 			(uuid "0973df2e-cdb6-4523-949b-4889b0125ea0")
 			(effects
 				(font

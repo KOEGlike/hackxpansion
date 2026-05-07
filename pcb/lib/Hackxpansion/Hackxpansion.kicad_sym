@@ -621,6 +621,7 @@
 						)
 					)
 				)
+				(alternate "ADC0" input line)
 			)
 			(pin bidirectional line
 				(at -13.97 -5.08 0)
@@ -639,6 +640,7 @@
 						)
 					)
 				)
+				(alternate "ADC1" input line)
 			)
 			(pin passive line
 				(at -13.97 -7.62 0)
