@@ -656,6 +656,18 @@
         "MD0",
         "MD1"
       ],
+      "GPIO_BANK": [
+        "GPIO0",
+        "GPIO1",
+        "GPIO2",
+        "GPIO3",
+        "GPIO4",
+        "GPIO5",
+        "GPIO6",
+        "GPIO7",
+        "GPIO8",
+        "GPIO9"
+      ],
       "I2C": [
         "SCL",
         "SDA"

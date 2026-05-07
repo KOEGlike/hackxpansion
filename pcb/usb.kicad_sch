@@ -1199,7 +1199,7 @@
 		(uuid "89728e35-61ef-4dde-9902-14a0efd9c4d9")
 	)
 	(hierarchical_label "VBUS"
-		(shape input)
+		(shape output)
 		(at 129.54 69.85 0)
 		(effects
 			(font
@@ -1210,7 +1210,7 @@
 		(uuid "3904ea1c-ba8a-4491-b14b-61f4fe5e1db4")
 	)
 	(hierarchical_label "{USB}"
-		(shape input)
+		(shape bidirectional)
 		(at 135.89 81.28 0)
 		(effects
 			(font

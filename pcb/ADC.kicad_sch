@@ -1692,7 +1692,7 @@
 		)
 		(uuid "0cf81e3c-5112-4e45-a710-d0b37d5ae033")
 	)
-	(hierarchical_label "i2c0{I2C}"
+	(hierarchical_label "{I2C}"
 		(shape bidirectional)
 		(at 191.77 81.28 0)
 		(effects

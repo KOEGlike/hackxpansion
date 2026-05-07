@@ -9,7 +9,7 @@
 		(in_pos_files yes)
 		(duplicate_pin_numbers_are_jumpers no)
 		(property "Reference" "U"
-			(at 0 10.668 0)
+			(at 5.334 10.414 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -74,7 +74,7 @@
 				)
 			)
 			(pin power_in line
-				(at -12.7 7.62 0)
+				(at 0 -12.7 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -92,7 +92,7 @@
 				)
 			)
 			(pin power_in line
-				(at 12.7 7.62 180)
+				(at 0 12.7 270)
 				(length 3.81)
 				(name "3V3"
 					(effects
@@ -128,7 +128,7 @@
 				)
 			)
 			(pin output line
-				(at 12.7 5.08 180)
+				(at -12.7 7.62 0)
 				(length 3.81)
 				(name "MD1"
 					(effects
@@ -146,7 +146,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 2.54 0)
+				(at 12.7 7.62 180)
 				(length 3.81)
 				(name "GPIO0"
 					(effects
@@ -164,7 +164,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 12.7 2.54 180)
+				(at 12.7 5.08 180)
 				(length 3.81)
 				(name "GPIO1"
 					(effects
@@ -182,7 +182,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 0 0)
+				(at 12.7 2.54 180)
 				(length 3.81)
 				(name "GPI02"
 					(effects
@@ -218,7 +218,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 -2.54 0)
+				(at 12.7 -2.54 180)
 				(length 3.81)
 				(name "GPIO4"
 					(effects
@@ -236,7 +236,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 12.7 -2.54 180)
+				(at 12.7 -5.08 180)
 				(length 3.81)
 				(name "GPIO5"
 					(effects
@@ -254,7 +254,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 -5.08 0)
+				(at 12.7 -7.62 180)
 				(length 3.81)
 				(name "GPIO6"
 					(effects
@@ -272,7 +272,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 12.7 -5.08 180)
+				(at -12.7 -2.54 0)
 				(length 3.81)
 				(name "GPIO7"
 					(effects
@@ -290,7 +290,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 -7.62 0)
+				(at -12.7 -5.08 0)
 				(length 3.81)
 				(name "GPIO8"
 					(effects
@@ -308,7 +308,7 @@
 				)
 			)
 			(pin passive line
-				(at 12.7 -7.62 180)
+				(at -12.7 -7.62 0)
 				(length 3.81)
 				(name "GPIO9"
 					(effects

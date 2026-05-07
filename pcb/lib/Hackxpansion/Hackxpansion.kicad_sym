@@ -335,7 +335,7 @@
 		(in_pos_files yes)
 		(duplicate_pin_numbers_are_jumpers no)
 		(property "Reference" "J"
-			(at 0 11.176 0)
+			(at 3.048 10.922 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -389,8 +389,8 @@
 		)
 		(symbol "Module_Male_1_1"
 			(rectangle
-				(start -8.89 8.89)
-				(end 8.89 -8.89)
+				(start -10.16 8.89)
+				(end 10.16 -8.89)
 				(stroke
 					(width 0.254)
 					(type default)
@@ -400,7 +400,7 @@
 				)
 			)
 			(pin power_in line
-				(at -12.7 7.62 0)
+				(at 0 -12.7 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -418,7 +418,7 @@
 				)
 			)
 			(pin power_in line
-				(at 12.7 7.62 180)
+				(at 0 12.7 270)
 				(length 3.81)
 				(name "3V3"
 					(effects
@@ -436,7 +436,7 @@
 				)
 			)
 			(pin output line
-				(at -12.7 5.08 0)
+				(at -13.97 5.08 0)
 				(length 3.81)
 				(name "MD0"
 					(effects
@@ -454,7 +454,7 @@
 				)
 			)
 			(pin output line
-				(at 12.7 5.08 180)
+				(at -13.97 7.62 0)
 				(length 3.81)
 				(name "MD1"
 					(effects
@@ -472,7 +472,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 2.54 0)
+				(at 13.97 7.62 180)
 				(length 3.81)
 				(name "GPIO0"
 					(effects
@@ -491,7 +491,7 @@
 				(alternate "I2C_SCL" input line)
 			)
 			(pin bidirectional line
-				(at 12.7 2.54 180)
+				(at 13.97 5.08 180)
 				(length 3.81)
 				(name "GPIO1"
 					(effects
@@ -510,7 +510,7 @@
 				(alternate "I2C_SDA" bidirectional line)
 			)
 			(pin bidirectional line
-				(at -12.7 0 0)
+				(at 13.97 2.54 180)
 				(length 3.81)
 				(name "GPI02"
 					(effects
@@ -529,7 +529,7 @@
 				(alternate "SPI_SCK" input line)
 			)
 			(pin bidirectional line
-				(at 12.7 0 180)
+				(at 13.97 0 180)
 				(length 3.81)
 				(name "GPIO3"
 					(effects
@@ -548,7 +548,7 @@
 				(alternate "SPI_MISO" output line)
 			)
 			(pin bidirectional line
-				(at -12.7 -2.54 0)
+				(at 13.97 -2.54 180)
 				(length 3.81)
 				(name "GPIO4"
 					(effects
@@ -567,7 +567,7 @@
 				(alternate "SPI_MOSI" input line)
 			)
 			(pin bidirectional line
-				(at 12.7 -2.54 180)
+				(at 13.97 -5.08 180)
 				(length 3.81)
 				(name "GPIO5"
 					(effects
@@ -586,7 +586,7 @@
 				(alternate "UART_TX" output line)
 			)
 			(pin bidirectional line
-				(at -12.7 -5.08 0)
+				(at 13.97 -7.62 180)
 				(length 3.81)
 				(name "GPIO6"
 					(effects
@@ -605,7 +605,7 @@
 				(alternate "UART_RX" input line)
 			)
 			(pin bidirectional line
-				(at 12.7 -5.08 180)
+				(at -13.97 -2.54 0)
 				(length 3.81)
 				(name "GPIO7"
 					(effects
@@ -623,7 +623,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -12.7 -7.62 0)
+				(at -13.97 -5.08 0)
 				(length 3.81)
 				(name "GPIO8"
 					(effects
@@ -641,7 +641,7 @@
 				)
 			)
 			(pin passive line
-				(at 12.7 -7.62 180)
+				(at -13.97 -7.62 0)
 				(length 3.81)
 				(name "GPIO9"
 					(effects
