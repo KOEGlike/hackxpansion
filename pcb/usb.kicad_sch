@@ -3,7 +3,7 @@
 	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "72fc72a8-ec21-41c6-b830-2f119f04f9a2")
-	(paper "A4")
+	(paper "A5")
 	(lib_symbols
 		(symbol "Connector:USB_C_Receptacle_USB2.0_14P"
 			(pin_names
@@ -917,31 +917,31 @@
 		)
 	)
 	(junction
-		(at 127 88.9)
+		(at 105.41 66.04)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "165625ad-be32-4bd6-ab2e-9b0009d4161c")
 	)
 	(junction
-		(at 111.76 109.22)
+		(at 90.17 86.36)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4423c651-c220-463f-a61b-1909d6b56f86")
 	)
 	(junction
-		(at 127 83.82)
+		(at 105.41 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8f3d6b4a-a4c9-4654-a843-723078dc4cb5")
 	)
 	(junction
-		(at 149.86 87.63)
+		(at 128.27 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f959d78a-f610-444c-9bc1-a03c669f78c5")
 	)
 	(bus_entry
-		(at 134.62 86.36)
+		(at 113.03 63.5)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -950,7 +950,7 @@
 		(uuid "6073dedf-133b-4dfd-9beb-c9ed4b1f4ee1")
 	)
 	(bus_entry
-		(at 134.62 81.28)
+		(at 113.03 58.42)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -960,7 +960,7 @@
 	)
 	(wire
 		(pts
-			(xy 153.67 74.93) (xy 153.67 78.74)
+			(xy 132.08 52.07) (xy 132.08 55.88)
 		)
 		(stroke
 			(width 0)
@@ -970,7 +970,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 87.63) (xy 153.67 87.63)
+			(xy 128.27 64.77) (xy 132.08 64.77)
 		)
 		(stroke
 			(width 0)
@@ -980,7 +980,7 @@
 	)
 	(bus
 		(pts
-			(xy 134.62 81.28) (xy 134.62 86.36)
+			(xy 113.03 58.42) (xy 113.03 63.5)
 		)
 		(stroke
 			(width 0)
@@ -990,7 +990,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 83.82) (xy 132.08 83.82)
+			(xy 105.41 60.96) (xy 110.49 60.96)
 		)
 		(stroke
 			(width 0)
@@ -1000,7 +1000,7 @@
 	)
 	(wire
 		(pts
-			(xy 104.14 109.22) (xy 111.76 109.22)
+			(xy 82.55 86.36) (xy 90.17 86.36)
 		)
 		(stroke
 			(width 0)
@@ -1010,7 +1010,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 107.95) (xy 111.76 109.22)
+			(xy 90.17 85.09) (xy 90.17 86.36)
 		)
 		(stroke
 			(width 0)
@@ -1020,7 +1020,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 74.93) (xy 153.67 74.93)
+			(xy 105.41 52.07) (xy 132.08 52.07)
 		)
 		(stroke
 			(width 0)
@@ -1030,7 +1030,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 88.9) (xy 127 87.63)
+			(xy 105.41 66.04) (xy 105.41 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1040,7 +1040,7 @@
 	)
 	(wire
 		(pts
-			(xy 104.14 107.95) (xy 104.14 109.22)
+			(xy 82.55 85.09) (xy 82.55 86.36)
 		)
 		(stroke
 			(width 0)
@@ -1050,7 +1050,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 83.82) (xy 127 82.55)
+			(xy 105.41 60.96) (xy 105.41 59.69)
 		)
 		(stroke
 			(width 0)
@@ -1060,7 +1060,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 88.9) (xy 127 90.17)
+			(xy 105.41 66.04) (xy 105.41 67.31)
 		)
 		(stroke
 			(width 0)
@@ -1070,7 +1070,7 @@
 	)
 	(wire
 		(pts
-			(xy 153.67 86.36) (xy 153.67 87.63)
+			(xy 132.08 63.5) (xy 132.08 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1080,7 +1080,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 88.9) (xy 132.08 88.9)
+			(xy 105.41 66.04) (xy 110.49 66.04)
 		)
 		(stroke
 			(width 0)
@@ -1090,7 +1090,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 87.63) (xy 149.86 87.63)
+			(xy 124.46 64.77) (xy 128.27 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1100,7 +1100,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 69.85) (xy 129.54 69.85)
+			(xy 105.41 46.99) (xy 107.95 46.99)
 		)
 		(stroke
 			(width 0)
@@ -1110,7 +1110,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 86.36) (xy 146.05 87.63)
+			(xy 124.46 63.5) (xy 124.46 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1120,7 +1120,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 77.47) (xy 146.05 77.47)
+			(xy 105.41 54.61) (xy 124.46 54.61)
 		)
 		(stroke
 			(width 0)
@@ -1130,7 +1130,7 @@
 	)
 	(wire
 		(pts
-			(xy 146.05 78.74) (xy 146.05 77.47)
+			(xy 124.46 55.88) (xy 124.46 54.61)
 		)
 		(stroke
 			(width 0)
@@ -1140,7 +1140,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 83.82) (xy 127 85.09)
+			(xy 105.41 60.96) (xy 105.41 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1150,7 +1150,7 @@
 	)
 	(bus
 		(pts
-			(xy 135.89 81.28) (xy 134.62 81.28)
+			(xy 114.3 58.42) (xy 113.03 58.42)
 		)
 		(stroke
 			(width 0)
@@ -1159,7 +1159,7 @@
 		(uuid "f21b3244-5748-4e61-a24c-675a590abca4")
 	)
 	(label "D+"
-		(at 130.81 88.9 180)
+		(at 109.22 66.04 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1169,7 +1169,7 @@
 		(uuid "2bc50c2e-84a6-4294-98ff-22dd260f574b")
 	)
 	(label "CC2"
-		(at 130.81 77.47 180)
+		(at 109.22 54.61 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1179,7 +1179,7 @@
 		(uuid "34e8045e-4f96-4988-a7ee-ad990d9247d0")
 	)
 	(label "CC1"
-		(at 130.81 74.93 180)
+		(at 109.22 52.07 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1189,7 +1189,7 @@
 		(uuid "42000df9-e5f7-4217-883f-3d427157b2ad")
 	)
 	(label "D-"
-		(at 130.81 83.82 180)
+		(at 109.22 60.96 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1200,7 +1200,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape output)
-		(at 129.54 69.85 0)
+		(at 107.95 46.99 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1211,7 +1211,7 @@
 	)
 	(hierarchical_label "{USB}"
 		(shape bidirectional)
-		(at 135.89 81.28 0)
+		(at 114.3 58.42 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1222,7 +1222,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 149.86 87.63 0)
+		(at 128.27 64.77 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1233,7 +1233,7 @@
 		(fields_autoplaced yes)
 		(uuid "70019aeb-23e7-4e82-9433-b7213923d20e")
 		(property "Reference" "#PWR039"
-			(at 149.86 93.98 0)
+			(at 128.27 71.12 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1244,7 +1244,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 149.86 92.71 0)
+			(at 128.27 69.85 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1254,7 +1254,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 149.86 87.63 0)
+			(at 128.27 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1265,7 +1265,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 149.86 87.63 0)
+			(at 128.27 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1276,7 +1276,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 149.86 87.63 0)
+			(at 128.27 64.77 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1287,11 +1287,11 @@
 			)
 		)
 		(pin "1"
-			(uuid "02634b21-7722-425b-a2cb-585303b1e66c")
+			(uuid "d15a4428-08ea-4005-9dbb-61fee22789f2")
 		)
 		(instances
 			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/59c7db53-5f38-4347-9642-e6c98087e7b2"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
 					(reference "#PWR039")
 					(unit 1)
 				)
@@ -1300,7 +1300,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 153.67 82.55 0)
+		(at 132.08 59.69 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1311,7 +1311,7 @@
 		(fields_autoplaced yes)
 		(uuid "7876fe04-dc84-4afa-bdb0-eb4bca08ed58")
 		(property "Reference" "R10"
-			(at 156.21 81.2799 0)
+			(at 134.62 58.4199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1322,7 +1322,7 @@
 			)
 		)
 		(property "Value" "5k1"
-			(at 156.21 83.8199 0)
+			(at 134.62 60.9599 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1332,8 +1332,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 151.892 82.55 90)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 130.302 59.69 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1344,7 +1344,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 153.67 82.55 0)
+			(at 132.08 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1355,7 +1355,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 153.67 82.55 0)
+			(at 132.08 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1366,14 +1366,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "a859b3bf-4313-49fc-a4fb-91f7234e5b5f")
+			(uuid "18502f41-8f84-4dbf-833c-e1ae382a5f27")
 		)
 		(pin "2"
-			(uuid "d2521de0-4d37-4ac7-83fa-1f2dcf236de2")
+			(uuid "21c4d98f-6e25-445d-b43b-27ff33734635")
 		)
 		(instances
 			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/59c7db53-5f38-4347-9642-e6c98087e7b2"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
 					(reference "R10")
 					(unit 1)
 				)
@@ -1382,7 +1382,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 111.76 109.22 0)
+		(at 90.17 86.36 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1393,7 +1393,7 @@
 		(fields_autoplaced yes)
 		(uuid "81bbfb54-46ee-4276-87d6-67fe69cb38a1")
 		(property "Reference" "#PWR037"
-			(at 111.76 115.57 0)
+			(at 90.17 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1404,7 +1404,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 111.76 114.3 0)
+			(at 90.17 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1414,7 +1414,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 111.76 109.22 0)
+			(at 90.17 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1425,7 +1425,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 111.76 109.22 0)
+			(at 90.17 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1436,7 +1436,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 111.76 109.22 0)
+			(at 90.17 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1447,11 +1447,11 @@
 			)
 		)
 		(pin "1"
-			(uuid "7989e168-6a49-4ce0-a4eb-cec2f2c76819")
+			(uuid "ad6a0377-a43f-400b-99e8-d20c2d2bc0ff")
 		)
 		(instances
 			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/59c7db53-5f38-4347-9642-e6c98087e7b2"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
 					(reference "#PWR037")
 					(unit 1)
 				)
@@ -1460,7 +1460,7 @@
 	)
 	(symbol
 		(lib_id "Connector:USB_C_Receptacle_USB2.0_14P")
-		(at 111.76 85.09 0)
+		(at 90.17 62.23 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1471,7 +1471,7 @@
 		(fields_autoplaced yes)
 		(uuid "c9d6890b-7502-45d1-8fd6-3e46102608e2")
 		(property "Reference" "J3"
-			(at 111.76 62.23 0)
+			(at 90.17 39.37 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1481,7 +1481,7 @@
 			)
 		)
 		(property "Value" "USB_C_Receptacle_USB2.0_14P"
-			(at 111.76 64.77 0)
+			(at 90.17 41.91 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1491,7 +1491,7 @@
 			)
 		)
 		(property "Footprint" "easyeda2kicad:USB-C-SMD_TYPE-C-16PIN-2MD-073"
-			(at 115.57 85.09 0)
+			(at 93.98 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1502,7 +1502,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
-			(at 115.57 85.09 0)
+			(at 93.98 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1513,7 +1513,7 @@
 			)
 		)
 		(property "Description" "USB 2.0-only 14P Type-C Receptacle connector"
-			(at 111.76 85.09 0)
+			(at 90.17 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1524,7 +1524,7 @@
 			)
 		)
 		(property "LCSC" "C2765186"
-			(at 111.76 85.09 0)
+			(at 90.17 62.23 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1535,53 +1535,53 @@
 			)
 		)
 		(pin "B1"
-			(uuid "ba486c9c-9c76-47b9-b3aa-d5db35af1d41")
+			(uuid "c92b5c1a-b8c8-4129-ba97-eb84cd27e283")
 		)
 		(pin "A1"
-			(uuid "68523b4e-6ffd-457e-953a-1be4cb6debe8")
+			(uuid "587ff926-9f9b-4c6d-82e2-98480d3f5945")
 		)
 		(pin "A4"
-			(uuid "844e08c7-72bb-4a55-a006-ed56ad614a2b")
+			(uuid "804e68f7-3316-43f2-b77c-c46d6c88131c")
 		)
 		(pin "A6"
-			(uuid "45c00817-0612-4703-b949-873aaa7563b2")
+			(uuid "144e692c-571e-4621-8877-b184818d8927")
 		)
 		(pin "A9"
-			(uuid "8e55fe2f-3d88-4e86-be39-cf43cf71301a")
+			(uuid "d7f692ac-fd93-4821-b040-1d68d0052adc")
 		)
 		(pin "A12"
-			(uuid "40b91de9-cff4-4db0-af37-014f47d1e0b9")
+			(uuid "1dd754b4-473c-41c4-98a1-71d9f064a580")
 		)
 		(pin "A5"
-			(uuid "dad8057f-f199-4952-a0a5-e6b34f256584")
+			(uuid "91d58dbc-9096-47f1-bc0b-929783f0bf49")
 		)
 		(pin "A7"
-			(uuid "bf9b7da0-5ab4-4c55-9fae-99ff88114328")
+			(uuid "8f695b05-ee95-4ead-a30b-a7177127d93a")
 		)
 		(pin "B6"
-			(uuid "d0c2b1e9-5e0b-4c2c-abb7-5d3def6f3ec5")
+			(uuid "b4452348-5ed8-4158-8b67-f471a499f77b")
 		)
 		(pin "B9"
-			(uuid "4758a502-c6c4-4807-aafd-850a7fbfdbfc")
+			(uuid "3c195f1f-fbb5-420f-ae56-2863c6e83f29")
 		)
 		(pin "B7"
-			(uuid "257d7749-a34a-4f3a-848d-c09e375242b7")
+			(uuid "003d59d8-cd5f-4344-913c-9b8717242959")
 		)
 		(pin "B5"
-			(uuid "c0629c76-0ddd-45bd-a90c-15424dea8a03")
+			(uuid "ce9f8143-32f9-42e8-8dc6-a7a026a7de52")
 		)
 		(pin "B4"
-			(uuid "993bbcf7-5b2f-493c-a7e3-3cca74d36884")
+			(uuid "f83891b7-5b20-4e87-84dc-447e2b8525d0")
 		)
 		(pin "B12"
-			(uuid "1d3cdb41-c3b8-4fc8-bacc-21159e1c9a2d")
+			(uuid "8d84c11a-fc30-4bda-ae5f-13a404264665")
 		)
 		(pin "SH"
-			(uuid "947269fd-a8c6-4e4e-acbd-25f2d92bbddf")
+			(uuid "0f3e7cfe-c49a-4d54-90a8-dc8e530f82f5")
 		)
 		(instances
 			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/59c7db53-5f38-4347-9642-e6c98087e7b2"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
 					(reference "J3")
 					(unit 1)
 				)
@@ -1590,7 +1590,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 146.05 82.55 0)
+		(at 124.46 59.69 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1601,7 +1601,7 @@
 		(fields_autoplaced yes)
 		(uuid "dd10e37b-24c7-41cc-95c7-0ffa020ffe47")
 		(property "Reference" "R9"
-			(at 148.59 81.2799 0)
+			(at 127 58.4199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1612,7 +1612,7 @@
 			)
 		)
 		(property "Value" "5k1"
-			(at 148.59 83.8199 0)
+			(at 127 60.9599 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1622,8 +1622,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 144.272 82.55 90)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 122.682 59.69 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1634,7 +1634,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 146.05 82.55 0)
+			(at 124.46 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1645,7 +1645,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 146.05 82.55 0)
+			(at 124.46 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1656,14 +1656,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "f557d222-261a-4268-9864-850bd6666ae1")
+			(uuid "6673dfec-c262-40ab-8b0b-dd75cf372272")
 		)
 		(pin "2"
-			(uuid "f0210432-9fb1-489b-b286-3b68eca38b1b")
+			(uuid "5b7e9e3b-0aa7-413a-8755-e6bcb458f848")
 		)
 		(instances
 			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/59c7db53-5f38-4347-9642-e6c98087e7b2"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
 					(reference "R9")
 					(unit 1)
 				)

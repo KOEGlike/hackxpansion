@@ -1,0 +1,140 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "b8a1fd98-aa98-4d0b-9dce-339e83b2fa83")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 119.38 87.63)
+		(size 16.51 7.62)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "610ddd8b-739b-4a86-9525-a7906a66d530")
+		(property "Sheetname" "Module Bay 2"
+			(at 119.38 86.9184 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "module.kicad_sch"
+			(at 119.38 95.8346 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "{DET}" output
+			(at 135.89 90.17 0)
+			(uuid "77109b2e-13d3-4ec0-9368-f8e0d8d27ece")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "{GPIO_BANK}" bidirectional
+			(at 119.38 92.71 180)
+			(uuid "0e7cb030-f0b6-49b5-a0d3-a4991ec0341a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/7b3174ee-89a2-4fc3-aea9-d162748ee587"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 119.38 101.6)
+		(size 16.51 7.62)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "a7eb6b5f-2a95-4366-b8d6-ec3bf3753c9e")
+		(property "Sheetname" "Module Bay 3"
+			(at 119.38 100.8884 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "module.kicad_sch"
+			(at 119.38 109.8046 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "{DET}" output
+			(at 135.89 104.14 0)
+			(uuid "76662984-781f-4272-925f-ec6500ff1390")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "{GPIO_BANK}" bidirectional
+			(at 119.38 106.68 180)
+			(uuid "0245ec22-cc79-47d6-b9d8-5012150022a0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/7b3174ee-89a2-4fc3-aea9-d162748ee587"
+					(page "7")
+				)
+			)
+		)
+	)
+)
