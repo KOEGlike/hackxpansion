@@ -2074,6 +2074,28 @@
 			(embedded_fonts no)
 		)
 	)
+	(rectangle
+		(start 16.51 92.71)
+		(end 88.9 132.08)
+		(stroke
+			(width 0.2032)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a68be33c-4bbd-4eff-b652-7413d81c27ab")
+	)
+	(text "On/Off Switch"
+		(exclude_from_sim no)
+		(at 24.384 94.996 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "ef8d436d-9cd6-4ce9-ac12-19274c861c94")
+	)
 	(junction
 		(at 107.95 76.2)
 		(diameter 0)
@@ -4847,7 +4869,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 77.47 125.222 0)
+			(at 78.486 124.968 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

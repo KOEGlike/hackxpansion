@@ -3294,6 +3294,30 @@
 			(embedded_fonts no)
 		)
 	)
+	(rectangle
+		(start 189.23 13.97)
+		(end 243.84 44.45)
+		(stroke
+			(width 0.2032)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "1b1b09c4-ab2f-4dbb-b7da-260a84c13297")
+	)
+	(rectangle
+		(start 13.97 167.64)
+		(end 44.45 196.85)
+		(stroke
+			(width 0.2032)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "6ccfc214-2077-40bd-9605-b53690bfcd95")
+	)
 	(circle
 		(center 49.53 62.865)
 		(radius 0.635)
@@ -3338,6 +3362,16 @@
 		)
 		(uuid "4a9abe42-cf44-45e9-a01e-52135e85b8db")
 	)
+	(text "Buttons"
+		(exclude_from_sim no)
+		(at 193.802 16.256 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "763ffd0d-cc78-4c77-8198-48cfbced685a")
+	)
 	(text "i2c1, spi0, uart0"
 		(exclude_from_sim no)
 		(at 219.71 116.078 0)
@@ -3347,6 +3381,16 @@
 			)
 		)
 		(uuid "c5f7ab16-730e-43e6-a4bd-b866dbc05dc4")
+	)
+	(text "SWD Connector"
+		(exclude_from_sim no)
+		(at 22.098 169.926 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "d662dd40-373e-4e70-bdbd-1a7d29da4eb5")
 	)
 	(junction
 		(at 99.06 29.21)
@@ -9109,6 +9153,7 @@
 		)
 		(property "Value" "Conn_01x03_MountingPin"
 			(at 36.83 178.1555 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

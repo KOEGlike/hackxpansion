@@ -5,6 +5,50 @@
 	(uuid "aaf5804d-3f78-442b-969e-39faa388db94")
 	(paper "A5")
 	(lib_symbols)
+	(rectangle
+		(start 26.67 45.72)
+		(end 99.06 85.09)
+		(stroke
+			(width 0.2032)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4568c273-b730-4634-bf41-61002f5f8f92")
+	)
+	(rectangle
+		(start 100.33 45.72)
+		(end 167.64 85.09)
+		(stroke
+			(width 0.2032)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "9fe66f42-dc32-4345-b969-12d28da3eee1")
+	)
+	(text "Main PCB"
+		(exclude_from_sim no)
+		(at 32.258 48.006 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "741e75b1-4f7f-4565-8911-835651cc217a")
+	)
+	(text "Daughter PCB"
+		(exclude_from_sim no)
+		(at 108.204 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "927351c5-769d-4b3e-8a92-b25c8f54a076")
+	)
 	(bus
 		(pts
 			(xy 54.61 68.58) (xy 68.58 68.58)
