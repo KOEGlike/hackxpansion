@@ -1569,7 +1569,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c9d6890b-7502-45d1-8fd6-3e46102608e2")
-		(property "Reference" "J3"
+		(property "Reference" "J2"
 			(at 90.17 39.37 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1681,7 +1681,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05"
-					(reference "J3")
+					(reference "J2")
 					(unit 1)
 				)
 			)

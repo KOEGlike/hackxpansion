@@ -3034,7 +3034,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "0f376df1-e918-4105-a7ac-f5444fffe66c")
-		(property "Reference" "C93"
+		(property "Reference" "C24"
 			(at 172.974 64.008 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3107,7 +3107,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "C93")
+					(reference "C24")
 					(unit 1)
 				)
 			)
@@ -3116,7 +3116,6 @@
 	(symbol
 		(lib_id "Device:R_Small")
 		(at 34.29 101.6 0)
-		(mirror y)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3124,9 +3123,8 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "155d9bfd-4edd-4e74-9a3e-d99a580d692c")
-		(property "Reference" "R16"
+		(property "Reference" "R15"
 			(at 31.75 100.3299 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3134,7 +3132,7 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Value" "100k"
@@ -3145,7 +3143,7 @@
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
@@ -3210,7 +3208,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "R16")
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -3227,7 +3225,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "169b74e8-6502-482a-ac18-e7484b4d6e00")
-		(property "Reference" "C88"
+		(property "Reference" "C21"
 			(at 40.386 62.738 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3300,7 +3298,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "C88")
+					(reference "C21")
 					(unit 1)
 				)
 			)
@@ -3317,7 +3315,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "1b12f1c1-8bdd-4984-9543-202574a253df")
-		(property "Reference" "R30"
+		(property "Reference" "R23"
 			(at 50.038 71.374 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3392,7 +3390,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "R30")
+					(reference "R23")
 					(unit 1)
 				)
 			)
@@ -3410,7 +3408,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "2b81d7d3-0a61-4734-9d84-bad2389820ae")
-		(property "Reference" "R35"
+		(property "Reference" "R25"
 			(at 104.902 66.294 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3485,7 +3483,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "R35")
+					(reference "R25")
 					(unit 1)
 				)
 			)
@@ -3502,7 +3500,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "32ae1f89-90d1-4cd9-9678-36a2cc827f83")
-		(property "Reference" "R28"
+		(property "Reference" "R22"
 			(at 58.928 71.374 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3577,7 +3575,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "R28")
+					(reference "R22")
 					(unit 1)
 				)
 			)
@@ -3834,7 +3832,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "85d5abee-4e89-4df5-9859-fe42b5c7db22")
-		(property "Reference" "U12"
+		(property "Reference" "U7"
 			(at 83.4233 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3955,7 +3953,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "U12")
+					(reference "U7")
 					(unit 1)
 				)
 			)
@@ -3973,7 +3971,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "86676f68-dba1-470d-851f-5349ad877c9b")
-		(property "Reference" "C92"
+		(property "Reference" "C23"
 			(at 148.844 64.008 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4046,7 +4044,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "C92")
+					(reference "C23")
 					(unit 1)
 				)
 			)
@@ -4064,7 +4062,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8ebf7d80-1430-4eab-8e9f-658151d37dc5")
-		(property "Reference" "U7"
+		(property "Reference" "U5"
 			(at 156.21 41.91 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4135,7 +4133,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "U7")
+					(reference "U5")
 					(unit 1)
 				)
 			)
@@ -4153,7 +4151,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9382b13f-65ff-4399-aca6-0a95ac23cbb5")
-		(property "Reference" "R34"
+		(property "Reference" "R24"
 			(at 113.792 66.294 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4228,7 +4226,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "R34")
+					(reference "R24")
 					(unit 1)
 				)
 			)
@@ -4426,7 +4424,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "bb8196b9-7fdf-40c4-a3cf-6436e251dc4d")
-		(property "Reference" "SW25"
+		(property "Reference" "SW3"
 			(at 43.18 99.06 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4511,7 +4509,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "SW25")
+					(reference "SW3")
 					(unit 1)
 				)
 			)
@@ -4766,7 +4764,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "f185d03a-5e9f-473b-891e-00bb117920f1")
-		(property "Reference" "C90"
+		(property "Reference" "C22"
 			(at 123.444 64.008 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4839,7 +4837,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7"
-					(reference "C90")
+					(reference "C22")
 					(unit 1)
 				)
 			)

@@ -1034,7 +1034,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/5128c8bf-7fd5-4142-8f5c-357a729d9a97"
-					(reference "CN7")
+					(reference "CN3")
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/79f7f22b-c2ab-42e1-a34f-927e722d2621"
@@ -1042,11 +1042,11 @@
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/a303a5eb-7273-4dfa-a166-817b9294c5a4"
-					(reference "CN8")
+					(reference "CN4")
 					(unit 1)
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/b4afcaf7-a1cb-4e89-a612-234ae7735c35"
-					(reference "CN6")
+					(reference "CN2")
 					(unit 1)
 				)
 			)
