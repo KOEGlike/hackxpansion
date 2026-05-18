@@ -730,7 +730,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "FPC1,D1,BT1,#PWR1-53,#PWR65,#PWR67,C1-20,C88,C90,C92-93,J1,J3,IC1,JP1-2,L1,Q1-2,R1-21,R28,R30,R34-35,SW1-2,SW25,U1-5,U7,U12,Y1",
+    "used_designators": "#PWR95-96",
     "variants": []
   },
   "sheets": [
@@ -755,12 +755,8 @@
       "Module Bay 1"
     ],
     [
-      "610ddd8b-739b-4a86-9525-a7906a66d530",
-      "Module Bay 2"
-    ],
-    [
-      "a7eb6b5f-2a95-4366-b8d6-ec3bf3753c9e",
-      "Module Bay 3"
+      "3ee99963-5fb2-4fd0-b832-3d641b7ff03c",
+      "Daughter Connector Daughter"
     ],
     [
       "6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7",
@@ -784,7 +780,15 @@
     ],
     [
       "5128c8bf-7fd5-4142-8f5c-357a729d9a97",
-      "Daughter Connector"
+      "Daughter Connector Main"
+    ],
+    [
+      "0547b68d-d760-4d9c-a3c3-9a4130f5ea65",
+      "Module Bay 2"
+    ],
+    [
+      "82bcf865-3cc6-4dae-b757-27ac9efd6517",
+      "Module Bay 3"
     ]
   ],
   "text_variables": {},

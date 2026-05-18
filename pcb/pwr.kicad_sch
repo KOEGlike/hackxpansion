@@ -1820,7 +1820,7 @@
 			(embedded_fonts no)
 		)
 		(symbol "power:GND"
-			(power global)
+			(power local)
 			(pin_numbers
 				(hide yes)
 			)
@@ -1828,12 +1828,12 @@
 				(offset 0)
 				(hide yes)
 			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
+			(exclude_from_sim yes)
+			(in_bom no)
+			(on_board no)
+			(in_pos_files no)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "#PWR"
+			(property "Reference" "#PWR050"
 				(at 0 -6.35 0)
 				(show_name no)
 				(do_not_autoplace no)

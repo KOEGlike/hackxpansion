@@ -3,11 +3,237 @@
 	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "aaf5804d-3f78-442b-969e-39faa388db94")
-	(paper "A4")
+	(paper "A5")
 	(lib_symbols)
+	(bus
+		(pts
+			(xy 54.61 68.58) (xy 68.58 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1d3a6dfd-360a-418b-8f14-389370284fcf")
+	)
+	(wire
+		(pts
+			(xy 123.19 57.15) (xy 140.97 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "206e809b-8732-462b-9dbd-47aa5b1630d5")
+	)
+	(bus
+		(pts
+			(xy 123.19 68.58) (xy 140.97 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "460cd662-bfe8-4fc2-a1bc-1917dd7fa47f")
+	)
+	(bus
+		(pts
+			(xy 123.19 71.12) (xy 140.97 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e486c2d-7fc6-45f7-9fd6-f5e2f6ed1776")
+	)
+	(bus
+		(pts
+			(xy 123.19 60.96) (xy 140.97 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5674f1c5-ff9d-4839-ae80-7cbd98724346")
+	)
+	(bus
+		(pts
+			(xy 123.19 63.5) (xy 140.97 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d19b73f-2d77-4b23-af31-2beb40c6b367")
+	)
+	(bus
+		(pts
+			(xy 54.61 63.5) (xy 68.58 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "84f5a6e7-013e-49cb-9b3f-0b89b0dfcfe8")
+	)
+	(wire
+		(pts
+			(xy 54.61 74.93) (xy 68.58 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "885a4800-8fbc-49b5-9c74-148f5e554f5a")
+	)
+	(bus
+		(pts
+			(xy 54.61 60.96) (xy 68.58 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94aab388-1c77-4729-922d-48ee288456ff")
+	)
+	(wire
+		(pts
+			(xy 123.19 74.93) (xy 140.97 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c2f781cf-443f-4b63-b858-2fa2ea2fc068")
+	)
+	(wire
+		(pts
+			(xy 54.61 57.15) (xy 68.58 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cfde5c65-2d1b-4da7-987e-70943ec91c1c")
+	)
+	(bus
+		(pts
+			(xy 54.61 71.12) (xy 68.58 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d8975c5d-55f2-4c5d-bade-ea0a8bc4ef23")
+	)
 	(sheet
-		(at 68.58 77.47)
-		(size 12.7 3.81)
+		(at 102.87 54.61)
+		(size 20.32 22.86)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "3ee99963-5fb2-4fd0-b832-3d641b7ff03c")
+		(property "Sheetname" "Daughter Connector Daughter"
+			(at 102.87 53.8984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "daughter_conn.kicad_sch"
+			(at 102.87 78.0546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+3V3" input
+			(at 123.19 57.15 0)
+			(uuid "8917fe02-f83b-400b-9b04-bdada9c52230")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "bank2{GPIO_BANK}" bidirectional
+			(at 123.19 60.96 0)
+			(uuid "5cb785d0-f1a8-4016-bcbd-0ae05b798fe4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "bank3{GPIO_BANK}" bidirectional
+			(at 123.19 68.58 0)
+			(uuid "c59cd7e8-6a77-498b-b3ed-b7a513c0fac1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 123.19 74.93 0)
+			(uuid "3658181e-d36b-4ab4-a8ea-dcd474548db2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod2{DET}" bidirectional
+			(at 123.19 63.5 0)
+			(uuid "4deb0cac-0423-43a8-ab48-01bbb70ef73f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod3{DET}" bidirectional
+			(at 123.19 71.12 0)
+			(uuid "fa967bb9-a3d6-470d-877d-c40c205ecc2c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 68.58 54.61)
+		(size 20.32 22.86)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -21,8 +247,8 @@
 			(color 0 0 0 0)
 		)
 		(uuid "5128c8bf-7fd5-4142-8f5c-357a729d9a97")
-		(property "Sheetname" "Daughter Connector"
-			(at 68.58 76.7584 0)
+		(property "Sheetname" "Daughter Connector Main"
+			(at 68.58 53.8984 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -32,8 +258,8 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "daughter_connector.kicad_sch"
-			(at 68.58 81.8646 0)
+		(property "Sheetfile" "daughter_conn.kicad_sch"
+			(at 68.58 78.0546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -41,6 +267,66 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "+3V3" input
+			(at 68.58 57.15 180)
+			(uuid "f6b95d5b-a26e-422d-a494-f373e77d4d21")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "bank2{GPIO_BANK}" bidirectional
+			(at 68.58 60.96 180)
+			(uuid "2b2b30fb-bf3e-4805-b8d0-38804310c9d9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "bank3{GPIO_BANK}" bidirectional
+			(at 68.58 68.58 180)
+			(uuid "6d2c6324-1683-49e8-b2e2-e860ab45d654")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 68.58 74.93 180)
+			(uuid "09940981-e6cc-4754-b3aa-5b60705bb387")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "mod2{DET}" bidirectional
+			(at 68.58 63.5 180)
+			(uuid "11892331-c3a3-44e8-9f5c-a76aca1739ca")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "mod3{DET}" bidirectional
+			(at 68.58 71.12 180)
+			(uuid "9b0e015c-4931-41f2-9d77-c305641a515c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 		(instances
@@ -52,8 +338,8 @@
 		)
 	)
 	(sheet
-		(at 34.925 56.515)
-		(size 18.415 9.525)
+		(at 32.385 54.61)
+		(size 22.225 22.86)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -68,7 +354,7 @@
 		)
 		(uuid "61af021d-ad04-487f-9d02-e2b100ecd1ae")
 		(property "Sheetname" "Main Board"
-			(at 34.925 55.8034 0)
+			(at 32.385 53.8984 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -79,7 +365,7 @@
 			)
 		)
 		(property "Sheetfile" "main.kicad_sch"
-			(at 34.925 66.6246 0)
+			(at 32.385 78.0546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -87,6 +373,66 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "+3V3" input
+			(at 54.61 57.15 0)
+			(uuid "633dc77e-249e-446e-9fd4-49fcfcf91e0e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "bank2{GPIO_BANK}" bidirectional
+			(at 54.61 60.96 0)
+			(uuid "e78d8ced-7c89-43ab-bb0d-b1dcfe41ce8c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "bank3{GPIO_BANK}" bidirectional
+			(at 54.61 68.58 0)
+			(uuid "5c25db4e-d3fb-4336-8d71-c80fb407b3b8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" input
+			(at 54.61 74.93 0)
+			(uuid "39905a31-d3ad-404a-8c8b-497d3e14d1ca")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod2{DET}" input
+			(at 54.61 63.5 0)
+			(uuid "76c1bc53-48d8-475e-943f-33d513cadfc7")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "mod3{DET}" input
+			(at 54.61 71.12 0)
+			(uuid "27feac7a-286a-4f3d-9aa1-c6dcb766e36e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 		(instances
@@ -98,8 +444,8 @@
 		)
 	)
 	(sheet
-		(at 102.87 65.405)
-		(size 12.7 3.81)
+		(at 140.97 54.61)
+		(size 20.32 22.86)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -114,7 +460,7 @@
 		)
 		(uuid "7b3174ee-89a2-4fc3-aea9-d162748ee587")
 		(property "Sheetname" "Daughter Board"
-			(at 102.87 64.6934 0)
+			(at 140.97 53.8984 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -125,7 +471,7 @@
 			)
 		)
 		(property "Sheetfile" "daughter.kicad_sch"
-			(at 102.87 69.7996 0)
+			(at 140.97 78.0546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -133,6 +479,66 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "+3V3" input
+			(at 140.97 57.15 180)
+			(uuid "6abddfc8-61fd-4dc5-bf23-47c6c334fd15")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "bank2{GPIO_BANK}" bidirectional
+			(at 140.97 60.96 180)
+			(uuid "41b6c702-dcc2-49e1-bf74-770383385b04")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "bank3{GPIO_BANK}" bidirectional
+			(at 140.97 68.58 180)
+			(uuid "f4bd3f37-b304-4073-b1f8-b2627f0d5ea2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GND" input
+			(at 140.97 74.93 180)
+			(uuid "2f47b940-56bc-451b-a0a2-78313130ebdb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "mod2{DET}" output
+			(at 140.97 63.5 180)
+			(uuid "a870ff31-81df-4874-93f1-886555a0dfdd")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "mod3{DET}" output
+			(at 140.97 71.12 180)
+			(uuid "acfd35fc-988e-47e8-8490-6ef514648903")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 		(instances
