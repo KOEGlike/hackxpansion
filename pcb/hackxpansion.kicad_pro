@@ -730,7 +730,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "",
+    "used_designators": "CN1-8,#PWR60,#PWR63-64,#PWR79-80,#PWR95-101",
     "variants": []
   },
   "sheets": [
@@ -755,8 +755,12 @@
       "Module Bay 1"
     ],
     [
-      "3ee99963-5fb2-4fd0-b832-3d641b7ff03c",
-      "Daughter Connector Daughter"
+      "79f7f22b-c2ab-42e1-a34f-927e722d2621",
+      "Connector Daughter Mod2"
+    ],
+    [
+      "b4afcaf7-a1cb-4e89-a612-234ae7735c35",
+      "Connector Main Mod3"
     ],
     [
       "6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7",
@@ -780,7 +784,7 @@
     ],
     [
       "5128c8bf-7fd5-4142-8f5c-357a729d9a97",
-      "Daughter Connector Main"
+      "Connector Main Mod2"
     ],
     [
       "0547b68d-d760-4d9c-a3c3-9a4130f5ea65",
@@ -789,6 +793,10 @@
     [
       "82bcf865-3cc6-4dae-b757-27ac9efd6517",
       "Module Bay 3"
+    ],
+    [
+      "a303a5eb-7273-4dfa-a166-817b9294c5a4",
+      "Connector Daughter Mod3"
     ]
   ],
   "text_variables": {},
