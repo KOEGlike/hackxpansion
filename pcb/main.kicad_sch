@@ -157,8 +157,8 @@
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "BT"
-				(at 2.54 2.54 0)
+			(property "Reference" "BT1"
+				(at 3.81 3.1116 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -169,7 +169,7 @@
 				)
 			)
 			(property "Value" "Battery_Cell"
-				(at 2.54 0 0)
+				(at 3.81 0.5716 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -179,7 +179,7 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal"
 				(at 0 1.524 90)
 				(show_name no)
 				(do_not_autoplace no)
@@ -235,6 +235,17 @@
 				)
 			)
 			(property "Sim.Pins" "1=+ 2=-"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C295747"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -330,9 +341,9 @@
 			)
 			(symbol "Battery_Cell_1_1"
 				(pin passive line
-					(at 0 5.08 270)
+					(at 0 -2.54 90)
 					(length 2.54)
-					(name "+"
+					(name "-"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -348,9 +359,9 @@
 					)
 				)
 				(pin passive line
-					(at 0 -2.54 90)
+					(at 0 5.08 270)
 					(length 2.54)
-					(name "-"
+					(name "+"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2217,7 +2228,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal"
+		(property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal"
 			(at 107.315 121.666 90)
 			(hide yes)
 			(show_name no)
