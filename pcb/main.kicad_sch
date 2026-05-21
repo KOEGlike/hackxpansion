@@ -495,6 +495,12 @@
 			(embedded_fonts no)
 		)
 	)
+	(junction
+		(at 102.87 127)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "dda3163d-9b4c-47ca-94fa-22135ace68c7")
+	)
 	(wire
 		(pts
 			(xy 178.435 92.71) (xy 178.435 91.44)
@@ -517,7 +523,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.315 116.84) (xy 111.125 116.84)
+			(xy 102.87 116.84) (xy 110.49 116.84)
 		)
 		(stroke
 			(width 0)
@@ -534,6 +540,16 @@
 			(type default)
 		)
 		(uuid "23f441b3-79c7-402d-88a0-bce860977d39")
+	)
+	(wire
+		(pts
+			(xy 110.49 120.65) (xy 107.95 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "27d11d1a-8bf5-4399-8f55-5c44c1aa5a47")
 	)
 	(wire
 		(pts
@@ -557,7 +573,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.315 125.73) (xy 107.315 127)
+			(xy 102.87 125.73) (xy 102.87 127)
 		)
 		(stroke
 			(width 0)
@@ -657,7 +673,7 @@
 	)
 	(wire
 		(pts
-			(xy 92.71 111.76) (xy 111.125 111.76)
+			(xy 92.71 111.76) (xy 110.49 111.76)
 		)
 		(stroke
 			(width 0)
@@ -667,7 +683,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.315 116.84) (xy 107.315 118.11)
+			(xy 102.87 116.84) (xy 102.87 118.11)
 		)
 		(stroke
 			(width 0)
@@ -767,6 +783,16 @@
 	)
 	(wire
 		(pts
+			(xy 107.95 127) (xy 102.87 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9d900d7e-2103-4fd6-858f-224dbe3ba58f")
+	)
+	(wire
+		(pts
 			(xy 146.05 59.69) (xy 181.61 59.69)
 		)
 		(stroke
@@ -834,6 +860,16 @@
 			(type default)
 		)
 		(uuid "b30d8631-a5b9-4ec8-b229-f9a9709b8cc5")
+	)
+	(wire
+		(pts
+			(xy 107.95 120.65) (xy 107.95 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b39dbf4d-8bb8-454b-a062-e464d0927856")
 	)
 	(bus
 		(pts
@@ -1886,7 +1922,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 107.315 127 0)
+		(at 102.87 127 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1896,7 +1932,7 @@
 		(dnp no)
 		(uuid "b6c8e99a-a220-42bc-9d35-8510b8336876")
 		(property "Reference" "#PWR050"
-			(at 107.315 133.35 0)
+			(at 102.87 133.35 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1907,7 +1943,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 107.315 131.572 0)
+			(at 102.87 131.572 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1917,7 +1953,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 107.315 127 0)
+			(at 102.87 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1928,7 +1964,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.315 127 0)
+			(at 102.87 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1939,7 +1975,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 107.315 127 0)
+			(at 102.87 127 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2196,7 +2232,7 @@
 	)
 	(symbol
 		(lib_id "Device:Battery_Cell")
-		(at 107.315 123.19 0)
+		(at 102.87 123.19 0)
 		(mirror y)
 		(unit 1)
 		(body_style 1)
@@ -2207,7 +2243,7 @@
 		(dnp no)
 		(uuid "fd7cc77a-a0af-455f-86d6-8051e3f862cc")
 		(property "Reference" "BT1"
-			(at 103.505 120.0784 0)
+			(at 99.06 120.0784 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2218,7 +2254,7 @@
 			)
 		)
 		(property "Value" "Battery_Cell"
-			(at 103.505 122.6184 0)
+			(at 99.06 122.6184 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2229,7 +2265,7 @@
 			)
 		)
 		(property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal"
-			(at 107.315 121.666 90)
+			(at 102.87 121.666 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2240,7 +2276,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.315 121.666 90)
+			(at 102.87 121.666 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2251,7 +2287,7 @@
 			)
 		)
 		(property "Description" "Single-cell battery"
-			(at 107.315 123.19 0)
+			(at 102.87 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2262,7 +2298,7 @@
 			)
 		)
 		(property "Sim.Device" "V"
-			(at 107.315 123.19 0)
+			(at 102.87 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2273,7 +2309,7 @@
 			)
 		)
 		(property "Sim.Type" "DC"
-			(at 107.315 123.19 0)
+			(at 102.87 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2284,7 +2320,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=+ 2=-"
-			(at 107.315 123.19 0)
+			(at 102.87 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2295,7 +2331,7 @@
 			)
 		)
 		(property "LCSC" "C295747"
-			(at 107.315 123.19 0)
+			(at 102.87 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2639,8 +2675,8 @@
 		)
 	)
 	(sheet
-		(at 111.125 109.855)
-		(size 12.7 8.255)
+		(at 110.49 109.855)
+		(size 13.335 12.065)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -2655,7 +2691,7 @@
 		)
 		(uuid "6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7")
 		(property "Sheetname" "Power"
-			(at 111.125 109.1434 0)
+			(at 110.49 109.1434 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2666,7 +2702,7 @@
 			)
 		)
 		(property "Sheetfile" "pwr.kicad_sch"
-			(at 111.125 118.6946 0)
+			(at 110.49 122.5046 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2677,7 +2713,7 @@
 			)
 		)
 		(pin "+BATT" input
-			(at 111.125 116.84 180)
+			(at 110.49 116.84 180)
 			(uuid "e9fb554c-8f29-428f-b98e-38a8d6f163f6")
 			(effects
 				(font
@@ -2687,7 +2723,7 @@
 			)
 		)
 		(pin "VBUS" input
-			(at 111.125 111.76 180)
+			(at 110.49 111.76 180)
 			(uuid "df3082ba-5cc6-43c2-90aa-e838ccbb820f")
 			(effects
 				(font
@@ -2704,6 +2740,16 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+			)
+		)
+		(pin "GND" input
+			(at 110.49 120.65 180)
+			(uuid "cd20ed83-6995-4325-9ee2-240b7fe4ed1c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 		(instances
