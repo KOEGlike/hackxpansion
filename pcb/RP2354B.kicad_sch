@@ -8801,7 +8801,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+		(property "Footprint" "RP2354B_MINIMAL:C_0402_1005Metric_small_pads"
 			(at 32.7152 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -11413,7 +11413,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+		(property "Footprint" "RP2354B_MINIMAL:C_0402_1005Metric_small_pads"
 			(at 41.6052 69.85 0)
 			(hide yes)
 			(show_name no)
