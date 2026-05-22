@@ -197,6 +197,7 @@
         0.0,
         0.15,
         0.2,
+        0.4,
         0.6
       ],
       "tuning_pattern_settings": {
@@ -229,6 +230,10 @@
         {
           "diameter": 0.0,
           "drill": 0.0
+        },
+        {
+          "diameter": 0.6,
+          "drill": 0.3
         }
       ],
       "zones_allow_external_fillets": false
@@ -517,7 +522,7 @@
         "clearance": 0.15,
         "name": "Microcontroller",
         "pcb_color": "rgb(0, 194, 0)",
-        "priority": 1,
+        "priority": 2,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.15,
         "tuning_profile": "",
@@ -528,12 +533,23 @@
         "clearance": 0.15,
         "name": "Power",
         "pcb_color": "rgb(194, 0, 0)",
-        "priority": 0,
+        "priority": 1,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.4,
         "tuning_profile": "",
         "via_diameter": 0.6,
         "via_drill": 0.3
+      },
+      {
+        "clearance": 0.15,
+        "diff_pair_gap": 0.15,
+        "diff_pair_width": 0.1354,
+        "name": "USB",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.1354,
+        "tuning_profile": ""
       }
     ],
     "meta": {
@@ -544,7 +560,7 @@
     "netclass_patterns": [
       {
         "netclass": "Microcontroller",
-        "pattern": "/RP2354B/*"
+        "pattern": "/Main Board/RP2354B/*"
       },
       {
         "netclass": "Microcontroller",
@@ -557,6 +573,30 @@
       {
         "netclass": "Power",
         "pattern": "GND"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "*D-"
+      },
+      {
+        "netclass": "USB",
+        "pattern": "*D+"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "/+3V3"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "*REG-OUT"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "*1V1"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "*BATT"
       }
     ]
   },

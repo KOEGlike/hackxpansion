@@ -2115,12 +2115,6 @@
 		(uuid "2522fe2e-a194-484f-a50e-0ee8297591ed")
 	)
 	(junction
-		(at 99.06 48.26)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "39114542-2cb6-4b31-adc0-a6a49b46b714")
-	)
-	(junction
 		(at 167.64 48.26)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2247,16 +2241,6 @@
 			(type default)
 		)
 		(uuid "14e96158-8d52-4978-816c-7ff83a79429f")
-	)
-	(wire
-		(pts
-			(xy 99.06 48.26) (xy 143.51 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1922bafd-3a96-4216-aa6c-0f780bff5322")
 	)
 	(wire
 		(pts
@@ -2400,7 +2384,7 @@
 	)
 	(wire
 		(pts
-			(xy 95.25 71.12) (xy 99.06 71.12)
+			(xy 95.25 72.39) (xy 99.06 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2520,7 +2504,7 @@
 	)
 	(wire
 		(pts
-			(xy 95.25 68.58) (xy 95.25 71.12)
+			(xy 95.25 68.58) (xy 95.25 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2660,7 +2644,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 55.88) (xy 99.06 63.5)
+			(xy 99.06 59.69) (xy 99.06 64.77)
 		)
 		(stroke
 			(width 0)
@@ -2677,6 +2661,16 @@
 			(type default)
 		)
 		(uuid "b4b9b013-8f7b-4664-93fb-d176804fda74")
+	)
+	(wire
+		(pts
+			(xy 99.06 50.8) (xy 101.6 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba821f9e-d1f9-48e4-b89b-a20cd8182be1")
 	)
 	(wire
 		(pts
@@ -2700,6 +2694,16 @@
 	)
 	(wire
 		(pts
+			(xy 99.06 50.8) (xy 99.06 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bef16632-cb41-4e62-b450-0169074a7eb6")
+	)
+	(wire
+		(pts
 			(xy 73.66 113.03) (xy 73.66 114.3)
 		)
 		(stroke
@@ -2710,7 +2714,7 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 48.26) (xy 99.06 48.26)
+			(xy 93.98 48.26) (xy 143.51 48.26)
 		)
 		(stroke
 			(width 0)
@@ -2899,6 +2903,17 @@
 			(justify right)
 		)
 		(uuid "1d945708-b539-4afe-8831-a40e33b2d6e4")
+	)
+	(hierarchical_label "+3V3"
+		(shape output)
+		(at 101.6 50.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "37f4b118-df96-4e0b-a2de-6818b5bf9432")
 	)
 	(hierarchical_label "+BATT"
 		(shape input)
@@ -3496,7 +3511,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 99.06 67.31 0)
+		(at 99.06 68.58 0)
 		(mirror y)
 		(unit 1)
 		(body_style 1)
@@ -3507,7 +3522,7 @@
 		(dnp no)
 		(uuid "2b81d7d3-0a61-4734-9d84-bad2389820ae")
 		(property "Reference" "R25"
-			(at 104.902 66.294 0)
+			(at 104.902 67.564 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3518,7 +3533,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 104.902 68.834 0)
+			(at 104.902 70.104 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3529,7 +3544,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 100.838 67.31 90)
+			(at 100.838 68.58 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3540,7 +3555,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 99.06 67.31 0)
+			(at 99.06 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3551,7 +3566,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 99.06 67.31 0)
+			(at 99.06 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3562,7 +3577,7 @@
 			)
 		)
 		(property "LCSC" "C25744"
-			(at 99.06 67.31 0)
+			(at 99.06 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4332,7 +4347,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 99.06 52.07 90)
+		(at 99.06 55.88 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4343,7 +4358,7 @@
 		(fields_autoplaced yes)
 		(uuid "a142cfb2-2f74-4986-bc77-430fa23faefc")
 		(property "Reference" "D1"
-			(at 102.87 52.3874 90)
+			(at 102.87 56.1974 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4354,7 +4369,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 102.87 54.9274 90)
+			(at 102.87 58.7374 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4365,7 +4380,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 99.06 52.07 0)
+			(at 99.06 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4376,7 +4391,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 99.06 52.07 0)
+			(at 99.06 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4387,7 +4402,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 99.06 52.07 0)
+			(at 99.06 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4398,7 +4413,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 99.06 52.07 0)
+			(at 99.06 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4409,7 +4424,7 @@
 			)
 		)
 		(property "LCSC" "C965808"
-			(at 99.06 52.07 90)
+			(at 99.06 55.88 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

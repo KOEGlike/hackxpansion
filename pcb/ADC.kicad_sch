@@ -1085,12 +1085,6 @@
 		(color 0 0 0 0)
 		(uuid "a59ea7b9-e97c-4b41-93e4-89d940146b56")
 	)
-	(junction
-		(at 130.81 69.85)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ace19bfc-1071-43fe-8c95-5be393573639")
-	)
 	(bus_entry
 		(at 73.66 58.42)
 		(size 2.54 2.54)
@@ -1323,16 +1317,6 @@
 	)
 	(wire
 		(pts
-			(xy 147.32 69.85) (xy 146.05 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "651a2384-77ad-48d4-bfa2-8eda49c32cf9")
-	)
-	(wire
-		(pts
 			(xy 177.8 36.83) (xy 179.07 36.83)
 		)
 		(stroke
@@ -1380,16 +1364,6 @@
 			(type default)
 		)
 		(uuid "86313249-3644-4d64-af0c-420ab2ed5c5e")
-	)
-	(wire
-		(pts
-			(xy 130.81 69.85) (xy 135.89 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "87bc23cf-4967-4884-a603-b85104ac2de9")
 	)
 	(bus
 		(pts
@@ -1570,16 +1544,6 @@
 			(type default)
 		)
 		(uuid "e5a1e83e-7509-4266-abea-384b198a5676")
-	)
-	(wire
-		(pts
-			(xy 147.32 71.12) (xy 147.32 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e8e4cb3a-f3b3-443b-848c-f57e900f9f59")
 	)
 	(wire
 		(pts
@@ -2106,83 +2070,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 147.32 71.12 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "5bacdf9a-4a65-4ad5-b39e-01711752b432")
-		(property "Reference" "#PWR021"
-			(at 147.32 77.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 151.13 72.898 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 147.32 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 147.32 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 147.32 71.12 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "769ca42d-b24d-4916-95b6-f56aa72fd489")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
-					(reference "#PWR021")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 105.41 36.83 0)
 		(unit 1)
@@ -2546,86 +2433,6 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
 					(reference "#PWR02")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 140.97 69.85 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "946b9523-148b-4005-bd9c-5c0c40096572")
-		(property "Reference" "JP1"
-			(at 140.97 67.31 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "SolderJumper_2_Open"
-			(at 140.97 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
-			(at 140.97 69.85 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 140.97 77.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 140.97 74.93 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "6125127b-f2d5-47c1-a5ef-52af07552037")
-		)
-		(pin "1"
-			(uuid "658bf9e5-7608-4ab5-92ca-61aaacaf6155")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
-					(reference "JP1")
 					(unit 1)
 				)
 			)
@@ -3035,7 +2842,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "f8cdbaf0-0765-41e1-9cda-adfe9e2f9da8")
-		(property "Reference" "JP2"
+		(property "Reference" "JP1"
 			(at 133.858 75.184 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3098,7 +2905,7 @@
 		(instances
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
-					(reference "JP2")
+					(reference "JP1")
 					(unit 1)
 				)
 			)
