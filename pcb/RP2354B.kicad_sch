@@ -6682,7 +6682,7 @@
 		)
 		(uuid "ffb28296-abf5-49c5-b694-92fd570d24d1")
 	)
-	(label "bank2.GPIO8"
+	(label "bank1.GPIO8"
 		(at 80.01 146.05 0)
 		(effects
 			(font
@@ -6692,7 +6692,7 @@
 		)
 		(uuid "0309b5d1-afbe-4366-aa98-57315682b1a8")
 	)
-	(label "bank3.GPIO7"
+	(label "bank0.GPIO7"
 		(at 80.01 148.59 0)
 		(effects
 			(font
@@ -6702,7 +6702,7 @@
 		)
 		(uuid "0375adbc-68df-418b-b427-4c6e446e4c2b")
 	)
-	(label "bank3.GPIO2"
+	(label "bank0.GPIO2"
 		(at 162.56 128.27 180)
 		(effects
 			(font
@@ -6712,7 +6712,7 @@
 		)
 		(uuid "04d500eb-4b09-4754-91db-7556ba67191a")
 	)
-	(label "bank2.GPIO0"
+	(label "bank1.GPIO0"
 		(at 162.56 100.33 180)
 		(effects
 			(font
@@ -6722,7 +6722,7 @@
 		)
 		(uuid "06d2d6b0-6f5b-44d9-8cea-44e0dacf77d0")
 	)
-	(label "bank2.GPIO5"
+	(label "bank1.GPIO5"
 		(at 162.56 123.19 180)
 		(effects
 			(font
@@ -6732,7 +6732,7 @@
 		)
 		(uuid "104c652a-a645-4225-9e4a-a12767a92fa4")
 	)
-	(label "bank0.GPIO3"
+	(label "bank2.GPIO3"
 		(at 193.04 105.41 0)
 		(effects
 			(font
@@ -6742,7 +6742,7 @@
 		)
 		(uuid "10e1bcb6-5d35-4078-9a4d-5dd13dd19342")
 	)
-	(label "bank0.GPIO8"
+	(label "bank2.GPIO8"
 		(at 193.04 86.36 0)
 		(effects
 			(font
@@ -6752,7 +6752,7 @@
 		)
 		(uuid "112cb892-cb01-412f-b8f5-1430150108e8")
 	)
-	(label "bank1.GPIO9"
+	(label "bank3.GPIO9"
 		(at 193.04 121.92 0)
 		(effects
 			(font
@@ -6762,7 +6762,7 @@
 		)
 		(uuid "178534c3-024d-481b-a54c-2a52daeb19cc")
 	)
-	(label "bank3.GPIO7"
+	(label "bank0.GPIO7"
 		(at 233.68 129.54 0)
 		(effects
 			(font
@@ -6772,7 +6772,7 @@
 		)
 		(uuid "19fde1bc-fb5c-4f11-b262-5bb22ecc9025")
 	)
-	(label "bank2.GPIO2"
+	(label "bank1.GPIO2"
 		(at 162.56 107.95 180)
 		(effects
 			(font
@@ -6782,7 +6782,7 @@
 		)
 		(uuid "1e62de7a-7349-4ed0-bd35-fd21f66414a0")
 	)
-	(label "bank3.GPIO0"
+	(label "bank0.GPIO0"
 		(at 162.56 146.05 180)
 		(effects
 			(font
@@ -6792,7 +6792,7 @@
 		)
 		(uuid "1fe02c03-1e83-412f-aa40-0c7e0f49591d")
 	)
-	(label "bank1.GPIO6"
+	(label "bank3.GPIO6"
 		(at 193.04 133.35 0)
 		(effects
 			(font
@@ -6802,7 +6802,7 @@
 		)
 		(uuid "2210cea8-060a-4121-b0dd-9ca95ec7c155")
 	)
-	(label "bank3.GPIO0"
+	(label "bank0.GPIO0"
 		(at 233.68 156.21 0)
 		(effects
 			(font
@@ -6812,7 +6812,7 @@
 		)
 		(uuid "22688046-2b5c-4e12-9ed0-116ee19c9967")
 	)
-	(label "bank2.GPIO9"
+	(label "bank1.GPIO9"
 		(at 233.68 82.55 0)
 		(effects
 			(font
@@ -6822,7 +6822,7 @@
 		)
 		(uuid "26ae0125-ea85-40c1-ba6e-8011f1728938")
 	)
-	(label "bank1.GPIO4"
+	(label "bank3.GPIO4"
 		(at 193.04 140.97 0)
 		(effects
 			(font
@@ -6832,7 +6832,7 @@
 		)
 		(uuid "2783f913-fb55-451d-98ca-09b9b91ab342")
 	)
-	(label "bank0.GPIO2"
+	(label "bank2.GPIO2"
 		(at 193.04 109.22 0)
 		(effects
 			(font
@@ -6842,7 +6842,7 @@
 		)
 		(uuid "27ec11d5-2942-48ee-a394-5aba286fc312")
 	)
-	(label "bank2.GPIO1"
+	(label "bank1.GPIO1"
 		(at 233.68 113.03 0)
 		(effects
 			(font
@@ -6852,7 +6852,7 @@
 		)
 		(uuid "2869f3f3-cde6-4c7f-8876-257f24e0114c")
 	)
-	(label "bank1.GPIO3"
+	(label "bank3.GPIO3"
 		(at 193.04 144.78 0)
 		(effects
 			(font
@@ -6862,7 +6862,7 @@
 		)
 		(uuid "351bc255-307a-4793-b10a-cb1d45696733")
 	)
-	(label "bank1.GPIO7"
+	(label "bank3.GPIO7"
 		(at 80.01 138.43 0)
 		(effects
 			(font
@@ -6872,7 +6872,7 @@
 		)
 		(uuid "360618e4-7b10-404c-a5c7-0d6c22fc2b2e")
 	)
-	(label "bank3.GPIO8"
+	(label "bank0.GPIO8"
 		(at 80.01 151.13 0)
 		(effects
 			(font
@@ -6882,7 +6882,7 @@
 		)
 		(uuid "391a56e5-5228-4e8f-abdd-4efc9237e5a4")
 	)
-	(label "bank1.GPIO4"
+	(label "bank3.GPIO4"
 		(at 162.56 80.01 180)
 		(effects
 			(font
@@ -6892,7 +6892,7 @@
 		)
 		(uuid "3f6fb5fc-60a3-4953-9627-236ba253ab3d")
 	)
-	(label "bank3.GPIO5"
+	(label "bank0.GPIO5"
 		(at 233.68 137.16 0)
 		(effects
 			(font
@@ -6902,7 +6902,7 @@
 		)
 		(uuid "41082f94-65a1-44be-b0ed-3e4f92177d6e")
 	)
-	(label "bank1.GPIO1"
+	(label "bank3.GPIO1"
 		(at 162.56 92.71 180)
 		(effects
 			(font
@@ -6912,7 +6912,7 @@
 		)
 		(uuid "48b546b3-03d3-46e9-845d-2663d9d149ef")
 	)
-	(label "bank1.GPIO5"
+	(label "bank3.GPIO5"
 		(at 193.04 137.16 0)
 		(effects
 			(font
@@ -6922,7 +6922,7 @@
 		)
 		(uuid "4aa35ed6-cfa9-4707-87b0-eabe3a224246")
 	)
-	(label "bank1.GPIO2"
+	(label "bank3.GPIO2"
 		(at 193.04 148.59 0)
 		(effects
 			(font
@@ -6932,7 +6932,7 @@
 		)
 		(uuid "4bb28822-7686-49de-9ac1-9f6294be8690")
 	)
-	(label "bank0.GPIO1"
+	(label "bank2.GPIO1"
 		(at 193.04 113.03 0)
 		(effects
 			(font
@@ -6942,7 +6942,7 @@
 		)
 		(uuid "4c718960-f352-4a07-b996-a9dc6e306869")
 	)
-	(label "bank2.GPIO6"
+	(label "bank1.GPIO6"
 		(at 233.68 93.98 0)
 		(effects
 			(font
@@ -6952,7 +6952,7 @@
 		)
 		(uuid "4c7cecd3-4e16-453a-bf39-bd3dd485fbcc")
 	)
-	(label "bank2.GPIO6"
+	(label "bank1.GPIO6"
 		(at 162.56 125.73 180)
 		(effects
 			(font
@@ -6972,7 +6972,7 @@
 		)
 		(uuid "52a73375-e04d-4397-b637-bc7f83875fb3")
 	)
-	(label "bank1.GPIO3"
+	(label "bank3.GPIO3"
 		(at 162.56 82.55 180)
 		(effects
 			(font
@@ -6982,7 +6982,7 @@
 		)
 		(uuid "540561b5-8cd4-46a2-81be-a014b01dbe26")
 	)
-	(label "bank3.GPIO9"
+	(label "bank0.GPIO9"
 		(at 233.68 121.92 0)
 		(effects
 			(font
@@ -6992,7 +6992,7 @@
 		)
 		(uuid "55006ea3-8595-4c62-a9d8-2ece359e81f0")
 	)
-	(label "bank0.GPIO1"
+	(label "bank2.GPIO1"
 		(at 162.56 67.31 180)
 		(effects
 			(font
@@ -7002,7 +7002,7 @@
 		)
 		(uuid "55fb3dab-1a98-4f1d-b91a-bbe67798e14e")
 	)
-	(label "bank0.GPIO5"
+	(label "bank2.GPIO5"
 		(at 193.04 97.79 0)
 		(effects
 			(font
@@ -7012,7 +7012,7 @@
 		)
 		(uuid "5ac30658-21c7-490f-9ead-2b47a1c9cdfe")
 	)
-	(label "bank1.GPIO0"
+	(label "bank3.GPIO0"
 		(at 193.04 156.21 0)
 		(effects
 			(font
@@ -7022,7 +7022,7 @@
 		)
 		(uuid "60c82f61-a3f2-4e2a-bb90-ce9d1bcea775")
 	)
-	(label "bank3.GPIO9"
+	(label "bank0.GPIO9"
 		(at 162.56 151.13 180)
 		(effects
 			(font
@@ -7032,7 +7032,7 @@
 		)
 		(uuid "61b6eca9-d7ca-4413-ba3f-4c450b336c96")
 	)
-	(label "bank3.GPIO8"
+	(label "bank0.GPIO8"
 		(at 233.68 125.73 0)
 		(effects
 			(font
@@ -7052,7 +7052,7 @@
 		)
 		(uuid "667c9436-5024-4d5f-93e2-2e79eb671144")
 	)
-	(label "bank1.GPIO5"
+	(label "bank3.GPIO5"
 		(at 162.56 102.87 180)
 		(effects
 			(font
@@ -7062,7 +7062,7 @@
 		)
 		(uuid "699b13c0-0c0d-4cb7-8f2f-be3a1f47cc70")
 	)
-	(label "bank1.GPIO9"
+	(label "bank3.GPIO9"
 		(at 162.56 95.25 180)
 		(effects
 			(font
@@ -7072,7 +7072,7 @@
 		)
 		(uuid "69a32570-6e81-448f-9180-25b355e9b708")
 	)
-	(label "bank1.GPIO7"
+	(label "bank3.GPIO7"
 		(at 193.04 129.54 0)
 		(effects
 			(font
@@ -7082,7 +7082,7 @@
 		)
 		(uuid "6c5e2e8c-ad67-405c-8737-4afe82e5944c")
 	)
-	(label "bank0.GPIO8"
+	(label "bank2.GPIO8"
 		(at 80.01 135.89 0)
 		(effects
 			(font
@@ -7092,7 +7092,7 @@
 		)
 		(uuid "6e1df596-d2e3-4f84-86e9-0101480c0a37")
 	)
-	(label "bank3.GPIO1"
+	(label "bank0.GPIO1"
 		(at 162.56 143.51 180)
 		(effects
 			(font
@@ -7102,7 +7102,7 @@
 		)
 		(uuid "6eeed6d3-6d17-4322-aa8c-75fd30ef2b52")
 	)
-	(label "bank2.GPIO1"
+	(label "bank1.GPIO1"
 		(at 162.56 97.79 180)
 		(effects
 			(font
@@ -7122,7 +7122,7 @@
 		)
 		(uuid "7a292399-9c73-46bb-b1c0-017ea5c04b54")
 	)
-	(label "bank2.GPIO3"
+	(label "bank1.GPIO3"
 		(at 233.68 105.41 0)
 		(effects
 			(font
@@ -7132,7 +7132,7 @@
 		)
 		(uuid "7d138016-0911-4975-aa2e-dea34f7f2594")
 	)
-	(label "bank2.GPIO5"
+	(label "bank1.GPIO5"
 		(at 233.68 97.79 0)
 		(effects
 			(font
@@ -7142,7 +7142,7 @@
 		)
 		(uuid "7db9cc44-bf52-456b-884c-5f3aeda9055f")
 	)
-	(label "bank3.GPIO1"
+	(label "bank0.GPIO1"
 		(at 233.68 152.4 0)
 		(effects
 			(font
@@ -7162,7 +7162,7 @@
 		)
 		(uuid "87379459-764f-4b1c-abd9-d0189a64bbb3")
 	)
-	(label "bank0.GPIO6"
+	(label "bank2.GPIO6"
 		(at 193.04 93.98 0)
 		(effects
 			(font
@@ -7182,7 +7182,7 @@
 		)
 		(uuid "8b7a4e6b-4532-431d-91ea-68915383f85e")
 	)
-	(label "bank2.GPIO9"
+	(label "bank1.GPIO9"
 		(at 162.56 118.11 180)
 		(effects
 			(font
@@ -7192,7 +7192,7 @@
 		)
 		(uuid "8cfb1c0f-81d5-4117-9459-ab14c1ba7860")
 	)
-	(label "bank3.GPIO4"
+	(label "bank0.GPIO4"
 		(at 162.56 120.65 180)
 		(effects
 			(font
@@ -7202,7 +7202,7 @@
 		)
 		(uuid "8f6c9f98-c976-42a5-b157-e9f171e1cdce")
 	)
-	(label "bank3.GPIO6"
+	(label "bank0.GPIO6"
 		(at 162.56 72.39 180)
 		(effects
 			(font
@@ -7212,7 +7212,7 @@
 		)
 		(uuid "973b7507-912f-478e-96d0-7fc010462c2d")
 	)
-	(label "bank0.GPIO6"
+	(label "bank2.GPIO6"
 		(at 162.56 54.61 180)
 		(effects
 			(font
@@ -7222,7 +7222,7 @@
 		)
 		(uuid "983e748c-2ba7-4542-b5b6-1c2b13e82314")
 	)
-	(label "bank1.GPIO0"
+	(label "bank3.GPIO0"
 		(at 162.56 85.09 180)
 		(effects
 			(font
@@ -7232,7 +7232,7 @@
 		)
 		(uuid "9926e4ca-a895-425c-8a8c-6282a13dbe6e")
 	)
-	(label "bank0.GPIO7"
+	(label "bank2.GPIO7"
 		(at 80.01 133.35 0)
 		(effects
 			(font
@@ -7252,7 +7252,7 @@
 		)
 		(uuid "9f3ac121-b23a-47cc-b29b-cfb7b74475b9")
 	)
-	(label "bank0.GPIO0"
+	(label "bank2.GPIO0"
 		(at 193.04 116.84 0)
 		(effects
 			(font
@@ -7272,7 +7272,7 @@
 		)
 		(uuid "a065d729-1dfa-4c8f-a436-b6794bf581d3")
 	)
-	(label "bank1.GPIO8"
+	(label "bank3.GPIO8"
 		(at 80.01 140.97 0)
 		(effects
 			(font
@@ -7282,7 +7282,7 @@
 		)
 		(uuid "a8eec6bf-79cb-4568-b0d4-0adfb303ef0d")
 	)
-	(label "bank3.GPIO5"
+	(label "bank0.GPIO5"
 		(at 162.56 74.93 180)
 		(effects
 			(font
@@ -7292,7 +7292,7 @@
 		)
 		(uuid "ad7a8923-2d81-4deb-b20c-60d4d713b2a3")
 	)
-	(label "bank2.GPIO7"
+	(label "bank1.GPIO7"
 		(at 80.01 143.51 0)
 		(effects
 			(font
@@ -7302,7 +7302,7 @@
 		)
 		(uuid "b5c2fb54-a5f4-4fda-8bc5-c6fd78ea431c")
 	)
-	(label "bank2.GPIO3"
+	(label "bank1.GPIO3"
 		(at 162.56 133.35 180)
 		(effects
 			(font
@@ -7312,7 +7312,7 @@
 		)
 		(uuid "b803b292-157f-4d01-aa17-79c56ea686d2")
 	)
-	(label "bank2.GPIO2"
+	(label "bank1.GPIO2"
 		(at 233.68 109.22 0)
 		(effects
 			(font
@@ -7322,7 +7322,7 @@
 		)
 		(uuid "b8b07033-c5c1-46c0-9d70-9992221b42c0")
 	)
-	(label "bank3.GPIO2"
+	(label "bank0.GPIO2"
 		(at 233.68 148.59 0)
 		(effects
 			(font
@@ -7342,7 +7342,7 @@
 		)
 		(uuid "c019404d-d170-4b4a-8d2c-863c5ead09d8")
 	)
-	(label "bank0.GPIO9"
+	(label "bank2.GPIO9"
 		(at 193.04 82.55 0)
 		(effects
 			(font
@@ -7352,7 +7352,7 @@
 		)
 		(uuid "c22754fd-104d-4624-b23d-ab519af8c163")
 	)
-	(label "bank1.GPIO6"
+	(label "bank3.GPIO6"
 		(at 162.56 105.41 180)
 		(effects
 			(font
@@ -7362,7 +7362,7 @@
 		)
 		(uuid "c30b424c-4b62-4289-8193-070195d3bc40")
 	)
-	(label "bank0.GPIO4"
+	(label "bank2.GPIO4"
 		(at 162.56 59.69 180)
 		(effects
 			(font
@@ -7372,7 +7372,7 @@
 		)
 		(uuid "c3354aef-98c4-4917-95e3-54a827412128")
 	)
-	(label "bank2.GPIO7"
+	(label "bank1.GPIO7"
 		(at 233.68 90.17 0)
 		(effects
 			(font
@@ -7382,7 +7382,7 @@
 		)
 		(uuid "c3a4cd1b-b7b1-4241-b97d-fcc3663d560a")
 	)
-	(label "bank3.GPIO3"
+	(label "bank0.GPIO3"
 		(at 162.56 113.03 180)
 		(effects
 			(font
@@ -7402,7 +7402,7 @@
 		)
 		(uuid "ca851283-d7e3-40cd-8a6d-cf3ddafbc61c")
 	)
-	(label "bank3.GPIO3"
+	(label "bank0.GPIO3"
 		(at 233.68 144.78 0)
 		(effects
 			(font
@@ -7412,7 +7412,7 @@
 		)
 		(uuid "cce732e4-de32-48ae-8d4c-04768933bbd6")
 	)
-	(label "bank0.GPIO0"
+	(label "bank2.GPIO0"
 		(at 162.56 69.85 180)
 		(effects
 			(font
@@ -7422,7 +7422,7 @@
 		)
 		(uuid "ced73305-25c8-455a-a2d7-b38546073c17")
 	)
-	(label "bank3.GPIO6"
+	(label "bank0.GPIO6"
 		(at 233.68 133.35 0)
 		(effects
 			(font
@@ -7442,7 +7442,7 @@
 		)
 		(uuid "d0e91f85-9e54-4dae-a858-4997db433152")
 	)
-	(label "bank3.GPIO4"
+	(label "bank0.GPIO4"
 		(at 233.68 140.97 0)
 		(effects
 			(font
@@ -7462,7 +7462,7 @@
 		)
 		(uuid "d69325ce-bd61-42e1-a3b6-db358bd6df57")
 	)
-	(label "bank2.GPIO8"
+	(label "bank1.GPIO8"
 		(at 233.68 86.36 0)
 		(effects
 			(font
@@ -7472,7 +7472,7 @@
 		)
 		(uuid "d6e69b36-59ae-4170-b1d2-99419884747c")
 	)
-	(label "bank0.GPIO4"
+	(label "bank2.GPIO4"
 		(at 193.04 101.6 0)
 		(effects
 			(font
@@ -7482,7 +7482,7 @@
 		)
 		(uuid "dae76f7c-f592-4a59-b531-5b681dae2342")
 	)
-	(label "bank0.GPIO5"
+	(label "bank2.GPIO5"
 		(at 162.56 52.07 180)
 		(effects
 			(font
@@ -7492,7 +7492,7 @@
 		)
 		(uuid "e1a2a6a3-6da1-4bf0-a6e9-be7f4f3b3cb0")
 	)
-	(label "bank0.GPIO9"
+	(label "bank2.GPIO9"
 		(at 162.56 135.89 180)
 		(effects
 			(font
@@ -7502,7 +7502,7 @@
 		)
 		(uuid "e402cca1-ab13-4683-b92a-84409379e9ae")
 	)
-	(label "bank0.GPIO2"
+	(label "bank2.GPIO2"
 		(at 162.56 57.15 180)
 		(effects
 			(font
@@ -7512,7 +7512,7 @@
 		)
 		(uuid "e98f0cb2-a636-4be1-892c-54d04d43f2e8")
 	)
-	(label "bank1.GPIO2"
+	(label "bank3.GPIO2"
 		(at 162.56 77.47 180)
 		(effects
 			(font
@@ -7522,7 +7522,7 @@
 		)
 		(uuid "ea9dbf96-0f61-4094-bbef-b303dc3805ed")
 	)
-	(label "bank2.GPIO4"
+	(label "bank1.GPIO4"
 		(at 233.68 101.6 0)
 		(effects
 			(font
@@ -7532,7 +7532,7 @@
 		)
 		(uuid "eb71b6b2-a5a7-44d8-92e9-450e7d1b9f38")
 	)
-	(label "bank0.GPIO7"
+	(label "bank2.GPIO7"
 		(at 193.04 90.17 0)
 		(effects
 			(font
@@ -7542,7 +7542,7 @@
 		)
 		(uuid "ec4bade0-4fc6-4609-a794-c375b17b2ef6")
 	)
-	(label "bank2.GPIO0"
+	(label "bank1.GPIO0"
 		(at 233.68 116.84 0)
 		(effects
 			(font
@@ -7582,7 +7582,7 @@
 		)
 		(uuid "f3c6ae6b-933c-454f-9ffe-60d00ba07a66")
 	)
-	(label "bank0.GPIO3"
+	(label "bank2.GPIO3"
 		(at 162.56 62.23 180)
 		(effects
 			(font
@@ -7602,7 +7602,7 @@
 		)
 		(uuid "f9e8f24d-7648-44ba-8472-874039137325")
 	)
-	(label "bank1.GPIO1"
+	(label "bank3.GPIO1"
 		(at 193.04 152.4 0)
 		(effects
 			(font
@@ -7612,7 +7612,7 @@
 		)
 		(uuid "fc823632-03b0-4802-9756-c3107f1dfac2")
 	)
-	(label "bank2.GPIO4"
+	(label "bank1.GPIO4"
 		(at 162.56 110.49 180)
 		(effects
 			(font
@@ -7622,7 +7622,7 @@
 		)
 		(uuid "fcd7f793-7d90-45e0-b9f4-34519706653e")
 	)
-	(label "bank1.GPIO8"
+	(label "bank3.GPIO8"
 		(at 193.04 125.73 0)
 		(effects
 			(font
@@ -7643,7 +7643,7 @@
 		)
 		(uuid "129b620b-0ea8-498b-86b4-d8d229103511")
 	)
-	(hierarchical_label "bank0{GPIO_BANK}"
+	(hierarchical_label "bank2{GPIO_BANK}"
 		(shape bidirectional)
 		(at 210.82 119.38 0)
 		(effects
@@ -7665,7 +7665,7 @@
 		)
 		(uuid "2276d964-fecf-4ee3-b57b-58968646caa2")
 	)
-	(hierarchical_label "bank2{GPIO_BANK}"
+	(hierarchical_label "bank1{GPIO_BANK}"
 		(shape bidirectional)
 		(at 251.46 119.38 0)
 		(effects
@@ -7676,7 +7676,7 @@
 		)
 		(uuid "2ea70271-d558-4c4a-bcc0-ebc5ae86f04c")
 	)
-	(hierarchical_label "bank3{GPIO_BANK}"
+	(hierarchical_label "bank0{GPIO_BANK}"
 		(shape bidirectional)
 		(at 251.46 158.75 0)
 		(effects
@@ -7775,7 +7775,7 @@
 		)
 		(uuid "f5c9accc-f0b3-4b3a-8149-15796436629c")
 	)
-	(hierarchical_label "bank1{GPIO_BANK}"
+	(hierarchical_label "bank3{GPIO_BANK}"
 		(shape bidirectional)
 		(at 210.82 158.75 0)
 		(effects
