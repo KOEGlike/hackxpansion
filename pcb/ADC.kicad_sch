@@ -1095,7 +1095,7 @@
 		(uuid "05515598-4fc1-4d5e-be5a-614372eb946b")
 	)
 	(bus_entry
-		(at 140.97 55.88)
+		(at 135.89 55.88)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -1113,7 +1113,7 @@
 		(uuid "50ef6da1-6748-4d72-8098-e9924757277d")
 	)
 	(bus_entry
-		(at 140.97 58.42)
+		(at 135.89 58.42)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -1187,7 +1187,7 @@
 	)
 	(bus
 		(pts
-			(xy 140.97 54.61) (xy 140.97 58.42)
+			(xy 135.89 54.61) (xy 135.89 58.42)
 		)
 		(stroke
 			(width 0)
@@ -1227,16 +1227,6 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 60.96) (xy 138.43 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "342ae9a3-f7cc-406e-a57d-1c0b660c1818")
-	)
-	(wire
-		(pts
 			(xy 76.2 72.39) (xy 87.63 72.39)
 		)
 		(stroke
@@ -1254,16 +1244,6 @@
 			(type default)
 		)
 		(uuid "35d161f6-0481-4d1e-b21d-62be2218ac1b")
-	)
-	(wire
-		(pts
-			(xy 128.27 58.42) (xy 138.43 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "446e0246-303a-463c-8a01-21388066a160")
 	)
 	(wire
 		(pts
@@ -1377,6 +1357,16 @@
 	)
 	(wire
 		(pts
+			(xy 128.27 58.42) (xy 133.35 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8f23baf1-4aa3-4c08-b887-d2a922e2beb4")
+	)
+	(wire
+		(pts
 			(xy 76.2 80.01) (xy 87.63 80.01)
 		)
 		(stroke
@@ -1477,7 +1467,7 @@
 	)
 	(bus
 		(pts
-			(xy 140.97 54.61) (xy 142.24 54.61)
+			(xy 135.89 54.61) (xy 137.16 54.61)
 		)
 		(stroke
 			(width 0)
@@ -1565,6 +1555,16 @@
 		)
 		(uuid "ebca6085-4121-4e41-b33a-3639613f4db5")
 	)
+	(wire
+		(pts
+			(xy 128.27 60.96) (xy 133.35 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee11b7f1-b70c-4481-83c7-c945267ea2b3")
+	)
 	(label "mod2.MD0"
 		(at 77.47 68.58 0)
 		(effects
@@ -1575,7 +1575,7 @@
 		)
 		(uuid "06c45401-2fa8-4b1d-8d81-2b14c27a1b7a")
 	)
-	(label "i2c0.SCL"
+	(label "SCL"
 		(at 128.27 60.96 0)
 		(effects
 			(font
@@ -1635,7 +1635,7 @@
 		)
 		(uuid "8f73e74e-73f1-4870-938f-795cefcb27d1")
 	)
-	(label "i2c0.SDA"
+	(label "SDA"
 		(at 128.27 58.42 0)
 		(effects
 			(font
@@ -1689,7 +1689,7 @@
 	)
 	(hierarchical_label "{I2C}"
 		(shape bidirectional)
-		(at 142.24 54.61 0)
+		(at 137.16 54.61 0)
 		(effects
 			(font
 				(size 1.27 1.27)
