@@ -1586,7 +1586,7 @@
 		(uuid "0830d399-46f8-4bd9-ad92-cd4103a23422")
 	)
 	(label "mod0.MD0"
-		(at 77.47 53.34 0)
+		(at 77.47 60.96 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1616,7 +1616,7 @@
 		(uuid "6fe8e4b6-e1d1-4ead-b20c-3c7e44f1040e")
 	)
 	(label "mod1.MD0"
-		(at 77.47 60.96 0)
+		(at 77.47 53.34 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1626,7 +1626,7 @@
 		(uuid "7660d507-ed67-48e8-bbb1-0f4b8f5d1877")
 	)
 	(label "mod0.MD1"
-		(at 77.47 57.15 0)
+		(at 77.47 64.77 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1646,7 +1646,7 @@
 		(uuid "bd26f213-2fd6-468c-83fc-0a9b6bee7303")
 	)
 	(label "mod1.MD1"
-		(at 77.47 64.77 0)
+		(at 77.47 57.15 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1667,7 +1667,7 @@
 	)
 	(hierarchical_label "mod0{DET}"
 		(shape input)
-		(at 72.39 50.8 180)
+		(at 72.39 58.42 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1733,7 +1733,7 @@
 	)
 	(hierarchical_label "mod1{DET}"
 		(shape input)
-		(at 72.39 58.42 180)
+		(at 72.39 50.8 180)
 		(effects
 			(font
 				(size 1.27 1.27)

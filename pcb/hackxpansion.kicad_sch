@@ -364,7 +364,7 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 55.88) (xy 160.02 57.15)
+			(xy 160.02 52.07) (xy 160.02 57.15)
 		)
 		(stroke
 			(width 0)
@@ -1090,7 +1090,7 @@
 				)
 			)
 		)
-		(property "Value" "+3V3"
+		(property "Value" "DAUGHT_+3V3"
 			(at 150.622 69.85 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1167,7 +1167,7 @@
 				)
 			)
 		)
-		(property "Value" "MAIN_GND"
+		(property "Value" "GND"
 			(at 57.15 90.932 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1246,8 +1246,8 @@
 				)
 			)
 		)
-		(property "Value" "+3V3"
-			(at 151.892 42.164 0)
+		(property "Value" "DAUGHT_+3V3"
+			(at 160.782 43.942 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1323,7 +1323,7 @@
 				)
 			)
 		)
-		(property "Value" "MAIN_GND"
+		(property "Value" "GND"
 			(at 67.31 65.532 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1381,7 +1381,7 @@
 	(symbol
 		(lib_name "+3V3_1")
 		(lib_id "power:+3V3")
-		(at 160.02 55.88 0)
+		(at 160.02 52.07 0)
 		(mirror y)
 		(unit 1)
 		(body_style 1)
@@ -1392,7 +1392,7 @@
 		(dnp no)
 		(uuid "78a5c215-dcf2-4f48-bb39-4387e96d9a0b")
 		(property "Reference" "#PWR096"
-			(at 160.02 59.69 0)
+			(at 160.02 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1402,8 +1402,8 @@
 				)
 			)
 		)
-		(property "Value" "+3V3"
-			(at 160.274 52.578 0)
+		(property "Value" "DAUGHT_+3V3"
+			(at 169.164 50.038 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1413,7 +1413,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 160.02 55.88 0)
+			(at 160.02 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1424,7 +1424,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 160.02 55.88 0)
+			(at 160.02 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1435,7 +1435,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 160.02 55.88 0)
+			(at 160.02 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

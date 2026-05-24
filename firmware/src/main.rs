@@ -5,7 +5,6 @@
 #![no_std]
 #![no_main]
 
-use crate::Hello;
 use defmt::*;
 use embassy_executor::Spawner;
 use embassy_rp::gpio;
@@ -19,7 +18,7 @@ use {defmt_rtt as _, panic_probe as _};
 #[unsafe(link_section = ".bi_entries")]
 #[used]
 pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
-    embassy_rp::binary_info::rp_program_name!(c"Blinky Example"),
+    embassy_rp::binary_info::rp_program_name!(c"Hackxpansion"),
     embassy_rp::binary_info::rp_program_description!(
         c"This example tests the RP Pico on board LED, connected to gpio 25"
     ),
@@ -32,8 +31,6 @@ async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
     let mut led = Output::new(p.PIN_25, Level::Low);
 
-    let hello = Hello::new(String::<32>::from("Hello, Embassy!"));
-    hello.say();
     loop {
         info!("led on!");
         led.set_high();
