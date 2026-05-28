@@ -612,6 +612,129 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector:TestPoint"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.762)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -1068,6 +1191,12 @@
 		(uuid "2547d8da-991b-4506-a044-7c6c842a3737")
 	)
 	(junction
+		(at 140.97 58.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "3e46fe8f-0533-4ef7-b03f-793663949ebc")
+	)
+	(junction
 		(at 130.81 80.01)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1080,10 +1209,22 @@
 		(uuid "74b2480c-9c11-49c7-bbbe-20f13494f07d")
 	)
 	(junction
+		(at 140.97 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9131da1e-dd16-4e17-9a53-5b7808af80d5")
+	)
+	(junction
 		(at 101.6 33.02)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a59ea7b9-e97c-4b41-93e4-89d940146b56")
+	)
+	(junction
+		(at 128.27 53.34)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d848e613-38b8-4f89-b03b-9a111620380b")
 	)
 	(bus_entry
 		(at 73.66 58.42)
@@ -1095,7 +1236,7 @@
 		(uuid "05515598-4fc1-4d5e-be5a-614372eb946b")
 	)
 	(bus_entry
-		(at 135.89 55.88)
+		(at 149.86 55.88)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -1113,7 +1254,7 @@
 		(uuid "50ef6da1-6748-4d72-8098-e9924757277d")
 	)
 	(bus_entry
-		(at 135.89 58.42)
+		(at 149.86 58.42)
 		(size -2.54 2.54)
 		(stroke
 			(width 0)
@@ -1187,13 +1328,23 @@
 	)
 	(bus
 		(pts
-			(xy 135.89 54.61) (xy 135.89 58.42)
+			(xy 149.86 54.61) (xy 149.86 58.42)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "14711caa-2632-432b-8b30-50ff3345d3c2")
+	)
+	(wire
+		(pts
+			(xy 140.97 58.42) (xy 147.32 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1621d12c-1d80-4fe6-a2ab-04579961e3ea")
 	)
 	(wire
 		(pts
@@ -1357,16 +1508,6 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 58.42) (xy 133.35 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8f23baf1-4aa3-4c08-b887-d2a922e2beb4")
-	)
-	(wire
-		(pts
 			(xy 76.2 80.01) (xy 87.63 80.01)
 		)
 		(stroke
@@ -1374,6 +1515,16 @@
 			(type default)
 		)
 		(uuid "9410dbf5-7e82-4c19-bc02-65b888452f3e")
+	)
+	(wire
+		(pts
+			(xy 140.97 60.96) (xy 147.32 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95a182ce-a4f9-4ce0-a09b-a8e0e0531276")
 	)
 	(wire
 		(pts
@@ -1467,7 +1618,7 @@
 	)
 	(bus
 		(pts
-			(xy 135.89 54.61) (xy 137.16 54.61)
+			(xy 149.86 54.61) (xy 151.13 54.61)
 		)
 		(stroke
 			(width 0)
@@ -1485,6 +1636,16 @@
 		)
 		(uuid "c1b2f2c8-76df-4fcd-b245-47a4bf9bad0c")
 	)
+	(wire
+		(pts
+			(xy 128.27 60.96) (xy 140.97 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c9a8a0ac-d6f4-4212-b225-95c804a84d80")
+	)
 	(bus
 		(pts
 			(xy 72.39 58.42) (xy 73.66 58.42)
@@ -1494,6 +1655,16 @@
 			(type default)
 		)
 		(uuid "d2f6a3fe-fff2-4e97-ab81-1107ffb8eb66")
+	)
+	(wire
+		(pts
+			(xy 128.27 58.42) (xy 140.97 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d53f9e72-46ce-4bae-8bc9-d5f41b9b087d")
 	)
 	(wire
 		(pts
@@ -1555,16 +1726,6 @@
 		)
 		(uuid "ebca6085-4121-4e41-b33a-3639613f4db5")
 	)
-	(wire
-		(pts
-			(xy 128.27 60.96) (xy 133.35 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ee11b7f1-b70c-4481-83c7-c945267ea2b3")
-	)
 	(label "mod2.MD0"
 		(at 77.47 68.58 0)
 		(effects
@@ -1576,7 +1737,7 @@
 		(uuid "06c45401-2fa8-4b1d-8d81-2b14c27a1b7a")
 	)
 	(label "SCL"
-		(at 128.27 60.96 0)
+		(at 142.24 60.96 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1636,7 +1797,7 @@
 		(uuid "8f73e74e-73f1-4870-938f-795cefcb27d1")
 	)
 	(label "SDA"
-		(at 128.27 58.42 0)
+		(at 142.24 58.42 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1689,7 +1850,7 @@
 	)
 	(hierarchical_label "{I2C}"
 		(shape bidirectional)
-		(at 137.16 54.61 0)
+		(at 151.13 54.61 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1752,6 +1913,85 @@
 			(justify right)
 		)
 		(uuid "fdffa102-cd50-408d-8e3b-f5ac96ad12e0")
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 128.27 53.34 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "151eabe8-5a0c-4aa7-9112-ab201ea25a71")
+		(property "Reference" "TP1"
+			(at 126.746 48.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 130.81 51.3079 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 133.35 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 133.35 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 128.27 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "88a7740c-777d-45eb-8ec0-6d82ebd92cd3")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
+					(reference "TP1")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -2152,6 +2392,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 140.97 60.96 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "64a329a2-9beb-4a56-aa87-e5c639710e36")
+		(property "Reference" "TP3"
+			(at 142.494 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 138.43 62.9921 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 135.89 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 135.89 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 140.97 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "03f1fff8-16d6-4dd9-bb3f-6ee23b34c27b")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
+					(reference "TP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "ADS7128IRTET:ADS7128IRTET")
 		(at 107.95 63.5 0)
 		(unit 1)
@@ -2356,6 +2675,85 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
 					(reference "IC1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 140.97 58.42 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "8547a68b-1330-4ea4-b846-cd4c9442f1cd")
+		(property "Reference" "TP2"
+			(at 139.446 53.34 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 143.51 56.3879 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 146.05 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 146.05 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 140.97 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f4fdb319-a224-4bec-9867-df31663daa7d")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/68a45941-d85a-4b30-af2a-3e36e3a9ba21"
+					(reference "TP2")
 					(unit 1)
 				)
 			)
