@@ -6,7 +6,8 @@ export const landingContent = {
 	steps: [
 		{
 			title: 'Step 1',
-			description: 'Design your card! Make a weird input card, or add a radio! Go wild!'
+			description:
+				'Design your card! Make a weird input card, add a radio, a speaker or a motor! Go wild!'
 		},
 		{
 			title: 'Step 2',
@@ -15,7 +16,8 @@ export const landingContent = {
 		},
 		{
 			title: 'Step 3',
-			description: "Repeat 3 times! Make modules that complement each other, or don't! Be creative!"
+			description:
+				"Repeat 3 more times! Make modules that complement each other, or don't! Be creative!"
 		},
 		{ title: 'Step 4', description: 'Submit and get the console!' }
 	],
