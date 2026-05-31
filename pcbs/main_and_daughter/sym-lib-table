@@ -2,6 +2,6 @@
 	(version 7)
 	(lib (name "ADS7128IRTET") (type "KiCad") (uri "${KIPRJMOD}/lib/ADS7128IRTET/ADS7128IRTET.kicad_sym") (options "") (descr ""))
 	(lib (name "MCU_RaspberryPi_RP2350") (type "KiCad") (uri "${KIPRJMOD}/lib/RP2354B_MINIMAL/MCU_RaspberryPi_RP2350.kicad_sym") (options "") (descr ""))
-	(lib (name "easyeda2kicad") (type "KiCad") (uri "${EASYEDA2KICAD}/easyeda2kicad.kicad_sym") (options "") (descr ""))
 	(lib (name "Hackxpansion") (type "KiCad") (uri "${KIPRJMOD}/../../kicad_lib/Hackxpansion.kicad_sym") (options "") (descr ""))
+	(lib (name "easyeda2kicad") (type "KiCad") (uri "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.kicad_sym") (options "") (descr ""))
 )
