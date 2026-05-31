@@ -1,17 +1,23 @@
 #![no_std]
 
 use defmt::info;
-use heapless::String;
-pub struct Hello {
-    pub message: String<32>,
-}
+use embassy_rp::{
+    gpio::AnyPin,
+    spi::{self, Blocking, Spi},
+};
 
-impl Hello {
-    pub fn new(message: String<32>) -> Self {
-        Self { message }
-    }
-
-    pub fn say(&self) {
-        info!("{}", self.message.as_str());
-    }
+pub fn init_display(
+    rst: AnyPin,
+    display_cs: AnyPin,
+    dcx: AnyPin,
+    miso: AnyPin,
+    mosi: AnyPin,
+    clk: AnyPin,
+) -> _ {
+    let mut display_config = spi::Config::default();
+    display_config.frequency = DISPLAY_FREQ;
+    display_config.phase = spi::Phase::CaptureOnSecondTransition;
+    display_config.polarity = spi::Polarity::IdleHigh;
+    let spi: Spi<'_, _, Blocking> =
+        Spi::new_blocking(p.SPI1, clk, mosi, miso, display_config.clone());
 }
