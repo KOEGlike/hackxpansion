@@ -1,0 +1,64 @@
+[package]
+edition = "2024"
+name = "xpanse"
+version = "0.1.0"
+license = "GPL-3.0"
+
+publish = false
+
+[dependencies]
+xpanse_driver_api = { workspace = true }
+
+embassy-embedded-hal = { workspace = true }
+embassy-sync = { workspace = true }
+embassy-executor = { workspace = true }
+embassy-time = { workspace = true }
+embassy-rp = { workspace = true }
+embassy-usb = { workspace = true }
+embassy-net = { workspace = true }
+embassy-net-wiznet = { workspace = true }
+embassy-futures = { workspace = true }
+embassy-usb-logger = { workspace = true }
+
+defmt = { workspace = true }
+defmt-rtt = { workspace = true }
+fixed = { workspace = true }
+fixed-macro = { workspace = true }
+
+serde = { workspace = true }
+serde-json-core = { workspace = true }
+
+# for assign resources example
+assign-resources = { workspace = true }
+
+# cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
+cortex-m = { workspace = true }
+cortex-m-rt = { workspace = true }
+critical-section = { workspace = true }
+panic-probe = { workspace = true }
+display-interface-spi = { workspace = true }
+embedded-graphics = { workspace = true }
+slint = { workspace = true }
+mipidsi = { workspace = true }
+display-interface = { workspace = true }
+byte-slice-cast = { workspace = true }
+smart-leds = { workspace = true }
+heapless = { workspace = true }
+usbd-hid = { workspace = true }
+ti-adc-expander = { workspace = true }
+
+
+embedded-hal-1 = { workspace = true }
+embedded-hal-async = { workspace = true }
+embedded-hal-bus = { workspace = true }
+embedded-io-async = { workspace = true }
+embedded-storage = { workspace = true }
+static_cell = { workspace = true }
+portable-atomic = { workspace = true }
+log = { workspace = true }
+embedded-sdmmc = { workspace = true }
+
+[package.metadata.embassy]
+build = [
+  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" }
+]
