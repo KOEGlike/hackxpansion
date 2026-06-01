@@ -7583,7 +7583,7 @@
 		(uuid "cf771d96-1e44-46eb-ae30-fbe380224826")
 	)
 	(label "adc.SCL"
-		(at 162.56 87.63 180)
+		(at 162.56 90.17 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7723,7 +7723,7 @@
 		(uuid "f206716e-ea7e-4f50-9141-2ef432a952a4")
 	)
 	(label "adc.SDA"
-		(at 162.56 90.17 180)
+		(at 162.56 87.63 180)
 		(effects
 			(font
 				(size 1.27 1.27)
