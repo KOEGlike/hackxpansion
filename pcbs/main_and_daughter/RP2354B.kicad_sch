@@ -4224,16 +4224,6 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 102.87) (xy 91.44 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "02f61c1f-70dc-42ac-90ee-29f74cea8927")
-	)
-	(wire
-		(pts
 			(xy 146.05 39.37) (xy 152.4 39.37)
 		)
 		(stroke
@@ -6094,6 +6084,16 @@
 	)
 	(wire
 		(pts
+			(xy 81.28 102.87) (xy 91.44 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba816477-b086-4180-870c-9c581c1ad2cd")
+	)
+	(wire
+		(pts
 			(xy 149.86 125.73) (xy 162.56 125.73)
 		)
 		(stroke
@@ -7804,6 +7804,17 @@
 		)
 		(uuid "1992551f-b09b-4264-a3fc-fce045060a07")
 	)
+	(hierarchical_label "DISP_RESET"
+		(shape output)
+		(at 163.83 64.77 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2276d964-fecf-4ee3-b57b-58968646caa2")
+	)
 	(hierarchical_label "bank1{GPIO_BANK}"
 		(shape bidirectional)
 		(at 251.46 119.38 0)
@@ -7848,7 +7859,7 @@
 		)
 		(uuid "8d63a6da-9181-4294-83a8-e3d199200b5e")
 	)
-	(hierarchical_label "DISP_RESET"
+	(hierarchical_label "DISP_BACKLIGHT"
 		(shape output)
 		(at 163.83 130.81 0)
 		(effects
@@ -7857,7 +7868,7 @@
 			)
 			(justify left)
 		)
-		(uuid "af6df31d-c409-4ab4-b7b6-8df5e8c7e7dd")
+		(uuid "afad04a8-66db-42e4-b46c-2254c5aebfad")
 	)
 	(hierarchical_label "DISP_DC"
 		(shape output)
@@ -7891,17 +7902,6 @@
 			(justify left)
 		)
 		(uuid "c8a601fd-d4ea-48a2-981c-8d1eb80f28e9")
-	)
-	(hierarchical_label "ADC_ALERT"
-		(shape input)
-		(at 163.83 64.77 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "e11ec3cf-2dce-4629-8e9b-c6de8f700045")
 	)
 	(hierarchical_label "disp{SPI}"
 		(shape bidirectional)
@@ -10248,85 +10248,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 81.28 102.87 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "6b722d4a-89a4-43a3-9f74-91fa7b892a4d")
-		(property "Reference" "TP15"
-			(at 76.962 102.87 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TestPoint"
-			(at 79.2479 100.33 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 81.28 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 81.28 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 81.28 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "48924e1d-7586-41f7-93cd-c9cec970f257")
-		)
-		(instances
-			(project "hackxpansion"
-				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/77d1a66a-1629-4487-9557-00ea9a578a7b"
-					(reference "TP15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 63.5 52.07 0)
 		(unit 1)
@@ -11908,6 +11829,85 @@
 			(project "hackxpansion"
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/77d1a66a-1629-4487-9557-00ea9a578a7b"
 					(reference "C10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 81.28 102.87 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ce8c8281-4592-486e-b90f-381f2d4ad61d")
+		(property "Reference" "TP15"
+			(at 76.962 102.87 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 79.2479 100.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 81.28 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 81.28 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 81.28 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "02b3d074-ca7b-47b1-8692-40b36d1bc4d8")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/77d1a66a-1629-4487-9557-00ea9a578a7b"
+					(reference "TP15")
 					(unit 1)
 				)
 			)

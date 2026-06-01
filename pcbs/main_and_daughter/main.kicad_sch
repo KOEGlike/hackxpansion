@@ -885,7 +885,7 @@
 	)
 	(wire
 		(pts
-			(xy 122.555 49.53) (xy 122.555 53.34)
+			(xy 122.555 49.53) (xy 122.555 50.8)
 		)
 		(stroke
 			(width 0)
@@ -922,16 +922,6 @@
 			(type default)
 		)
 		(uuid "a634cd04-d5b7-49da-bdb6-9ec7229ae622")
-	)
-	(wire
-		(pts
-			(xy 146.05 76.2) (xy 223.52 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a7fe0d27-01d0-49f8-ac97-fc54506401f7")
 	)
 	(wire
 		(pts
@@ -1045,6 +1035,16 @@
 	)
 	(wire
 		(pts
+			(xy 146.05 54.61) (xy 181.61 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e955d37c-7c00-43f3-b235-7de978a955ff")
+	)
+	(wire
+		(pts
 			(xy 238.76 71.12) (xy 238.76 72.39)
 		)
 		(stroke
@@ -1065,7 +1065,7 @@
 	)
 	(wire
 		(pts
-			(xy 195.58 50.8) (xy 195.58 54.61)
+			(xy 195.58 50.8) (xy 195.58 52.07)
 		)
 		(stroke
 			(width 0)
@@ -2753,8 +2753,8 @@
 		)
 	)
 	(sheet
-		(at 181.61 54.61)
-		(size 16.51 17.78)
+		(at 181.61 52.07)
+		(size 16.51 20.32)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -2769,7 +2769,7 @@
 		)
 		(uuid "154552c3-4779-450a-9b58-0a812de6a15a")
 		(property "Sheetname" "Display"
-			(at 181.61 53.8984 0)
+			(at 181.61 51.3584 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2788,6 +2788,16 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "BACKLIGHT" input
+			(at 181.61 54.61 180)
+			(uuid "98e5b544-9923-472c-b8c5-b7cfed433d9c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 		(pin "CS" input
@@ -2831,7 +2841,7 @@
 			)
 		)
 		(pin "+3V3" input
-			(at 195.58 54.61 90)
+			(at 195.58 52.07 90)
 			(uuid "84c691c6-4adb-4bf7-aabe-82665fd8623d")
 			(effects
 				(font
@@ -2894,16 +2904,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
-			)
-		)
-		(pin "ALERT" output
-			(at 223.52 76.2 180)
-			(uuid "ae790177-9b5f-41fd-b2f2-e6eb1a42e0b5")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 			)
 		)
 		(pin "mod0{DET}" input
@@ -3071,8 +3071,8 @@
 		)
 	)
 	(sheet
-		(at 109.855 53.34)
-		(size 36.195 48.895)
+		(at 109.855 50.8)
+		(size 36.195 51.435)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -3087,7 +3087,7 @@
 		)
 		(uuid "77d1a66a-1629-4487-9557-00ea9a578a7b")
 		(property "Sheetname" "RP2354B"
-			(at 109.855 52.6284 0)
+			(at 109.855 50.0884 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3118,9 +3118,9 @@
 				(justify left)
 			)
 		)
-		(pin "ADC_ALERT" input
-			(at 146.05 76.2 0)
-			(uuid "85753055-8720-4c75-87b1-c2cbf80e8f24")
+		(pin "adc{I2C}" bidirectional
+			(at 146.05 78.74 0)
+			(uuid "9f76a7ac-c734-4049-8b88-c8afa886889b")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3128,9 +3128,9 @@
 				(justify right)
 			)
 		)
-		(pin "adc{I2C}" bidirectional
-			(at 146.05 78.74 0)
-			(uuid "9f76a7ac-c734-4049-8b88-c8afa886889b")
+		(pin "DISP_BACKLIGHT" output
+			(at 146.05 54.61 0)
+			(uuid "d8160d21-b963-4c5f-bca8-a21a51de2dba")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3219,7 +3219,7 @@
 			)
 		)
 		(pin "+3V3" input
-			(at 122.555 53.34 90)
+			(at 122.555 50.8 90)
 			(uuid "43e99e8e-b8a8-4116-9d43-2195b72f209c")
 			(effects
 				(font
