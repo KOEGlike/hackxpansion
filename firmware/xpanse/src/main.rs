@@ -3,11 +3,11 @@
 
 use defmt::*;
 use embassy_executor::Spawner;
-use embassy_rp::gpio;
+use embassy_rp::{gpio, i2c};
 use embassy_time::Timer;
 use gpio::{Level, Output};
 use heapless::String;
-use xpanse::display::init_display;
+use xpanse::{adc::init_adc, display::init_display_with_pins};
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.
@@ -23,15 +23,25 @@ pub static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];
 
+embassy_rp::bind_interrupts!(struct Irqs {
+    I2C1_IRQ => i2c::InterruptHandler<embassy_rp::peripherals::I2C1>;
+});
+
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
-    let disp = init_display(
+    let disp = init_display_with_pins(
         p.SPI0,
         p.PIN_34,
         p.PIN_35,
-        p.PIN_31.into(),
+        p.PIN_5.into(),
         p.PIN_38.into(),
         p.PIN_25.into(),
     );
+    let sda = p.PIN_14;
+    let scl = p.PIN_15;
+    let config = embassy_rp::i2c::Config::default();
+    let mut bus = embassy_rp::i2c::I2c::new_async(p.I2C1, scl, sda, Irqs, config);
+
+    let adc = init_adc(bus).await.unwrap();
 }
