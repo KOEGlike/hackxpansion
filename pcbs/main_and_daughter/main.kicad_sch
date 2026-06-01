@@ -4,6 +4,9 @@
 	(generator_version "10.0")
 	(uuid "0bbaf53a-f64f-4cdf-af76-c72f7bed4263")
 	(paper "A4")
+	(title_block
+		(title "Main Board")
+	)
 	(lib_symbols
 		(symbol "+3V3_1"
 			(power local)
