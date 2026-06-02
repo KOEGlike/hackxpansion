@@ -4,6 +4,7 @@
 use embassy_executor::Spawner;
 use embassy_rp::i2c;
 use xpanse::{adc::init_adc, display::init_display};
+use xpanse_driver_api::gpio_bank::GpioBank;
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.
@@ -40,4 +41,56 @@ async fn main(_spawner: Spawner) {
     let bus = embassy_rp::i2c::I2c::new_async(p.I2C1, scl, sda, Irqs, config);
 
     let adc = init_adc(bus).await.unwrap();
+
+    let gpio_bank_0 = GpioBank::new(
+        p.PIN_37, //0
+        p.PIN_36, //1
+        p.PIN_30, //2
+        p.PIN_24, //3
+        p.PIN_27, //4
+        p.PIN_8,  //5
+        p.PIN_9,  //6
+        p.PIN_46, //7
+        p.PIN_47, //8
+        p.PIN_39, //9
+    );
+
+    let gpio_bank_1 = GpioBank::new(
+        p.PIN_19, //0
+        p.PIN_18, //1
+        p.PIN_22, //2
+        p.PIN_32, //3
+        p.PIN_23, //4
+        p.PIN_28, //5
+        p.PIN_29, //6
+        p.PIN_44, //7
+        p.PIN_45, //8
+        p.PIN_26, //9
+    );
+
+    let gpio_bank_2 = GpioBank::new(
+        p.PIN_7,  //0
+        p.PIN_6,  //1
+        p.PIN_2,  //2
+        p.PIN_4,  //3
+        p.PIN_3,  //4
+        p.PIN_0,  //5
+        p.PIN_1,  //6
+        p.PIN_40, //7
+        p.PIN_41, //8
+        p.PIN_33, //9
+    );
+
+    let gpio_bank_3 = GpioBank::new(
+        p.PIN_13, //0
+        p.PIN_16, //1
+        p.PIN_10, //2
+        p.PIN_12, //3
+        p.PIN_11, //4
+        p.PIN_20, //5
+        p.PIN_21, //6
+        p.PIN_42, //7
+        p.PIN_43, //8
+        p.PIN_17, //9
+    );
 }
