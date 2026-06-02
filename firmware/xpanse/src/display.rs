@@ -1,4 +1,3 @@
-use display_interface_spi::SPIInterface;
 use embassy_rp::{
     Peri,
     gpio::{AnyPin, Level, Output},
@@ -6,6 +5,7 @@ use embassy_rp::{
 };
 use embassy_time::Delay;
 use embedded_hal_bus::spi::ExclusiveDevice;
+use mipidsi::interface::SpiInterface;
 use mipidsi::{
     Builder,
     models::ST7789,
@@ -14,7 +14,7 @@ use mipidsi::{
 
 // Update your type definition to use ExclusiveDevice
 type Display<'a, T> = mipidsi::Display<
-    SPIInterface<ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
+    SpiInterface<'a, ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
     ST7789,
     Output<'a>,
 >;
@@ -26,6 +26,7 @@ pub fn init_display<'d, T: Instance>(
     rst: Peri<'d, AnyPin>,
     display_cs: Peri<'d, AnyPin>,
     dcx: Peri<'d, AnyPin>,
+    buffer: &'d mut [u8],
 ) -> Display<'d, T> {
     let mut display_config = spi::Config::default();
     display_config.frequency = 64_000_000;
@@ -43,7 +44,7 @@ pub fn init_display<'d, T: Instance>(
     let display_spi = ExclusiveDevice::new(spi, display_cs, Delay).unwrap();
 
     // Display interface abstraction from SPI and DC
-    let di = SPIInterface::new(display_spi, dcx);
+    let di = SpiInterface::new(display_spi, dcx, buffer);
 
     Builder::new(ST7789, di)
         .display_size(240, 320)

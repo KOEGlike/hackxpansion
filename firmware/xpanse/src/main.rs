@@ -6,6 +6,7 @@ use embassy_rp::{
     gpio::{Level, Output},
     i2c,
 };
+use static_cell::StaticCell;
 use xpanse::{adc::init_adc, display::init_display};
 use xpanse_driver_api::gpio_bank::GpioBank;
 use {defmt_rtt as _, panic_probe as _};
@@ -25,9 +26,13 @@ embassy_rp::bind_interrupts!(struct Irqs {
     I2C1_IRQ => i2c::InterruptHandler<embassy_rp::peripherals::I2C1>;
 });
 
+static BUFFER: StaticCell<[u8; 512]> = StaticCell::new();
+
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let mut p = embassy_rp::init(Default::default());
+
+    let display_buffer = BUFFER.init([0_u8; 512]);
     let disp = init_display(
         p.SPI0,
         p.PIN_34,
@@ -35,6 +40,7 @@ async fn main(_spawner: Spawner) {
         p.PIN_5.into(),
         p.PIN_38.into(),
         p.PIN_25.into(),
+        display_buffer,
     );
 
     let config = embassy_rp::i2c::Config::default();
