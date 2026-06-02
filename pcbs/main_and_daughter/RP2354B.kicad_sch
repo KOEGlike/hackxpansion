@@ -7353,7 +7353,7 @@
 		(uuid "8f6c9f98-c976-42a5-b157-e9f171e1cdce")
 	)
 	(label "bank0.GPIO6"
-		(at 162.56 72.39 180)
+		(at 162.56 74.93 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7433,7 +7433,7 @@
 		(uuid "a8eec6bf-79cb-4568-b0d4-0adfb303ef0d")
 	)
 	(label "bank0.GPIO5"
-		(at 162.56 74.93 180)
+		(at 162.56 72.39 180)
 		(effects
 			(font
 				(size 1.27 1.27)
