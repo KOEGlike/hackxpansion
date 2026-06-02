@@ -1,12 +1,8 @@
 #![no_std]
 #![no_main]
 
-use defmt::*;
 use embassy_executor::Spawner;
-use embassy_rp::{gpio, i2c};
-use embassy_time::Timer;
-use gpio::{Level, Output};
-use heapless::String;
+use embassy_rp::i2c;
 use xpanse::{adc::init_adc, display::init_display};
 use {defmt_rtt as _, panic_probe as _};
 
@@ -41,7 +37,7 @@ async fn main(_spawner: Spawner) {
     let sda = p.PIN_14;
     let scl = p.PIN_15;
     let config = embassy_rp::i2c::Config::default();
-    let mut bus = embassy_rp::i2c::I2c::new_async(p.I2C1, scl, sda, Irqs, config);
+    let bus = embassy_rp::i2c::I2c::new_async(p.I2C1, scl, sda, Irqs, config);
 
     let adc = init_adc(bus).await.unwrap();
 }
