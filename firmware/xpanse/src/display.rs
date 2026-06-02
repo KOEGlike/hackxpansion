@@ -13,7 +13,7 @@ use mipidsi::{
 };
 
 // Update your type definition to use ExclusiveDevice
-type Display<'a, T: Instance> = mipidsi::Display<
+type Display<'a, T> = mipidsi::Display<
     SPIInterface<ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
     ST7789,
     Output<'a>,
