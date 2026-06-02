@@ -69,6 +69,8 @@ async fn main(_spawner: Spawner) {
         p.PIN_46, //7
         p.PIN_47, //8
         p.PIN_39, //9
+        p.PWM_SLICE10,
+        p.PWM_SLICE4,
     );
 
     let gpio_bank_1 = GpioBank::new(
@@ -82,6 +84,8 @@ async fn main(_spawner: Spawner) {
         p.PIN_44, //7
         p.PIN_45, //8
         p.PIN_26, //9
+        p.PWM_SLICE1,
+        p.PWM_SLICE6,
     );
 
     let gpio_bank_2 = GpioBank::new(
@@ -95,6 +99,8 @@ async fn main(_spawner: Spawner) {
         p.PIN_40, //7
         p.PIN_41, //8
         p.PIN_33, //9
+        p.PWM_SLICE3,
+        p.PWM_SLICE0,
     );
 
     let gpio_bank_3 = GpioBank::new(
@@ -108,5 +114,7 @@ async fn main(_spawner: Spawner) {
         p.PIN_42, //7
         p.PIN_43, //8
         p.PIN_17, //9
+        p.PWM_SLICE0,
+        p.PWM_SLICE2,
     );
 }
