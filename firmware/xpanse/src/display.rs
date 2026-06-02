@@ -40,7 +40,7 @@ pub fn init_display<'d, T: Instance>(
     let display_cs = Output::new(display_cs, Level::High);
 
     // Give the display exclusive ownership of the SPI bus
-    let display_spi = ExclusiveDevice::new(spi, display_cs, Delay);
+    let display_spi = ExclusiveDevice::new(spi, display_cs, Delay).unwrap();
 
     // Display interface abstraction from SPI and DC
     let di = SPIInterface::new(display_spi, dcx);

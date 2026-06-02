@@ -7,7 +7,7 @@ use embassy_rp::{gpio, i2c};
 use embassy_time::Timer;
 use gpio::{Level, Output};
 use heapless::String;
-use xpanse::{adc::init_adc, display::init_display_with_pins};
+use xpanse::{adc::init_adc, display::init_display};
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.
@@ -30,7 +30,7 @@ embassy_rp::bind_interrupts!(struct Irqs {
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
-    let disp = init_display_with_pins(
+    let disp = init_display(
         p.SPI0,
         p.PIN_34,
         p.PIN_35,
