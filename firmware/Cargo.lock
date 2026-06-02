@@ -6404,6 +6404,10 @@ dependencies = [
 [[package]]
 name = "xpanse_driver_api"
 version = "0.1.0"
+dependencies = [
+ "embassy-rp",
+ "embedded-hal-async",
+]
 
 [[package]]
 name = "yaml-rust2"

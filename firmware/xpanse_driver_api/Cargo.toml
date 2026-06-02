@@ -3,3 +3,7 @@ edition = "2024"
 name = "xpanse_driver_api"
 version = "0.1.0"
 license = "GPL-3.0"
+
+[dependencies]
+embassy-rp = { workspace = true }
+embedded-hal-async = { workspace = true }
