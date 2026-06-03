@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 
+extern crate alloc;
+
 use defmt::*;
 use embassy_executor::{SendSpawner, Spawner};
 use embassy_rp::{
@@ -8,6 +10,7 @@ use embassy_rp::{
     gpio::{self, AnyPin, Level, Output},
     i2c,
 };
+use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 use embassy_time::Timer;
 use static_cell::StaticCell;
 use xpanse::{adc::init_adc, display::init_display};
@@ -129,25 +132,35 @@ async fn main(spawner: Spawner) {
     );
 }
 
-struct TestDriver<G: BankPins> {
-    gpio_bank: GpioBank<G>,
+struct TestDriver<G>
+where
+    G: BankPins,
+{
+    btn_pin: Peri<'static, G::GPIO3>,
+    pressed: Signal<ThreadModeRawMutex, bool>,
 }
 
 impl<G: BankPins> Driver<G> for TestDriver<G> {
     async fn init(&mut self, gpio_bank: GpioBank<G>) -> Self {
         let spawner = SendSpawner::for_current_executor().await;
-        spawner.spawn(blink_led(gpio_bank.gpio0.map_into()).unwrap());
-        Self { gpio_bank }
+        let pressed = Signal::new();
+        spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed).unwrap());
+        Self {
+            btn_pin: gpio_bank.gpio3,
+            pressed,
+        }
     }
 }
 
 #[embassy_executor::task]
-async fn blink_led(pin: Peri<'static, AnyPin>) {
+async fn blink_led(pin: Peri<'static, AnyPin>, pressed: Signal<ThreadModeRawMutex, bool>) {
     let mut led = Output::new(pin, Level::Low);
     loop {
-        led.set_high();
-        Timer::after_millis(150).await;
-        led.set_low();
-        Timer::after_millis(150).await;
+        let val = pressed.wait().await;
+        if val {
+            led.set_high();
+        } else {
+            led.set_low();
+        }
     }
 }
