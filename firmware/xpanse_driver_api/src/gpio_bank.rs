@@ -6,7 +6,7 @@ use core::{
 use embassy_rp::{
     Peri, PeripheralType,
     adc::{AdcChannel, AdcPin},
-    gpio::Pin,
+    gpio::{AnyPin, Pin},
     i2c,
     pio::PioPin,
     pwm::{self, ChannelAPin, ChannelBPin},
@@ -14,13 +14,31 @@ use embassy_rp::{
 };
 
 pub trait BasePin:
-    RefUnwindSafe + Send + Sync + Unpin + UnwindSafe + Copy + Pin + PioPin + PeripheralType
+    RefUnwindSafe
+    + Send
+    + Sync
+    + Unpin
+    + UnwindSafe
+    + Copy
+    + Pin
+    + PioPin
+    + PeripheralType
+    + Into<AnyPin>
 {
 }
 
 // Implement BasePin for any type T that implements all these traits
 impl<T> BasePin for T where
-    T: RefUnwindSafe + Send + Sync + Unpin + UnwindSafe + Copy + Pin + PioPin + PeripheralType
+    T: RefUnwindSafe
+        + Send
+        + Sync
+        + Unpin
+        + UnwindSafe
+        + Copy
+        + Pin
+        + PioPin
+        + PeripheralType
+        + Into<AnyPin>
 {
 }
 
@@ -43,20 +61,20 @@ pub trait BankPins {
     type GPIO9: BasePin;
 }
 
-pub struct GpioBank<'a, G: BankPins> {
-    pub gpio0: Peri<'a, G::GPIO0>,
-    pub gpio1: Peri<'a, G::GPIO1>,
-    pub gpio2: Peri<'a, G::GPIO2>,
-    pub gpio3: Peri<'a, G::GPIO3>,
-    pub gpio4: Peri<'a, G::GPIO4>,
-    pub gpio5: Peri<'a, G::GPIO5>,
-    pub gpio6: Peri<'a, G::GPIO6>,
-    pub gpio7: Peri<'a, G::GPIO7>,
-    pub gpio8: Peri<'a, G::GPIO8>,
-    pub gpio9: Peri<'a, G::GPIO9>,
-    pub pwm_slice0: Peri<'a, G::PWM_SLICE0>,
-    pub pwm_slice1: Peri<'a, G::PWM_SLICE1>,
-    pub pwm_slice2: Peri<'a, G::PWM_SLICE2>,
+pub struct GpioBank<G: BankPins> {
+    pub gpio0: Peri<'static, G::GPIO0>,
+    pub gpio1: Peri<'static, G::GPIO1>,
+    pub gpio2: Peri<'static, G::GPIO2>,
+    pub gpio3: Peri<'static, G::GPIO3>,
+    pub gpio4: Peri<'static, G::GPIO4>,
+    pub gpio5: Peri<'static, G::GPIO5>,
+    pub gpio6: Peri<'static, G::GPIO6>,
+    pub gpio7: Peri<'static, G::GPIO7>,
+    pub gpio8: Peri<'static, G::GPIO8>,
+    pub gpio9: Peri<'static, G::GPIO9>,
+    pub pwm_slice0: Peri<'static, G::PWM_SLICE0>,
+    pub pwm_slice1: Peri<'static, G::PWM_SLICE1>,
+    pub pwm_slice2: Peri<'static, G::PWM_SLICE2>,
     _phantom: PhantomData<G>,
 }
 
@@ -79,8 +97,22 @@ impl<
     GPIO9: BasePin,
 > BankPins
     for (
-        I2C, SPI, UART, PWM_SLICE0, PWM_SLICE1, PWM_SLICE2, GPIO0, GPIO1, GPIO2, GPIO3, GPIO4,
-        GPIO5, GPIO6, GPIO7, GPIO8, GPIO9,
+        I2C,
+        SPI,
+        UART,
+        PWM_SLICE0,
+        PWM_SLICE1,
+        PWM_SLICE2,
+        GPIO0,
+        GPIO1,
+        GPIO2,
+        GPIO3,
+        GPIO4,
+        GPIO5,
+        GPIO6,
+        GPIO7,
+        GPIO8,
+        GPIO9,
     )
 {
     type I2C = I2C;
@@ -102,7 +134,6 @@ impl<
 }
 
 impl<
-    'a,
     I2C: i2c::Instance,
     SPI: spi::Instance,
     UART: uart::Instance,
@@ -120,42 +151,39 @@ impl<
     GPIO8: BasePin + AdcChannel + AdcPin + ChannelBPin<PWM_SLICE0>,
     GPIO9: BasePin,
 >
-    GpioBank<
-        'a,
-        (
-            I2C,
-            SPI,
-            UART,
-            PWM_SLICE0,
-            PWM_SLICE1,
-            PWM_SLICE2,
-            GPIO0,
-            GPIO1,
-            GPIO2,
-            GPIO3,
-            GPIO4,
-            GPIO5,
-            GPIO6,
-            GPIO7,
-            GPIO8,
-            GPIO9,
-        ),
-    >
+    GpioBank<(
+        I2C,
+        SPI,
+        UART,
+        PWM_SLICE0,
+        PWM_SLICE1,
+        PWM_SLICE2,
+        GPIO0,
+        GPIO1,
+        GPIO2,
+        GPIO3,
+        GPIO4,
+        GPIO5,
+        GPIO6,
+        GPIO7,
+        GPIO8,
+        GPIO9,
+    )>
 {
     pub fn new(
-        gpio0: Peri<'a, GPIO0>,
-        gpio1: Peri<'a, GPIO1>,
-        gpio2: Peri<'a, GPIO2>,
-        gpio3: Peri<'a, GPIO3>,
-        gpio4: Peri<'a, GPIO4>,
-        gpio5: Peri<'a, GPIO5>,
-        gpio6: Peri<'a, GPIO6>,
-        gpio7: Peri<'a, GPIO7>,
-        gpio8: Peri<'a, GPIO8>,
-        gpio9: Peri<'a, GPIO9>,
-        pwm_slice0: Peri<'a, PWM_SLICE0>,
-        pwm_slice1: Peri<'a, PWM_SLICE1>,
-        pwm_slice2: Peri<'a, PWM_SLICE2>,
+        gpio0: Peri<'static, GPIO0>,
+        gpio1: Peri<'static, GPIO1>,
+        gpio2: Peri<'static, GPIO2>,
+        gpio3: Peri<'static, GPIO3>,
+        gpio4: Peri<'static, GPIO4>,
+        gpio5: Peri<'static, GPIO5>,
+        gpio6: Peri<'static, GPIO6>,
+        gpio7: Peri<'static, GPIO7>,
+        gpio8: Peri<'static, GPIO8>,
+        gpio9: Peri<'static, GPIO9>,
+        pwm_slice0: Peri<'static, PWM_SLICE0>,
+        pwm_slice1: Peri<'static, PWM_SLICE1>,
+        pwm_slice2: Peri<'static, PWM_SLICE2>,
     ) -> Self {
         Self {
             gpio0,

@@ -1,14 +1,20 @@
 #![no_std]
 #![no_main]
 
-use embassy_executor::Spawner;
+use defmt::*;
+use embassy_executor::{SendSpawner, Spawner};
 use embassy_rp::{
-    gpio::{Level, Output},
+    Peri,
+    gpio::{self, AnyPin, Level, Output},
     i2c,
 };
+use embassy_time::Timer;
 use static_cell::StaticCell;
 use xpanse::{adc::init_adc, display::init_display};
-use xpanse_driver_api::gpio_bank::GpioBank;
+use xpanse_driver_api::{
+    driver::Driver,
+    gpio_bank::{BankPins, GpioBank},
+};
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.
@@ -29,7 +35,7 @@ embassy_rp::bind_interrupts!(struct Irqs {
 static BUFFER: StaticCell<[u8; 512]> = StaticCell::new();
 
 #[embassy_executor::main]
-async fn main(_spawner: Spawner) {
+async fn main(spawner: Spawner) {
     let mut p = embassy_rp::init(Default::default());
 
     let display_buffer = BUFFER.init([0_u8; 512]);
@@ -121,4 +127,27 @@ async fn main(_spawner: Spawner) {
         p.PWM_SLICE2,
         p.PWM_SLICE5,
     );
+}
+
+struct TestDriver<G: BankPins> {
+    gpio_bank: GpioBank<G>,
+}
+
+impl<G: BankPins> Driver<G> for TestDriver<G> {
+    async fn init(&mut self, gpio_bank: GpioBank<G>) -> Self {
+        let spawner = SendSpawner::for_current_executor().await;
+        spawner.spawn(blink_led(gpio_bank.gpio0.map_into()).unwrap());
+        Self { gpio_bank }
+    }
+}
+
+#[embassy_executor::task]
+async fn blink_led(pin: Peri<'static, AnyPin>) {
+    let mut led = Output::new(pin, Level::Low);
+    loop {
+        led.set_high();
+        Timer::after_millis(150).await;
+        led.set_low();
+        Timer::after_millis(150).await;
+    }
 }
