@@ -16,19 +16,6 @@ pub async fn core1_task(
     mut i2c_pins: I2cPinPeris,
     mut remaining_peris: RemainingPeris,
 ) {
-    let config = embassy_rp::i2c::Config::default();
-    let bus = embassy_rp::i2c::I2c::new_async(
-        remaining_peris.i2c1.reborrow(),
-        i2c_pins.scl.reborrow(),
-        i2c_pins.sda.reborrow(),
-        Irqs,
-        config,
-    );
-
-    let adc = init_adc(bus).await.unwrap();
-
-    drop(adc);
-
     let gpio_bank_0 = GpioBank::new(
         gpio_bank_0.gpio0,      //0
         gpio_bank_0.gpio1,      //1
@@ -92,4 +79,17 @@ pub async fn core1_task(
         gpio_bank_3.pwm_slice2, //11
         gpio_bank_3.pwm_slice3, //12
     );
+
+    let config = embassy_rp::i2c::Config::default();
+    let bus = embassy_rp::i2c::I2c::new_async(
+        remaining_peris.i2c1.reborrow(),
+        i2c_pins.scl.reborrow(),
+        i2c_pins.sda.reborrow(),
+        Irqs,
+        config,
+    );
+
+    let adc = init_adc(bus).await.unwrap();
+
+    
 }
