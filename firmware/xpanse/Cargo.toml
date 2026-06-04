@@ -53,6 +53,7 @@ embedded-hal-async = { workspace = true }
 embedded-hal-bus = { workspace = true }
 embedded-io-async = { workspace = true }
 embedded-storage = { workspace = true }
+embedded-alloc = { workspace = true }
 static_cell = { workspace = true }
 portable-atomic = { workspace = true }
 log = { workspace = true }
@@ -60,5 +61,5 @@ embedded-sdmmc = { workspace = true }
 
 [package.metadata.embassy]
 build = [
-  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" }
+  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" },
 ]
