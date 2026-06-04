@@ -89,7 +89,13 @@ pub async fn core1_task(
         config,
     );
 
-    let adc = init_adc(bus).await.unwrap();
+    let mut adc = init_adc(bus).await.unwrap();
 
-    
+    let raw = match adc.read_ch0_polled().await {
+        Ok(raw) => raw,
+        Err(e) => {
+            defmt::error!("Error while reading adc ch0 {}", e);
+            return;
+        }
+    };
 }

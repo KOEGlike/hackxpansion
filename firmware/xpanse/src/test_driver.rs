@@ -22,7 +22,7 @@ where
 }
 
 impl<G: BankPins> Driver<G> for TestDriver<G> {
-    async fn init(&mut self, gpio_bank: GpioBank<G>) -> Self {
+    async fn init(gpio_bank: GpioBank<G>) -> Self {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
         spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());

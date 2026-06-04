@@ -1,6 +1,7 @@
 #![no_std]
 
 pub mod adc;
+pub mod adc_mapping;
 pub mod core0;
 pub mod core1;
 pub mod display;
