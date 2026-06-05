@@ -1,6 +1,8 @@
 use xpanse_driver_api::gpio_bank::GpioBank;
 
+use crate::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
+use xpanse_driver_api::{driver::Driver, metadata::ModuleSlot};
 
 slint::slint! {
     export component HelloWorld inherits Window {
@@ -107,10 +109,28 @@ pub async fn core1_task(
 
     let mut registry = crate::device_registry::DeviceRegistry::new();
 
-    use xpanse_driver_api::driver::Driver;
-    use xpanse_driver_api::metadata::ModuleSlot;
-    test_driver::TestDriver::new(gpio_bank_0, ModuleSlot::FrontLeft, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_1, ModuleSlot::FrontRight, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_2, ModuleSlot::BackLeft, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_3, ModuleSlot::BackRight, &mut registry).await;
+    load_driver!(
+        module_0_id,
+        gpio_bank_0,
+        ModuleSlot::FrontLeft,
+        &mut registry
+    );
+    load_driver!(
+        module_1_id,
+        gpio_bank_1,
+        ModuleSlot::FrontRight,
+        &mut registry
+    );
+    load_driver!(
+        module_2_id,
+        gpio_bank_2,
+        ModuleSlot::BackLeft,
+        &mut registry
+    );
+    load_driver!(
+        module_3_id,
+        gpio_bank_3,
+        ModuleSlot::BackRight,
+        &mut registry
+    );
 }

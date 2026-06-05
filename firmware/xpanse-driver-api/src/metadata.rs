@@ -1,7 +1,7 @@
 //! Metadata for apps about the drivers, like what physiscal slot the module is in, that the driver uses,
 //! and what type of module is used by the driver
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum ModuleSlot {
     FrontLeft,
     FrontRight,
@@ -9,12 +9,13 @@ pub enum ModuleSlot {
     BackRight,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub struct ModuleID {
     pub md0: ModuleDetectResistor,
     pub md1: ModuleDetectResistor,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum ModuleDetectResistor {
     R1K,
     R1K1,

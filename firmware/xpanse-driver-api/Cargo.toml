@@ -7,3 +7,4 @@ license = "GPL-3.0"
 [dependencies]
 embassy-rp = { workspace = true }
 embedded-hal-async = { workspace = true }
+defmt = { workspace = true }
