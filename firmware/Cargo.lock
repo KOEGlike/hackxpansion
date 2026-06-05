@@ -5140,6 +5140,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "test-driver"
+version = "0.1.0"
+dependencies = [
+ "embassy-executor",
+ "embassy-rp",
+ "embassy-sync",
+ "xpanse-driver-api",
+]
+
+[[package]]
 name = "text-size"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6455,13 +6465,14 @@ dependencies = [
  "slint",
  "smart-leds",
  "static_cell",
+ "test-driver",
  "ti-adc-expander",
  "usbd-hid",
- "xpanse_driver_api",
+ "xpanse-driver-api",
 ]
 
 [[package]]
-name = "xpanse_driver_api"
+name = "xpanse-driver-api"
 version = "0.1.0"
 dependencies = [
  "embassy-rp",

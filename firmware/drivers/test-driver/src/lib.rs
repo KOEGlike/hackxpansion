@@ -1,3 +1,5 @@
+#![no_std]
+
 extern crate alloc;
 
 use alloc::boxed::Box;
@@ -42,21 +44,29 @@ impl Button for SingleButton {
 // The primary module driver
 pub struct TestDriver {}
 
-impl<G: BankPins, R> xpanse_driver_api::driver::Driver<G, R> for TestDriver 
-where 
-    R: xpanse_driver_api::registry::Register<dyn Button>
+impl<G: BankPins, R> xpanse_driver_api::driver::Driver<G, R> for TestDriver
+where
+    R: xpanse_driver_api::registry::Register<dyn Button>,
 {
-    async fn new(gpio_bank: GpioBank<G>, slot: xpanse_driver_api::metadata::Slots, registry: &mut R) -> Self {
+    async fn new(
+        gpio_bank: GpioBank<G>,
+        slot: xpanse_driver_api::metadata::Slots,
+        registry: &mut R,
+    ) -> Self {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
-        
+
         // Keep the blinking LED from the original code just to show spawning works
         spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
-        
+
         let button = SingleButton::new(gpio_bank.gpio3.into());
         // We cast to Box<dyn Button> to satisfy the Register trait
-        registry.register(slot, xpanse_driver_api::metadata::Module::TestModule, Box::new(button) as Box<dyn Button>);
-        
+        registry.register(
+            slot,
+            xpanse_driver_api::metadata::Module::TestModule,
+            Box::new(button) as Box<dyn Button>,
+        );
+
         Self {}
     }
 }

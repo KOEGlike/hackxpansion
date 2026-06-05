@@ -36,7 +36,7 @@ pub async fn core0_task(display_peris: DisplayPeris) {
     );
 
     let window = MinimalSoftwareWindow::new(Default::default());
-    slint::platform::set_platform(Box::new(MyPlatform {
+    slint::platform::set_platform(Box::new(XpansePlatfrom {
         window: window.clone(),
     }))
     .unwrap();
@@ -82,11 +82,11 @@ fn slint_rgb565_into_embedded_graphics(rgb: &Rgb565Pixel) -> Rgb565 {
     Rgb565::new(rgb.r, rgb.g, rgb.b)
 }
 
-struct MyPlatform {
+struct XpansePlatfrom {
     window: Rc<MinimalSoftwareWindow>,
 }
 
-impl Platform for MyPlatform {
+impl Platform for XpansePlatfrom {
     fn create_window_adapter(
         &self,
     ) -> Result<Rc<dyn slint::platform::WindowAdapter>, slint::PlatformError> {
@@ -96,9 +96,5 @@ impl Platform for MyPlatform {
     }
     fn duration_since_start(&self) -> core::time::Duration {
         Instant::now().duration_since(Instant::from_secs(0)).into()
-    }
-    // optional: You can put the event loop there, or in the main function, see later
-    fn run_event_loop(&self) -> Result<(), slint::PlatformError> {
-        todo!();
     }
 }

@@ -7,7 +7,7 @@ license = "GPL-3.0"
 publish = false
 
 [dependencies]
-xpanse_driver_api = { workspace = true }
+xpanse-driver-api = { workspace = true }
 
 embassy-embedded-hal = { workspace = true }
 embassy-sync = { workspace = true }
@@ -59,6 +59,8 @@ static_cell = { workspace = true }
 portable-atomic = { workspace = true }
 log = { workspace = true }
 embedded-sdmmc = { workspace = true }
+
+test-driver = { workspace = true }
 
 [package.metadata.embassy]
 build = [

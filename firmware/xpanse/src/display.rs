@@ -16,7 +16,7 @@ pub const HIGHT: u16 = 240;
 pub const WIDTH: u16 = 320;
 
 // Update your type definition to use ExclusiveDevice
-type Display<'a, T> = mipidsi::Display<
+pub type Display<'a, T> = mipidsi::Display<
     SpiInterface<'a, ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
     ST7789,
     Output<'a>,

@@ -7,6 +7,15 @@ embassy_rp::bind_interrupts!(struct Irqs {
     I2C1_IRQ => i2c::InterruptHandler<embassy_rp::peripherals::I2C1>;
 });
 
+slint::slint! {
+    export component HelloWorld inherits Window {
+        Text {
+            text: "hello world";
+            color: green;
+        }
+    }
+}
+
 #[embassy_executor::task]
 pub async fn core1_task(
     gpio_bank_0: GpioBankPeris0,
@@ -105,10 +114,8 @@ pub async fn core1_task(
 
     use xpanse_driver_api::driver::Driver;
     use xpanse_driver_api::metadata::Slots;
-    crate::test_driver::TestDriver::new(gpio_bank_0, Slots::FrontLeft, &mut registry).await;
-    crate::test_driver::TestDriver::new(gpio_bank_1, Slots::FrontRight, &mut registry).await;
-    crate::test_driver::TestDriver::new(gpio_bank_2, Slots::BackLeft, &mut registry).await;
-    crate::test_driver::TestDriver::new(gpio_bank_3, Slots::BackRight, &mut registry).await;
-
-    defmt::info!("System Registry initialized with {} buttons", registry.buttons.len());
+    test_driver::TestDriver::new(gpio_bank_0, Slots::FrontLeft, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_1, Slots::FrontRight, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_2, Slots::BackLeft, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_3, Slots::BackRight, &mut registry).await;
 }
