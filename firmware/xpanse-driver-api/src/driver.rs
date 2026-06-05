@@ -1,7 +1,13 @@
 use crate::gpio_bank::{BankPins, GpioBank};
-use crate::metadata::Slots;
+use crate::metadata::{ModuleID, ModuleSlot};
 use core::future::Future;
 
 pub trait Driver<G: BankPins, R> {
-    fn new(gpio_bank: GpioBank<G>, slot: Slots, registry: &mut R) -> impl Future<Output = Self>;
+    const ID: ModuleID;
+
+    fn new(
+        gpio_bank: GpioBank<G>,
+        slot: ModuleSlot,
+        registry: &mut R,
+    ) -> impl Future<Output = Self>;
 }

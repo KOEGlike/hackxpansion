@@ -16,21 +16,25 @@ pub const HIGHT: u16 = 240;
 pub const WIDTH: u16 = 320;
 
 // Update your type definition to use ExclusiveDevice
-pub type Display<'a, T> = mipidsi::Display<
-    SpiInterface<'a, ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
+pub type Display<T> = mipidsi::Display<
+    SpiInterface<
+        'static,
+        ExclusiveDevice<Spi<'static, T, spi::Blocking>, Output<'static>, Delay>,
+        Output<'static>,
+    >,
     ST7789,
-    Output<'a>,
+    Output<'static>,
 >;
 
-pub fn init_display<'d, T: Instance>(
-    spi: Peri<'d, T>,
-    clk: Peri<'d, impl ClkPin<T>>,
-    mosi: Peri<'d, impl MosiPin<T>>,
-    rst: Peri<'d, AnyPin>,
-    display_cs: Peri<'d, AnyPin>,
-    dcx: Peri<'d, AnyPin>,
-    buffer: &'d mut [u8],
-) -> Display<'d, T> {
+pub fn init_display<T: Instance>(
+    spi: Peri<'static, T>,
+    clk: Peri<'static, impl ClkPin<T>>,
+    mosi: Peri<'static, impl MosiPin<T>>,
+    rst: Peri<'static, AnyPin>,
+    display_cs: Peri<'static, AnyPin>,
+    dcx: Peri<'static, AnyPin>,
+    buffer: &'static mut [u8],
+) -> Display<T> {
     let mut display_config = spi::Config::default();
     display_config.frequency = 64_000_000;
     display_config.phase = spi::Phase::CaptureOnSecondTransition;

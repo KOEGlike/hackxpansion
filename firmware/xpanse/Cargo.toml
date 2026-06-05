@@ -45,6 +45,7 @@ display-interface = { workspace = true }
 byte-slice-cast = { workspace = true }
 smart-leds = { workspace = true }
 heapless = { workspace = true }
+libm = { workspace = true }
 usbd-hid = { workspace = true }
 ti-adc-expander = { workspace = true }
 

@@ -1,11 +1,6 @@
-use embassy_rp::{gpio, i2c};
 use xpanse_driver_api::gpio_bank::GpioBank;
 
-use crate::{adc::init_adc, resource_split::*};
-
-embassy_rp::bind_interrupts!(struct Irqs {
-    I2C1_IRQ => i2c::InterruptHandler<embassy_rp::peripherals::I2C1>;
-});
+use crate::{adc::init_adc, adc_mapping, resource_split::*};
 
 slint::slint! {
     export component HelloWorld inherits Window {
@@ -89,33 +84,33 @@ pub async fn core1_task(
         gpio_bank_3.pwm_slice3, //12
     );
 
-    let config = embassy_rp::i2c::Config::default();
-    let bus = embassy_rp::i2c::I2c::new_async(
+    let mut adc = init_adc(
         remaining_peris.i2c1.reborrow(),
-        i2c_pins.scl.reborrow(),
         i2c_pins.sda.reborrow(),
-        Irqs,
-        config,
-    );
+        i2c_pins.scl.reborrow(),
+    )
+    .await
+    .unwrap();
 
-    let mut adc = init_adc(bus).await.unwrap();
-
-    let raw = match adc.read_ch0_polled().await {
-        Ok(raw) => raw,
-        Err(e) => {
-            defmt::error!("Error while reading adc ch0 {}", e);
-            return;
-        }
-    };
-
-    defmt::info!("ADC CH0: {}", raw);
+    let module_0_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontLeft)
+        .await
+        .unwrap();
+    let module_1_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontRight)
+        .await
+        .unwrap();
+    let module_2_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackLeft)
+        .await
+        .unwrap();
+    let module_3_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackRight)
+        .await
+        .unwrap();
 
     let mut registry = crate::device_registry::DeviceRegistry::new();
 
     use xpanse_driver_api::driver::Driver;
-    use xpanse_driver_api::metadata::Slots;
-    test_driver::TestDriver::new(gpio_bank_0, Slots::FrontLeft, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_1, Slots::FrontRight, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_2, Slots::BackLeft, &mut registry).await;
-    test_driver::TestDriver::new(gpio_bank_3, Slots::BackRight, &mut registry).await;
+    use xpanse_driver_api::metadata::ModuleSlot;
+    test_driver::TestDriver::new(gpio_bank_0, ModuleSlot::FrontLeft, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_1, ModuleSlot::FrontRight, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_2, ModuleSlot::BackLeft, &mut registry).await;
+    test_driver::TestDriver::new(gpio_bank_3, ModuleSlot::BackRight, &mut registry).await;
 }

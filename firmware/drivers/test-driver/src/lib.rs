@@ -15,6 +15,7 @@ use embassy_rp::{
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 
 use xpanse_driver_api::{
+    driver::Driver,
     gpio_bank::{BankPins, GpioBank},
     interfaces::buttons::{Button, ButtonA, ButtonB},
 };
@@ -44,13 +45,18 @@ impl Button for SingleButton {
 // The primary module driver
 pub struct TestDriver {}
 
-impl<G: BankPins, R> xpanse_driver_api::driver::Driver<G, R> for TestDriver
+impl<G: BankPins, R> Driver<G, R> for TestDriver
 where
     R: xpanse_driver_api::registry::Register<dyn Button>,
 {
+    const ID: xpanse_driver_api::metadata::ModuleID = xpanse_driver_api::metadata::ModuleID {
+        md0: xpanse_driver_api::metadata::ModuleDetectResistor::R1K,
+        md1: xpanse_driver_api::metadata::ModuleDetectResistor::R1K1,
+    };
+
     async fn new(
         gpio_bank: GpioBank<G>,
-        slot: xpanse_driver_api::metadata::Slots,
+        slot: xpanse_driver_api::metadata::ModuleSlot,
         registry: &mut R,
     ) -> Self {
         let spawner = SendSpawner::for_current_executor().await;
@@ -63,10 +69,7 @@ where
         // We cast to Box<dyn Button> to satisfy the Register trait
         registry.register(
             slot,
-            xpanse_driver_api::metadata::ModuleID {
-                md0: xpanse_driver_api::metadata::ModuleDetectResistor::R1K,
-                md1: xpanse_driver_api::metadata::ModuleDetectResistor::R1K1,
-            },
+            <Self as Driver<G, R>>::ID,
             Box::new(button) as Box<dyn Button>,
         );
 

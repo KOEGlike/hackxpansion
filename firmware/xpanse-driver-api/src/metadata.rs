@@ -2,7 +2,7 @@
 //! and what type of module is used by the driver
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Slots {
+pub enum ModuleSlot {
     FrontLeft,
     FrontRight,
     BackLeft,
@@ -67,9 +67,86 @@ pub enum ModuleDetectResistor {
     R100K,
 }
 
-impl Into<f32> for ModuleDetectResistor {
-    fn into(self) -> f32 {
-        match self {
+pub const BOTTOM_RESISTOR: f64 = 10_000.0;
+pub const AVDD: f64 = 3.3;
+
+impl ModuleDetectResistor {
+    pub fn from_voltage(voltage: f64) -> Self {
+        let safe_voltage = voltage.max(0.001);
+
+        let calculated_resistor = (AVDD * BOTTOM_RESISTOR) / safe_voltage - BOTTOM_RESISTOR;
+
+        let (_, closest_resistor) = RESISTOR_MAP
+            .iter()
+            .min_by(|(val_a, _), (val_b, _)| {
+                let diff_a = (val_a - calculated_resistor).abs();
+                let diff_b = (val_b - calculated_resistor).abs();
+
+                diff_a
+                    .partial_cmp(&diff_b)
+                    .unwrap_or(core::cmp::Ordering::Equal)
+            })
+            .expect("RESISTOR_MAP should never be empty");
+
+        *closest_resistor
+    }
+}
+
+const RESISTOR_MAP: &[(f64, ModuleDetectResistor)] = &[
+    (1_000.0, ModuleDetectResistor::R1K),
+    (1_100.0, ModuleDetectResistor::R1K1),
+    (1_200.0, ModuleDetectResistor::R1K2),
+    (1_300.0, ModuleDetectResistor::R1K3),
+    (1_500.0, ModuleDetectResistor::R1K5),
+    (1_600.0, ModuleDetectResistor::R1K6),
+    (1_800.0, ModuleDetectResistor::R1K8),
+    (2_000.0, ModuleDetectResistor::R2K),
+    (2_200.0, ModuleDetectResistor::R2K2),
+    (2_400.0, ModuleDetectResistor::R2K4),
+    (2_700.0, ModuleDetectResistor::R2K7),
+    (3_000.0, ModuleDetectResistor::R3K),
+    (3_300.0, ModuleDetectResistor::R3K3),
+    (3_600.0, ModuleDetectResistor::R3K6),
+    (3_900.0, ModuleDetectResistor::R3K9),
+    (4_300.0, ModuleDetectResistor::R4K3),
+    (4_700.0, ModuleDetectResistor::R4K7),
+    (5_100.0, ModuleDetectResistor::R5K1),
+    (5_600.0, ModuleDetectResistor::R5K6),
+    (6_200.0, ModuleDetectResistor::R6K2),
+    (6_800.0, ModuleDetectResistor::R6K8),
+    (7_500.0, ModuleDetectResistor::R7K5),
+    (8_200.0, ModuleDetectResistor::R8K2),
+    (9_100.0, ModuleDetectResistor::R9K1),
+    (10_000.0, ModuleDetectResistor::R10K),
+    (11_000.0, ModuleDetectResistor::R11K),
+    (12_000.0, ModuleDetectResistor::R12K),
+    (13_000.0, ModuleDetectResistor::R13K),
+    (15_000.0, ModuleDetectResistor::R15K),
+    (16_000.0, ModuleDetectResistor::R16K),
+    (18_000.0, ModuleDetectResistor::R18K),
+    (20_000.0, ModuleDetectResistor::R20K),
+    (22_000.0, ModuleDetectResistor::R22K),
+    (24_000.0, ModuleDetectResistor::R24K),
+    (27_000.0, ModuleDetectResistor::R27K),
+    (30_000.0, ModuleDetectResistor::R30K),
+    (33_000.0, ModuleDetectResistor::R33K),
+    (36_000.0, ModuleDetectResistor::R36K),
+    (39_000.0, ModuleDetectResistor::R39K),
+    (43_000.0, ModuleDetectResistor::R43K),
+    (47_000.0, ModuleDetectResistor::R47K),
+    (51_000.0, ModuleDetectResistor::R51K),
+    (56_000.0, ModuleDetectResistor::R56K),
+    (62_000.0, ModuleDetectResistor::R62K),
+    (68_000.0, ModuleDetectResistor::R68K),
+    (75_000.0, ModuleDetectResistor::R75K),
+    (82_000.0, ModuleDetectResistor::R82K),
+    (91_000.0, ModuleDetectResistor::R91K),
+    (100_000.0, ModuleDetectResistor::R100K),
+];
+
+impl From<ModuleDetectResistor> for f64 {
+    fn from(val: ModuleDetectResistor) -> Self {
+        match val {
             ModuleDetectResistor::R1K => 1_000.0,
             ModuleDetectResistor::R1K1 => 1_100.0,
             ModuleDetectResistor::R1K2 => 1_200.0,
