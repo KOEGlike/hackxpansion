@@ -39,6 +39,7 @@ panic-probe = { workspace = true }
 display-interface-spi = { workspace = true }
 embedded-graphics = { workspace = true }
 slint = { workspace = true }
+rgb = { workspace = true }
 mipidsi = { workspace = true }
 display-interface = { workspace = true }
 byte-slice-cast = { workspace = true }

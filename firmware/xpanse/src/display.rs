@@ -12,6 +12,9 @@ use mipidsi::{
     options::{Orientation, Rotation},
 };
 
+pub const HIGHT: u16 = 240;
+pub const WIDTH: u16 = 320;
+
 // Update your type definition to use ExclusiveDevice
 type Display<'a, T> = mipidsi::Display<
     SpiInterface<'a, ExclusiveDevice<Spi<'a, T, spi::Blocking>, Output<'a>, Delay>, Output<'a>>,
@@ -47,7 +50,7 @@ pub fn init_display<'d, T: Instance>(
     let di = SpiInterface::new(display_spi, dcx, buffer);
 
     Builder::new(ST7789, di)
-        .display_size(240, 320)
+        .display_size(WIDTH, HIGHT)
         .reset_pin(rst)
         .orientation(Orientation::new().rotate(Rotation::Deg90))
         .init(&mut Delay)
