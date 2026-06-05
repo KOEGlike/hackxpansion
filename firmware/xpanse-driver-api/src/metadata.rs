@@ -9,14 +9,9 @@ pub enum Slots {
     BackRight,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Module {
-    TestModule,
-}
-
 pub struct ModuleID {
-    md0: ModuleDetectResistor,
-    md1: ModuleDetectResistor,
+    pub md0: ModuleDetectResistor,
+    pub md1: ModuleDetectResistor,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

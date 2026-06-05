@@ -63,7 +63,10 @@ where
         // We cast to Box<dyn Button> to satisfy the Register trait
         registry.register(
             slot,
-            xpanse_driver_api::metadata::Module::TestModule,
+            xpanse_driver_api::metadata::ModuleID {
+                md0: xpanse_driver_api::metadata::ModuleDetectResistor::R1K,
+                md1: xpanse_driver_api::metadata::ModuleDetectResistor::R1K1,
+            },
             Box::new(button) as Box<dyn Button>,
         );
 

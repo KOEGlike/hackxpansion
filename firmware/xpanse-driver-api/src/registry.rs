@@ -1,15 +1,15 @@
+use crate::metadata::{ModuleID, Slots};
 use alloc::boxed::Box;
-use crate::metadata::{Module, Slots};
 
 pub struct RegisteredResource<T: ?Sized> {
     pub slot: Slots,
-    pub module: Module,
+    pub module_id: ModuleID,
     pub resource: Box<T>,
 }
 
 // Implement this to accept a trait object
 pub trait Register<T: ?Sized> {
-    fn register(&mut self, slot: Slots, module: Module, item: Box<T>);
+    fn register(&mut self, slot: Slots, module_id: ModuleID, item: Box<T>);
 }
 
 // Implement this to hand out a trait object

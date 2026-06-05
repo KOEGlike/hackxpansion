@@ -3,7 +3,7 @@ extern crate alloc;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use xpanse_driver_api::interfaces::buttons::Button;
-use xpanse_driver_api::metadata::{Module, Slots};
+use xpanse_driver_api::metadata::{ModuleID, Slots};
 use xpanse_driver_api::registry::{Register, RegisteredResource};
 
 #[derive(Default)]
@@ -22,10 +22,10 @@ impl DeviceRegistry {
 
 // We prove to the API that our registry knows how to accept Buttons
 impl Register<dyn Button> for DeviceRegistry {
-    fn register(&mut self, slot: Slots, module: Module, item: Box<dyn Button>) {
+    fn register(&mut self, slot: Slots, module_id: ModuleID, item: Box<dyn Button>) {
         self.buttons.push(RegisteredResource {
             slot,
-            module,
+            module_id,
             resource: item,
         });
     }
