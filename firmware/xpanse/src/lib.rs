@@ -7,3 +7,4 @@ pub mod core1;
 pub mod display;
 pub mod resource_split;
 mod test_driver;
+pub mod device_registry;

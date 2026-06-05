@@ -1,35 +1,63 @@
 extern crate alloc;
 
+use alloc::boxed::Box;
+use core::future::Future;
+use core::pin::Pin;
+
+use alloc::sync::Arc;
 use embassy_executor::SendSpawner;
 use embassy_rp::{
     Peri,
-    gpio::{AnyPin, Level, Output},
+    gpio::{AnyPin, Input, Level, Output, Pull},
 };
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
+
 use xpanse_driver_api::{
-    driver::Driver,
     gpio_bank::{BankPins, GpioBank},
+    interfaces::buttons::{Button, ButtonA, ButtonB},
 };
 
-use alloc::sync::Arc;
-
-struct TestDriver<G>
-where
-    G: BankPins,
-{
-    btn_pin: Peri<'static, G::GPIO3>,
-    pressed: Arc<Signal<ThreadModeRawMutex, bool>>,
+pub struct SingleButton {
+    pin: Input<'static>,
 }
 
-impl<G: BankPins> Driver<G> for TestDriver<G> {
-    async fn init(gpio_bank: GpioBank<G>) -> Self {
+impl SingleButton {
+    pub fn new(pin: Peri<'static, AnyPin>) -> Self {
+        Self {
+            pin: Input::new(pin, Pull::Up),
+        }
+    }
+}
+
+impl Button for SingleButton {
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
+        Box::pin(async move {
+            // Mock waiting for press using embassy_time.
+            // In a real hardware driver, you'd use ExtiInput::wait_for_low().
+            self.pin.wait_for_low().await;
+        })
+    }
+}
+
+// The primary module driver
+pub struct TestDriver {}
+
+impl<G: BankPins, R> xpanse_driver_api::driver::Driver<G, R> for TestDriver 
+where 
+    R: xpanse_driver_api::registry::Register<dyn Button>
+{
+    async fn new(gpio_bank: GpioBank<G>, slot: xpanse_driver_api::metadata::Slots, registry: &mut R) -> Self {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
+        
+        // Keep the blinking LED from the original code just to show spawning works
         spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
-        Self {
-            btn_pin: gpio_bank.gpio3,
-            pressed,
-        }
+        
+        let button = SingleButton::new(gpio_bank.gpio3.into());
+        // We cast to Box<dyn Button> to satisfy the Register trait
+        registry.register(slot, xpanse_driver_api::metadata::Module::TestModule, Box::new(button) as Box<dyn Button>);
+        
+        Self {}
     }
 }
 

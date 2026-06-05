@@ -1,5 +1,9 @@
+use alloc::boxed::Box;
+use core::pin::Pin;
+use core::future::Future;
+
 pub trait Button {
-    fn wait_for_pressed(&mut self) -> impl Future<Output = ()>;
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
 }
 
 pub trait ButtonUp: Button {}

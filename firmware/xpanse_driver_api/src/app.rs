@@ -1,14 +1,14 @@
-use crate::{
-    driver::{self, Driver},
-    gpio_bank::{BankPins, GpioBank},
-};
+use alloc::boxed::Box;
+use core::pin::Pin;
+use core::future::Future;
 
-pub trait App {
-    fn run(&mut self) -> impl Future<Output = ()>;
-    fn new<G1: BankPins, G2: BankPins, G3: BankPins, G4: BankPins>(
-        driver_1: impl Driver<G1>,
-        driver_2: impl Driver<G2>,
-        driver_3: impl Driver<G3>,
-        driver_4: impl Driver<G4>,
-    ) -> impl Future<Output = Self>;
+pub trait App<R> {
+    // Run the application
+    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
+    
+    // Check if dependencies are met
+    fn can_run(registry: &R) -> bool where Self: Sized;
+
+    // Instantiate the application, taking capabilities out of the registry
+    fn new(registry: &mut R) -> Option<Self> where Self: Sized;
 }
