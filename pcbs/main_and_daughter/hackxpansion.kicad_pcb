@@ -12284,12 +12284,6 @@
 		(path "/61af021d-ad04-487f-9d02-e2b100ecd1ae/77d1a66a-1629-4487-9557-00ea9a578a7b/4f70ee66-41ca-4ae7-b93c-70a7d8aa391d")
 		(sheetname "/Main Board/RP2354B/")
 		(sheetfile "RP2354B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -12304,8 +12298,8 @@
 			(uuid "efe332e3-e715-4b14-bb62-2424b70ca275")
 		)
 		(fp_line
-			(start -1.25 1.050001)
-			(end 1.25 1.050001)
+			(start -1.25 1.05)
+			(end 1.25 1.05)
 			(stroke
 				(width 0.05)
 				(type solid)
@@ -12314,18 +12308,8 @@
 			(uuid "1d7da9a1-880e-4dad-9919-3880e550a814")
 		)
 		(fp_line
-			(start 1.25 1.050001)
-			(end 1.25 -1.050001)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(layer "F.CrtYd")
-			(uuid "903e24b3-9d15-432a-b92e-7e7ea4e9a52a")
-		)
-		(fp_line
-			(start -1.25 -1.050001)
-			(end -1.25 1.050001)
+			(start 1.25 1.05)
+			(end 1.25 -1.05)
 			(stroke
 				(width 0.05)
 				(type solid)
@@ -12334,8 +12318,18 @@
 			(uuid "b204182a-da38-4f26-8003-491522a073b1")
 		)
 		(fp_line
-			(start 1.25 -1.050001)
-			(end -1.25 -1.050001)
+			(start -1.25 -1.05)
+			(end -1.25 1.05)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "903e24b3-9d15-432a-b92e-7e7ea4e9a52a")
+		)
+		(fp_line
+			(start 1.25 -1.05)
+			(end -1.25 -1.05)
 			(stroke
 				(width 0.05)
 				(type solid)
@@ -12424,15 +12418,15 @@
 			(uuid "33fad0e2-6ec9-4f4e-9b41-8dddaa779f9d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD7_3DMODEL_DIR}/Inductor_SMD.3dshapes/AOTA-B201610SR47MT.STEP"
+		(model "${KIPRJMOD}/lib/RP2354B_MINIMAL/AOTA-B201610S3R3-101-T.stp"
 			(offset
-				(xyz 0 0 0.5)
+				(xyz 0 0 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz -90 0 0)
+				(xyz 0 0 0)
 			)
 		)
 	)
@@ -23900,7 +23894,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP5"
-			(at 0 1.448 180)
+			(at -0.205738 1.634294 180)
 			(layer "B.SilkS")
 			(uuid "a09973ad-5a6b-49b0-a918-48073dad8dd6")
 			(effects
@@ -26222,7 +26216,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP12"
-			(at 0 1.448 180)
+			(at 2.914262 -0.075706 180)
 			(layer "B.SilkS")
 			(uuid "8a5adfd8-ee80-410e-8ed0-3fd3a4cb935a")
 			(effects
@@ -26336,7 +26330,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP13"
-			(at 0 1.448 180)
+			(at 2.984262 0.044294 180)
 			(layer "B.SilkS")
 			(uuid "6448be63-2f91-4a52-8e92-8bfc7978c9af")
 			(effects
