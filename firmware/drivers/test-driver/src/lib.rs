@@ -47,7 +47,7 @@ pub struct TestDriver {}
 
 impl<G: BankPins, R> Driver<G, R> for TestDriver
 where
-    R: xpanse_driver_api::registry::Register<dyn Button>
+    R: xpanse_driver_api::registry::Register<Box<dyn Button>>
         + xpanse_driver_api::registry::Register<TestDriver>,
 {
     const ID: xpanse_driver_api::metadata::ModuleID = xpanse_driver_api::metadata::ModuleID {
@@ -76,7 +76,7 @@ where
 
         let x = Self {};
 
-        registry.register(slot, <Self as Driver<G, R>>::ID, Box::new(x));
+        registry.register(slot, <Self as Driver<G, R>>::ID, x);
     }
 }
 

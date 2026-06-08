@@ -9,7 +9,7 @@ use xpanse_driver_api::registry::{Register, RegisteredResource};
 
 #[derive(Default)]
 pub struct DeviceRegistry {
-    pub buttons: Vec<RegisteredResource<dyn Button>>,
+    pub buttons: Vec<RegisteredResource<Box<dyn Button>>>,
     pub test_drivers: Vec<RegisteredResource<TestDriver>>,
     // Add other capability lists here as you define new traits!
 }
@@ -24,7 +24,7 @@ impl DeviceRegistry {
 }
 
 // We prove to the API that our registry knows how to accept Buttons
-impl Register<dyn Button> for DeviceRegistry {
+impl Register<Box<dyn Button>> for DeviceRegistry {
     fn register(&mut self, slot: ModuleSlot, module_id: ModuleID, item: Box<dyn Button>) {
         self.buttons.push(RegisteredResource {
             slot,
@@ -35,7 +35,7 @@ impl Register<dyn Button> for DeviceRegistry {
 }
 
 impl Register<TestDriver> for DeviceRegistry {
-    fn register(&mut self, slot: ModuleSlot, module_id: ModuleID, item: Box<TestDriver>) {
+    fn register(&mut self, slot: ModuleSlot, module_id: ModuleID, item: TestDriver) {
         self.test_drivers.push(RegisteredResource {
             slot,
             module_id,
