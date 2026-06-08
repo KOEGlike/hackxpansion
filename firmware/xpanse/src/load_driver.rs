@@ -1,5 +1,3 @@
-use xpanse_driver_api::driver::Driver;
-
 #[macro_export]
 macro_rules! load_driver {
     ($id:expr, $bank:expr, $slot:expr, $registry:expr) => {

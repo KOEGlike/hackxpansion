@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types)]
+
 use core::{
     marker::PhantomData,
     panic::{RefUnwindSafe, UnwindSafe},
