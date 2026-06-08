@@ -47,7 +47,8 @@ pub struct TestDriver {}
 
 impl<G: BankPins, R> Driver<G, R> for TestDriver
 where
-    R: xpanse_driver_api::registry::Register<dyn Button>,
+    R: xpanse_driver_api::registry::Register<dyn Button>
+        + xpanse_driver_api::registry::Register<TestDriver>,
 {
     const ID: xpanse_driver_api::metadata::ModuleID = xpanse_driver_api::metadata::ModuleID {
         md0: xpanse_driver_api::metadata::ModuleDetectResistor::R1K,
@@ -58,7 +59,7 @@ where
         gpio_bank: GpioBank<G>,
         slot: xpanse_driver_api::metadata::ModuleSlot,
         registry: &mut R,
-    ) -> Self {
+    ) {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
 
@@ -73,7 +74,9 @@ where
             Box::new(button) as Box<dyn Button>,
         );
 
-        Self {}
+        let x = Self {};
+
+        registry.register(slot, <Self as Driver<G, R>>::ID, Box::new(x));
     }
 }
 
