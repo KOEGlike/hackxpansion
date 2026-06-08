@@ -2,6 +2,8 @@ use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;
 
+use crate::registry::RegisteredResourceInner;
+
 pub struct ButtonUseCase {
     pub button_a: bool,
     pub button_b: bool,
@@ -15,5 +17,12 @@ pub struct ButtonUseCase {
 
 pub trait Button {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
-    fn use_case(&self) -> ButtonUseCase;
+}
+
+impl RegisteredResourceInner for dyn Button {
+    type Info = ButtonUseCase;
+}
+
+impl RegisteredResourceInner for Box<dyn Button> {
+    type Info = ButtonUseCase;
 }
