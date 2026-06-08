@@ -17,7 +17,7 @@ use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 use xpanse_driver_api::{
     driver::Driver,
     gpio_bank::{BankPins, GpioBank},
-    interfaces::buttons::{Button, ButtonA, ButtonB},
+    interfaces::buttons::{Button, ButtonUseCase},
 };
 
 pub struct SingleButton {
@@ -39,6 +39,20 @@ impl Button for SingleButton {
             // In a real hardware driver, you'd use ExtiInput::wait_for_low().
             self.pin.wait_for_low().await;
         })
+    }
+    fn use_case(&self) -> ButtonUseCase {
+        // This is just a dummy implementation to show how you might return button states.
+        // In a real driver, you'd read the actual state of the buttons here.
+        ButtonUseCase {
+            button_a: false,
+            button_b: false,
+            button_x: false,
+            button_y: false,
+            button_up: false,
+            button_down: false,
+            button_left: false,
+            button_right: false,
+        }
     }
 }
 

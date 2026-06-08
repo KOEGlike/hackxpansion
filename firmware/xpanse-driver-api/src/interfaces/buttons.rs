@@ -1,17 +1,19 @@
 use alloc::boxed::Box;
-use core::pin::Pin;
 use core::future::Future;
+use core::pin::Pin;
+
+pub struct ButtonUseCase {
+    pub button_a: bool,
+    pub button_b: bool,
+    pub button_x: bool,
+    pub button_y: bool,
+    pub button_up: bool,
+    pub button_down: bool,
+    pub button_left: bool,
+    pub button_right: bool,
+}
 
 pub trait Button {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
+    fn use_case(&self) -> ButtonUseCase;
 }
-
-pub trait ButtonUp: Button {}
-pub trait ButtonDown: Button {}
-pub trait ButtonLeft: Button {}
-pub trait ButtonRight: Button {}
-
-pub trait ButtonA: Button {}
-pub trait ButtonB: Button {}
-pub trait ButtonX: Button {}
-pub trait ButtonY: Button {}
