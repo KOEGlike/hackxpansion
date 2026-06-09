@@ -18,6 +18,7 @@ use xpanse_driver_api::{
     driver::Driver,
     gpio_bank::{BankPins, GpioBank},
     interfaces::buttons::{Button, ButtonUseCase},
+    registry::RegisteredResourceInner,
 };
 
 pub struct SingleButton {
@@ -40,24 +41,14 @@ impl Button for SingleButton {
             self.pin.wait_for_low().await;
         })
     }
-    fn use_case(&self) -> ButtonUseCase {
-        // This is just a dummy implementation to show how you might return button states.
-        // In a real driver, you'd read the actual state of the buttons here.
-        ButtonUseCase {
-            button_a: false,
-            button_b: false,
-            button_x: false,
-            button_y: false,
-            button_up: false,
-            button_down: false,
-            button_left: false,
-            button_right: false,
-        }
-    }
 }
 
 // The primary module driver
 pub struct TestDriver {}
+
+impl RegisteredResourceInner for TestDriver {
+    type Info = ();
+}
 
 impl<G: BankPins, R> Driver<G, R> for TestDriver
 where
@@ -81,16 +72,27 @@ where
         spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
 
         let button = SingleButton::new(gpio_bank.gpio3.into());
+
         // We cast to Box<dyn Button> to satisfy the Register trait
         registry.register(
             slot,
             <Self as Driver<G, R>>::ID,
             Box::new(button) as Box<dyn Button>,
+            ButtonUseCase {
+                button_a: false,
+                button_b: false,
+                button_x: false,
+                button_y: false,
+                button_up: false,
+                button_down: false,
+                button_left: false,
+                button_right: false,
+            },
         );
 
         let x = Self {};
 
-        registry.register(slot, <Self as Driver<G, R>>::ID, x);
+        registry.register(slot, <Self as Driver<G, R>>::ID, x, ());
     }
 }
 
