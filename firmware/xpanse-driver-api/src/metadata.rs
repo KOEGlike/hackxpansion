@@ -3,10 +3,10 @@
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum ModuleSlot {
-    FrontLeft,
     FrontRight,
-    BackLeft,
+    FrontLeft,
     BackRight,
+    BackLeft,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]

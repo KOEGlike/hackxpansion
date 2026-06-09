@@ -94,16 +94,16 @@ pub async fn core1_task(
     .await
     .unwrap();
 
-    let module_0_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontLeft)
+    let module_0_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontRight)
         .await
         .unwrap();
-    let module_1_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontRight)
+    let module_1_id = adc_mapping::map_adc(&mut adc, ModuleSlot::FrontLeft)
         .await
         .unwrap();
-    let module_2_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackLeft)
+    let module_2_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackRight)
         .await
         .unwrap();
-    let module_3_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackRight)
+    let module_3_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackLeft)
         .await
         .unwrap();
 
@@ -112,25 +112,25 @@ pub async fn core1_task(
     load_driver!(
         module_0_id,
         gpio_bank_0,
-        ModuleSlot::FrontLeft,
+        ModuleSlot::FrontRight,
         &mut registry
     );
     load_driver!(
         module_1_id,
         gpio_bank_1,
-        ModuleSlot::FrontRight,
+        ModuleSlot::FrontLeft,
         &mut registry
     );
     load_driver!(
         module_2_id,
         gpio_bank_2,
-        ModuleSlot::BackLeft,
+        ModuleSlot::BackRight,
         &mut registry
     );
     load_driver!(
         module_3_id,
         gpio_bank_3,
-        ModuleSlot::BackRight,
+        ModuleSlot::BackLeft,
         &mut registry
     );
 }
