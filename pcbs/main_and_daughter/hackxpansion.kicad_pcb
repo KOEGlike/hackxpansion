@@ -4004,6 +4004,17 @@
 				(xyz 90 -0 -0)
 			)
 		)
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0510211400.stp"
+			(offset
+				(xyz 0 -2.77 5.65)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -15600,6 +15611,17 @@
 				(xyz 90 -0 -0)
 			)
 		)
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0510211400.stp"
+			(offset
+				(xyz 0 -2.77 5.65)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -20670,6 +20692,17 @@
 				(xyz 90 -0 -0)
 			)
 		)
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0510211400.stp"
+			(offset
+				(xyz 0 -2.77 5.65)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(footprint "TestPoint:TestPoint_Pad_D1.0mm"
 		(layer "B.Cu")
@@ -22757,6 +22790,17 @@
 		)
 		(embedded_fonts no)
 		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0533981471.stp"
+			(offset
+				(xyz 0 -2.77 5.65)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0510211400.stp"
 			(offset
 				(xyz 0 -2.77 5.65)
 			)
