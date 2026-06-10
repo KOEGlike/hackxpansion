@@ -3993,15 +3993,15 @@
 			(uuid "32f00f50-6485-4c03-b224-8faa10fce7f0")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/CONN-SMD_14P-P1.25_MOLEX_533981471.step"
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0533981471.stp"
 			(offset
-				(xyz -8.125 -1.15 0)
+				(xyz 0 -2.77 5.65)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz -0 -0 180)
+				(xyz 90 -0 -0)
 			)
 		)
 	)
@@ -15589,15 +15589,15 @@
 			(uuid "a05ada3b-f4ab-4396-b078-e497c53427e2")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/CONN-SMD_14P-P1.25_MOLEX_533981471.step"
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0533981471.stp"
 			(offset
-				(xyz -8.125 -1.15 0)
+				(xyz 0 -2.77 5.65)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz -0 -0 180)
+				(xyz 90 -0 -0)
 			)
 		)
 	)
@@ -20659,15 +20659,15 @@
 			(uuid "33937ad2-5c7f-41d8-af98-b0e375e5dd66")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/CONN-SMD_14P-P1.25_MOLEX_533981471.step"
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0533981471.stp"
 			(offset
-				(xyz -8.125 -1.15 0)
+				(xyz 0 -2.77 5.65)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz -0 -0 180)
+				(xyz 90 -0 -0)
 			)
 		)
 	)
@@ -22756,15 +22756,15 @@
 			(uuid "cf967ec1-c57d-4807-9617-8a66b8e7bb25")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/CONN-SMD_14P-P1.25_MOLEX_533981471.step"
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/0533981471.stp"
 			(offset
-				(xyz -8.125 -1.15 0)
+				(xyz 0 -2.77 5.65)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz -0 -0 180)
+				(xyz 90 -0 -0)
 			)
 		)
 	)
