@@ -11322,7 +11322,7 @@
 			(uuid "69f3c0c7-bf0a-4db5-b2a3-ec0ce33961bf")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/USB-C-SMD_TYPE-C-6PIN-2MD-073.step"
+		(model "${KIPRJMOD}/lib/easyeda2kicad/easyeda2kicad.3dshapes/USB-C-SMD_TYPE-C-6PIN-2MD-073.step"
 			(offset
 				(xyz -0.01 -1.32 1.67)
 			)
