@@ -2216,6 +2216,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25905"
+			(at 110.49 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "18502f41-8f84-4dbf-833c-e1ae382a5f27")
 		)
@@ -2496,6 +2507,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 102.87 82.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25905"
 			(at 102.87 82.55 0)
 			(hide yes)
 			(show_name no)

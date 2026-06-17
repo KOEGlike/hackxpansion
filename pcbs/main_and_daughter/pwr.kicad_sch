@@ -3197,6 +3197,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C8545"
+			(at 62.23 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "3"
 			(uuid "2b9df853-c800-4f57-ad05-9a0806e8fff3")
 		)
@@ -3462,6 +3473,17 @@
 		)
 		(property "Sim.Pins" ""
 			(at 34.29 101.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C481918"
+			(at 34.29 101.6 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3858,7 +3880,7 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
@@ -4145,6 +4167,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 73.66 118.11 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2906861"
 			(at 73.66 118.11 0)
 			(hide yes)
 			(show_name no)
@@ -4455,6 +4488,17 @@
 			)
 		)
 		(property "Description" "500mA Low drop-out regulator, Fixed Output 3.3V, SOT-23-5"
+			(at 156.21 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C20617301"
 			(at 156.21 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -5010,6 +5054,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25076"
+			(at 73.66 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "9532fef7-485d-45a8-8ba4-4ed1f2cd2e70")
 		)
@@ -5108,7 +5163,7 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
