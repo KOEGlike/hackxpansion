@@ -15,6 +15,7 @@ use embassy_rp::{
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 
 use xpanse_driver_api::{
+    bus::allocator::BusAllocator,
     driver::Driver,
     gpio_bank::{BankPins, GpioBank},
     interfaces::buttons::{Button, ButtonUseCase},
@@ -64,6 +65,7 @@ where
         gpio_bank: GpioBank<G>,
         slot: xpanse_driver_api::metadata::ModuleSlot,
         registry: &mut R,
+        _bus_allocator: &mut BusAllocator,
     ) {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());

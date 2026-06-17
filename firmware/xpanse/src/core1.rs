@@ -1,5 +1,7 @@
 use xpanse_driver_api::gpio_bank::GpioBank;
 
+use crate::bus::spi_factory::PioManager;
+use xpanse_driver_api::bus::allocator::BusAllocator;
 use crate::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
 use xpanse_driver_api::{driver::Driver, metadata::ModuleSlot};
@@ -107,30 +109,48 @@ pub async fn core1_task(
         .await
         .unwrap();
 
+    let mut _pio_manager = PioManager::new(
+        remaining_peris.pio0,
+        remaining_peris.pio1,
+        remaining_peris.pio2,
+    );
+
+    let mut bus_allocator = BusAllocator::new(
+        remaining_peris.spi1,
+        remaining_peris.i2c0,
+        remaining_peris.i2c1,
+        remaining_peris.uart0,
+        remaining_peris.uart1,
+    );
+
     let mut registry = crate::device_registry::DeviceRegistry::new();
 
     load_driver!(
         module_0_id,
         gpio_bank_0,
         ModuleSlot::FrontRight,
-        &mut registry
+        &mut registry,
+        &mut bus_allocator
     );
     load_driver!(
         module_1_id,
         gpio_bank_1,
         ModuleSlot::FrontLeft,
-        &mut registry
+        &mut registry,
+        &mut bus_allocator
     );
     load_driver!(
         module_2_id,
         gpio_bank_2,
         ModuleSlot::BackRight,
-        &mut registry
+        &mut registry,
+        &mut bus_allocator
     );
     load_driver!(
         module_3_id,
         gpio_bank_3,
         ModuleSlot::BackLeft,
-        &mut registry
+        &mut registry,
+        &mut bus_allocator
     );
 }

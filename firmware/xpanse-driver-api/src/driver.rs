@@ -1,3 +1,4 @@
+use crate::bus::allocator::BusAllocator;
 use crate::gpio_bank::{BankPins, GpioBank};
 use crate::metadata::{ModuleID, ModuleSlot};
 use core::future::Future;
@@ -5,5 +6,10 @@ use core::future::Future;
 pub trait Driver<G: BankPins, R> {
     const ID: ModuleID;
 
-    fn new(gpio_bank: GpioBank<G>, slot: ModuleSlot, registry: &mut R) -> impl Future<Output = ()>;
+    fn new(
+        gpio_bank: GpioBank<G>,
+        slot: ModuleSlot,
+        registry: &mut R,
+        bus_allocator: &mut BusAllocator,
+    ) -> impl Future<Output = ()>;
 }

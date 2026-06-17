@@ -1,13 +1,12 @@
 #[macro_export]
 macro_rules! load_driver {
-    ($id:expr, $bank:expr, $slot:expr, $registry:expr) => {
-        // Pass references to $bank and $registry so the compiler can infer G and R
+    ($id:expr, $bank:expr, $slot:expr, $registry:expr, $bus_allocator:expr) => {
         if $id
             == $crate::load_driver::get_driver_id::<test_driver::TestDriver, _, _>(
                 &$bank, $registry,
             )
         {
-            test_driver::TestDriver::new($bank, $slot, $registry).await;
+            test_driver::TestDriver::new($bank, $slot, $registry, $bus_allocator).await;
         } else {
             defmt::warn!("Unknown driver ID: {:#?}", $id);
         }
