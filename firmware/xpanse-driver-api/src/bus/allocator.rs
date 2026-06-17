@@ -1,10 +1,10 @@
 use embassy_rp::peripherals::{I2C0, I2C1, PIO0, PIO1, PIO2, SPI1, UART0, UART1};
 use embassy_rp::pio::PioPin;
 use embassy_rp::spi::{self, ClkPin, MisoPin, MosiPin};
-use embassy_rp::{i2c, Peri};
+use embassy_rp::{Peri, i2c};
 
-use crate::bus::spi_factory::PioManager;
 use crate::bus::spi::{SpiBusHandle, SpiBusVersion};
+use crate::bus::spi_factory::PioManager;
 
 pub enum SpiResource {
     HwSpi1(Peri<'static, SPI1>),
@@ -74,7 +74,9 @@ impl BusAllocator {
         SpiResource::BitBang
     }
 
-    pub fn request_spi_typed<I: spi::Instance + 'static>(&mut self) -> (SpiBusVersion, SpiResource) {
+    pub fn request_spi_typed<I: spi::Instance + 'static>(
+        &mut self,
+    ) -> (SpiBusVersion, SpiResource) {
         let resource = self.request_spi::<I>();
         let version = match &resource {
             SpiResource::HwSpi1(_) => SpiBusVersion::Hardware,
@@ -98,7 +100,14 @@ impl BusAllocator {
         config: spi::Config,
     ) -> SpiBusHandle {
         let resource = self.request_spi::<I>();
-        crate::bus::spi_factory::create_spi_bus_pio(resource, clk, mosi, miso, config, &mut self.pio_manager)
+        crate::bus::spi_factory::create_spi_bus_pio(
+            resource,
+            clk,
+            mosi,
+            miso,
+            config,
+            &mut self.pio_manager,
+        )
     }
 
     /// Request SPI and build a handle — hardware SPI1 + fallback.
@@ -111,7 +120,14 @@ impl BusAllocator {
         config: spi::Config,
     ) -> SpiBusHandle {
         let resource = self.request_spi::<I>();
-        crate::bus::spi_factory::create_spi_bus(resource, clk, mosi, miso, config, &mut self.pio_manager)
+        crate::bus::spi_factory::create_spi_bus(
+            resource,
+            clk,
+            mosi,
+            miso,
+            config,
+            &mut self.pio_manager,
+        )
     }
 
     // ── I2C ──────────────────────────────────────────────────────────
