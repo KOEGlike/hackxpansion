@@ -2,6 +2,8 @@
 
 extern crate alloc;
 
+pub mod spi_adc;
+
 use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;

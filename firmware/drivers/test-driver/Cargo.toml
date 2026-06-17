@@ -10,3 +10,4 @@ xpanse-driver-api = { workspace = true }
 embassy-sync = { workspace = true }
 embassy-rp = { workspace = true }
 embassy-executor = { workspace = true }
+ti-adc-expander = { workspace = true }

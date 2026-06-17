@@ -1,7 +1,6 @@
+use crate::bus::spi::SpiError;
 use embassy_rp::gpio::{Input, Level, Output};
 use embassy_rp::Peri;
-
-use xpanse_driver_api::bus::spi::SpiError;
 
 pub struct BitBangSpiBus<'d> {
     clk: Output<'d>,
@@ -32,22 +31,17 @@ impl<'d> BitBangSpiBus<'d> {
 
     fn transfer_byte_blocking(&mut self, write_byte: u8) -> u8 {
         let mut read_byte = 0u8;
-
         for i in (0..8).rev() {
             let bit = (write_byte >> i) & 1;
             self.mosi.set_level(Level::from(bit != 0));
-
             self.clk.set_high();
             embassy_time::block_for(embassy_time::Duration::from_micros(self.delay_us));
-
             if self.miso.is_high() {
                 read_byte |= 1 << i;
             }
-
             self.clk.set_low();
             embassy_time::block_for(embassy_time::Duration::from_micros(self.delay_us));
         }
-
         read_byte
     }
 }

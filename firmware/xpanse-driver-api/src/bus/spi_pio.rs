@@ -1,32 +1,36 @@
-use embassy_rp::peripherals::SPI1;
-use embassy_rp::spi::{self, Blocking, Spi};
+use crate::bus::spi::SpiError;
+use embassy_rp::pio::{Common, PioPin, StateMachine};
+use embassy_rp::spi::{self, Blocking};
 use embassy_rp::Peri;
 
-use xpanse_driver_api::bus::spi::SpiError;
-
-pub struct HardwareSpiBus<'d> {
-    spi: Spi<'d, SPI1, Blocking>,
+pub struct PioSpiBus<'d, PIO: embassy_rp::pio::Instance, const SM: usize> {
+    spi: embassy_rp::pio_programs::spi::Spi<'d, PIO, SM, Blocking>,
 }
 
-impl<'d> HardwareSpiBus<'d> {
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> PioSpiBus<'d, PIO, SM> {
     pub fn new(
-        peri: Peri<'d, SPI1>,
-        clk: Peri<'d, impl embassy_rp::spi::ClkPin<SPI1> + 'd>,
-        mosi: Peri<'d, impl embassy_rp::spi::MosiPin<SPI1> + 'd>,
-        miso: Peri<'d, impl embassy_rp::spi::MisoPin<SPI1> + 'd>,
+        common: &mut Common<'d, PIO>,
+        sm: StateMachine<'d, PIO, SM>,
+        clk: Peri<'d, impl PioPin>,
+        mosi: Peri<'d, impl PioPin>,
+        miso: Peri<'d, impl PioPin>,
         config: spi::Config,
     ) -> Self {
-        let spi = Spi::new_blocking(peri, clk, mosi, miso, config);
+        let spi =
+            embassy_rp::pio_programs::spi::Spi::new_blocking(common, sm, clk, mosi, miso, config);
         Self { spi }
     }
 }
 
-// Delegate embedded-hal ErrorType to inner Spi
-impl<'d> embedded_hal_1::spi::ErrorType for HardwareSpiBus<'d> {
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_1::spi::ErrorType
+    for PioSpiBus<'d, PIO, SM>
+{
     type Error = SpiError;
 }
 
-impl<'d> embedded_hal_1::spi::SpiBus<u8> for HardwareSpiBus<'d> {
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_1::spi::SpiBus<u8>
+    for PioSpiBus<'d, PIO, SM>
+{
     fn flush(&mut self) -> Result<(), SpiError> {
         self.spi.flush().map_err(|e| e.into())
     }
@@ -48,7 +52,9 @@ impl<'d> embedded_hal_1::spi::SpiBus<u8> for HardwareSpiBus<'d> {
     }
 }
 
-impl<'d> embedded_hal_async::spi::SpiBus<u8> for HardwareSpiBus<'d> {
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_async::spi::SpiBus<u8>
+    for PioSpiBus<'d, PIO, SM>
+{
     async fn flush(&mut self) -> Result<(), SpiError> {
         self.spi.flush().map_err(|e| e.into())
     }

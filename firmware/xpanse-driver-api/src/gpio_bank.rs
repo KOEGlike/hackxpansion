@@ -45,12 +45,12 @@ impl<T> BasePin for T where
 }
 
 pub trait BankPins {
-    type I2C: i2c::Instance;
-    type SPI: spi::Instance;
-    type UART: uart::Instance;
-    type PWM_SLICE0: pwm::Slice;
-    type PWM_SLICE1: pwm::Slice;
-    type PWM_SLICE2: pwm::Slice;
+    type I2C: i2c::Instance + 'static;
+    type SPI: spi::Instance + 'static;
+    type UART: uart::Instance + 'static;
+    type PWM_SLICE0: pwm::Slice + 'static;
+    type PWM_SLICE1: pwm::Slice + 'static;
+    type PWM_SLICE2: pwm::Slice + 'static;
     type GPIO0: BasePin + i2c::SclPin<Self::I2C>;
     type GPIO1: BasePin + i2c::SdaPin<Self::I2C>;
     type GPIO2: BasePin + spi::ClkPin<Self::SPI> + ChannelAPin<Self::PWM_SLICE2>;
@@ -81,12 +81,12 @@ pub struct GpioBank<G: BankPins> {
 }
 
 impl<
-    I2C: i2c::Instance,
-    SPI: spi::Instance,
-    UART: uart::Instance,
-    PWM_SLICE0: pwm::Slice,
-    PWM_SLICE1: pwm::Slice,
-    PWM_SLICE2: pwm::Slice,
+    I2C: i2c::Instance + 'static,
+    SPI: spi::Instance + 'static,
+    UART: uart::Instance + 'static,
+    PWM_SLICE0: pwm::Slice + 'static,
+    PWM_SLICE1: pwm::Slice + 'static,
+    PWM_SLICE2: pwm::Slice + 'static,
     GPIO0: BasePin + i2c::SclPin<I2C>,
     GPIO1: BasePin + i2c::SdaPin<I2C>,
     GPIO2: BasePin + spi::ClkPin<SPI> + ChannelAPin<PWM_SLICE2>,
@@ -136,12 +136,12 @@ impl<
 }
 
 impl<
-    I2C: i2c::Instance,
-    SPI: spi::Instance,
-    UART: uart::Instance,
-    PWM_SLICE0: pwm::Slice,
-    PWM_SLICE1: pwm::Slice,
-    PWM_SLICE2: pwm::Slice,
+    I2C: i2c::Instance + 'static,
+    SPI: spi::Instance + 'static,
+    UART: uart::Instance + 'static,
+    PWM_SLICE0: pwm::Slice + 'static,
+    PWM_SLICE1: pwm::Slice + 'static,
+    PWM_SLICE2: pwm::Slice + 'static,
     GPIO0: BasePin + i2c::SclPin<I2C>,
     GPIO1: BasePin + i2c::SdaPin<I2C>,
     GPIO2: BasePin + spi::ClkPin<SPI> + ChannelAPin<PWM_SLICE2>,

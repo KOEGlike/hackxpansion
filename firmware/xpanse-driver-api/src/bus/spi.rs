@@ -56,6 +56,11 @@ pub trait DynSpiBus {
         read: &'a mut [u8],
         write: &'a [u8],
     ) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>>;
+
+    fn transfer_in_place<'a>(
+        &'a mut self,
+        words: &'a mut [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>>;
 }
 
 pub trait DynSpiBusBlocking {
@@ -93,6 +98,10 @@ impl SpiBusHandle {
         self.inner.transfer(read, write).await
     }
 
+    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.inner.transfer_in_place(words).await
+    }
+
     pub fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError> {
         self.inner.write_blocking(data)
     }
@@ -103,6 +112,87 @@ impl SpiBusHandle {
 
     pub fn transfer_blocking(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
         self.inner.transfer_blocking(read, write)
+    }
+}
+
+// ── embedded-hal trait impls on SpiBusHandle ──────────────────────────
+
+impl embedded_hal_1::spi::ErrorType for SpiBusHandle {
+    type Error = SpiError;
+}
+
+impl embedded_hal_1::spi::SpiBus<u8> for SpiBusHandle {
+    fn flush(&mut self) -> Result<(), SpiError> {
+        Ok(())
+    }
+
+    fn read(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.read_blocking(words)
+    }
+
+    fn write(&mut self, words: &[u8]) -> Result<(), SpiError> {
+        self.write_blocking(words)
+    }
+
+    fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
+        self.transfer_blocking(read, write)
+    }
+
+    fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        let len = words.len();
+        for i in 0..len {
+            let w = words[i];
+            self.transfer_blocking(&mut words[i..i + 1], &[w])?;
+        }
+        Ok(())
+    }
+}
+
+impl embedded_hal_async::spi::SpiBus<u8> for SpiBusHandle {
+    async fn flush(&mut self) -> Result<(), SpiError> {
+        Ok(())
+    }
+
+    async fn read(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.read(words).await
+    }
+
+    async fn write(&mut self, words: &[u8]) -> Result<(), SpiError> {
+        self.write(words).await
+    }
+
+    async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
+        self.transfer(read, write).await
+    }
+
+    async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.inner.transfer_in_place(words).await
+    }
+}
+
+impl embedded_hal_async::spi::SpiDevice<u8> for SpiBusHandle {
+    async fn transaction(
+        &mut self,
+        operations: &mut [embedded_hal_1::spi::Operation<'_, u8>],
+    ) -> Result<(), SpiError> {
+        for op in operations {
+            match op {
+                embedded_hal_1::spi::Operation::Read(buf) => {
+                    self.inner.read(buf).await?;
+                }
+                embedded_hal_1::spi::Operation::Write(buf) => {
+                    self.inner.write(buf).await?;
+                }
+                embedded_hal_1::spi::Operation::Transfer(read, write) => {
+                    self.inner.transfer(read, write).await?;
+                }
+                embedded_hal_1::spi::Operation::TransferInPlace(buf) => {
+                    self.inner.transfer_in_place(buf).await?;
+                }
+                embedded_hal_1::spi::Operation::DelayNs(_) => {}
+            }
+        }
+        Ok(())
     }
 }
 
@@ -160,6 +250,17 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>> {
         Box::pin(async move {
             embedded_hal_async::spi::SpiBus::transfer(self, read, write)
+                .await
+                .map_err(|e| e.into())
+        })
+    }
+
+    fn transfer_in_place<'a>(
+        &'a mut self,
+        words: &'a mut [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>> {
+        Box::pin(async move {
+            embedded_hal_async::spi::SpiBus::transfer_in_place(self, words)
                 .await
                 .map_err(|e| e.into())
         })

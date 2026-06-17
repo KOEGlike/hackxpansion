@@ -1,4 +1,1 @@
-pub mod spi_bitbang;
-pub mod spi_factory;
-pub mod spi_hardware;
-pub mod spi_pio;
+pub use xpanse_driver_api::bus::spi_factory::{self, PioManager, create_spi_bus};
