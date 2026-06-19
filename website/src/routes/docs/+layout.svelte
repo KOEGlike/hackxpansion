@@ -111,7 +111,7 @@
 			</button>
 		{/if}
 		<div
-			class="prose prose-lg max-w-none pt-8 sm:max-w-7/12 sm:pt-0 prose-headings:text-slate-700 prose-p:text-slate-700"
+			class="prose prose-lg max-w-none pt-8 sm:max-w-7/12 sm:pt-0 prose-headings:my-2 prose-headings:text-slate-700 prose-p:text-slate-700"
 		>
 			{@render children()}
 		</div>
