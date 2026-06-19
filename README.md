@@ -64,7 +64,7 @@ The models have parameters that can be adjusted to fit your needs.
 
 ## BOM for Console
 
-Also found in a [CSV file](hardware/hackxpansion/BOM.csv)
+Also found in a [CSV file](hardware/hackxpansion/BOM.csv). Each component has an LCSC part number attached that can be used to find the component on the LCSC website.
 
 |Item                      |Price per unit|Nr of units|Total price|Link                                                                                          |
 |--------------------------|--------------|-----------|-----------|----------------------------------------------------------------------------------------------|
