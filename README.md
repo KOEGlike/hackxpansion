@@ -58,6 +58,10 @@ The case is designed in Autodesk Fusion, there are .f3z files in the hardware di
 
 The models have parameters that can be adjusted to fit your needs.
 
+## Shoutouts
+
+Thank you so much for [Simon](https://github.com/NEOgHacking) who helped with the fanout of the RP, and also gave a ton of constructive feedback!!!!
+
 ## Zine
 
 <img src="zine.png" alt="magazine page" width="800">
