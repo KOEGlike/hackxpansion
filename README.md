@@ -50,13 +50,21 @@ There are detailed docs on the [hackxpansion website](https://hackxpansion.dino.
 
 ## Case
 
+The case is designed in Autodesk Fusion, there are .f3z files in the hardware directory.
+
+The models have parameters that can be adjusted to fit your needs.
+
+## Zine
+
+<img src="zine.png" alt="magazine page" width="800">
+
 ## BOM for Console
 
 Also found in a [CSV file](hardware/hackxpansion/BOM.csv)
 
 |Item                      |Price per unit|Nr of units|Total price|Link                                                                                          |
 |--------------------------|--------------|-----------|-----------|----------------------------------------------------------------------------------------------|
-|PCB with PCBA             |$60.00        |2          |$120.00    |https://jlcpcb.com/                                                                           |
+|PCB with PCBA             |$60.00        |1          |$60.00     |https://jlcpcb.com/                                                                           |
 |Display                   |$4.36         |1          |$4.36      |https://www.buydisplay.com/2-inch-ips-tft-lcd-display-ips-panel-screen-240x320-for-smart-watch|
 |2x7 2.54mm header         |$0.386        |10         |$3.860     |https://www.aliexpress.com/item/1005012166781874.html                                         |
 |Battery 502035            |$6.64         |1          |$6.64      |https://www.aliexpress.com/item/1005008218024646.html                                         |
@@ -64,4 +72,4 @@ Also found in a [CSV file](hardware/hackxpansion/BOM.csv)
 |M2 L6 screw               |$0.0766       |5          |$0.3830    |https://www.aliexpress.com/item/4000970993800.html                                            |
 |M2 L8 screw               |$0.0766       |2          |$0.1532    |https://www.aliexpress.com/item/4000970993800.html                                            |
 |M2 L4 screw               |$0.0766       |8          |$0.6128    |https://www.aliexpress.com/item/4000970993800.html                                            |
-|                          |              |Total:     |$137.05    |                                                                                              |
+|                          |              |Total:     |$77.05     |                                                                                              |
