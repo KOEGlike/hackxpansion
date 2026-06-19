@@ -64,7 +64,7 @@ Thank you so much for [Simon](https://github.com/NEOgHacking) who helped with th
 
 ## Zine
 
-<img src="zine.png" alt="magazine page" width="800">
+<img src="Zine.png" alt="magazine page" width="800">
 
 ## BOM for Console
 
