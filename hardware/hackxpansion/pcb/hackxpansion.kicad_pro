@@ -914,12 +914,28 @@
       "hackxpansion"
     ],
     [
-      "68a45941-d85a-4b30-af2a-3e36e3a9ba21",
-      "ADC"
+      "61af021d-ad04-487f-9d02-e2b100ecd1ae",
+      "Main Board"
+    ],
+    [
+      "77d1a66a-1629-4487-9557-00ea9a578a7b",
+      "RP2354B"
     ],
     [
       "154552c3-4779-450a-9b58-0a812de6a15a",
       "Display"
+    ],
+    [
+      "68a45941-d85a-4b30-af2a-3e36e3a9ba21",
+      "ADC"
+    ],
+    [
+      "6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7",
+      "Power"
+    ],
+    [
+      "069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05",
+      "USB"
     ],
     [
       "8e7c9aa8-528d-465c-8c66-453c45c0eb2c",
@@ -930,36 +946,8 @@
       "Module Bay 1"
     ],
     [
-      "79f7f22b-c2ab-42e1-a34f-927e722d2621",
-      "Connector Daughter Mod2"
-    ],
-    [
-      "b4afcaf7-a1cb-4e89-a612-234ae7735c35",
-      "Connector Main Mod3"
-    ],
-    [
-      "6db278f7-98fa-4dd5-9d8d-cad8c2d6baa7",
-      "Power"
-    ],
-    [
-      "77d1a66a-1629-4487-9557-00ea9a578a7b",
-      "RP2354B"
-    ],
-    [
-      "069d1fb5-8bf9-42a3-a1b0-79aaef9e4c05",
-      "USB"
-    ],
-    [
-      "61af021d-ad04-487f-9d02-e2b100ecd1ae",
-      "Main Board"
-    ],
-    [
       "7b3174ee-89a2-4fc3-aea9-d162748ee587",
       "Daughter Board"
-    ],
-    [
-      "5128c8bf-7fd5-4142-8f5c-357a729d9a97",
-      "Connector Main Mod2"
     ],
     [
       "0547b68d-d760-4d9c-a3c3-9a4130f5ea65",
@@ -968,6 +956,18 @@
     [
       "82bcf865-3cc6-4dae-b757-27ac9efd6517",
       "Module Bay 3"
+    ],
+    [
+      "5128c8bf-7fd5-4142-8f5c-357a729d9a97",
+      "Connector Main Mod2"
+    ],
+    [
+      "b4afcaf7-a1cb-4e89-a612-234ae7735c35",
+      "Connector Main Mod3"
+    ],
+    [
+      "79f7f22b-c2ab-42e1-a34f-927e722d2621",
+      "Connector Daughter Mod2"
     ],
     [
       "a303a5eb-7273-4dfa-a166-817b9294c5a4",
