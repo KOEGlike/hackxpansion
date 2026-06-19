@@ -11,7 +11,7 @@
 </h4>
 
 <div align="center">
-    <img src="blender/Hero.webp" width="600">
+    <img src="blender/images/Hero.webp" width="600">
 </div>
 
 ## Key Features
@@ -34,13 +34,13 @@ The console has two 4 layer PCBs designed in KiCAD, a main-board and a daughter-
 
 ![main-board schematic](images/Main-Board-schematic.png)
 ![main-board pcb](images/Main-Board-pcb.png)
-![main-board render](blender/MainBoardFront.webp)
+![main-board render](blender/images/MainBoardFront.webp)
 
 ### Daughter-Board
 
 ![daughter-board schematic](images/Daughter-Board-schematic.png)
 ![daughter-board pcb](images/Daughter-Board-pcb.png)
-![daughter-board render](blender/DaughterBoardFront.webp)
+![daughter-board render](blender/images/DaughterBoardFront.webp)
 
 ## Making Your Own Modules
 
@@ -57,6 +57,8 @@ There are detailed docs on the [hackxpansion website](https://hackxpansion.dino.
 The case is designed in Autodesk Fusion, there are .f3z files in the hardware directory.
 
 The models have parameters that can be adjusted to fit your needs.
+
+![side view](blender/images/SideView.webp)
 
 ## Shoutouts
 
