@@ -1244,7 +1244,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x07_P2.54mm_Horizontal"
+		(property "Footprint" "Hackxpansion:Male_Module"
 			(at 87.63 64.77 0)
 			(hide yes)
 			(show_name no)
