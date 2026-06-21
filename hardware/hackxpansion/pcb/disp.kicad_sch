@@ -2353,7 +2353,7 @@
 				)
 			)
 		)
-		(property "Value" "10"
+		(property "Value" "10R"
 			(at 105.41 54.61 90)
 			(show_name no)
 			(do_not_autoplace no)

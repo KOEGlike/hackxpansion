@@ -824,7 +824,7 @@
       "include_excluded_from_bom": true,
       "name": "",
       "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_field": "Value"
     },
     "bus_aliases": {
       "DET": [
@@ -905,7 +905,7 @@
         "uuid": "aaf5804d-3f78-442b-969e-39faa388db94"
       }
     ],
-    "used_designators": "TP15",
+    "used_designators": "TP15,R26-29",
     "variants": []
   },
   "sheets": [

@@ -888,6 +888,16 @@
 	)
 	(wire
 		(pts
+			(xy 105.41 35.56) (xy 105.41 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1661060d-aba2-436e-a037-298b3b105321")
+	)
+	(wire
+		(pts
 			(xy 71.12 68.58) (xy 71.12 67.31)
 		)
 		(stroke
@@ -1116,6 +1126,16 @@
 		)
 		(uuid "d2f24f28-7fc7-4190-a441-26ba0b58bfc4")
 	)
+	(wire
+		(pts
+			(xy 105.41 45.72) (xy 105.41 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dd3523a6-88e8-4c36-ac3c-c72e3d800c78")
+	)
 	(bus
 		(pts
 			(xy 132.08 73.66) (xy 128.27 73.66)
@@ -1145,16 +1165,6 @@
 			(type default)
 		)
 		(uuid "eb6eb9a1-2dcf-4254-9758-25363046c41a")
-	)
-	(wire
-		(pts
-			(xy 105.41 46.99) (xy 105.41 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f352031f-7491-4ac9-8c53-bb1011f53e76")
 	)
 	(wire
 		(pts
@@ -1459,7 +1469,7 @@
 	(symbol
 		(lib_name "+3V3_1")
 		(lib_id "power:+3V3")
-		(at 105.41 46.99 0)
+		(at 105.41 35.56 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1469,7 +1479,7 @@
 		(dnp no)
 		(uuid "2b392d33-49fe-473c-8af7-75f7f8bd0186")
 		(property "Reference" "#PWR057"
-			(at 105.41 50.8 0)
+			(at 105.41 39.37 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1480,7 +1490,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 101.854 45.72 0)
+			(at 101.854 34.29 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1490,7 +1500,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 105.41 46.99 0)
+			(at 105.41 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1501,7 +1511,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 105.41 46.99 0)
+			(at 105.41 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1512,7 +1522,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 105.41 46.99 0)
+			(at 105.41 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2132,6 +2142,111 @@
 				)
 				(path "/aaf5804d-3f78-442b-969e-39faa388db94/7b3174ee-89a2-4fc3-aea9-d162748ee587/82bcf865-3cc6-4dae-b757-27ac9efd6517"
 					(reference "#PWR086")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 105.41 41.91 0)
+		(mirror y)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ec6dd67b-ab56-41fc-bce3-46da24d59ff4")
+		(property "Reference" "R26"
+			(at 102.87 40.6399 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "5R"
+			(at 102.87 43.1799 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 107.188 41.91 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 105.41 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 105.41 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C54920693"
+			(at 105.41 41.91 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "29df8ca3-e08b-43fb-8466-6d27b73ddecd")
+		)
+		(pin "1"
+			(uuid "1ab59e21-d4f8-48c3-9686-fb28b9389397")
+		)
+		(instances
+			(project "hackxpansion"
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/83610548-4b56-444f-89db-0bbc742f5add"
+					(reference "R27")
+					(unit 1)
+				)
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/61af021d-ad04-487f-9d02-e2b100ecd1ae/8e7c9aa8-528d-465c-8c66-453c45c0eb2c"
+					(reference "R26")
+					(unit 1)
+				)
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/7b3174ee-89a2-4fc3-aea9-d162748ee587/0547b68d-d760-4d9c-a3c3-9a4130f5ea65"
+					(reference "R28")
+					(unit 1)
+				)
+				(path "/aaf5804d-3f78-442b-969e-39faa388db94/7b3174ee-89a2-4fc3-aea9-d162748ee587/82bcf865-3cc6-4dae-b757-27ac9efd6517"
+					(reference "R29")
 					(unit 1)
 				)
 			)
