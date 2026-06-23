@@ -1,9 +1,29 @@
 use xpanse_driver_api::gpio_bank::GpioBank;
 
-use xpanse_driver_api::bus::allocator::BusAllocator;
 use crate::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
+use xpanse_driver_api::bus::allocator::BusAllocator;
 use xpanse_driver_api::{driver::Driver, metadata::ModuleSlot};
+
+macro_rules! gpio_bank_from_peris {
+    ($peri:expr) => {
+        GpioBank::new(
+            $peri.gpio0,
+            $peri.gpio1,
+            $peri.gpio2,
+            $peri.gpio3,
+            $peri.gpio4,
+            $peri.gpio5,
+            $peri.gpio6,
+            $peri.gpio7,
+            $peri.gpio8,
+            $peri.gpio9,
+            $peri.pwm_slice1,
+            $peri.pwm_slice2,
+            $peri.pwm_slice3,
+        )
+    };
+}
 
 slint::slint! {
     export component HelloWorld inherits Window {
@@ -23,69 +43,10 @@ pub async fn core1_task(
     mut i2c_pins: I2cPinPeris,
     mut remaining_peris: RemainingPeris,
 ) {
-    let gpio_bank_0 = GpioBank::new(
-        gpio_bank_0.gpio0,      //0
-        gpio_bank_0.gpio1,      //1
-        gpio_bank_0.gpio2,      //2
-        gpio_bank_0.gpio3,      //3
-        gpio_bank_0.gpio4,      //4
-        gpio_bank_0.gpio5,      //5
-        gpio_bank_0.gpio6,      //6
-        gpio_bank_0.gpio7,      //7
-        gpio_bank_0.gpio8,      //8
-        gpio_bank_0.gpio9,      //9
-        gpio_bank_0.pwm_slice1, //10
-        gpio_bank_0.pwm_slice2, //11
-        gpio_bank_0.pwm_slice3, //12
-    );
-
-    let gpio_bank_1 = GpioBank::new(
-        gpio_bank_1.gpio0,      //0
-        gpio_bank_1.gpio1,      //1
-        gpio_bank_1.gpio2,      //2
-        gpio_bank_1.gpio3,      //3
-        gpio_bank_1.gpio4,      //4
-        gpio_bank_1.gpio5,      //5
-        gpio_bank_1.gpio6,      //6
-        gpio_bank_1.gpio7,      //7
-        gpio_bank_1.gpio8,      //8
-        gpio_bank_1.gpio9,      //9
-        gpio_bank_1.pwm_slice1, //10
-        gpio_bank_1.pwm_slice2, //11
-        gpio_bank_1.pwm_slice3, //12
-    );
-
-    let gpio_bank_2 = GpioBank::new(
-        gpio_bank_2.gpio0,      //0
-        gpio_bank_2.gpio1,      //1
-        gpio_bank_2.gpio2,      //2
-        gpio_bank_2.gpio3,      //3
-        gpio_bank_2.gpio4,      //4
-        gpio_bank_2.gpio5,      //5
-        gpio_bank_2.gpio6,      //6
-        gpio_bank_2.gpio7,      //7
-        gpio_bank_2.gpio8,      //8
-        gpio_bank_2.gpio9,      //9
-        gpio_bank_2.pwm_slice1, //10
-        gpio_bank_2.pwm_slice2, //11
-        gpio_bank_2.pwm_slice3, //12
-    );
-
-    let gpio_bank_3 = GpioBank::new(
-        gpio_bank_3.gpio0,      //0
-        gpio_bank_3.gpio1,      //1
-        gpio_bank_3.gpio2,      //2
-        gpio_bank_3.gpio3,      //3
-        gpio_bank_3.gpio4,      //4
-        gpio_bank_3.gpio5,      //5
-        gpio_bank_3.gpio6,      //6
-        gpio_bank_3.gpio7,      //7
-        gpio_bank_3.gpio8,      //8
-        gpio_bank_3.gpio9,      //9
-        gpio_bank_3.pwm_slice1, //10
-        gpio_bank_3.pwm_slice2, //11
-        gpio_bank_3.pwm_slice3, //12
-    );
+    let gpio_bank_0 = gpio_bank_from_peris!(gpio_bank_0);
+    let gpio_bank_1 = gpio_bank_from_peris!(gpio_bank_1);
+    let gpio_bank_2 = gpio_bank_from_peris!(gpio_bank_2);
+    let gpio_bank_3 = gpio_bank_from_peris!(gpio_bank_3);
 
     let mut adc = init_adc(
         remaining_peris.i2c1.reborrow(),
