@@ -564,12 +564,12 @@
       {
         "clearance": 0.15,
         "diff_pair_gap": 0.15,
-        "diff_pair_width": 0.1354,
+        "diff_pair_width": 0.2,
         "name": "USB",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.1354,
+        "track_width": 0.2,
         "tuning_profile": ""
       }
     ],

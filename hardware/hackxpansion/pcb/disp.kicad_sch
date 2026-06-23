@@ -3256,7 +3256,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:FPC-SMD_AFC08-S12ECA-00"
+		(property "Footprint" "easyeda2kicad:FPC-SMD_P0.80-12P_LCS-SJ-H2.0"
 			(at 135.89 92.71 0)
 			(hide yes)
 			(show_name no)
