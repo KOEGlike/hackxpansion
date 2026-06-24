@@ -1,4 +1,7 @@
 pub mod allocator;
+pub mod i2c;
+pub mod i2c_bitbang;
+pub mod i2c_hardware;
 pub mod pio;
 pub mod spi;
 pub mod spi_bitbang;

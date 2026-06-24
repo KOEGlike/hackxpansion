@@ -42,6 +42,9 @@ use embassy_rp::{Peri, i2c, uart};
 
 use alloc::boxed::Box;
 
+use crate::bus::i2c::I2cBusHandle;
+use crate::bus::i2c_bitbang::BitBangI2cBus;
+use crate::bus::i2c_hardware::HardwareI2cBus;
 use crate::bus::pio::PioManager;
 use crate::bus::spi::SpiBusHandle;
 use crate::bus::spi_bitbang::BitBangSpiBus;
@@ -415,6 +418,41 @@ impl BusAllocator {
     /// Return a hardware I2C peripheral to the pool.
     pub fn release_i2c_hardware<I: I2cHw>(&mut self, peri: Peri<'static, I>) {
         I::return_peri(self, peri);
+    }
+
+    /// Build a hardware I2C bus (async, interrupt-driven — no DMA needed).
+    /// `scl`/`sda` are role-checked against `I` at compile time. The IRQ
+    /// binding is the board's `bind_interrupts!` type for the I2C interrupt.
+    pub fn create_i2c_hardware<I, Irq>(
+        &mut self,
+        scl: Peri<'static, impl i2c::SclPin<I> + PioPin>,
+        sda: Peri<'static, impl i2c::SdaPin<I> + PioPin>,
+        irq: Irq,
+        config: i2c::Config,
+    ) -> Result<I2cBusHandle, AllocatorError>
+    where
+        I: I2cHw,
+        Irq: Binding<I::Interrupt, i2c::InterruptHandler<I>> + 'static,
+    {
+        let peri = self.request_i2c_hardware::<I>()?;
+        let bus = HardwareI2cBus::new(peri, scl, sda, irq, config);
+        Ok(I2cBusHandle::new(
+            Box::new(bus),
+            crate::bus::i2c::I2cBusVersion::Hardware,
+        ))
+    }
+
+    /// Build a bit-banged I2C bus (always available — only needs two GPIO
+    /// pins with open-drain capability, no hardware I2C peripheral or DMA).
+    /// `scl`/`sda` are role-checked against `I` at compile time.
+    pub fn create_i2c_bitbang<I: I2cHw>(
+        &mut self,
+        scl: Peri<'static, impl i2c::SclPin<I> + PioPin>,
+        sda: Peri<'static, impl i2c::SdaPin<I> + PioPin>,
+        frequency_hz: u32,
+    ) -> I2cBusHandle {
+        let bus = BitBangI2cBus::new(scl, sda, frequency_hz);
+        I2cBusHandle::new(Box::new(bus), crate::bus::i2c::I2cBusVersion::BitBang)
     }
 
     // ── UART ─────────────────────────────────────────────────────────
