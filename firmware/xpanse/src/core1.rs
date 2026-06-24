@@ -3,6 +3,7 @@ use xpanse_driver_api::gpio_bank::GpioBank;
 use crate::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
 use xpanse_driver_api::bus::allocator::BusAllocator;
+use xpanse_driver_api::interfaces::adc;
 use xpanse_driver_api::{driver::Driver, metadata::ModuleSlot};
 
 macro_rules! gpio_bank_from_peris {
@@ -68,6 +69,8 @@ pub async fn core1_task(
     let module_3_id = adc_mapping::map_adc(&mut adc, ModuleSlot::BackLeft)
         .await
         .unwrap();
+
+    adc::init_adc(remaining_peris.adc, remaining_peris.adc_temp);
 
     let mut bus_allocator = BusAllocator::new(
         None,
