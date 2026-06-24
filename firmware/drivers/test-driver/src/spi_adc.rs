@@ -24,7 +24,7 @@ where
         registry: &mut R,
         bus_allocator: &mut BusAllocator,
     ) {
-        let spi = bus_allocator.create_spi_bus::<G::SPI>(
+        let spi = bus_allocator.create_spi_bitbang::<G::SPI>(
             gpio_bank.gpio2,
             gpio_bank.gpio4,
             gpio_bank.gpio3,

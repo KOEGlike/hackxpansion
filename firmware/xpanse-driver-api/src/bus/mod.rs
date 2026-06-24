@@ -1,6 +1,10 @@
 pub mod allocator;
+pub mod pio;
 pub mod spi;
 pub mod spi_bitbang;
-pub mod spi_factory;
 pub mod spi_hardware;
 pub mod spi_pio;
+pub mod uart;
+pub mod uart_bitbang;
+pub mod uart_hardware;
+pub mod uart_pio;

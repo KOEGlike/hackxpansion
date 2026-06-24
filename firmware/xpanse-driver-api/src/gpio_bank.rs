@@ -15,6 +15,8 @@ use embassy_rp::{
     spi, uart,
 };
 
+use crate::bus::allocator::{I2cHw, SpiHw, UartHw};
+
 pub trait BasePin:
     RefUnwindSafe
     + Send
@@ -45,9 +47,9 @@ impl<T> BasePin for T where
 }
 
 pub trait BankPins {
-    type I2C: i2c::Instance + 'static;
-    type SPI: spi::Instance + 'static;
-    type UART: uart::Instance + 'static;
+    type I2C: i2c::Instance + 'static + I2cHw;
+    type SPI: spi::Instance + 'static + SpiHw;
+    type UART: uart::Instance + 'static + UartHw;
     type PWM_SLICE0: pwm::Slice + 'static;
     type PWM_SLICE1: pwm::Slice + 'static;
     type PWM_SLICE2: pwm::Slice + 'static;
@@ -81,9 +83,9 @@ pub struct GpioBank<G: BankPins> {
 }
 
 impl<
-    I2C: i2c::Instance + 'static,
-    SPI: spi::Instance + 'static,
-    UART: uart::Instance + 'static,
+    I2C: i2c::Instance + 'static + I2cHw,
+    SPI: spi::Instance + 'static + SpiHw,
+    UART: uart::Instance + 'static + UartHw,
     PWM_SLICE0: pwm::Slice + 'static,
     PWM_SLICE1: pwm::Slice + 'static,
     PWM_SLICE2: pwm::Slice + 'static,
@@ -136,9 +138,9 @@ impl<
 }
 
 impl<
-    I2C: i2c::Instance + 'static,
-    SPI: spi::Instance + 'static,
-    UART: uart::Instance + 'static,
+    I2C: i2c::Instance + 'static + I2cHw,
+    SPI: spi::Instance + 'static + SpiHw,
+    UART: uart::Instance + 'static + UartHw,
     PWM_SLICE0: pwm::Slice + 'static,
     PWM_SLICE1: pwm::Slice + 'static,
     PWM_SLICE2: pwm::Slice + 'static,

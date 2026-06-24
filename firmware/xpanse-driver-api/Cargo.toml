@@ -10,3 +10,4 @@ embassy-time = { workspace = true }
 embedded-hal-1 = { workspace = true }
 embedded-hal-async = { workspace = true }
 defmt = { workspace = true }
+embedded-io-async = { workspace = true }
