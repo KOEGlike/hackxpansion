@@ -4,99 +4,49 @@ extern crate alloc;
 
 pub mod spi_adc;
 
-use alloc::boxed::Box;
-use core::future::Future;
-use core::pin::Pin;
-
 use alloc::sync::Arc;
+
 use embassy_executor::SendSpawner;
 use embassy_rp::{
     Peri,
-    gpio::{AnyPin, Input, Level, Output, Pull},
+    gpio::{AnyPin, Level, Output},
 };
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 
 use xpanse_driver_api::{
     bus::allocator::BusAllocator,
-    driver::Driver,
+    driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},
-    interfaces::buttons::{Button, ButtonUseCase},
-    registry::RegisteredResourceInner,
+    interfaces::buttons::{pin_button, A},
+    metadata::{ModuleID, ModuleDetectResistor, ModuleSlot},
+    registry::Registry,
 };
 
-pub struct SingleButton {
-    pin: Input<'static>,
-}
+pub struct TestDriver;
 
-impl SingleButton {
-    pub fn new(pin: Peri<'static, AnyPin>) -> Self {
-        Self {
-            pin: Input::new(pin, Pull::Up),
-        }
-    }
-}
-
-impl Button for SingleButton {
-    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
-        Box::pin(async move {
-            // Mock waiting for press using embassy_time.
-            // In a real hardware driver, you'd use ExtiInput::wait_for_low().
-            self.pin.wait_for_low().await;
-        })
-    }
-}
-
-// The primary module driver
-pub struct TestDriver {}
-
-impl RegisteredResourceInner for TestDriver {
-    type Info = ();
-}
-
-impl<G: BankPins, R> Driver<G, R> for TestDriver
-where
-    R: xpanse_driver_api::registry::Register<Box<dyn Button>>
-        + xpanse_driver_api::registry::Register<TestDriver>,
-{
-    const ID: xpanse_driver_api::metadata::ModuleID = xpanse_driver_api::metadata::ModuleID {
-        md0: xpanse_driver_api::metadata::ModuleDetectResistor::R1K,
-        md1: xpanse_driver_api::metadata::ModuleDetectResistor::R1K1,
+impl DriverMeta for TestDriver {
+    const ID: ModuleID = ModuleID {
+        md0: ModuleDetectResistor::R1K,
+        md1: ModuleDetectResistor::R1K1,
     };
+}
 
-    async fn new(
+impl<G: BankPins> Driver<G> for TestDriver {
+    async fn create(
         gpio_bank: GpioBank<G>,
-        slot: xpanse_driver_api::metadata::ModuleSlot,
-        registry: &mut R,
+        slot: ModuleSlot,
+        registry: &mut Registry,
         _bus_allocator: &mut BusAllocator,
-    ) {
+    ) -> Result<(), DriverError> {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
 
-        // Keep the blinking LED from the original code just to show spawning works
-        spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
+        spawner
+            .spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
 
-        let button = SingleButton::new(gpio_bank.gpio3.into());
+        registry.register(slot, TestDriver::ID, pin_button::<A>(gpio_bank.gpio3.into()));
 
-        // We cast to Box<dyn Button> to satisfy the Register trait
-        registry.register(
-            slot,
-            <Self as Driver<G, R>>::ID,
-            Box::new(button) as Box<dyn Button>,
-            ButtonUseCase {
-                button_a: false,
-                button_b: false,
-                button_x: false,
-                button_y: false,
-                button_up: false,
-                button_down: false,
-                button_left: false,
-                button_right: false,
-            },
-        );
-
-        let x = Self {};
-
-        registry.register(slot, <Self as Driver<G, R>>::ID, x, ());
+        Ok(())
     }
 }
 

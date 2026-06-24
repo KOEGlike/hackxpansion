@@ -3,27 +3,28 @@ use ti_adc_expander::Ads7028;
 
 use xpanse_driver_api::{
     bus::allocator::BusAllocator,
-    driver::Driver,
+    driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},
+    metadata::{ModuleID, ModuleDetectResistor, ModuleSlot},
+    registry::Registry,
 };
 
 pub struct SpiAdcDriver;
 
-impl<G: BankPins, R> Driver<G, R> for SpiAdcDriver
-where
-    R: xpanse_driver_api::registry::Register<SpiAdcDriver>,
-{
-    const ID: xpanse_driver_api::metadata::ModuleID = xpanse_driver_api::metadata::ModuleID {
-        md0: xpanse_driver_api::metadata::ModuleDetectResistor::R4K7,
-        md1: xpanse_driver_api::metadata::ModuleDetectResistor::R10K,
+impl DriverMeta for SpiAdcDriver {
+    const ID: ModuleID = ModuleID {
+        md0: ModuleDetectResistor::R4K7,
+        md1: ModuleDetectResistor::R10K,
     };
+}
 
-    async fn new(
+impl<G: BankPins> Driver<G> for SpiAdcDriver {
+    async fn create(
         gpio_bank: GpioBank<G>,
-        slot: xpanse_driver_api::metadata::ModuleSlot,
-        registry: &mut R,
+        slot: ModuleSlot,
+        registry: &mut Registry,
         bus_allocator: &mut BusAllocator,
-    ) {
+    ) -> Result<(), DriverError> {
         let spi = bus_allocator.create_spi_bitbang::<G::SPI>(
             gpio_bank.gpio2,
             gpio_bank.gpio4,
@@ -48,10 +49,8 @@ where
             .configure_ch6_as_analog().await.ok().unwrap()
             .configure_ch7_as_analog().await.ok().unwrap();
 
-        registry.register(slot, <Self as Driver<G, R>>::ID, SpiAdcDriver, ());
-    }
-}
+        registry.register(slot, SpiAdcDriver::ID, SpiAdcDriver);
 
-impl xpanse_driver_api::registry::RegisteredResourceInner for SpiAdcDriver {
-    type Info = ();
+        Ok(())
+    }
 }

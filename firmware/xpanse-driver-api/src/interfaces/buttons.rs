@@ -1,28 +1,57 @@
 use alloc::boxed::Box;
 use core::future::Future;
+use core::marker::PhantomData;
 use core::pin::Pin;
 
-use crate::registry::RegisteredResourceInner;
+use embassy_rp::{
+    Peri,
+    gpio::{AnyPin, Input, Pull},
+};
 
-pub struct ButtonUseCase {
-    pub button_a: bool,
-    pub button_b: bool,
-    pub button_x: bool,
-    pub button_y: bool,
-    pub button_up: bool,
-    pub button_down: bool,
-    pub button_left: bool,
-    pub button_right: bool,
+mod private {
+    pub trait Sealed {}
 }
 
-pub trait Button {
+pub trait ButtonRole: private::Sealed + 'static {}
+
+macro_rules! role {
+    ($($n:ident),* $(,)?) => {
+        $(
+            pub struct $n;
+            impl private::Sealed for $n {}
+            impl ButtonRole for $n {}
+        )*
+    };
+}
+
+role!(A, B, X, Y, Up, Down, Left, Right);
+
+pub trait Button<R: ButtonRole> {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
 }
 
-impl RegisteredResourceInner for dyn Button {
-    type Info = ButtonUseCase;
+pub struct SingleButton<R: ButtonRole> {
+    pin: Input<'static>,
+    _role: PhantomData<R>,
 }
 
-impl RegisteredResourceInner for Box<dyn Button> {
-    type Info = ButtonUseCase;
+impl<R: ButtonRole> SingleButton<R> {
+    pub fn new(pin: Peri<'static, AnyPin>) -> Self {
+        Self {
+            pin: Input::new(pin, Pull::Up),
+            _role: PhantomData,
+        }
+    }
+}
+
+impl<R: ButtonRole> Button<R> for SingleButton<R> {
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
+        Box::pin(async move {
+            self.pin.wait_for_low().await;
+        })
+    }
+}
+
+pub fn pin_button<R: ButtonRole>(pin: Peri<'static, AnyPin>) -> Box<dyn Button<R>> {
+    Box::new(SingleButton::<R>::new(pin))
 }

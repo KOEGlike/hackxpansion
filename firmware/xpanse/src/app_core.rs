@@ -1,10 +1,11 @@
 use xpanse_driver_api::gpio_bank::GpioBank;
+use xpanse_driver_api::registry::Registry;
 
-use crate::load_driver;
+use crate::load_driver::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
 use xpanse_driver_api::bus::allocator::BusAllocator;
 use xpanse_driver_api::interfaces::adc;
-use xpanse_driver_api::{driver::Driver, metadata::ModuleSlot};
+use xpanse_driver_api::metadata::ModuleSlot;
 
 macro_rules! gpio_bank_from_peris {
     ($peri:expr) => {
@@ -102,34 +103,38 @@ pub async fn app_core_task(
         remaining_peris.pio2,
     );
 
-    let mut registry = crate::device_registry::DeviceRegistry::new();
+    let mut registry = Registry::new();
 
-    load_driver!(
+    load_driver(
         module_0_id,
         gpio_bank_0,
         ModuleSlot::FrontRight,
         &mut registry,
-        &mut bus_allocator
-    );
-    load_driver!(
+        &mut bus_allocator,
+    )
+    .await;
+    load_driver(
         module_1_id,
         gpio_bank_1,
         ModuleSlot::FrontLeft,
         &mut registry,
-        &mut bus_allocator
-    );
-    load_driver!(
+        &mut bus_allocator,
+    )
+    .await;
+    load_driver(
         module_2_id,
         gpio_bank_2,
         ModuleSlot::BackRight,
         &mut registry,
-        &mut bus_allocator
-    );
-    load_driver!(
+        &mut bus_allocator,
+    )
+    .await;
+    load_driver(
         module_3_id,
         gpio_bank_3,
         ModuleSlot::BackLeft,
         &mut registry,
-        &mut bus_allocator
-    );
+        &mut bus_allocator,
+    )
+    .await;
 }

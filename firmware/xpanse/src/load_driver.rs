@@ -1,25 +1,24 @@
-#[macro_export]
-macro_rules! load_driver {
-    ($id:expr, $bank:expr, $slot:expr, $registry:expr, $bus_allocator:expr) => {
-        if $id
-            == $crate::load_driver::get_driver_id::<test_driver::TestDriver, _, _>(
-                &$bank, $registry,
-            )
-        {
-            test_driver::TestDriver::new($bank, $slot, $registry, $bus_allocator).await;
-        } else {
-            defmt::warn!("Unknown driver ID: {:#?}", $id);
-        }
-    };
-}
+use xpanse_driver_api::{
+    bus::allocator::BusAllocator,
+    driver::{Driver, DriverMeta},
+    gpio_bank::{BankPins, GpioBank},
+    metadata::{ModuleID, ModuleSlot},
+    registry::Registry,
+};
 
-pub fn get_driver_id<D, G, R>(
-    _bank: &xpanse_driver_api::gpio_bank::GpioBank<G>,
-    _registry: &mut R,
-) -> xpanse_driver_api::metadata::ModuleID
-where
-    G: xpanse_driver_api::gpio_bank::BankPins,
-    D: xpanse_driver_api::driver::Driver<G, R>,
-{
-    D::ID
+pub async fn load_driver<G: BankPins>(
+    id: ModuleID,
+    bank: GpioBank<G>,
+    slot: ModuleSlot,
+    registry: &mut Registry,
+    bus: &mut BusAllocator,
+) {
+    match id {
+        id if id == test_driver::TestDriver::ID => {
+            if let Err(e) = test_driver::TestDriver::create(bank, slot, registry, bus).await {
+                defmt::error!("driver init failed: {:?}", e);
+            }
+        }
+        _ => defmt::warn!("unknown driver id: {:?}", id),
+    }
 }
