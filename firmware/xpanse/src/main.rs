@@ -8,7 +8,7 @@ use embassy_executor::Executor;
 use embassy_rp::multicore::{Stack, spawn_core1};
 use embedded_alloc::LlffHeap as Heap;
 use static_cell::StaticCell;
-use xpanse::{core0::core0_task, core1::core1_task, resource_split::*, split_resources};
+use xpanse::{app_core::app_core_task, resource_split::*, split_resources, ui_core::ui_core_task};
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.
@@ -44,7 +44,7 @@ fn main() -> ! {
         move || {
             let executor1 = EXECUTOR1.init(Executor::new());
             executor1.run(|spawner| {
-                spawner.spawn(unwrap!(core1_task(
+                spawner.spawn(unwrap!(app_core_task(
                     r.gpio_bank_0,
                     r.gpio_bank_1,
                     r.gpio_bank_2,
@@ -57,5 +57,5 @@ fn main() -> ! {
     );
 
     let executor0 = EXECUTOR0.init(Executor::new());
-    executor0.run(|spawner| spawner.spawn(unwrap!(core0_task(r.display))));
+    executor0.run(|spawner| spawner.spawn(unwrap!(ui_core_task(r.display))));
 }

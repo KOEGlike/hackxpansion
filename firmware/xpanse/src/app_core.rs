@@ -36,7 +36,7 @@ slint::slint! {
 }
 
 #[embassy_executor::task]
-pub async fn core1_task(
+pub async fn app_core_task(
     gpio_bank_0: GpioBankPeris0,
     gpio_bank_1: GpioBankPeris1,
     gpio_bank_2: GpioBankPeris2,

@@ -23,7 +23,7 @@ static SLINT_BUFFER: StaticCell<[Rgb565Pixel; display::WIDTH as usize * display:
     StaticCell::new();
 
 #[embassy_executor::task]
-pub async fn core0_task(display_peris: DisplayPeris) {
+pub async fn ui_core_task(display_peris: DisplayPeris) {
     let driver_buffer = DRIVER_BUFFER.init([0_u8; 512]);
     let mut disp = init_display(
         display_peris.spi,
