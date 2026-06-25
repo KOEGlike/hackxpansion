@@ -20,6 +20,41 @@ use crate::bus::spi_pio::PioSpiBus;
 use crate::bus::uart::{DynUartBus, UartBusHandle, UartBusVersion};
 use crate::bus::uart_pio::PioUartBus;
 
+/// A `StateMachine` with the SM number erased at runtime.
+///
+/// Drivers that load custom PIO programs match on this enum to recover the
+/// const-generic `StateMachine<'static, PIO, N>` they need.
+pub enum AnyStateMachine<'d, PIO: Instance + 'static> {
+    Sm0(StateMachine<'d, PIO, 0>),
+    Sm1(StateMachine<'d, PIO, 1>),
+    Sm2(StateMachine<'d, PIO, 2>),
+    Sm3(StateMachine<'d, PIO, 3>),
+}
+
+/// A handle returned by [`BusAllocator::request_pio`](crate::bus::allocator::BusAllocator::request_pio)
+/// that gives a driver temporary access to one block's `Common` handle plus a
+/// free `StateMachine`.
+///
+/// The `Common` borrow is only valid for the lifetime of the handle (which is
+/// tied to `&mut BusAllocator`).  Programs loaded via `Common` return handles
+/// with `'static` lifetime (because the `Common` inside `BusAllocator` is
+/// `Common<'static, PIO>`), so a driver can load a program, configure the SM,
+/// and then keep the `LoadedProgram` + `StateMachine` after the borrow ends.
+pub enum PioAccess<'a> {
+    Block0 {
+        common: &'a mut Common<'static, PIO0>,
+        sm: AnyStateMachine<'static, PIO0>,
+    },
+    Block1 {
+        common: &'a mut Common<'static, PIO1>,
+        sm: AnyStateMachine<'static, PIO1>,
+    },
+    Block2 {
+        common: &'a mut Common<'static, PIO2>,
+        sm: AnyStateMachine<'static, PIO2>,
+    },
+}
+
 embassy_rp::bind_interrupts!(struct PioIrqs {
     PIO0_IRQ_0 => embassy_rp::pio::InterruptHandler<PIO0>;
     PIO1_IRQ_0 => embassy_rp::pio::InterruptHandler<PIO1>;
@@ -77,6 +112,15 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
             Sm::Sm1 => self.sm1.is_some(),
             Sm::Sm2 => self.sm2.is_some(),
             Sm::Sm3 => self.sm3.is_some(),
+        }
+    }
+
+    fn take_any_sm(&mut self, sm: Sm) -> Option<AnyStateMachine<'static, PIO>> {
+        match sm {
+            Sm::Sm0 => self.sm0.take().map(AnyStateMachine::Sm0),
+            Sm::Sm1 => self.sm1.take().map(AnyStateMachine::Sm1),
+            Sm::Sm2 => self.sm2.take().map(AnyStateMachine::Sm2),
+            Sm::Sm3 => self.sm3.take().map(AnyStateMachine::Sm3),
         }
     }
 
@@ -276,6 +320,38 @@ impl PioManager {
         Some(self.build_uart_at(block, sm_tx, sm_rx, tx_pin, rx_pin, baud_rate))
     }
 
+    /// Hand out one free state machine on any block, together with the block's
+    /// `Common` handle.  Drivers use this to load custom PIO programs.
+    pub fn request_pio(&mut self) -> Option<PioAccess<'_>> {
+        let (block, sm) = self.find_free_sm()?;
+        match block {
+            PioBlock::Block0 => {
+                let slot = self.pio0.as_mut()?;
+                let sm = slot.take_any_sm(sm)?;
+                Some(PioAccess::Block0 {
+                    common: &mut slot.common,
+                    sm,
+                })
+            }
+            PioBlock::Block1 => {
+                let slot = self.pio1.as_mut()?;
+                let sm = slot.take_any_sm(sm)?;
+                Some(PioAccess::Block1 {
+                    common: &mut slot.common,
+                    sm,
+                })
+            }
+            PioBlock::Block2 => {
+                let slot = self.pio2.as_mut()?;
+                let sm = slot.take_any_sm(sm)?;
+                Some(PioAccess::Block2 {
+                    common: &mut slot.common,
+                    sm,
+                })
+            }
+        }
+    }
+
     pub(crate) fn find_free_sm(&self) -> Option<(PioBlock, Sm)> {
         if let Some(slot) = &self.pio0 {
             for sm in Sm::ALL {
@@ -329,4 +405,62 @@ fn two_free_sms<PIO: Instance + 'static>(slot: &PioSlot<PIO>) -> Option<(Sm, Sm)
         (Some(a), Some(b)) => Some((a, b)),
         _ => None,
     }
+}
+
+/// Dispatch over a [`PioAccess`] handle, recovering the typed `Common` and
+/// `StateMachine` so a driver can load a custom PIO program.
+///
+/// The driver provides a **generic** function/closure that works for any
+/// `PIO: Instance` and `const N: usize`.  The macro matches all 12
+/// (block × SM) arms and calls the function in the one that matches.
+///
+/// # Example
+///
+/// ```ignore
+/// use embassy_rp::pio::{Common, Instance, StateMachine};
+///
+/// fn my_init<PIO: Instance, const N: usize>(
+///     common: &mut Common<'static, PIO>,
+///     sm: StateMachine<'static, PIO, N>,
+/// ) -> MyDriver<PIO, N> {
+///     let program = MyProgram::new(common);
+///     MyDriver::new(common, sm, &program)
+/// }
+///
+/// let handle = allocator.request_pio()?;
+/// let driver = with_pio!(handle, common, sm, my_init(common, sm));
+/// ```
+#[macro_export]
+macro_rules! with_pio {
+    ($handle:expr, $common:ident, $sm:ident, $body:expr) => {
+        match $handle {
+            $crate::bus::pio::PioAccess::Block0 { common, sm } => {
+                let $common = common;
+                match sm {
+                    $crate::bus::pio::AnyStateMachine::Sm0($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm1($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm2($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm3($sm) => $body,
+                }
+            }
+            $crate::bus::pio::PioAccess::Block1 { common, sm } => {
+                let $common = common;
+                match sm {
+                    $crate::bus::pio::AnyStateMachine::Sm0($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm1($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm2($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm3($sm) => $body,
+                }
+            }
+            $crate::bus::pio::PioAccess::Block2 { common, sm } => {
+                let $common = common;
+                match sm {
+                    $crate::bus::pio::AnyStateMachine::Sm0($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm1($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm2($sm) => $body,
+                    $crate::bus::pio::AnyStateMachine::Sm3($sm) => $body,
+                }
+            }
+        }
+    };
 }

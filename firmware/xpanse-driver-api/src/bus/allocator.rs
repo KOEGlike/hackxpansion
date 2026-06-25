@@ -538,4 +538,19 @@ impl BusAllocator {
         let bus = BitBangUartBus::new(tx, rx, baud_rate);
         UartBusHandle::new(Box::new(bus), crate::bus::uart::UartBusVersion::BitBang)
     }
+
+    // ── PIO ─────────────────────────────────────────────────────────
+
+    /// Hand out one free PIO state machine on any block, together with the
+    /// block's `Common` handle.  Drivers that load custom PIO programs use
+    /// this, then call [`with_pio!`](crate::with_pio!) to dispatch over the
+    /// erased block/SM types.
+    ///
+    /// The `Common` borrow is only valid while the returned `PioAccess` is
+    /// alive (i.e. while you hold `&mut BusAllocator`).  Programs loaded via
+    /// `Common` produce `'static` handles, so a driver can load a program,
+    /// configure the SM, and keep the results after the borrow ends.
+    pub fn request_pio(&mut self) -> Option<crate::bus::pio::PioAccess<'_>> {
+        self.pio_manager.request_pio()
+    }
 }
