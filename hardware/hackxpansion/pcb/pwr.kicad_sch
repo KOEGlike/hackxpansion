@@ -3700,7 +3700,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "2b81d7d3-0a61-4734-9d84-bad2389820ae")
+		(uuid "2b8ba11c-52c9-41ed-9894-80a738d966a2")
 		(property "Reference" "R25"
 			(at 104.902 67.564 0)
 			(show_name no)
@@ -3712,7 +3712,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "1k5"
 			(at 104.902 70.104 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3756,7 +3756,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25867"
 			(at 99.06 68.58 0)
 			(hide yes)
 			(show_name no)
@@ -3768,10 +3768,10 @@
 			)
 		)
 		(pin "2"
-			(uuid "7aabeaba-8f61-420b-a19a-3b1a654e3ccb")
+			(uuid "d092118c-ac5d-41b9-add8-be7494678070")
 		)
 		(pin "1"
-			(uuid "d222e507-7f42-4749-9bee-b08fb954d823")
+			(uuid "7d18fdd3-5a7c-48b8-8e96-0a1baf689319")
 		)
 		(instances
 			(project "hackxpansion"
@@ -4636,10 +4636,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "a142cfb2-2f74-4986-bc77-430fa23faefc")
 		(property "Reference" "D1"
-			(at 102.87 56.1974 90)
+			(at 100.838 53.594 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4650,7 +4649,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 102.87 58.7374 90)
+			(at 100.838 56.134 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
