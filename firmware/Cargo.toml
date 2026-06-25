@@ -84,5 +84,7 @@ portable-atomic = { version = "1.5", features = ["critical-section"] }
 log = "0.4"
 embedded-sdmmc = "0.9.0"
 
+pio = "0.3"
+
 test-driver = { path = "./drivers/test-driver/" }
 example-app = { path = "./apps/example-app/" }

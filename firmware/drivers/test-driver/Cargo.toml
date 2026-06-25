@@ -11,3 +11,6 @@ embassy-sync = { workspace = true }
 embassy-rp = { workspace = true }
 embassy-executor = { workspace = true }
 ti-adc-expander = { workspace = true }
+pio = { workspace = true }
+defmt = { workspace = true }
+fixed = { workspace = true }
