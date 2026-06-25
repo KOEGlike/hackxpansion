@@ -63,4 +63,11 @@ impl Registry {
     pub fn has<T: 'static>(&self) -> bool {
         self.entries.contains_key(&TypeId::of::<CapabilityList<T>>())
     }
+
+    pub fn take<T: 'static>(&mut self) -> Option<T> {
+        self.entries
+            .get_mut(&TypeId::of::<CapabilityList<T>>())
+            .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
+            .and_then(|list| list.items.pop().map(|r| r.resource))
+    }
 }

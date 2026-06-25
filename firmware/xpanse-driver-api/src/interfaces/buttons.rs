@@ -12,7 +12,7 @@ mod private {
     pub trait Sealed {}
 }
 
-pub trait ButtonRole: private::Sealed + 'static {}
+pub trait ButtonRole: private::Sealed + 'static + Send {}
 
 macro_rules! role {
     ($($n:ident),* $(,)?) => {
@@ -26,7 +26,7 @@ macro_rules! role {
 
 role!(A, B, X, Y, Up, Down, Left, Right);
 
-pub trait Button<R: ButtonRole> {
+pub trait Button<R: ButtonRole>: Send {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
 }
 

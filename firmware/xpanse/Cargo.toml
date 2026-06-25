@@ -62,6 +62,7 @@ log = { workspace = true }
 embedded-sdmmc = { workspace = true }
 
 test-driver = { workspace = true }
+example-app = { workspace = true }
 
 [package.metadata.embassy]
 build = [

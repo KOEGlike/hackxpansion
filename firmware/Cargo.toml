@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["xpanse", "xpanse-driver-api", "drivers/test-driver"]
+members = ["xpanse", "xpanse-driver-api", "drivers/test-driver", "apps/example-app"]
 
 [workspace.dependencies]
 xpanse-driver-api = { path = "./xpanse-driver-api/" }
@@ -85,3 +85,4 @@ log = "0.4"
 embedded-sdmmc = "0.9.0"
 
 test-driver = { path = "./drivers/test-driver/" }
+example-app = { path = "./apps/example-app/" }

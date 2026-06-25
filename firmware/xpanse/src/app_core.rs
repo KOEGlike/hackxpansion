@@ -137,4 +137,6 @@ pub async fn app_core_task(
         &mut bus_allocator,
     )
     .await;
+
+    example_app::try_spawn(&mut registry).await;
 }
