@@ -7,7 +7,6 @@ use core::pin::Pin;
 use alloc::boxed::Box;
 use core::future::Future;
 
-use embassy_executor::SendSpawner;
 use embassy_time::Timer;
 use xpanse_driver_api::{
     app::App,
@@ -29,7 +28,7 @@ impl App for ButtonLoggerApp {
         Some(Self { button })
     }
 
-    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
+    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
         Box::pin(async move {
             let mut count = 0u32;
             loop {
@@ -39,22 +38,5 @@ impl App for ButtonLoggerApp {
                 Timer::after_millis(50).await;
             }
         })
-    }
-}
-
-#[embassy_executor::task]
-pub async fn button_logger_task(mut app: ButtonLoggerApp) {
-    app.run().await;
-}
-
-pub async fn try_spawn(registry: &mut Registry) {
-    if ButtonLoggerApp::can_run(registry) {
-        if let Some(app) = ButtonLoggerApp::new(registry) {
-            let spawner = SendSpawner::for_current_executor().await;
-            spawner.spawn(button_logger_task(app).unwrap());
-            defmt::info!("ButtonLoggerApp spawned");
-        }
-    } else {
-        defmt::warn!("ButtonLoggerApp needs a Button<A>");
     }
 }

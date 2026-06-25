@@ -4,8 +4,8 @@ use core::future::Future;
 
 use crate::registry::Registry;
 
-pub trait App {
-    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
+pub trait App: Send {
+    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
 
     fn can_run(registry: &Registry) -> bool
     where

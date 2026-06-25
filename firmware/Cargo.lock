@@ -1764,7 +1764,6 @@ name = "example-app"
 version = "0.1.0"
 dependencies = [
  "defmt 1.1.0",
- "embassy-executor",
  "embassy-time",
  "xpanse-driver-api",
 ]

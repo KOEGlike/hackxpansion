@@ -27,7 +27,7 @@ macro_rules! role {
 role!(A, B, X, Y, Up, Down, Left, Right);
 
 pub trait Button<R: ButtonRole>: Send {
-    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
 }
 
 pub struct SingleButton<R: ButtonRole> {
@@ -45,7 +45,7 @@ impl<R: ButtonRole> SingleButton<R> {
 }
 
 impl<R: ButtonRole> Button<R> for SingleButton<R> {
-    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
         Box::pin(async move {
             self.pin.wait_for_low().await;
         })

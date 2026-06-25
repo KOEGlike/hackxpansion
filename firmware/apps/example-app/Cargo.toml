@@ -7,6 +7,5 @@ license = "GPL-3.0"
 [dependencies]
 xpanse-driver-api = { workspace = true }
 
-embassy-executor = { workspace = true }
 embassy-time = { workspace = true }
 defmt = { workspace = true }
