@@ -3291,7 +3291,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C307423"
+		(property "LCSC" "C23733"
 			(at 167.64 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -3571,7 +3571,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C307423"
+		(property "LCSC" "C23733"
 			(at 45.72 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -4407,7 +4407,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C307423"
+		(property "LCSC" "C23733"
 			(at 143.51 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -5300,7 +5300,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C307423"
+		(property "LCSC" "C23733"
 			(at 118.11 64.77 0)
 			(hide yes)
 			(show_name no)
