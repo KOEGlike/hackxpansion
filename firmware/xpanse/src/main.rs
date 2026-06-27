@@ -8,7 +8,9 @@ use embassy_executor::Executor;
 use embassy_rp::multicore::{Stack, spawn_core1};
 use embedded_alloc::LlffHeap as Heap;
 use static_cell::StaticCell;
-use xpanse::{app_core::app_core_task, resource_split::*, split_resources, ui_core::ui_core_task};
+use xpanse::{
+    core_app::ui_core_task, core_driver::app_core_task, resource_split::*, split_resources,
+};
 use {defmt_rtt as _, panic_probe as _};
 
 // Program metadata for `picotool info`.

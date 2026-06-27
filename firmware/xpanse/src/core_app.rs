@@ -10,7 +10,7 @@ use embedded_graphics::{
 };
 
 use crate::{
-    app_core::take_registry,
+    core_driver::take_registry,
     display::{self, init_display},
     resource_split::*,
 };
