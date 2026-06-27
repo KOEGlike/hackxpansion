@@ -24,7 +24,7 @@ impl<T> Default for CapabilityList<T> {
 }
 
 pub struct Registry {
-    entries: BTreeMap<TypeId, Box<dyn Any>>,
+    entries: BTreeMap<TypeId, Box<dyn Any + Send>>,
 }
 
 impl Default for Registry {
@@ -40,7 +40,7 @@ impl Registry {
         }
     }
 
-    pub fn register<T: 'static>(&mut self, slot: ModuleSlot, module_id: ModuleID, resource: T) {
+    pub fn register<T: 'static + Send>(&mut self, slot: ModuleSlot, module_id: ModuleID, resource: T) {
         self.entries
             .entry(TypeId::of::<CapabilityList<T>>())
             .or_insert_with(|| Box::new(CapabilityList::<T>::default()))
@@ -54,17 +54,17 @@ impl Registry {
             });
     }
 
-    pub fn capabilities<T: 'static>(&mut self) -> Option<&mut CapabilityList<T>> {
+    pub fn capabilities<T: 'static + Send>(&mut self) -> Option<&mut CapabilityList<T>> {
         self.entries
             .get_mut(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
     }
 
-    pub fn has<T: 'static>(&self) -> bool {
+    pub fn has<T: 'static + Send>(&self) -> bool {
         self.entries.contains_key(&TypeId::of::<CapabilityList<T>>())
     }
 
-    pub fn take<T: 'static>(&mut self) -> Option<T> {
+    pub fn take<T: 'static + Send>(&mut self) -> Option<T> {
         self.entries
             .get_mut(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())

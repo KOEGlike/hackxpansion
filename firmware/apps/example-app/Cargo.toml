@@ -9,3 +9,4 @@ xpanse-driver-api = { workspace = true }
 
 embassy-time = { workspace = true }
 defmt = { workspace = true }
+slint = { workspace = true }

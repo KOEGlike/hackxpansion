@@ -14,6 +14,16 @@ use xpanse_driver_api::{
     registry::Registry,
 };
 
+slint::slint! {
+    export component ButtonLoggerUI inherits Window {
+        in-out property <int> count: 0;
+        Text {
+            text: "Clicks: " + root.count;
+            color: green;
+        }
+    }
+}
+
 pub struct ButtonLoggerApp {
     button: Box<dyn Button<A>>,
 }
@@ -28,12 +38,16 @@ impl App for ButtonLoggerApp {
         Some(Self { button })
     }
 
-    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
+    fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
         Box::pin(async move {
+            let ui = ButtonLoggerUI::new().unwrap();
+            ui.show().unwrap();
+
             let mut count = 0u32;
             loop {
                 self.button.wait_for_pressed().await;
                 count += 1;
+                ui.set_count(count as i32);
                 defmt::info!("button A pressed (count: {})", count);
                 Timer::after_millis(50).await;
             }

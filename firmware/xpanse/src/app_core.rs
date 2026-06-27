@@ -1,6 +1,5 @@
 use xpanse_driver_api::gpio_bank::GpioBank;
 use xpanse_driver_api::registry::Registry;
-use xpanse_driver_api::app::App;
 
 use crate::load_driver::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
@@ -8,8 +7,7 @@ use xpanse_driver_api::bus::allocator::BusAllocator;
 use xpanse_driver_api::interfaces::adc;
 use xpanse_driver_api::metadata::ModuleSlot;
 
-use embassy_executor::SendSpawner;
-use alloc::boxed::Box;
+use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, signal::Signal};
 
 macro_rules! gpio_bank_from_peris {
     ($peri:expr) => {
@@ -31,13 +29,10 @@ macro_rules! gpio_bank_from_peris {
     };
 }
 
-slint::slint! {
-    export component HelloWorld inherits Window {
-        Text {
-            text: "hello world";
-            color: green;
-        }
-    }
+static REGISTRY_HANDOFF: Signal<CriticalSectionRawMutex, Registry> = Signal::new();
+
+pub async fn take_registry() -> Registry {
+    REGISTRY_HANDOFF.wait().await
 }
 
 #[embassy_executor::task]
@@ -142,22 +137,6 @@ pub async fn app_core_task(
     )
     .await;
 
-    spawn_app::<example_app::ButtonLoggerApp>(&mut registry).await;
-}
-
-#[embassy_executor::task]
-async fn run_app(mut app: Box<dyn App>) {
-    app.run().await;
-}
-
-async fn spawn_app<A: App + 'static>(registry: &mut Registry) {
-    if A::can_run(registry) {
-        if let Some(app) = A::new(registry) {
-            let spawner = SendSpawner::for_current_executor().await;
-            spawner.spawn(run_app(Box::new(app)).unwrap());
-            defmt::info!("app spawned");
-        }
-    } else {
-        defmt::warn!("app requirements not met");
-    }
+    defmt::info!("drivers loaded, handing registry to core 0");
+    REGISTRY_HANDOFF.signal(registry);
 }

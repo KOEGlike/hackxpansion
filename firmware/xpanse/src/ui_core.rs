@@ -1,5 +1,6 @@
 extern crate alloc;
 use alloc::{boxed::Box, rc::Rc};
+use embassy_futures::select::select;
 use embassy_time::{Duration, Instant, Timer};
 use embedded_graphics::{
     draw_target::DrawTarget,
@@ -9,6 +10,7 @@ use embedded_graphics::{
 };
 
 use crate::{
+    app_core::take_registry,
     display::{self, init_display},
     resource_split::*,
 };
@@ -17,6 +19,7 @@ use slint::platform::{
     software_renderer::{MinimalSoftwareWindow, Rgb565Pixel},
 };
 use static_cell::StaticCell;
+use xpanse_driver_api::{app::App, registry::Registry};
 
 static DRIVER_BUFFER: StaticCell<[u8; 512]> = StaticCell::new();
 static SLINT_BUFFER: StaticCell<[Rgb565Pixel; display::WIDTH as usize * display::HIGHT as usize]> =
@@ -36,7 +39,7 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     );
 
     let window = MinimalSoftwareWindow::new(Default::default());
-    slint::platform::set_platform(Box::new(XpansePlatfrom {
+    slint::platform::set_platform(Box::new(XpansePlatform {
         window: window.clone(),
     }))
     .unwrap();
@@ -49,13 +52,15 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     let slint_buffer =
         SLINT_BUFFER.init([Rgb565Pixel(0); display::WIDTH as usize * display::HIGHT as usize]);
 
+    defmt::info!("ui_core: waiting for registry from core 1");
+    let mut registry = take_registry().await;
+    defmt::info!("ui_core: registry received");
+
+    spawn_app::<example_app::ButtonLoggerApp>(&mut registry).await;
+
     loop {
-        // Let Slint run the timer hooks and update animations.
         slint::platform::update_timers_and_animations();
 
-        // ... maybe some more application logic ...
-
-        // Draw the scene if something needs to be drawn.
         window.draw_if_needed(|renderer| {
             renderer.render(&mut slint_buffer[..], display::WIDTH as usize);
             disp.fill_contiguous(
@@ -68,7 +73,6 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
             .unwrap();
         });
 
-        // Try to put the MCU to sleep
         if !window.has_active_animations() {
             if let Some(duration) = slint::platform::duration_until_next_timer_update() {
                 Timer::after(Duration::from_nanos(duration.as_nanos() as u64)).await;
@@ -77,21 +81,42 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     }
 }
 
+async fn spawn_app<A: App + 'static>(registry: &mut Registry) {
+    if A::can_run(registry) {
+        if let Some(app) = A::new(registry) {
+            run_app(app).await;
+            defmt::info!("app started");
+        }
+    } else {
+        defmt::warn!("app requirements not met");
+    }
+}
+
+async fn run_app(mut app: impl App) {
+    let app_future = app.run();
+    let ui_future = async {
+        loop {
+            slint::platform::update_timers_and_animations();
+            slint::platform::duration_until_next_timer_update();
+            Timer::after_millis(10).await;
+        }
+    };
+    select(app_future, ui_future).await;
+}
+
 fn slint_rgb565_into_embedded_graphics(rgb: &Rgb565Pixel) -> Rgb565 {
-    let rgb: rgb::RGB<u8> = rgb.clone().into();
+    let rgb: rgb::RGB<u8> = (*rgb).into();
     Rgb565::new(rgb.r, rgb.g, rgb.b)
 }
 
-struct XpansePlatfrom {
+struct XpansePlatform {
     window: Rc<MinimalSoftwareWindow>,
 }
 
-impl Platform for XpansePlatfrom {
+impl Platform for XpansePlatform {
     fn create_window_adapter(
         &self,
     ) -> Result<Rc<dyn slint::platform::WindowAdapter>, slint::PlatformError> {
-        // Since on MCUs, there can be only one window, just return a clone of self.window.
-        // We'll also use the same window in the event loop.
         Ok(self.window.clone())
     }
     fn duration_since_start(&self) -> core::time::Duration {
