@@ -63,11 +63,22 @@ impl Registry {
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
     }
 
-    pub fn has<T: 'static + Send>(&self) -> bool {
+    /// Returns how many resources of type `T` are currently available.
+    pub fn resource_count<T: 'static + Send>(&self) -> usize {
         self.entries
             .get(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())
-            .is_some_and(|list| !list.items.is_empty())
+            .map_or(0, |list| list.items.len())
+    }
+
+    /// Returns whether at least one resource of type `T` is currently available.
+    pub fn has<T: 'static + Send>(&self) -> bool {
+        self.has_at_least::<T>(1)
+    }
+
+    /// Returns whether at least `count` resources of type `T` are currently available.
+    pub fn has_at_least<T: 'static + Send>(&self, count: usize) -> bool {
+        self.resource_count::<T>() >= count
     }
 
     pub fn return_resource<T: 'static + Send>(&mut self, resource: RegisteredResource<T>) {
@@ -79,5 +90,28 @@ impl Registry {
             .get_mut(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
             .and_then(|list| list.items.pop())
+    }
+
+    /// Takes exactly `count` resources of type `T` if enough are available.
+    ///
+    /// If fewer than `count` resources are available, the registry is left unchanged.
+    pub fn take_resources<T: 'static + Send>(
+        &mut self,
+        count: usize,
+    ) -> Option<Vec<RegisteredResource<T>>> {
+        if count == 0 {
+            return Some(Vec::new());
+        }
+
+        let list = self
+            .entries
+            .get_mut(&TypeId::of::<CapabilityList<T>>())
+            .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())?;
+
+        if list.items.len() < count {
+            return None;
+        }
+
+        Some(list.items.split_off(list.items.len() - count))
     }
 }
