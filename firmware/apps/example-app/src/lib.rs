@@ -11,7 +11,7 @@ use embassy_time::Timer;
 use xpanse_driver_api::{
     app::App,
     interfaces::buttons::{A, Button},
-    registry::Registry,
+    registry::{RegisteredResource, Registry},
 };
 
 slint::slint! {
@@ -25,16 +25,18 @@ slint::slint! {
 }
 
 pub struct ButtonLoggerApp {
-    button: Box<dyn Button<A>>,
+    button: RegisteredResource<Box<dyn Button<A>>>,
 }
 
 impl App for ButtonLoggerApp {
+    const NAME: &'static str = "Button Logger";
+
     fn can_run(registry: &Registry) -> bool {
         registry.has::<Box<dyn Button<A>>>()
     }
 
     fn new(registry: &mut Registry) -> Option<Self> {
-        let button = registry.take::<Box<dyn Button<A>>>()?;
+        let button = registry.take_resource::<Box<dyn Button<A>>>()?;
         Some(Self { button })
     }
 
@@ -45,12 +47,16 @@ impl App for ButtonLoggerApp {
 
             let mut count = 0u32;
             loop {
-                self.button.wait_for_pressed().await;
+                self.button.resource.wait_for_pressed().await;
                 count += 1;
                 ui.set_count(count as i32);
                 defmt::info!("button A pressed (count: {})", count);
                 Timer::after_millis(50).await;
             }
         })
+    }
+
+    fn release(self, registry: &mut Registry) {
+        registry.return_resource(self.button);
     }
 }

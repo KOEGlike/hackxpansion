@@ -1,0 +1,45 @@
+export component AppPickerUI inherits Window {
+    in property <[string]> apps;
+    in-out property <int> selected-index: -1;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #101018;
+    }
+
+    VerticalLayout {
+        width: parent.width;
+        height: parent.height;
+        padding: 10px;
+        spacing: 8px;
+
+        Text {
+            text: "Select app";
+            color: #ffffff;
+            font-size: 24px;
+            horizontal-alignment: center;
+        }
+
+        if root.apps.length == 0: Text {
+            text: "No compatible apps";
+            color: #ff8080;
+            font-size: 16px;
+            horizontal-alignment: center;
+        }
+
+        for app[index] in root.apps: Rectangle {
+            height: 42px;
+            border-radius: 5px;
+            background: index == root.selected-index ? #3f6090 : #263044;
+
+            Text {
+                text: app;
+                color: #ffffff;
+                font-size: 18px;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

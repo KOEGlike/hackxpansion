@@ -65,13 +65,19 @@ impl Registry {
 
     pub fn has<T: 'static + Send>(&self) -> bool {
         self.entries
-            .contains_key(&TypeId::of::<CapabilityList<T>>())
+            .get(&TypeId::of::<CapabilityList<T>>())
+            .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())
+            .is_some_and(|list| !list.items.is_empty())
     }
 
-    pub fn take<T: 'static + Send>(&mut self) -> Option<T> {
+    pub fn return_resource<T: 'static + Send>(&mut self, resource: RegisteredResource<T>) {
+        self.register(resource.slot, resource.module_id, resource.resource);
+    }
+
+    pub fn take_resource<T: 'static + Send>(&mut self) -> Option<RegisteredResource<T>> {
         self.entries
             .get_mut(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
-            .and_then(|list| list.items.pop().map(|r| r.resource))
+            .and_then(|list| list.items.pop())
     }
 }

@@ -5,6 +5,8 @@ use core::pin::Pin;
 use crate::registry::Registry;
 
 pub trait App: Send {
+    const NAME: &'static str;
+
     fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>>;
 
     fn can_run(registry: &Registry) -> bool
@@ -14,4 +16,10 @@ pub trait App: Send {
     fn new(registry: &mut Registry) -> Option<Self>
     where
         Self: Sized;
+
+    fn release(self, _registry: &mut Registry)
+    where
+        Self: Sized,
+    {
+    }
 }

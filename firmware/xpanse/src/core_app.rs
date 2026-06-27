@@ -1,6 +1,9 @@
 extern crate alloc;
+
 use alloc::{boxed::Box, rc::Rc};
-use embassy_futures::select::select;
+use core::future::Future;
+
+use embassy_futures::select::{Either, select as select_future};
 use embassy_time::{Duration, Instant, Timer};
 use embedded_graphics::{
     draw_target::DrawTarget,
@@ -10,6 +13,8 @@ use embedded_graphics::{
 };
 
 use crate::{
+    app_loader::run_app,
+    app_picker::pick_app,
     core_driver::take_registry,
     display::{self, init_display},
     resource_split::*,
@@ -19,7 +24,8 @@ use slint::platform::{
     software_renderer::{MinimalSoftwareWindow, Rgb565Pixel},
 };
 use static_cell::StaticCell;
-use xpanse_driver_api::{app::App, registry::Registry};
+
+pub use crate::app_picker::{down, left, right, select, up};
 
 static DRIVER_BUFFER: StaticCell<[u8; 512]> = StaticCell::new();
 static SLINT_BUFFER: StaticCell<[Rgb565Pixel; display::WIDTH as usize * display::HIGHT as usize]> =
@@ -56,52 +62,82 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     let mut registry = take_registry().await;
     defmt::info!("ui_core: registry received");
 
-    spawn_app::<example_app::ButtonLoggerApp>(&mut registry).await;
-
     loop {
-        slint::platform::update_timers_and_animations();
+        let app = drive_ui_until(
+            &window,
+            &mut disp,
+            &mut slint_buffer[..],
+            pick_app(&registry),
+        )
+        .await;
 
-        window.draw_if_needed(|renderer| {
-            renderer.render(&mut slint_buffer[..], display::WIDTH as usize);
-            disp.fill_contiguous(
-                &Rectangle {
-                    top_left: Point::zero(),
-                    size: Size::new(display::WIDTH as u32, display::HIGHT as u32),
-                },
-                slint_buffer.iter().map(slint_rgb565_into_embedded_graphics),
-            )
-            .unwrap();
-        });
-
-        if !window.has_active_animations() {
-            if let Some(duration) = slint::platform::duration_until_next_timer_update() {
-                Timer::after(Duration::from_nanos(duration.as_nanos() as u64)).await;
-            }
-        }
+        defmt::info!("starting selected app: {}", app.name);
+        drive_ui_until(
+            &window,
+            &mut disp,
+            &mut slint_buffer[..],
+            run_app(app, &mut registry),
+        )
+        .await;
+        defmt::info!("selected app returned");
     }
 }
 
-async fn spawn_app<A: App + 'static>(registry: &mut Registry) {
-    if A::can_run(registry) {
-        if let Some(app) = A::new(registry) {
-            run_app(app).await;
-            defmt::info!("app started");
-        }
-    } else {
-        defmt::warn!("app requirements not met");
-    }
-}
-
-async fn run_app(mut app: impl App) {
-    let app_future = app.run();
+async fn drive_ui_until<D, F>(
+    window: &MinimalSoftwareWindow,
+    disp: &mut D,
+    slint_buffer: &mut [Rgb565Pixel],
+    future: F,
+) -> F::Output
+where
+    D: DrawTarget<Color = Rgb565>,
+    D::Error: core::fmt::Debug,
+    F: Future,
+{
     let ui_future = async {
         loop {
-            slint::platform::update_timers_and_animations();
-            slint::platform::duration_until_next_timer_update();
-            Timer::after_millis(10).await;
+            render_ui(window, disp, slint_buffer);
+            wait_for_next_ui_tick(window).await;
         }
     };
-    select(app_future, ui_future).await;
+
+    match select_future(future, ui_future).await {
+        Either::First(output) => output,
+        Either::Second(_) => unreachable!(),
+    }
+}
+
+fn render_ui<D>(window: &MinimalSoftwareWindow, disp: &mut D, slint_buffer: &mut [Rgb565Pixel])
+where
+    D: DrawTarget<Color = Rgb565>,
+    D::Error: core::fmt::Debug,
+{
+    slint::platform::update_timers_and_animations();
+
+    window.draw_if_needed(|renderer| {
+        renderer.render(slint_buffer, display::WIDTH as usize);
+        disp.fill_contiguous(
+            &Rectangle {
+                top_left: Point::zero(),
+                size: Size::new(display::WIDTH as u32, display::HIGHT as u32),
+            },
+            slint_buffer.iter().map(slint_rgb565_into_embedded_graphics),
+        )
+        .unwrap();
+    });
+}
+
+async fn wait_for_next_ui_tick(window: &MinimalSoftwareWindow) {
+    if window.has_active_animations() {
+        Timer::after_millis(10).await;
+        return;
+    }
+
+    if let Some(duration) = slint::platform::duration_until_next_timer_update() {
+        Timer::after(Duration::from_nanos(duration.as_nanos() as u64)).await;
+    } else {
+        Timer::after_millis(10).await;
+    }
 }
 
 fn slint_rgb565_into_embedded_graphics(rgb: &Rgb565Pixel) -> Rgb565 {

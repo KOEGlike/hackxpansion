@@ -64,6 +64,9 @@ embedded-sdmmc = { workspace = true }
 test-driver = { workspace = true }
 example-app = { workspace = true }
 
+[build-dependencies]
+slint-build = { workspace = true }
+
 [package.metadata.embassy]
 build = [
   { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" },
