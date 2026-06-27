@@ -3804,7 +3804,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3k9"
+		(property "Value" "3k3"
 			(at 58.928 73.914 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3848,7 +3848,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C131467"
+		(property "LCSC" "C25890"
 			(at 64.77 72.39 0)
 			(hide yes)
 			(show_name no)

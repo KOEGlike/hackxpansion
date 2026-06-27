@@ -2170,7 +2170,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "5R"
+		(property "Value" "5R1"
 			(at 102.87 43.1799 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2214,7 +2214,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C54920693"
+		(property "LCSC" "C2909363"
 			(at 105.41 41.91 0)
 			(hide yes)
 			(show_name no)
