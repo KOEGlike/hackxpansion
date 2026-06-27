@@ -10,13 +10,13 @@ pub enum SpiError {
     Other,
 }
 
-impl embedded_hal_1::spi::Error for SpiError {
-    fn kind(&self) -> embedded_hal_1::spi::ErrorKind {
+impl embedded_hal::spi::Error for SpiError {
+    fn kind(&self) -> embedded_hal::spi::ErrorKind {
         match self {
-            SpiError::Overrun => embedded_hal_1::spi::ErrorKind::Overrun,
-            SpiError::ModeFault => embedded_hal_1::spi::ErrorKind::ModeFault,
-            SpiError::Crc => embedded_hal_1::spi::ErrorKind::FrameFormat,
-            SpiError::Other => embedded_hal_1::spi::ErrorKind::Other,
+            SpiError::Overrun => embedded_hal::spi::ErrorKind::Overrun,
+            SpiError::ModeFault => embedded_hal::spi::ErrorKind::ModeFault,
+            SpiError::Crc => embedded_hal::spi::ErrorKind::FrameFormat,
+            SpiError::Other => embedded_hal::spi::ErrorKind::Other,
         }
     }
 }
@@ -117,11 +117,11 @@ impl SpiBusHandle {
 
 // ── embedded-hal trait impls on SpiBusHandle ──────────────────────────
 
-impl embedded_hal_1::spi::ErrorType for SpiBusHandle {
+impl embedded_hal::spi::ErrorType for SpiBusHandle {
     type Error = SpiError;
 }
 
-impl embedded_hal_1::spi::SpiBus<u8> for SpiBusHandle {
+impl embedded_hal::spi::SpiBus<u8> for SpiBusHandle {
     fn flush(&mut self) -> Result<(), SpiError> {
         Ok(())
     }
@@ -173,23 +173,23 @@ impl embedded_hal_async::spi::SpiBus<u8> for SpiBusHandle {
 impl embedded_hal_async::spi::SpiDevice<u8> for SpiBusHandle {
     async fn transaction(
         &mut self,
-        operations: &mut [embedded_hal_1::spi::Operation<'_, u8>],
+        operations: &mut [embedded_hal::spi::Operation<'_, u8>],
     ) -> Result<(), SpiError> {
         for op in operations {
             match op {
-                embedded_hal_1::spi::Operation::Read(buf) => {
+                embedded_hal::spi::Operation::Read(buf) => {
                     self.inner.read(buf).await?;
                 }
-                embedded_hal_1::spi::Operation::Write(buf) => {
+                embedded_hal::spi::Operation::Write(buf) => {
                     self.inner.write(buf).await?;
                 }
-                embedded_hal_1::spi::Operation::Transfer(read, write) => {
+                embedded_hal::spi::Operation::Transfer(read, write) => {
                     self.inner.transfer(read, write).await?;
                 }
-                embedded_hal_1::spi::Operation::TransferInPlace(buf) => {
+                embedded_hal::spi::Operation::TransferInPlace(buf) => {
                     self.inner.transfer_in_place(buf).await?;
                 }
-                embedded_hal_1::spi::Operation::DelayNs(_) => {}
+                embedded_hal::spi::Operation::DelayNs(_) => {}
             }
         }
         Ok(())
@@ -200,7 +200,7 @@ impl embedded_hal_async::spi::SpiDevice<u8> for SpiBusHandle {
 
 impl<T> DynSpiBusBlocking for T
 where
-    T: embedded_hal_1::spi::SpiBus<u8>,
+    T: embedded_hal::spi::SpiBus<u8>,
     T::Error: Into<SpiError>,
 {
     fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError> {

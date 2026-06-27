@@ -73,7 +73,7 @@ libm = "0.2"
 usbd-hid = "0.10.0"
 ti-adc-expander = { version = "0.1", features = ["defmt"] }
 
-embedded-hal-1 = { package = "embedded-hal", version = "1.0" }
+embedded-hal = { package = "embedded-hal", version = "1.0" }
 embedded-hal-async = "1.0"
 embedded-hal-bus = { version = "0.3", features = ["async"] }
 embedded-io-async = { version = "0.7.0", features = ["defmt"] }

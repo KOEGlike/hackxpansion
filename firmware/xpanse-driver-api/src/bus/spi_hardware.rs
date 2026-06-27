@@ -31,11 +31,11 @@ impl<'d, I: Instance> HardwareSpiBus<'d, I> {
     }
 }
 
-impl<'d, I: Instance> embedded_hal_1::spi::ErrorType for HardwareSpiBus<'d, I> {
+impl<'d, I: Instance> embedded_hal::spi::ErrorType for HardwareSpiBus<'d, I> {
     type Error = SpiError;
 }
 
-impl<'d, I: Instance> embedded_hal_1::spi::SpiBus<u8> for HardwareSpiBus<'d, I> {
+impl<'d, I: Instance> embedded_hal::spi::SpiBus<u8> for HardwareSpiBus<'d, I> {
     fn flush(&mut self) -> Result<(), SpiError> {
         self.spi.flush().map_err(|e| e.into())
     }

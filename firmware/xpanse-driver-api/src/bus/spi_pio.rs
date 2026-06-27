@@ -34,13 +34,13 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> PioSpiBus<'d, PIO, SM>
     }
 }
 
-impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_1::spi::ErrorType
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal::spi::ErrorType
     for PioSpiBus<'d, PIO, SM>
 {
     type Error = SpiError;
 }
 
-impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_1::spi::SpiBus<u8>
+impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal::spi::SpiBus<u8>
     for PioSpiBus<'d, PIO, SM>
 {
     fn flush(&mut self) -> Result<(), SpiError> {

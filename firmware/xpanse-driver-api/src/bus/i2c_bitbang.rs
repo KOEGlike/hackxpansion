@@ -158,14 +158,14 @@ impl<'d> BitBangI2cBus<'d> {
     }
 }
 
-impl<'d> embedded_hal_1::i2c::ErrorType for BitBangI2cBus<'d> {
+impl<'d> embedded_hal::i2c::ErrorType for BitBangI2cBus<'d> {
     type Error = I2cError;
 }
 
-impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress> for BitBangI2cBus<'d> {
+impl<'d> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress> for BitBangI2cBus<'d> {
     async fn read(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         read: &mut [u8],
     ) -> Result<(), I2cError> {
         if read.is_empty() {
@@ -184,7 +184,7 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress> for 
 
     async fn write(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         write: &[u8],
     ) -> Result<(), I2cError> {
         if write.is_empty() {
@@ -202,7 +202,7 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress> for 
 
     async fn write_read(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         write: &[u8],
         read: &mut [u8],
     ) -> Result<(), I2cError> {
@@ -229,10 +229,10 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress> for 
 
     async fn transaction(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
-        operations: &mut [embedded_hal_1::i2c::Operation<'_>],
+        address: embedded_hal::i2c::SevenBitAddress,
+        operations: &mut [embedded_hal::i2c::Operation<'_>],
     ) -> Result<(), I2cError> {
-        use embedded_hal_1::i2c::Operation;
+        use embedded_hal::i2c::Operation;
 
         if operations.is_empty() {
             return Ok(());

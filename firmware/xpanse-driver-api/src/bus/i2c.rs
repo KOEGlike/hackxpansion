@@ -2,7 +2,7 @@ use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;
 
-use embedded_hal_1::i2c::{ErrorKind, Operation, SevenBitAddress};
+use embedded_hal::i2c::{ErrorKind, Operation, SevenBitAddress};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum I2cError {
@@ -23,11 +23,11 @@ impl core::fmt::Display for I2cError {
 
 impl core::error::Error for I2cError {}
 
-impl embedded_hal_1::i2c::Error for I2cError {
+impl embedded_hal::i2c::Error for I2cError {
     fn kind(&self) -> ErrorKind {
         match self {
             I2cError::Abort => {
-                ErrorKind::NoAcknowledge(embedded_hal_1::i2c::NoAcknowledgeSource::Unknown)
+                ErrorKind::NoAcknowledge(embedded_hal::i2c::NoAcknowledgeSource::Unknown)
             }
             I2cError::InvalidBufferLength => ErrorKind::Other,
             I2cError::AddressOutOfRange => ErrorKind::Other,
@@ -116,7 +116,7 @@ impl I2cBusHandle {
     }
 }
 
-impl embedded_hal_1::i2c::ErrorType for I2cBusHandle {
+impl embedded_hal::i2c::ErrorType for I2cBusHandle {
     type Error = I2cError;
 }
 

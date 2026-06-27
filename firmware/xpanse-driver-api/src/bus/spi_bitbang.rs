@@ -68,11 +68,11 @@ impl<'d> BitBangSpiBus<'d> {
     }
 }
 
-impl<'d> embedded_hal_1::spi::ErrorType for BitBangSpiBus<'d> {
+impl<'d> embedded_hal::spi::ErrorType for BitBangSpiBus<'d> {
     type Error = SpiError;
 }
 
-impl<'d> embedded_hal_1::spi::SpiBus<u8> for BitBangSpiBus<'d> {
+impl<'d> embedded_hal::spi::SpiBus<u8> for BitBangSpiBus<'d> {
     fn flush(&mut self) -> Result<(), SpiError> {
         Ok(())
     }

@@ -23,16 +23,16 @@ impl<'d, I: Instance> HardwareI2cBus<'d, I> {
     }
 }
 
-impl<'d, I: Instance> embedded_hal_1::i2c::ErrorType for HardwareI2cBus<'d, I> {
+impl<'d, I: Instance> embedded_hal::i2c::ErrorType for HardwareI2cBus<'d, I> {
     type Error = I2cError;
 }
 
-impl<'d, I: Instance> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress>
+impl<'d, I: Instance> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress>
     for HardwareI2cBus<'d, I>
 {
     async fn read(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         read: &mut [u8],
     ) -> Result<(), I2cError> {
         self.i2c.read(address, read).await.map_err(I2cError::from)
@@ -40,7 +40,7 @@ impl<'d, I: Instance> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBit
 
     async fn write(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         write: &[u8],
     ) -> Result<(), I2cError> {
         self.i2c.write(address, write).await.map_err(I2cError::from)
@@ -48,7 +48,7 @@ impl<'d, I: Instance> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBit
 
     async fn write_read(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
+        address: embedded_hal::i2c::SevenBitAddress,
         write: &[u8],
         read: &mut [u8],
     ) -> Result<(), I2cError> {
@@ -60,8 +60,8 @@ impl<'d, I: Instance> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBit
 
     async fn transaction(
         &mut self,
-        address: embedded_hal_1::i2c::SevenBitAddress,
-        operations: &mut [embedded_hal_1::i2c::Operation<'_>],
+        address: embedded_hal::i2c::SevenBitAddress,
+        operations: &mut [embedded_hal::i2c::Operation<'_>],
     ) -> Result<(), I2cError> {
         self.i2c
             .transaction(address, operations)

@@ -50,7 +50,7 @@ usbd-hid = { workspace = true }
 ti-adc-expander = { workspace = true }
 
 
-embedded-hal-1 = { workspace = true }
+embedded-hal = { workspace = true }
 embedded-hal-async = { workspace = true }
 embedded-hal-bus = { workspace = true }
 embedded-io-async = { workspace = true }
