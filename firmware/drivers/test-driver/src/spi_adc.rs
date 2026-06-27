@@ -5,7 +5,7 @@ use xpanse_driver_api::{
     bus::allocator::BusAllocator,
     driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},
-    metadata::{ModuleID, ModuleDetectResistor, ModuleSlot},
+    metadata::{ModuleDetectResistor, ModuleID, ModuleSlot},
     registry::Registry,
 };
 
@@ -40,14 +40,38 @@ impl<G: BankPins> Driver<G> for SpiAdcDriver {
             .ok();
 
         let _adc = adc
-            .configure_ch0_as_analog().await.ok().unwrap()
-            .configure_ch1_as_analog().await.ok().unwrap()
-            .configure_ch2_as_analog().await.ok().unwrap()
-            .configure_ch3_as_analog().await.ok().unwrap()
-            .configure_ch4_as_analog().await.ok().unwrap()
-            .configure_ch5_as_analog().await.ok().unwrap()
-            .configure_ch6_as_analog().await.ok().unwrap()
-            .configure_ch7_as_analog().await.ok().unwrap();
+            .configure_ch0_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch1_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch2_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch3_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch4_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch5_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch6_as_analog()
+            .await
+            .ok()
+            .unwrap()
+            .configure_ch7_as_analog()
+            .await
+            .ok()
+            .unwrap();
 
         registry.register(slot, SpiAdcDriver::ID, SpiAdcDriver);
 

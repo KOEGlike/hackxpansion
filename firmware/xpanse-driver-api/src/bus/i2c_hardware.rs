@@ -1,7 +1,7 @@
 use crate::bus::i2c::I2cError;
-use embassy_rp::i2c::{self, Async, Config, Instance, InterruptHandler, I2c};
-use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::Peri;
+use embassy_rp::i2c::{self, Async, Config, I2c, Instance, InterruptHandler};
+use embassy_rp::interrupt::typelevel::Binding;
 
 pub struct HardwareI2cBus<'d, I: Instance> {
     i2c: I2c<'d, I, Async>,

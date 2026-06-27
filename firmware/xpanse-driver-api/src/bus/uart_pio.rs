@@ -1,7 +1,7 @@
 use crate::bus::uart::UartError;
+use embassy_rp::Peri;
 use embassy_rp::pio::{Common, PioPin, StateMachine};
 use embassy_rp::pio_programs::uart::{PioUartRx, PioUartRxProgram, PioUartTx, PioUartTxProgram};
-use embassy_rp::Peri;
 
 pub struct PioUartBus<'d, PIO: embassy_rp::pio::Instance, const SM_TX: usize, const SM_RX: usize> {
     tx: PioUartTx<'d, PIO, SM_TX>,

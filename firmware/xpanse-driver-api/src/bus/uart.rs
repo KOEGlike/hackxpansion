@@ -36,8 +36,14 @@ pub enum UartBusVersion {
 }
 
 pub trait DynUartBus {
-    fn write<'a>(&'a mut self, buf: &'a [u8]) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>>;
-    fn read<'a>(&'a mut self, buf: &'a mut [u8]) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>>;
+    fn write<'a>(
+        &'a mut self,
+        buf: &'a [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>>;
+    fn read<'a>(
+        &'a mut self,
+        buf: &'a mut [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>>;
     fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), UartError>> + 'a>>;
 }
 
@@ -80,11 +86,17 @@ impl<T> DynUartBus for T
 where
     T: embedded_io_async::Read<Error = UartError> + embedded_io_async::Write<Error = UartError>,
 {
-    fn write<'a>(&'a mut self, buf: &'a [u8]) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>> {
+    fn write<'a>(
+        &'a mut self,
+        buf: &'a [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>> {
         Box::pin(async move { embedded_io_async::Write::write(self, buf).await })
     }
 
-    fn read<'a>(&'a mut self, buf: &'a mut [u8]) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>> {
+    fn read<'a>(
+        &'a mut self,
+        buf: &'a mut [u8],
+    ) -> Pin<Box<dyn Future<Output = Result<usize, UartError>> + 'a>> {
         Box::pin(async move { embedded_io_async::Read::read(self, buf).await })
     }
 

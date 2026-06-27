@@ -17,9 +17,7 @@ pub struct CapabilityList<T> {
 
 impl<T> Default for CapabilityList<T> {
     fn default() -> Self {
-        Self {
-            items: Vec::new(),
-        }
+        Self { items: Vec::new() }
     }
 }
 
@@ -40,7 +38,12 @@ impl Registry {
         }
     }
 
-    pub fn register<T: 'static + Send>(&mut self, slot: ModuleSlot, module_id: ModuleID, resource: T) {
+    pub fn register<T: 'static + Send>(
+        &mut self,
+        slot: ModuleSlot,
+        module_id: ModuleID,
+        resource: T,
+    ) {
         self.entries
             .entry(TypeId::of::<CapabilityList<T>>())
             .or_insert_with(|| Box::new(CapabilityList::<T>::default()))
@@ -61,7 +64,8 @@ impl Registry {
     }
 
     pub fn has<T: 'static + Send>(&self) -> bool {
-        self.entries.contains_key(&TypeId::of::<CapabilityList<T>>())
+        self.entries
+            .contains_key(&TypeId::of::<CapabilityList<T>>())
     }
 
     pub fn take<T: 'static + Send>(&mut self) -> Option<T> {

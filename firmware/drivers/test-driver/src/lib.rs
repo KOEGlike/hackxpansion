@@ -18,8 +18,8 @@ use xpanse_driver_api::{
     bus::allocator::BusAllocator,
     driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},
-    interfaces::buttons::{pin_button, A},
-    metadata::{ModuleID, ModuleDetectResistor, ModuleSlot},
+    interfaces::buttons::{A, pin_button},
+    metadata::{ModuleDetectResistor, ModuleID, ModuleSlot},
     registry::Registry,
     with_pio,
 };
@@ -43,10 +43,13 @@ impl<G: BankPins> Driver<G> for TestDriver {
         let spawner = SendSpawner::for_current_executor().await;
         let pressed = Arc::new(Signal::new());
 
-        spawner
-            .spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
+        spawner.spawn(blink_led(gpio_bank.gpio0.into(), pressed.clone()).unwrap());
 
-        registry.register(slot, TestDriver::ID, pin_button::<A>(gpio_bank.gpio3.into()));
+        registry.register(
+            slot,
+            TestDriver::ID,
+            pin_button::<A>(gpio_bank.gpio3.into()),
+        );
 
         if let Some(pio_access) = bus_allocator.request_pio() {
             with_pio!(
@@ -68,10 +71,7 @@ fn start_pio_blink<PIO: Instance, const N: usize, P: PioPin>(
     mut sm: StateMachine<'static, PIO, N>,
     pin: Peri<'static, P>,
 ) {
-    let program = pio::pio_asm!(
-        "set pins, 1",
-        "set pins, 0",
-    );
+    let program = pio::pio_asm!("set pins, 1", "set pins, 0",);
     let loaded = common.load_program(&program.program);
 
     let pin = common.make_pio_pin(pin);

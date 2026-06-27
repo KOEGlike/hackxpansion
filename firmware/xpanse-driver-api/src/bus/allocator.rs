@@ -32,9 +32,9 @@
 use embassy_rp::dma::{self, ChannelInstance};
 use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::peripherals::{
-    DMA_CH0, DMA_CH1, DMA_CH10, DMA_CH11, DMA_CH12, DMA_CH13, DMA_CH14, DMA_CH15, DMA_CH2,
-    DMA_CH3, DMA_CH4, DMA_CH5, DMA_CH6, DMA_CH7, DMA_CH8, DMA_CH9, I2C0, I2C1, PIO0, PIO1, PIO2,
-    SPI0, SPI1, UART0, UART1,
+    DMA_CH0, DMA_CH1, DMA_CH2, DMA_CH3, DMA_CH4, DMA_CH5, DMA_CH6, DMA_CH7, DMA_CH8, DMA_CH9,
+    DMA_CH10, DMA_CH11, DMA_CH12, DMA_CH13, DMA_CH14, DMA_CH15, I2C0, I2C1, PIO0, PIO1, PIO2, SPI0,
+    SPI1, UART0, UART1,
 };
 use embassy_rp::pio::PioPin;
 use embassy_rp::spi::{self, ClkPin, MisoPin, MosiPin};
@@ -279,10 +279,22 @@ impl DmaPool {
     /// No DMA channels — for boards that don't use async SPI/UART hardware.
     pub const fn none() -> Self {
         Self {
-            ch0: None, ch1: None, ch2: None, ch3: None,
-            ch4: None, ch5: None, ch6: None, ch7: None,
-            ch8: None, ch9: None, ch10: None, ch11: None,
-            ch12: None, ch13: None, ch14: None, ch15: None,
+            ch0: None,
+            ch1: None,
+            ch2: None,
+            ch3: None,
+            ch4: None,
+            ch5: None,
+            ch6: None,
+            ch7: None,
+            ch8: None,
+            ch9: None,
+            ch10: None,
+            ch11: None,
+            ch12: None,
+            ch13: None,
+            ch14: None,
+            ch15: None,
         }
     }
 }
@@ -307,10 +319,22 @@ impl BusAllocator {
             i2c1_peri: i2c1,
             uart0_peri: uart0,
             uart1_peri: uart1,
-            dma_ch0: dma.ch0, dma_ch1: dma.ch1, dma_ch2: dma.ch2, dma_ch3: dma.ch3,
-            dma_ch4: dma.ch4, dma_ch5: dma.ch5, dma_ch6: dma.ch6, dma_ch7: dma.ch7,
-            dma_ch8: dma.ch8, dma_ch9: dma.ch9, dma_ch10: dma.ch10, dma_ch11: dma.ch11,
-            dma_ch12: dma.ch12, dma_ch13: dma.ch13, dma_ch14: dma.ch14, dma_ch15: dma.ch15,
+            dma_ch0: dma.ch0,
+            dma_ch1: dma.ch1,
+            dma_ch2: dma.ch2,
+            dma_ch3: dma.ch3,
+            dma_ch4: dma.ch4,
+            dma_ch5: dma.ch5,
+            dma_ch6: dma.ch6,
+            dma_ch7: dma.ch7,
+            dma_ch8: dma.ch8,
+            dma_ch9: dma.ch9,
+            dma_ch10: dma.ch10,
+            dma_ch11: dma.ch11,
+            dma_ch12: dma.ch12,
+            dma_ch13: dma.ch13,
+            dma_ch14: dma.ch14,
+            dma_ch15: dma.ch15,
             pio_manager: PioManager::new(pio0, pio1, pio2),
         }
     }
@@ -389,7 +413,10 @@ impl BusAllocator {
     {
         let tx_dma = self.request_dma::<TxDma>()?;
         let rx_dma = self.request_dma::<RxDma>()?;
-        let (block, sm) = self.pio_manager.find_free_sm().ok_or(AllocatorError::Exhausted)?;
+        let (block, sm) = self
+            .pio_manager
+            .find_free_sm()
+            .ok_or(AllocatorError::Exhausted)?;
         Ok(self
             .pio_manager
             .build_spi_at(block, sm, clk, mosi, miso, tx_dma, rx_dma, irq, config))
@@ -458,9 +485,7 @@ impl BusAllocator {
     // ── UART ─────────────────────────────────────────────────────────
 
     /// Take the hardware UART peripheral for instance `I`.
-    pub fn request_uart_hardware<I: UartHw>(
-        &mut self,
-    ) -> Result<Peri<'static, I>, AllocatorError> {
+    pub fn request_uart_hardware<I: UartHw>(&mut self) -> Result<Peri<'static, I>, AllocatorError> {
         I::take_peri(self).ok_or(AllocatorError::Exhausted)
     }
 

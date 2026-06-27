@@ -1,10 +1,10 @@
 use crate::bus::spi::SpiError;
+use embassy_rp::Peri;
 use embassy_rp::dma::{self, ChannelInstance};
 use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::pio::{Common, PioPin, StateMachine};
 use embassy_rp::pio_programs::spi as pio_spi;
 use embassy_rp::spi::{self, Async};
-use embassy_rp::Peri;
 
 pub struct PioSpiBus<'d, PIO: embassy_rp::pio::Instance, const SM: usize> {
     spi: pio_spi::Spi<'d, PIO, SM, Async>,
@@ -56,11 +56,15 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_1::spi::S
     }
 
     fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
-        self.spi.blocking_transfer(read, write).map_err(|e| e.into())
+        self.spi
+            .blocking_transfer(read, write)
+            .map_err(|e| e.into())
     }
 
     fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
-        self.spi.blocking_transfer_in_place(words).map_err(|e| e.into())
+        self.spi
+            .blocking_transfer_in_place(words)
+            .map_err(|e| e.into())
     }
 }
 
@@ -84,6 +88,9 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> embedded_hal_async::sp
     }
 
     async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
-        self.spi.transfer_in_place(words).await.map_err(|e| e.into())
+        self.spi
+            .transfer_in_place(words)
+            .await
+            .map_err(|e| e.into())
     }
 }

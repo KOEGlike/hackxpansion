@@ -1,6 +1,6 @@
 use crate::bus::uart::UartError;
-use embassy_rp::gpio::{Input, Level, Output, Pull};
 use embassy_rp::Peri;
+use embassy_rp::gpio::{Input, Level, Output, Pull};
 use embassy_time::{Duration, Timer};
 
 pub struct BitBangUartBus<'d> {

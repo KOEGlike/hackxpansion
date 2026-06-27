@@ -10,7 +10,7 @@ use core::future::Future;
 use embassy_time::Timer;
 use xpanse_driver_api::{
     app::App,
-    interfaces::buttons::{Button, A},
+    interfaces::buttons::{A, Button},
     registry::Registry,
 };
 

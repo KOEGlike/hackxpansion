@@ -7,12 +7,12 @@
 
 use alloc::boxed::Box;
 
+use embassy_rp::Peri;
 use embassy_rp::dma::{self, ChannelInstance};
 use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::peripherals::{PIO0, PIO1, PIO2};
 use embassy_rp::pio::{Common, Instance, Irq, IrqFlags, Pio, PioPin, StateMachine};
 use embassy_rp::spi;
-use embassy_rp::Peri;
 
 use crate::bus::allocator::{PioBlock, Sm};
 use crate::bus::spi::{DynSpiBusCombined, SpiBusHandle, SpiBusVersion};
@@ -398,9 +398,7 @@ impl PioManager {
 }
 
 fn two_free_sms<PIO: Instance + 'static>(slot: &PioSlot<PIO>) -> Option<(Sm, Sm)> {
-    let mut free = Sm::ALL
-        .into_iter()
-        .filter(|sm| slot.has_sm(*sm));
+    let mut free = Sm::ALL.into_iter().filter(|sm| slot.has_sm(*sm));
     match (free.next(), free.next()) {
         (Some(a), Some(b)) => Some((a, b)),
         _ => None,

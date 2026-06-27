@@ -1,6 +1,6 @@
 use crate::bus::spi::SpiError;
-use embassy_rp::gpio::{Input, Level, Output};
 use embassy_rp::Peri;
+use embassy_rp::gpio::{Input, Level, Output};
 use embassy_time::{Duration, Timer};
 
 pub struct BitBangSpiBus<'d> {
@@ -27,7 +27,12 @@ impl<'d> BitBangSpiBus<'d> {
             Duration::from_micros(10)
         };
 
-        Self { clk, mosi, miso, half_bit }
+        Self {
+            clk,
+            mosi,
+            miso,
+            half_bit,
+        }
     }
 
     fn transfer_byte_blocking(&mut self, write_byte: u8) -> u8 {

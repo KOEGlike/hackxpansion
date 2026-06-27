@@ -17,10 +17,10 @@
 use core::ptr::null_mut;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
+use embassy_rp::Peri;
 use embassy_rp::adc::{self, Adc, AdcPin, Async, Channel};
 use embassy_rp::gpio::Pull;
 use embassy_rp::peripherals::{ADC, ADC_TEMP_SENSOR};
-use embassy_rp::Peri;
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::mutex::Mutex;
 use static_cell::StaticCell;
@@ -74,7 +74,11 @@ impl AdcService {
         Ok(temp)
     }
 
-    async fn read_pin_raw(&mut self, pin: Peri<'_, impl AdcPin>, pull: Pull) -> Result<u16, AdcError> {
+    async fn read_pin_raw(
+        &mut self,
+        pin: Peri<'_, impl AdcPin>,
+        pull: Pull,
+    ) -> Result<u16, AdcError> {
         let mut channel = Channel::new_pin(pin, pull);
         self.adc
             .read(&mut channel)

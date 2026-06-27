@@ -1,8 +1,8 @@
 use crate::bus::uart::UartError;
+use embassy_rp::Peri;
 use embassy_rp::dma::{self, ChannelInstance};
 use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::uart::{Async, Config, Instance, InterruptHandler, Uart};
-use embassy_rp::Peri;
 
 pub struct HardwareUartBus<'d> {
     uart: Uart<'d, Async>,
@@ -14,9 +14,9 @@ impl<'d> HardwareUartBus<'d> {
         tx: Peri<'d, impl embassy_rp::uart::TxPin<I> + 'd>,
         rx: Peri<'d, impl embassy_rp::uart::RxPin<I> + 'd>,
         irq: impl Binding<I::Interrupt, InterruptHandler<I>>
-            + Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
-            + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
-            + 'd,
+        + Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
+        + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
+        + 'd,
         tx_dma: Peri<'d, TxDma>,
         rx_dma: Peri<'d, RxDma>,
         config: Config,

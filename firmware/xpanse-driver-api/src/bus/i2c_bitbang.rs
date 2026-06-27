@@ -1,6 +1,6 @@
 use crate::bus::i2c::I2cError;
-use embassy_rp::gpio::{Level, OutputOpenDrain};
 use embassy_rp::Peri;
+use embassy_rp::gpio::{Level, OutputOpenDrain};
 use embassy_time::{Duration, Timer};
 
 /// Bit-banged I2C master using open-drain GPIO for SCL/SDA.
@@ -162,9 +162,7 @@ impl<'d> embedded_hal_1::i2c::ErrorType for BitBangI2cBus<'d> {
     type Error = I2cError;
 }
 
-impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress>
-    for BitBangI2cBus<'d>
-{
+impl<'d> embedded_hal_async::i2c::I2c<embedded_hal_1::i2c::SevenBitAddress> for BitBangI2cBus<'d> {
     async fn read(
         &mut self,
         address: embedded_hal_1::i2c::SevenBitAddress,
