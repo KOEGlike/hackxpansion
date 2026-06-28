@@ -8,7 +8,7 @@ use alloc::boxed::Box;
 use core::future::Future;
 
 use embassy_time::Timer;
-use xpanse_driver_api::{
+use xpanse_api::{
     app::App,
     interfaces::buttons::{A, Button},
     registry::{RegisteredResource, Registry},

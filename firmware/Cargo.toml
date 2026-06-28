@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
-members = ["xpanse", "xpanse-driver-api", "drivers/test-driver", "apps/example-app"]
+members = ["xpanse", "xpanse-api", "drivers/test-driver", "apps/example-app"]
 
 [workspace.dependencies]
-xpanse-driver-api = { path = "./xpanse-driver-api/" }
+xpanse-api = { path = "./xpanse-api/" }
 
 embassy-embedded-hal = { version = "0.6.0", features = ["defmt"] }
 embassy-sync = { version = "0.8.0", features = ["defmt"] }

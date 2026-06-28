@@ -7,7 +7,7 @@ license = "GPL-3.0"
 publish = false
 
 [dependencies]
-xpanse-driver-api = { workspace = true }
+xpanse-api = { workspace = true }
 
 embassy-embedded-hal = { workspace = true }
 embassy-sync = { workspace = true }

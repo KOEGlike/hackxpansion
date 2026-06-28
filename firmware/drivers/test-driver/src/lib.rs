@@ -14,7 +14,7 @@ use embassy_rp::{
 };
 use embassy_sync::{blocking_mutex::raw::ThreadModeRawMutex, signal::Signal};
 
-use xpanse_driver_api::{
+use xpanse_api::{
     bus::allocator::BusAllocator,
     driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},

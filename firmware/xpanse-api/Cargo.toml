@@ -1,6 +1,6 @@
 [package]
 edition = "2024"
-name = "xpanse-driver-api"
+name = "xpanse-api"
 version = "0.1.0"
 license = "GPL-3.0"
 

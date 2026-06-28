@@ -3,7 +3,7 @@ extern crate alloc;
 use alloc::boxed::Box;
 use core::{future::Future, pin::Pin};
 
-use xpanse_driver_api::{app::App, registry::Registry};
+use xpanse_api::{app::App, registry::Registry};
 
 const APP_CATALOG: &[AppDescriptor] = &[AppDescriptor {
     name: example_app::ButtonLoggerApp::NAME,

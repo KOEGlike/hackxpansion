@@ -1913,7 +1913,7 @@ dependencies = [
  "defmt 1.1.0",
  "embassy-time",
  "slint",
- "xpanse-driver-api",
+ "xpanse-api",
 ]
 
 [[package]]
@@ -5736,7 +5736,7 @@ dependencies = [
  "fixed",
  "pio",
  "ti-adc-expander",
- "xpanse-driver-api",
+ "xpanse-api",
 ]
 
 [[package]]
@@ -7004,11 +7004,11 @@ dependencies = [
  "test-driver",
  "ti-adc-expander",
  "usbd-hid",
- "xpanse-driver-api",
+ "xpanse-api",
 ]
 
 [[package]]
-name = "xpanse-driver-api"
+name = "xpanse-api"
 version = "0.1.0"
 dependencies = [
  "defmt 1.1.0",

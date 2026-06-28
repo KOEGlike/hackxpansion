@@ -4,7 +4,7 @@ use alloc::{rc::Rc, vec::Vec};
 
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
 use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
-use xpanse_driver_api::registry::Registry;
+use xpanse_api::registry::Registry;
 slint::include_modules!();
 
 use crate::app_loader::{self, AppDescriptor};

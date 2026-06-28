@@ -1,4 +1,4 @@
-use xpanse_driver_api::{
+use xpanse_api::{
     bus::allocator::BusAllocator,
     driver::{Driver, DriverMeta},
     gpio_bank::{BankPins, GpioBank},

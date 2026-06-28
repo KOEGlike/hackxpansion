@@ -1,6 +1,6 @@
 use embassy_rp::i2c;
 use libm::pow;
-use xpanse_driver_api::metadata::{AVDD, ModuleDetectResistor, ModuleID, ModuleSlot};
+use xpanse_api::metadata::{AVDD, ModuleDetectResistor, ModuleID, ModuleSlot};
 
 use crate::adc;
 

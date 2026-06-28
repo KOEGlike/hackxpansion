@@ -1,11 +1,11 @@
-use xpanse_driver_api::gpio_bank::GpioBank;
-use xpanse_driver_api::registry::Registry;
+use xpanse_api::gpio_bank::GpioBank;
+use xpanse_api::registry::Registry;
 
 use crate::load_driver::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
-use xpanse_driver_api::bus::allocator::BusAllocator;
-use xpanse_driver_api::interfaces::adc;
-use xpanse_driver_api::metadata::ModuleSlot;
+use xpanse_api::bus::allocator::BusAllocator;
+use xpanse_api::interfaces::adc;
+use xpanse_api::metadata::ModuleSlot;
 
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, signal::Signal};
 
@@ -79,7 +79,7 @@ pub async fn app_core_task(
         Some(remaining_peris.i2c1),
         Some(remaining_peris.uart0),
         Some(remaining_peris.uart1),
-        xpanse_driver_api::bus::allocator::DmaPool {
+        xpanse_api::bus::allocator::DmaPool {
             ch0: Some(remaining_peris.dma_ch0),
             ch1: Some(remaining_peris.dma_ch1),
             ch2: Some(remaining_peris.dma_ch2),

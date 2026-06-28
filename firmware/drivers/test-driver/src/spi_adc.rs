@@ -1,7 +1,7 @@
 use embassy_rp::spi;
 use ti_adc_expander::Ads7028;
 
-use xpanse_driver_api::{
+use xpanse_api::{
     bus::allocator::BusAllocator,
     driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},

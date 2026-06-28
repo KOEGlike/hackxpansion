@@ -1,1 +1,1 @@
-pub use xpanse_driver_api::bus::{allocator, pio};
+pub use xpanse_api::bus::{allocator, pio};
