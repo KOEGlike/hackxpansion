@@ -39,3 +39,4 @@ fp-info-cache
 *.kicad_prl
 
 production
+fabrication-toolkit-options.json
