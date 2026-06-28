@@ -93,7 +93,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(grid_origin 132.98 93.72)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
@@ -1446,7 +1445,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k6"
 			(at 0 1.65 90)
 			(layer "F.Fab")
 			(uuid "93d8a64f-86f2-4bb9-bde9-bc1ae90c7511")
@@ -1484,6 +1483,19 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "73694c19-4a3a-4791-98f2-6bf5e141945b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C861205"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1c54120f-249c-440b-beb9-095a92ec5f09")
 			(effects
 				(font
 					(size 1 1)
@@ -2076,7 +2088,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k5"
 			(at 0 1.65 90)
 			(layer "F.Fab")
 			(uuid "a6706558-e779-4fc0-8f55-55f839c6fa88")
@@ -2114,6 +2126,19 @@
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "a565de9c-f842-43ab-951d-5073ae33a2f3")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C281775"
+			(at 0 0 90)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7f709c3e-5830-46b3-9d93-518b4e9208f8")
 			(effects
 				(font
 					(size 1 1)
