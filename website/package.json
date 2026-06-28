@@ -18,9 +18,11 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"auth:schema": "better-auth generate --config src/lib/server/auth.ts --output src/lib/server/db/auth.schema.ts --yes"
 	},
 	"devDependencies": {
+		"@better-auth/cli": "1.4",
 		"@eslint/compat": "^2.0.2",
 		"@eslint/js": "^10",
 		"@sveltejs/adapter-static": "3",
@@ -31,6 +33,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^24",
+		"better-auth": "1.6",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
 		"eslint": "^10",
@@ -49,5 +52,8 @@
 		"typescript-eslint": "^8.54.0",
 		"vite": "^7.0.0",
 		"vite-plugin-devtools-json": "^1.0.0"
+	},
+	"dependencies": {
+		"@better-auth/oauth-provider": "^1.6.22"
 	}
 }
