@@ -93,7 +93,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(grid_origin 132.98 93.72)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
@@ -1446,7 +1445,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k5"
 			(at 0 1.65 90)
 			(layer "F.Fab")
 			(uuid "93d8a64f-86f2-4bb9-bde9-bc1ae90c7511")
@@ -1491,8 +1490,21 @@
 				)
 			)
 		)
+		(property "LCSC" "C281775"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a489cab2-1204-4af0-bdd6-5a96d3f7269e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
-		(path "/8c079b72-749e-43d3-91de-63c26d9a69e8")
+		(path "/2d7dd04b-2bdd-43ba-9ee8-1bfdee1a0de7")
 		(sheetname "/")
 		(sheetfile "two_button.kicad_sch")
 		(units
@@ -1722,7 +1734,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k6"
 			(at 0 1.65 0)
 			(layer "F.Fab")
 			(uuid "a6706558-e779-4fc0-8f55-55f839c6fa88")
@@ -1767,8 +1779,21 @@
 				)
 			)
 		)
+		(property "LCSC" "C861205"
+			(at 0 0 0)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2a6263a8-e3fd-4210-b621-9fc3090770d1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
-		(path "/e6d41530-b82f-4550-b053-ed9de76025b6")
+		(path "/50b3631c-e174-41a4-9e05-f995fc31b99d")
 		(sheetname "/")
 		(sheetfile "two_button.kicad_sch")
 		(units

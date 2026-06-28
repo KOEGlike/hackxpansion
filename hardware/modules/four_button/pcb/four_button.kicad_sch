@@ -1780,7 +1780,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k6"
 			(at 67.31 81.2799 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1814,6 +1814,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 69.85 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C861205"
 			(at 69.85 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -2290,7 +2301,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "1k5"
 			(at 59.69 81.2799 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2324,6 +2335,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 62.23 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C281775"
 			(at 62.23 80.01 0)
 			(hide yes)
 			(show_name no)
