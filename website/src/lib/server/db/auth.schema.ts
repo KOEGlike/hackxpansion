@@ -7,13 +7,16 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
-  slackId: text("slack_id"),
-  verificationStatus: text("verification_status"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  slackId: text("slack_id").notNull(),
+  verificationStatus: text("verification_status").notNull(),
+  given_name: text("given_name"),
+  yswsEligible: boolean("ysws_eligible").notNull(),
+  pronouns: text("pronouns"),
 });
 
 export const session = pgTable(

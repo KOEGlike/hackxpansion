@@ -14,9 +14,21 @@ export const auth = betterAuth({
 		additionalFields: {
 			slackId: {
 				type: 'string',
-				required: false
+				required: true
 			},
 			verificationStatus: {
+				type: 'string',
+				required: true
+			},
+			given_name: {
+				type: 'string',
+				required: false
+			},
+			yswsEligible: {
+				type: 'boolean',
+				required: true
+			},
+			pronouns: {
 				type: 'string',
 				required: false
 			}
@@ -31,20 +43,39 @@ export const auth = betterAuth({
 					clientId: env.HACKCLUB_CLIENT_ID,
 					clientSecret: env.HACKCLUB_CLIENT_SECRET,
 					scopes: ['openid', 'email', 'name', 'profile', 'verification_status', 'slack_id'],
-					mapProfileToUser: (profile) => {
-    return {
-        // 1. You MUST return the standard fields, otherwise authentication fails!
-        name: profile.name,
-        email: profile.email,
-        emailVerified: profile.email_verified === true,
-        image: profile.picture, // or profile.image depending on Hack Club's exact response
-        
-        // 2. Add your custom fields
-        slackId: profile.slack_id,
-        verificationStatus: profile.verification_status
-        
-    } as any; // 3. Cast to 'any' to bypass the strict TypeScript return type
-}
+					getUserInfo: async (tokens) => {
+						const res = await fetch('https://auth.hackclub.com/oauth/userinfo', {
+							headers: {
+								Authorization: `Bearer ${tokens.accessToken}`
+							}
+						});
+
+						if (!res.ok) return null;
+
+						const data = await res.json();
+
+						const slack_info = await fetch(`https://cachet.dunkirk.sh/users/${data.slack_id}`);
+						const slack_data = await slack_info.json();
+
+						console.log(data);
+
+						return {
+							...data,
+							...slack_data
+						};
+					},
+					mapProfileToUser: (profile) => ({
+						id: profile.sub,
+						name: profile.name,
+						email: profile.email,
+						emailVerified: profile.email_verified === true,
+						image: profile.imageUrl,
+						slackId: profile.slack_id,
+						verificationStatus: profile.verification_status,
+						given_name: profile.given_name,
+						yswsEligible: profile.ysws_eligible === true,
+						pronouns: profile.pronouns
+					})
 				}
 			]
 		}),

@@ -20,9 +20,3 @@
 <div class=" font-share-tech">
 	{@render children()}
 </div>
-
-<style>
-	:global(body) {
-		@apply h-screen overflow-x-hidden bg-[#c3cbd4];
-	}
-</style>

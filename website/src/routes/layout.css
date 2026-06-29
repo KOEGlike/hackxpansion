@@ -9,6 +9,12 @@
 	--font-share-tech: 'Share Tech Mono', monospace;
 }
 
+@layer base {
+	body {
+		@apply h-screen overflow-x-hidden bg-[#c3cbd4];
+	}
+}
+
 @utility content-box {
 	@apply border-3 border-solid border-slate-700 bg-slate-400/50 text-slate-700 backdrop-blur-md;
 }
