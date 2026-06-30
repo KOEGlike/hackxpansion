@@ -11,7 +11,15 @@ import {
 	type Reviewer
 } from '../ari/outbound';
 
-export const projectStatus = pgEnum('project_status', ['not_submitted', 'submitted']);
+export const projectStatus = pgEnum('project_status', [
+	'not_submitted',
+	'waiting_design',
+	'rejected_design',
+	'approved_design',
+	'waiting_build',
+	'rejected_build',
+	'approved_build'
+]);
 
 export const project = pgTable('project', {
 	id: uuid('id')
@@ -25,7 +33,8 @@ export const project = pgTable('project', {
 	status: projectStatus('status').notNull().default('not_submitted'),
 	userId: text('user_id')
 		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' })
+		.references(() => user.id, { onDelete: 'cascade' }),
+	hackatime_projects: text('hackatime_projects').array()
 });
 
 export const journal = pgTable('journal', {
