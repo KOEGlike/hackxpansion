@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { pgTable, integer, text, uuid, timestamp, pgEnum, jsonb } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
+import { eventTypeArray, type FraudReview, type Reviewer } from '../ari/outbound';
 
 export const projectStatus = pgEnum('project_status', ['not_submitted', 'submitted']);
 
@@ -33,14 +34,7 @@ export const journal = pgTable('journal', {
 		.references(() => project.id, { onDelete: 'cascade' })
 });
 
-export const reviewEvent = pgEnum('review_event', [
-	'approved',
-	'changes',
-	'rejected',
-	'reverted',
-	'requeued',
-	'fraud'
-]);
+export const reviewEvent = pgEnum('review_event', eventTypeArray);
 
 export type MinutesBrakedown = {
 	hackatime: number;
@@ -62,7 +56,9 @@ export const review = pgTable('review', {
       COALESCE((minutes_breakdown->>'lapse')::int, 0) +
       COALESCE((minutes_breakdown->>'program')::int, 0)
     `),
-	noteToMakre: text('note_to_maker').notNull()
+	noteToMakre: text('note_to_maker'),
+	fraud: jsonb('fraud').$type<FraudReview>(),
+	reviewer: jsonb('reviewer').$type<Reviewer>()
 });
 
 export * from './auth.schema';
