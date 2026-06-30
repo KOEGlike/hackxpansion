@@ -9,6 +9,10 @@ export type NextProjectSubmission = {
 	waitingStatus: ProjectStatus;
 };
 
+export function canEditProject(status: ProjectStatus) {
+	return status !== 'waiting_design' && status !== 'waiting_build';
+}
+
 export function getNextProjectSubmission(status: ProjectStatus): NextProjectSubmission | null {
 	switch (status) {
 		case 'not_submitted':

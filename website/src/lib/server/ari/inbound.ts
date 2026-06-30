@@ -89,7 +89,8 @@ export function buildAriIngestPayload({
 	const description = requiredString(project.description, 'Project description is required');
 	const repoUrl = requiredString(project.repoUrl, 'Project repo URL is required');
 	const thumbnailUrl = requiredString(project.thumbnailUrl, 'Project thumbnail URL is required');
-	const hackatimeProjects = project.hackatime_projects?.filter((name) => name.trim().length > 0) ?? [];
+	const hackatimeProjects =
+		project.hackatime_projects?.filter((name) => name.trim().length > 0) ?? [];
 	const ariJournals = journals
 		.filter((entry) => entry.durationInMinutes > 0)
 		.map((entry) => ({
@@ -98,11 +99,12 @@ export function buildAriIngestPayload({
 			text: `${formatPhase(phase)} journal entry`
 		}));
 
-	if (hackatimeProjects.length === 0 && ariJournals.length === 0) {
-		throw new AriInboundError(
-			422,
-			'Add at least one Hackatime project or journal entry before submitting to Ari'
-		);
+	if (hackatimeProjects.length === 0) {
+		throw new AriInboundError(422, 'Add at least one Hackatime project before submitting to Ari');
+	}
+
+	if (phase === 'build' && !project.demoUrl?.trim()) {
+		throw new AriInboundError(422, 'Project demo URL is required for build review');
 	}
 
 	if (track === 'software' && !project.demoUrl?.trim()) {

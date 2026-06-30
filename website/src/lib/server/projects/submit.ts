@@ -25,6 +25,35 @@ export type SubmitProjectToAriResult = {
 	ari: AriIngestResult;
 };
 
+export type ProjectSubmissionChangeField =
+	'status' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'hackatimeProjects' | 'demoUrl';
+
+export type ProjectSubmissionChange = {
+	field: ProjectSubmissionChangeField;
+	message: string;
+};
+
+export type CanSubmitProjectResult = {
+	canSubmit: boolean;
+	phase: ProjectReviewPhase | null;
+	waitingStatus: ProjectStatus | null;
+	changes: ProjectSubmissionChange[];
+};
+
+type ProjectForSubmission = {
+	id: string;
+	title: string;
+	description: string | null;
+	repoUrl: string | null;
+	demoUrl: string | null;
+	thumbnailUrl: string | null;
+	status: ProjectStatus;
+	hackatime_projects: string[] | null;
+	makerEmail: string;
+	makerName: string;
+	makerSlackId: string;
+};
+
 export class ProjectSubmissionError extends Error {
 	constructor(
 		readonly status: number,
@@ -35,12 +64,20 @@ export class ProjectSubmissionError extends Error {
 	}
 }
 
+export async function canSubmit({
+	projectId,
+	userId
+}: SubmitProjectToAriOptions): Promise<CanSubmitProjectResult> {
+	const projectForSubmission = await getProjectForSubmission(projectId, userId);
+	return getProjectSubmissionReadiness(projectForSubmission);
+}
+
 export async function submitProjectToAri({
 	projectId,
 	userId
 }: SubmitProjectToAriOptions): Promise<SubmitProjectToAriResult> {
 	const programId = env.ARI_PROGRAM_ID;
-	const signingSecret = env.ARI_IN_SECRET;
+	const signingSecret = env.ARI_IN_SECRET ?? env.ARI_SECRET;
 
 	if (!programId) {
 		throw new ProjectSubmissionError(500, 'ARI_PROGRAM_ID environment variable is not set');
@@ -54,12 +91,12 @@ export async function submitProjectToAri({
 	}
 
 	const projectForSubmission = await getProjectForSubmission(projectId, userId);
-	const nextSubmission = getNextProjectSubmission(projectForSubmission.status);
+	const readiness = getProjectSubmissionReadiness(projectForSubmission);
 
-	if (!nextSubmission) {
+	if (!readiness.canSubmit || !readiness.phase || !readiness.waitingStatus) {
 		throw new ProjectSubmissionError(
-			409,
-			`Project cannot be submitted to Ari while its status is ${projectForSubmission.status}`
+			getSubmissionReadinessErrorStatus(readiness),
+			`Project cannot be submitted to Ari: ${formatSubmissionChanges(readiness.changes)}`
 		);
 	}
 
@@ -79,7 +116,7 @@ export async function submitProjectToAri({
 			slackId: projectForSubmission.makerSlackId
 		},
 		journals: projectJournals,
-		phase: nextSubmission.phase
+		phase: readiness.phase
 	});
 
 	const ari = await sendAriIngest(payload, {
@@ -90,7 +127,7 @@ export async function submitProjectToAri({
 
 	const [updatedProject] = await db
 		.update(project)
-		.set({ status: nextSubmission.waitingStatus })
+		.set({ status: readiness.waitingStatus })
 		.where(and(eq(project.id, projectId), eq(project.userId, userId)))
 		.returning({ status: project.status });
 
@@ -100,13 +137,67 @@ export async function submitProjectToAri({
 
 	return {
 		projectId,
-		phase: nextSubmission.phase,
+		phase: readiness.phase,
 		status: updatedProject.status,
 		ari
 	};
 }
 
-async function getProjectForSubmission(projectId: string, userId: string) {
+function getProjectSubmissionReadiness(
+	projectForSubmission: ProjectForSubmission
+): CanSubmitProjectResult {
+	const nextSubmission = getNextProjectSubmission(projectForSubmission.status);
+	const changes: ProjectSubmissionChange[] = [];
+
+	if (!nextSubmission) {
+		changes.push({
+			field: 'status',
+			message: getStatusSubmissionMessage(projectForSubmission.status)
+		});
+
+		return {
+			canSubmit: false,
+			phase: null,
+			waitingStatus: null,
+			changes
+		};
+	}
+
+	if (!hasText(projectForSubmission.description)) {
+		changes.push({ field: 'description', message: 'Add a project description.' });
+	}
+
+	if (!hasText(projectForSubmission.repoUrl)) {
+		changes.push({ field: 'repoUrl', message: 'Add a repository URL.' });
+	}
+
+	if (!hasText(projectForSubmission.thumbnailUrl)) {
+		changes.push({ field: 'thumbnailUrl', message: 'Add a thumbnail URL.' });
+	}
+
+	if (!hasHackatimeProjects(projectForSubmission.hackatime_projects)) {
+		changes.push({
+			field: 'hackatimeProjects',
+			message: 'Add at least one Hackatime project.'
+		});
+	}
+
+	if (nextSubmission.phase === 'build' && !hasText(projectForSubmission.demoUrl)) {
+		changes.push({ field: 'demoUrl', message: 'Add a demo URL before build review.' });
+	}
+
+	return {
+		canSubmit: changes.length === 0,
+		phase: nextSubmission.phase,
+		waitingStatus: nextSubmission.waitingStatus,
+		changes
+	};
+}
+
+async function getProjectForSubmission(
+	projectId: string,
+	userId: string
+): Promise<ProjectForSubmission> {
 	const [row] = await db
 		.select({
 			id: project.id,
@@ -131,4 +222,33 @@ async function getProjectForSubmission(projectId: string, userId: string) {
 	}
 
 	return row;
+}
+
+function hasText(value: string | null | undefined) {
+	return value?.trim().length ? true : false;
+}
+
+function hasHackatimeProjects(projects: string[] | null | undefined) {
+	return projects?.some((name) => name.trim().length > 0) ?? false;
+}
+
+function getStatusSubmissionMessage(status: ProjectStatus) {
+	switch (status) {
+		case 'waiting_design':
+			return 'Wait for the current design review to finish.';
+		case 'waiting_build':
+			return 'Wait for the current build review to finish.';
+		case 'approved_build':
+			return 'This project build has already been approved.';
+		default:
+			return `Project status must change before submitting. Current status: ${status}.`;
+	}
+}
+
+function getSubmissionReadinessErrorStatus(readiness: CanSubmitProjectResult) {
+	return readiness.changes.some((change) => change.field === 'status') ? 409 : 422;
+}
+
+function formatSubmissionChanges(changes: ProjectSubmissionChange[]) {
+	return changes.map((change) => change.message).join(' ');
 }
