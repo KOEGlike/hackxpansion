@@ -1,31 +1,68 @@
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import type { OutboundBody } from '$lib/server/ari/outbound';
-import { createHmac } from 'crypto';
-import { env } from 'process';
+import {
+	fromOutboundEvent,
+	normalizeMinutesBreakdown,
+	OutboundWebhookError,
+	processOutboundRequest
+} from '$lib/server/ari/outbound';
+import { db } from '$lib/server/db';
+import { project, review } from '$lib/server/db/schema';
+import { env } from '$env/dynamic/private';
+import { eq } from 'drizzle-orm';
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const POST: RequestHandler = async ({ request }) => {
 	if (!env.ARI_OUT_SECRET) {
 		error(500, 'ARI_OUT_SECRET environment variable is not set');
 	}
 
-	const signature = request.headers.get('X-Ari-Signature');
-	const timestamp = request.headers.get('X-Ari-Timestamp');
-	const deliverId = request.headers.get('X-Ari-Deliver-Id');
+	try {
+		const { body, headers } = await processOutboundRequest(request, env.ARI_OUT_SECRET);
+		const projectId = await findProjectId(body.external_id);
 
-	if (!signature || !timestamp || !deliverId) {
-		error(400, 'X-Ari-Signature, X-Ari-Timestamp, and X-Ari-Deliver-Id headers are required');
+		const inserted = await db
+			.insert(review)
+			.values({
+				event: fromOutboundEvent(body.event),
+				ariId: body.id,
+				deliveryId: headers.delivery_id,
+				projectId,
+				minutesBreakdown: normalizeMinutesBreakdown(body.review.minutes_breakdown),
+				noteToMaker: body.review.note_to_maker ?? null,
+				auditNote: body.review.audit_note ?? null,
+				fields: body.review.fields ?? null,
+				collaborators: body.collaborators ?? null,
+				fraud: body.fraud ?? null,
+				reviewer: body.review.reviewer ?? null,
+				rawPayload: body
+			})
+			.onConflictDoNothing({ target: review.deliveryId })
+			.returning({ id: review.id });
+
+		if (inserted.length === 0) {
+			return json({ status: 'duplicate' });
+		}
+
+		return json({ status: 'ok', id: inserted[0].id });
+	} catch (err) {
+		if (err instanceof OutboundWebhookError) {
+			error(err.status, err.message);
+		}
+
+		throw err;
 	}
-
-	const calculated_signature = createHmac('sha256', env.ARI_OUT_SECRET)
-		.update(await request.bytes())
-		.digest('hex');
-
-	if (signature !== calculated_signature) {
-		error(401, 'Invalid signature');
-	}
-
-	const body: OutboundBody = await request.json();
-
-	return new Response(null, { status: 200 });
 };
+
+async function findProjectId(externalId: string) {
+	if (!UUID_REGEX.test(externalId)) return null;
+
+	const [row] = await db
+		.select({ id: project.id })
+		.from(project)
+		.where(eq(project.id, externalId))
+		.limit(1);
+
+	return row?.id ?? null;
+}

@@ -1,7 +1,15 @@
 import { sql } from 'drizzle-orm';
 import { pgTable, integer, text, uuid, timestamp, pgEnum, jsonb } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
-import { eventTypeArray, type FraudReview, type Reviewer } from '../ari/outbound';
+import {
+	eventTypeArray,
+	type FraudReview,
+	type MinutesBreakdown,
+	type OutboundBody,
+	type OutboundCollaborator,
+	type ReviewField,
+	type Reviewer
+} from '../ari/outbound';
 
 export const projectStatus = pgEnum('project_status', ['not_submitted', 'submitted']);
 
@@ -36,29 +44,29 @@ export const journal = pgTable('journal', {
 
 export const reviewEvent = pgEnum('review_event', eventTypeArray);
 
-export type MinutesBrakedown = {
-	hackatime: number;
-	journals: number;
-	lapse: number;
-	program: number;
-};
-
 export const review = pgTable('review', {
 	id: uuid('id')
 		.primaryKey()
 		.default(sql`uuidv7()`),
+	receivedAt: timestamp('received_at').defaultNow().notNull(),
 	event: reviewEvent('event').notNull(),
 	ariId: text('ari_id').notNull(),
-	minutesBrakedown: jsonb('minutes_breakdown').$type<MinutesBrakedown>().notNull(),
+	deliveryId: text('delivery_id').notNull().unique(),
+	projectId: uuid('project_id').references(() => project.id, { onDelete: 'set null' }),
+	minutesBreakdown: jsonb('minutes_breakdown').$type<MinutesBreakdown | null>(),
 	approvedMinutes: integer('approved_minutes').generatedAlwaysAs(sql`
       COALESCE((minutes_breakdown->>'hackatime')::int, 0) +
       COALESCE((minutes_breakdown->>'journals')::int, 0) +
       COALESCE((minutes_breakdown->>'lapse')::int, 0) +
       COALESCE((minutes_breakdown->>'program')::int, 0)
     `),
-	noteToMakre: text('note_to_maker'),
-	fraud: jsonb('fraud').$type<FraudReview>(),
-	reviewer: jsonb('reviewer').$type<Reviewer>()
+	noteToMaker: text('note_to_maker'),
+	auditNote: text('audit_note'),
+	fields: jsonb('fields').$type<ReviewField[] | null>(),
+	collaborators: jsonb('collaborators').$type<OutboundCollaborator[] | null>(),
+	fraud: jsonb('fraud').$type<FraudReview | null>(),
+	reviewer: jsonb('reviewer').$type<Reviewer | null>(),
+	rawPayload: jsonb('raw_payload').$type<OutboundBody>().notNull()
 });
 
 export * from './auth.schema';
