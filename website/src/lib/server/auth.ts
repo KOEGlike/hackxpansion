@@ -57,8 +57,6 @@ export const auth = betterAuth({
 						const slack_info = await fetch(`https://cachet.dunkirk.sh/users/${data.slack_id}`);
 						const slack_data = await slack_info.json();
 
-						console.log(data);
-
 						return {
 							...data,
 							...slack_data

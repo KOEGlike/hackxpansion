@@ -80,9 +80,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ status: 'ok', id: result.id, project_status: result.projectStatus });
 	} catch (err) {
 		if (err instanceof OutboundWebhookError) {
+			console.error(`[ari/outbound] ${err.status} ${err.message}`);
 			error(err.status, err.message);
 		}
 
+		console.error('[ari/outbound] Unexpected error processing webhook', err);
 		throw err;
 	}
 };

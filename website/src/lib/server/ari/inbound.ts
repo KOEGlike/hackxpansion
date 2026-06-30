@@ -159,6 +159,10 @@ export async function sendAriIngest(
 		};
 	}
 
+	console.error(
+		`[ari/inbound] POST ${url} failed with status ${response.status}: ${responseBody}`
+	);
+
 	throw new AriInboundError(
 		response.status,
 		`Ari rejected the submission with status ${response.status}`,
