@@ -5,6 +5,11 @@ import { project } from '$lib/server/db/schema';
 import { createProject, ProjectMutationError } from '$lib/server/projects/mutations';
 import { AriInboundError } from '$lib/server/ari/inbound';
 import { canSubmit, ProjectSubmissionError, submitProjectToAri } from '$lib/server/projects/submit';
+import {
+	HackatimeError,
+	listUserHackatimeProjects,
+	safeListUserHackatimeProjects
+} from '$lib/server/hackatime';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -32,15 +37,19 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.from(project)
 		.where(eq(project.userId, locals.user.id));
 
-	const projectsWithReadiness = await Promise.all(
-		projects.map(async (project) => ({
-			...project,
-			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
-		}))
-	);
+	const [projectsWithReadiness, availableHackatimeProjects] = await Promise.all([
+		Promise.all(
+			projects.map(async (project) => ({
+				...project,
+				readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
+			}))
+		),
+		safeListUserHackatimeProjects(currentUser.slackId)
+	]);
 
 	return {
-		projects: projectsWithReadiness
+		projects: projectsWithReadiness,
+		availableHackatimeProjects
 	};
 };
 
@@ -53,6 +62,10 @@ export const actions: Actions = {
 		const formData = await request.formData();
 
 		try {
+			const selectedHackatimeProjects = stringListFromFormEntries(formData, 'hackatimeProjects');
+			const availableHackatimeProjects = await listUserHackatimeProjects(locals.user.slackId);
+			validateHackatimeProjects(selectedHackatimeProjects, availableHackatimeProjects);
+
 			const createdProject = await createProject({
 				userId: locals.user.id,
 				input: {
@@ -62,7 +75,7 @@ export const actions: Actions = {
 					repoUrl: stringFromForm(formData, 'repoUrl'),
 					demoUrl: stringFromForm(formData, 'demoUrl'),
 					thumbnailUrl: stringFromForm(formData, 'thumbnailUrl'),
-					hackatimeProjects: stringListFromForm(formData, 'hackatimeProjects'),
+					hackatimeProjects: selectedHackatimeProjects,
 					requirements: stringFromForm(formData, 'requirements')
 				}
 			});
@@ -72,7 +85,10 @@ export const actions: Actions = {
 			return fail(getErrorStatus(err), {
 				success: false,
 				message: getErrorMessage(err),
-				values: Object.fromEntries(formData.entries())
+				values: {
+					...Object.fromEntries(formData.entries()),
+					hackatimeProjects: formData.getAll('hackatimeProjects')
+				}
 			});
 		}
 	},
@@ -118,6 +134,36 @@ function stringListFromForm(formData: FormData, key: string) {
 		.filter(Boolean);
 }
 
+function stringListFromFormEntries(formData: FormData, key: string) {
+	return formData
+		.getAll(key)
+		.map((value) => (typeof value === 'string' ? value.trim() : ''))
+		.filter(Boolean);
+}
+
+function validateHackatimeProjects(selected: string[], available: string[]) {
+	if (selected.length === 0) {
+		throw new ProjectMutationError(422, 'Select at least one Hackatime project.');
+	}
+
+	if (available.length === 0) {
+		throw new HackatimeError(
+			422,
+			'No Hackatime projects were found for your account. Link Hackatime to your Hack Club account and try again.'
+		);
+	}
+
+	const known = new Set(available);
+	const unknown = selected.filter((name) => !known.has(name));
+
+	if (unknown.length > 0) {
+		throw new ProjectMutationError(
+			422,
+			`Unknown Hackatime project(s): ${unknown.join(', ')}. Choose from your Hackatime projects.`
+		);
+	}
+}
+
 function projectTypeFromForm(formData: FormData, key: string): 'card' | 'app' {
 	const value = stringFromForm(formData, key);
 	return value === 'app' ? 'app' : 'card';
@@ -127,7 +173,8 @@ function getErrorStatus(err: unknown) {
 	if (
 		err instanceof ProjectMutationError ||
 		err instanceof ProjectSubmissionError ||
-		err instanceof AriInboundError
+		err instanceof AriInboundError ||
+		err instanceof HackatimeError
 	) {
 		return err.status;
 	}

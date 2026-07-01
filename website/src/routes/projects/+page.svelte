@@ -8,13 +8,26 @@
 	function formValue(key: string) {
 		if (!form || !('values' in form) || !form.values) return '';
 
-		const value = form.values[key];
+		const value = (form.values as Record<string, unknown>)[key];
 		return typeof value === 'string' ? value : '';
 	}
 
 	function formTypeValue(key: string): 'card' | 'app' | undefined {
 		const value = formValue(key);
 		return value === 'app' ? 'app' : value === 'card' ? 'card' : undefined;
+	}
+
+	function isHackatimeProjectChecked(name: string) {
+		if (!form || !('values' in form) || !form.values) return false;
+		const value = form.values['hackatimeProjects'] as unknown;
+		if (Array.isArray(value)) return (value as string[]).includes(name);
+		if (typeof value === 'string' && value.length > 0) {
+			return value
+				.split(',')
+				.map((v) => v.trim())
+				.includes(name);
+		}
+		return false;
 	}
 
 	function formatResistor(ohms: number | null): string {
@@ -78,14 +91,30 @@
 				<input name="title" required value={formValue('title')} class="rounded-md" />
 			</label>
 
-			<label class="flex flex-col gap-1">
+			<label class="flex flex-col gap-1 md:col-span-2">
 				<span>Hackatime projects</span>
-				<input
-					name="hackatimeProjects"
-					placeholder="project-one, project-two"
-					value={formValue('hackatimeProjects')}
-					class="rounded-md"
-				/>
+				{#if data.availableHackatimeProjects.length === 0}
+					<p class="text-sm text-slate-600">
+						No Hackatime projects found for your account. Link Hackatime to your Hack Club account
+						to pick projects.
+					</p>
+				{:else}
+					<div class="flex flex-wrap gap-2">
+						{#each data.availableHackatimeProjects as name (name)}
+							<label
+								class="flex items-center gap-2 rounded-md border border-slate-400 bg-white/60 px-2 py-1 text-sm"
+							>
+								<input
+									type="checkbox"
+									name="hackatimeProjects"
+									value={name}
+									checked={isHackatimeProjectChecked(name)}
+								/>
+								<span>{name}</span>
+							</label>
+						{/each}
+					</div>
+				{/if}
 			</label>
 
 			<label class="flex flex-col gap-1 md:col-span-2">
