@@ -23,6 +23,15 @@
 		const ids = (values.cardIds ?? '').split(',').map((id) => id.trim());
 		return ids.includes(cardId);
 	}
+
+	function formatResistor(ohms: number | null): string {
+		if (ohms == null) return '—';
+		if (ohms >= 1000) {
+			const kilo = ohms / 1000;
+			return `${kilo}k`;
+		}
+		return `${ohms}`;
+	}
 </script>
 
 <svelte:head>
@@ -218,6 +227,12 @@
 							<a class="underline" href={project.demoUrl} target="_blank" rel="noreferrer">Demo</a>
 						{/if}
 						<p>Hackatime: {project.hackatimeProjects?.join(', ') || 'none'}</p>
+						{#if project.type === 'card'}
+							<p>
+								Module ID resistors: MD1 = {formatResistor(project.md1)}, MD2 =
+								{formatResistor(project.md2)}
+							</p>
+						{/if}
 					</div>
 
 					{#if project.type === 'app'}

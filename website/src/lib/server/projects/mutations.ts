@@ -1,7 +1,10 @@
 import { db } from '$lib/server/db';
 import { appCard, project } from '$lib/server/db/schema';
 import { canEditProject, type ProjectType } from '$lib/server/projects/lifecycle';
-import { and, eq, inArray } from 'drizzle-orm';
+import { findNextAvailableResistorPair, type ModuleResistor } from '$lib/server/projects/resistors';
+import { and, eq, inArray, isNotNull, sql } from 'drizzle-orm';
+
+const MODULE_RESISTOR_ADVISORY_LOCK_KEY = 0x6d6470; // 'mdp'
 
 export type ProjectInput = {
 	title: string;
@@ -39,6 +42,8 @@ export type ProjectMutationResult = {
 	userId: string;
 	hackatimeProjects: string[] | null;
 	cardIds: string[];
+	md1: ModuleResistor | null;
+	md2: ModuleResistor | null;
 };
 
 export class ProjectMutationError extends Error {
@@ -57,29 +62,71 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 
 	if (values.type === 'app') {
 		await assertCardsExist(cardIds);
+
+		const [createdProject] = await db
+			.insert(project)
+			.values({
+				userId,
+				title: values.title,
+				type: values.type,
+				description: values.description,
+				repoUrl: values.repoUrl,
+				demoUrl: values.demoUrl,
+				thumbnailUrl: values.thumbnailUrl,
+				hackatime_projects: values.hackatimeProjects
+			})
+			.returning(projectReturnFields);
+
+		if (!createdProject) {
+			throw new ProjectMutationError(500, 'Failed to create project');
+		}
+
+		const settledCardIds = await syncAppCards(createdProject.id, values.type, cardIds);
+
+		return { ...createdProject, cardIds: settledCardIds };
 	}
 
-	const [createdProject] = await db
-		.insert(project)
-		.values({
-			userId,
-			title: values.title,
-			type: values.type,
-			description: values.description,
-			repoUrl: values.repoUrl,
-			demoUrl: values.demoUrl,
-			thumbnailUrl: values.thumbnailUrl,
-			hackatime_projects: values.hackatimeProjects
-		})
-		.returning(projectReturnFields);
+	const created = await db.transaction(async (tx) => {
+		await tx.execute(sql`SELECT pg_advisory_xact_lock(${MODULE_RESISTOR_ADVISORY_LOCK_KEY})`);
 
-	if (!createdProject) {
-		throw new ProjectMutationError(500, 'Failed to create project');
-	}
+		const usedPairs = await tx
+			.select({ md1: project.md1, md2: project.md2 })
+			.from(project)
+			.where(and(eq(project.type, 'card'), isNotNull(project.md1), isNotNull(project.md2)));
 
-	const settledCardIds = await syncAppCards(createdProject.id, values.type, cardIds);
+		const pair = findNextAvailableResistorPair(usedPairs);
 
-	return { ...createdProject, cardIds: settledCardIds };
+		if (!pair) {
+			throw new ProjectMutationError(
+				503,
+				'All module resistor pairs are taken. No unique md1/md2 combination is available.'
+			);
+		}
+
+		const [row] = await tx
+			.insert(project)
+			.values({
+				userId,
+				title: values.title,
+				type: values.type,
+				description: values.description,
+				repoUrl: values.repoUrl,
+				demoUrl: values.demoUrl,
+				thumbnailUrl: values.thumbnailUrl,
+				hackatime_projects: values.hackatimeProjects,
+				md1: pair.md1,
+				md2: pair.md2
+			})
+			.returning(projectReturnFields);
+
+		if (!row) {
+			throw new ProjectMutationError(500, 'Failed to create project');
+		}
+
+		return row;
+	});
+
+	return { ...created, cardIds: [] };
 }
 
 export async function editProject({ projectId, userId, input }: EditProjectOptions) {
@@ -144,7 +191,9 @@ const projectReturnFields = {
 	thumbnailUrl: project.thumbnailUrl,
 	status: project.status,
 	userId: project.userId,
-	hackatimeProjects: project.hackatime_projects
+	hackatimeProjects: project.hackatime_projects,
+	md1: project.md1,
+	md2: project.md2
 };
 
 function normalizeProjectInput(input: ProjectInput) {

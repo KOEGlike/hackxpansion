@@ -8,7 +8,8 @@ import {
 	pgEnum,
 	jsonb,
 	primaryKey,
-	index
+	index,
+	uniqueIndex
 } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 import {
@@ -33,22 +34,32 @@ export const projectStatus = pgEnum('project_status', [
 
 export const projectType = pgEnum('project_type', ['card', 'app']);
 
-export const project = pgTable('project', {
-	id: uuid('id')
-		.primaryKey()
-		.default(sql`uuidv7()`),
-	title: text('title').notNull(),
-	description: text('description'),
-	repoUrl: text('repo_url'),
-	demoUrl: text('demo_url'),
-	thumbnailUrl: text('thumbnail_url'),
-	status: projectStatus('status').notNull().default('not_submitted'),
-	type: projectType('type').notNull().default('card'),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	hackatime_projects: text('hackatime_projects').array()
-});
+export const project = pgTable(
+	'project',
+	{
+		id: uuid('id')
+			.primaryKey()
+			.default(sql`uuidv7()`),
+		title: text('title').notNull(),
+		description: text('description'),
+		repoUrl: text('repo_url'),
+		demoUrl: text('demo_url'),
+		thumbnailUrl: text('thumbnail_url'),
+		status: projectStatus('status').notNull().default('not_submitted'),
+		type: projectType('type').notNull().default('card'),
+		md1: integer('md1'),
+		md2: integer('md2'),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		hackatime_projects: text('hackatime_projects').array()
+	},
+	(table) => [
+		uniqueIndex('project_card_md_pair_uniq')
+			.on(table.md1, table.md2)
+			.where(sql`type = 'card' AND md1 IS NOT NULL AND md2 IS NOT NULL`)
+	]
+);
 
 export const appCard = pgTable(
 	'app_card',

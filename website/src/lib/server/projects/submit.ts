@@ -14,6 +14,7 @@ import {
 	type ProjectType
 } from '$lib/server/projects/lifecycle';
 import { listCardDependencies } from '$lib/server/projects/queries';
+import { formatResistor } from '$lib/server/projects/resistors';
 import { and, eq } from 'drizzle-orm';
 
 export type SubmitProjectToAriOptions = {
@@ -53,6 +54,8 @@ type ProjectForSubmission = {
 	status: ProjectStatus;
 	type: ProjectType;
 	hackatime_projects: string[] | null;
+	md1: number | null;
+	md2: number | null;
 	makerEmail: string;
 	makerName: string;
 	makerSlackId: string;
@@ -114,6 +117,15 @@ export async function submitProjectToAri({
 
 	const cardDeps = projectForSubmission.type === 'app' ? await listCardDependencies(projectId) : [];
 
+	const extraMeta: Record<string, string> = {
+		...buildResistorMeta(
+			projectForSubmission.type,
+			projectForSubmission.md1,
+			projectForSubmission.md2
+		),
+		...buildCardDependencyMeta(cardDeps)
+	};
+
 	const payload = buildAriIngestPayload({
 		project: projectForSubmission,
 		maker: {
@@ -124,7 +136,7 @@ export async function submitProjectToAri({
 		journals: projectJournals,
 		phase: readiness.phase,
 		track: trackForProjectType(projectForSubmission.type),
-		extraMeta: buildCardDependencyMeta(cardDeps)
+		extraMeta
 	});
 
 	const ari = await sendAriIngest(payload, {
@@ -224,6 +236,8 @@ async function getProjectForSubmission(
 			status: project.status,
 			type: project.type,
 			hackatime_projects: project.hackatime_projects,
+			md1: project.md1,
+			md2: project.md2,
 			makerEmail: user.email,
 			makerName: user.name,
 			makerSlackId: user.slackId
@@ -285,4 +299,18 @@ function buildCardDependencyMeta(
 	}
 
 	return meta;
+}
+
+function buildResistorMeta(
+	type: ProjectType,
+	md1: number | null,
+	md2: number | null
+): Record<string, string> {
+	if (type !== 'card' || md1 == null || md2 == null) return {};
+
+	return {
+		'Module ID MD1': `${formatResistor(md1)}Ω`,
+		'Module ID MD2': `${formatResistor(md2)}Ω`,
+		'Module ID pair': `${formatResistor(md1)}Ω / ${formatResistor(md2)}Ω`
+	};
 }
