@@ -3,11 +3,25 @@
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
+	let selectedType = $state<'card' | 'app'>(formTypeValue('type') ?? 'card');
+
 	function formValue(key: string) {
 		if (!form || !('values' in form) || !form.values) return '';
 
 		const value = form.values[key];
 		return typeof value === 'string' ? value : '';
+	}
+
+	function formTypeValue(key: string): 'card' | 'app' | undefined {
+		const value = formValue(key);
+		return value === 'app' ? 'app' : value === 'card' ? 'card' : undefined;
+	}
+
+	function isCardChecked(cardId: string) {
+		if (!form || !('values' in form) || !form.values) return false;
+		const values = form.values as Record<string, string>;
+		const ids = (values.cardIds ?? '').split(',').map((id) => id.trim());
+		return ids.includes(cardId);
 	}
 </script>
 
@@ -18,7 +32,10 @@
 <main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">
 	<header>
 		<h1 class="text-4xl font-bold">Projects</h1>
-		<p class="text-slate-600">Create a project, fill in the basics, then submit it to Ari.</p>
+		<p class="text-slate-600">
+			Create a card (hardware) or an app (software) that builds on approved cards, then submit it to
+			Ari.
+		</p>
 	</header>
 
 	{#if form?.message}
@@ -31,6 +48,30 @@
 		<h2 class="mb-4 text-2xl font-bold">Create project</h2>
 
 		<form method="post" action="?/create" class="grid gap-4 md:grid-cols-2">
+			<fieldset class="flex flex-col gap-1">
+				<span>Type *</span>
+				<label class="flex gap-2">
+					<input
+						type="radio"
+						name="type"
+						value="card"
+						checked={selectedType === 'card'}
+						onchange={() => (selectedType = 'card')}
+					/>
+					<span>Card (hardware)</span>
+				</label>
+				<label class="flex gap-2">
+					<input
+						type="radio"
+						name="type"
+						value="app"
+						checked={selectedType === 'app'}
+						onchange={() => (selectedType = 'app')}
+					/>
+					<span>App (software)</span>
+				</label>
+			</fieldset>
+
 			<label class="flex flex-col gap-1">
 				<span>Title *</span>
 				<input name="title" required value={formValue('title')} class="rounded-md" />
@@ -64,18 +105,57 @@
 			</label>
 
 			<label class="flex flex-col gap-1 md:col-span-2">
-				<span>Demo URL</span>
+				<span>Demo URL {selectedType === 'app' ? '*' : ''}</span>
 				<input
 					name="demoUrl"
-					placeholder="Required before build review"
+					placeholder={selectedType === 'app'
+						? 'Required for apps (software)'
+						: 'Required before build review'}
+					required={selectedType === 'app'}
 					value={formValue('demoUrl')}
 					class="rounded-md"
 				/>
 			</label>
 
+			{#if selectedType === 'app'}
+				<fieldset class="flex flex-col gap-2 md:col-span-2">
+					<span>Depends on cards * (any cards in the program)</span>
+					{#if data.selectableCards.length === 0}
+						<p class="text-sm text-slate-600">
+							No cards exist yet. An app needs at least one card to depend on.
+						</p>
+					{:else}
+						<div class="grid gap-2 md:grid-cols-2">
+							{#each data.selectableCards as card (card.id)}
+								<label
+									class="flex items-start gap-2 rounded-md border border-slate-400 bg-white/60 p-2"
+								>
+									<input
+										type="checkbox"
+										name="cardIds"
+										value={card.id}
+										checked={isCardChecked(card.id)}
+									/>
+									<span class="flex flex-col text-sm">
+										<span class="font-semibold">{card.title}</span>
+										<span class="text-xs text-slate-500">status: {card.status}</span>
+										{#if card.repoUrl}
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
+											<a class="underline" href={card.repoUrl} target="_blank" rel="noreferrer">
+												repo
+											</a>
+										{/if}
+									</span>
+								</label>
+							{/each}
+						</div>
+					{/if}
+				</fieldset>
+			{/if}
+
 			<div class="md:col-span-2">
 				<button class="rounded-md bg-slate-800 px-4 py-2 text-white hover:bg-slate-700">
-					Create project
+					Create {selectedType}
 				</button>
 			</div>
 		</form>
@@ -100,7 +180,16 @@
 							{/if}
 
 							<div>
-								<h3 class="text-xl font-bold">{project.title}</h3>
+								<div class="flex items-center gap-2">
+									<h3 class="text-xl font-bold">{project.title}</h3>
+									<span
+										class="rounded-full px-2 py-0.5 text-xs font-semibold {project.type === 'app'
+											? 'bg-blue-100 text-blue-800'
+											: 'bg-amber-100 text-amber-800'}"
+									>
+										{project.type === 'app' ? 'App · software' : 'Card · hardware'}
+									</span>
+								</div>
 								<p class="text-sm text-slate-600">Status: {project.status}</p>
 								{#if project.description}
 									<p class="mt-2 max-w-2xl">{project.description}</p>
@@ -130,6 +219,29 @@
 						{/if}
 						<p>Hackatime: {project.hackatimeProjects?.join(', ') || 'none'}</p>
 					</div>
+
+					{#if project.type === 'app'}
+						<div class="mt-4 rounded-md bg-blue-50 p-3 text-sm text-blue-950">
+							<p class="font-bold">Depends on {project.cardDependencies.length} card(s):</p>
+							{#if project.cardDependencies.length === 0}
+								<p>No card dependencies set.</p>
+							{:else}
+								<ul class="list-disc pl-5">
+									{#each project.cardDependencies as card (card.id)}
+										<li>
+											{card.title} (status: {card.status})
+											{#if card.repoUrl}
+												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
+												<a class="underline" href={card.repoUrl} target="_blank" rel="noreferrer"
+													>repo</a
+												>
+											{/if}
+										</li>
+									{/each}
+								</ul>
+							{/if}
+						</div>
+					{/if}
 
 					{#if !project.readiness.canSubmit}
 						<div class="mt-4 rounded-md bg-amber-100 p-3 text-sm text-amber-950">

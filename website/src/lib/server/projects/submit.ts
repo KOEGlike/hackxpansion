@@ -8,9 +8,12 @@ import { db } from '$lib/server/db';
 import { journal, project, user } from '$lib/server/db/schema';
 import {
 	getNextProjectSubmission,
+	trackForProjectType,
 	type ProjectReviewPhase,
-	type ProjectStatus
+	type ProjectStatus,
+	type ProjectType
 } from '$lib/server/projects/lifecycle';
+import { listCardDependencies } from '$lib/server/projects/queries';
 import { and, eq } from 'drizzle-orm';
 
 export type SubmitProjectToAriOptions = {
@@ -48,6 +51,7 @@ type ProjectForSubmission = {
 	demoUrl: string | null;
 	thumbnailUrl: string | null;
 	status: ProjectStatus;
+	type: ProjectType;
 	hackatime_projects: string[] | null;
 	makerEmail: string;
 	makerName: string;
@@ -108,6 +112,8 @@ export async function submitProjectToAri({
 		.from(journal)
 		.where(eq(journal.projectId, projectId));
 
+	const cardDeps = projectForSubmission.type === 'app' ? await listCardDependencies(projectId) : [];
+
 	const payload = buildAriIngestPayload({
 		project: projectForSubmission,
 		maker: {
@@ -116,7 +122,9 @@ export async function submitProjectToAri({
 			slackId: projectForSubmission.makerSlackId
 		},
 		journals: projectJournals,
-		phase: readiness.phase
+		phase: readiness.phase,
+		track: trackForProjectType(projectForSubmission.type),
+		extraMeta: buildCardDependencyMeta(cardDeps)
 	});
 
 	const ari = await sendAriIngest(payload, {
@@ -186,6 +194,13 @@ function getProjectSubmissionReadiness(
 		changes.push({ field: 'demoUrl', message: 'Add a demo URL before build review.' });
 	}
 
+	if (projectForSubmission.type === 'app' && !hasText(projectForSubmission.demoUrl)) {
+		changes.push({
+			field: 'demoUrl',
+			message: 'Apps are software - add a demo URL before submitting to Ari.'
+		});
+	}
+
 	return {
 		canSubmit: changes.length === 0,
 		phase: nextSubmission.phase,
@@ -207,6 +222,7 @@ async function getProjectForSubmission(
 			demoUrl: project.demoUrl,
 			thumbnailUrl: project.thumbnailUrl,
 			status: project.status,
+			type: project.type,
 			hackatime_projects: project.hackatime_projects,
 			makerEmail: user.email,
 			makerName: user.name,
@@ -251,4 +267,22 @@ function getSubmissionReadinessErrorStatus(readiness: CanSubmitProjectResult) {
 
 function formatSubmissionChanges(changes: ProjectSubmissionChange[]) {
 	return changes.map((change) => change.message).join(' ');
+}
+
+function buildCardDependencyMeta(
+	cards: { id: string; title: string; repoUrl: string | null; status: string }[]
+): Record<string, string> {
+	if (cards.length === 0) return {};
+
+	const meta: Record<string, string> = {
+		'Depends on cards': String(cards.length)
+	};
+
+	for (const card of cards) {
+		const label = `Card: ${card.title}`;
+		const link = card.repoUrl ?? card.id;
+		meta[label] = `${link} (status: ${card.status})`;
+	}
+
+	return meta;
 }

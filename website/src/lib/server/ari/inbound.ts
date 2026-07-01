@@ -54,6 +54,7 @@ export type BuildAriIngestPayloadOptions = {
 	journals: JournalForAriIngest[];
 	phase: ProjectReviewPhase;
 	track?: InboundTrack;
+	extraMeta?: Record<string, string>;
 };
 
 export type SendAriIngestOptions = {
@@ -84,7 +85,8 @@ export function buildAriIngestPayload({
 	maker,
 	journals,
 	phase,
-	track = 'hardware'
+	track = 'hardware',
+	extraMeta
 }: BuildAriIngestPayloadOptions): AriIngestPayload {
 	const description = requiredString(project.description, 'Project description is required');
 	const repoUrl = requiredString(project.repoUrl, 'Project repo URL is required');
@@ -129,7 +131,8 @@ export function buildAriIngestPayload({
 		...(ariJournals.length > 0 ? { journals: ariJournals } : {}),
 		meta: {
 			'Project ID': project.id,
-			'Review phase': formatPhase(phase)
+			'Review phase': formatPhase(phase),
+			...(extraMeta ?? {})
 		}
 	};
 }
@@ -159,9 +162,7 @@ export async function sendAriIngest(
 		};
 	}
 
-	console.error(
-		`[ari/inbound] POST ${url} failed with status ${response.status}: ${responseBody}`
-	);
+	console.error(`[ari/inbound] POST ${url} failed with status ${response.status}: ${responseBody}`);
 
 	throw new AriInboundError(
 		response.status,

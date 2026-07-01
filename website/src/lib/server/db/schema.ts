@@ -1,5 +1,15 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, integer, text, uuid, timestamp, pgEnum, jsonb } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	integer,
+	text,
+	uuid,
+	timestamp,
+	pgEnum,
+	jsonb,
+	primaryKey,
+	index
+} from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 import {
 	eventTypeArray,
@@ -21,6 +31,8 @@ export const projectStatus = pgEnum('project_status', [
 	'approved_build'
 ]);
 
+export const projectType = pgEnum('project_type', ['card', 'app']);
+
 export const project = pgTable('project', {
 	id: uuid('id')
 		.primaryKey()
@@ -31,11 +43,28 @@ export const project = pgTable('project', {
 	demoUrl: text('demo_url'),
 	thumbnailUrl: text('thumbnail_url'),
 	status: projectStatus('status').notNull().default('not_submitted'),
+	type: projectType('type').notNull().default('card'),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	hackatime_projects: text('hackatime_projects').array()
 });
+
+export const appCard = pgTable(
+	'app_card',
+	{
+		appId: uuid('app_id')
+			.notNull()
+			.references(() => project.id, { onDelete: 'cascade' }),
+		cardId: uuid('card_id')
+			.notNull()
+			.references(() => project.id, { onDelete: 'cascade' })
+	},
+	(table) => [
+		primaryKey({ columns: [table.appId, table.cardId] }),
+		index('app_card_card_id_idx').on(table.cardId)
+	]
+);
 
 export const journal = pgTable('journal', {
 	id: uuid('id')

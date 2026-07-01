@@ -2,7 +2,11 @@ import type { Event } from '$lib/server/ari/outbound';
 import type { project } from '$lib/server/db/schema';
 
 export type ProjectStatus = typeof project.$inferSelect.status;
+export type ProjectType = typeof project.$inferSelect.type;
 export type ProjectReviewPhase = 'design' | 'build';
+
+export const trackForProjectType = (type: ProjectType): 'hardware' | 'software' =>
+	type === 'app' ? 'software' : 'hardware';
 
 export type NextProjectSubmission = {
 	phase: ProjectReviewPhase;

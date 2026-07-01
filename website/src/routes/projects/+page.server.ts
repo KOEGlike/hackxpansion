@@ -5,6 +5,7 @@ import { project } from '$lib/server/db/schema';
 import { createProject, ProjectMutationError } from '$lib/server/projects/mutations';
 import { AriInboundError } from '$lib/server/ari/inbound';
 import { canSubmit, ProjectSubmissionError, submitProjectToAri } from '$lib/server/projects/submit';
+import { listSelectableCards, listCardDependencies } from '$lib/server/projects/queries';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -23,6 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			demoUrl: project.demoUrl,
 			thumbnailUrl: project.thumbnailUrl,
 			status: project.status,
+			type: project.type,
 			hackatimeProjects: project.hackatime_projects
 		})
 		.from(project)
@@ -31,12 +33,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const projectsWithReadiness = await Promise.all(
 		projects.map(async (project) => ({
 			...project,
-			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
+			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id }),
+			cardDependencies: project.type === 'app' ? await listCardDependencies(project.id) : []
 		}))
 	);
 
+	const selectableCards = await listSelectableCards();
+
 	return {
-		projects: projectsWithReadiness
+		projects: projectsWithReadiness,
+		selectableCards
 	};
 };
 
@@ -53,11 +59,13 @@ export const actions: Actions = {
 				userId: locals.user.id,
 				input: {
 					title: stringFromForm(formData, 'title'),
+					type: projectTypeFromForm(formData, 'type'),
 					description: stringFromForm(formData, 'description'),
 					repoUrl: stringFromForm(formData, 'repoUrl'),
 					demoUrl: stringFromForm(formData, 'demoUrl'),
 					thumbnailUrl: stringFromForm(formData, 'thumbnailUrl'),
-					hackatimeProjects: stringListFromForm(formData, 'hackatimeProjects')
+					hackatimeProjects: stringListFromForm(formData, 'hackatimeProjects'),
+					cardIds: stringListFromFormEntries(formData, 'cardIds')
 				}
 			});
 
@@ -110,6 +118,18 @@ function stringListFromForm(formData: FormData, key: string) {
 		.split(',')
 		.map((value) => value.trim())
 		.filter(Boolean);
+}
+
+function stringListFromFormEntries(formData: FormData, key: string) {
+	return formData
+		.getAll(key)
+		.map((value) => (typeof value === 'string' ? value.trim() : ''))
+		.filter(Boolean);
+}
+
+function projectTypeFromForm(formData: FormData, key: string): 'card' | 'app' {
+	const value = stringFromForm(formData, key);
+	return value === 'app' ? 'app' : 'card';
 }
 
 function getErrorStatus(err: unknown) {
