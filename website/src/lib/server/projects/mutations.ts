@@ -1,8 +1,8 @@
 import { db } from '$lib/server/db';
-import { appCard, project } from '$lib/server/db/schema';
+import { project } from '$lib/server/db/schema';
 import { canEditProject, type ProjectType } from '$lib/server/projects/lifecycle';
 import { findNextAvailableResistorPair, type ModuleResistor } from '$lib/server/projects/resistors';
-import { and, eq, inArray, isNotNull, sql } from 'drizzle-orm';
+import { and, eq, isNotNull, sql } from 'drizzle-orm';
 
 const MODULE_RESISTOR_ADVISORY_LOCK_KEY = 0x6d6470; // 'mdp'
 
@@ -14,7 +14,7 @@ export type ProjectInput = {
 	demoUrl?: string | null;
 	thumbnailUrl?: string | null;
 	hackatimeProjects?: string[] | null;
-	cardIds?: string[] | null;
+	requirements?: string | null;
 };
 
 export type ProjectPatch = Partial<ProjectInput>;
@@ -41,7 +41,7 @@ export type ProjectMutationResult = {
 	status: typeof project.$inferSelect.status;
 	userId: string;
 	hackatimeProjects: string[] | null;
-	cardIds: string[];
+	requirements: string | null;
 	md1: ModuleResistor | null;
 	md2: ModuleResistor | null;
 };
@@ -58,11 +58,8 @@ export class ProjectMutationError extends Error {
 
 export async function createProject({ userId, input }: CreateProjectOptions) {
 	const values = normalizeProjectInput(input);
-	const cardIds = normalizeCardIds(input.cardIds);
 
 	if (values.type === 'app') {
-		await assertCardsExist(cardIds);
-
 		const [createdProject] = await db
 			.insert(project)
 			.values({
@@ -73,7 +70,8 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				repoUrl: values.repoUrl,
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
-				hackatime_projects: values.hackatimeProjects
+				hackatime_projects: values.hackatimeProjects,
+				requirements: values.requirements
 			})
 			.returning(projectReturnFields);
 
@@ -81,9 +79,7 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 			throw new ProjectMutationError(500, 'Failed to create project');
 		}
 
-		const settledCardIds = await syncAppCards(createdProject.id, values.type, cardIds);
-
-		return { ...createdProject, cardIds: settledCardIds };
+		return { ...createdProject };
 	}
 
 	const created = await db.transaction(async (tx) => {
@@ -114,6 +110,7 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
+				requirements: values.requirements,
 				md1: pair.md1,
 				md2: pair.md2
 			})
@@ -126,7 +123,7 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 		return row;
 	});
 
-	return { ...created, cardIds: [] };
+	return { ...created };
 }
 
 export async function editProject({ projectId, userId, input }: EditProjectOptions) {
@@ -149,21 +146,8 @@ export async function editProject({ projectId, userId, input }: EditProjectOptio
 
 	const values = normalizeProjectPatch(input);
 
-	if (Object.keys(values).length === 0 && input.cardIds === undefined) {
+	if (Object.keys(values).length === 0) {
 		throw new ProjectMutationError(400, 'No project changes provided');
-	}
-
-	let nextType = existingProject.type;
-	if (values.type !== undefined) {
-		nextType = values.type;
-	}
-
-	let cardIds: string[] | null = null;
-	if (input.cardIds !== undefined) {
-		cardIds = normalizeCardIds(input.cardIds);
-		if (nextType === 'app') {
-			await assertCardsExist(cardIds);
-		}
 	}
 
 	const [updatedProject] = await db
@@ -176,9 +160,7 @@ export async function editProject({ projectId, userId, input }: EditProjectOptio
 		throw new ProjectMutationError(404, 'Project not found');
 	}
 
-	const settledCardIds = await syncAppCards(updatedProject.id, updatedProject.type, cardIds);
-
-	return { ...updatedProject, cardIds: settledCardIds };
+	return { ...updatedProject };
 }
 
 const projectReturnFields = {
@@ -192,6 +174,7 @@ const projectReturnFields = {
 	status: project.status,
 	userId: project.userId,
 	hackatimeProjects: project.hackatime_projects,
+	requirements: project.requirements,
 	md1: project.md1,
 	md2: project.md2
 };
@@ -204,7 +187,8 @@ function normalizeProjectInput(input: ProjectInput) {
 		repoUrl: optionalString(input.repoUrl),
 		demoUrl: optionalString(input.demoUrl),
 		thumbnailUrl: optionalString(input.thumbnailUrl),
-		hackatimeProjects: normalizeStringArray(input.hackatimeProjects)
+		hackatimeProjects: normalizeStringArray(input.hackatimeProjects),
+		requirements: optionalString(input.requirements)
 	};
 }
 
@@ -239,70 +223,15 @@ function normalizeProjectPatch(input: ProjectPatch) {
 		values.hackatime_projects = normalizeStringArray(input.hackatimeProjects);
 	}
 
+	if ('requirements' in input) {
+		values.requirements = optionalString(input.requirements);
+	}
+
 	return values;
 }
 
 function normalizeProjectType(type: ProjectType | undefined): ProjectType {
 	return type === 'app' ? 'app' : 'card';
-}
-
-function normalizeCardIds(cardIds: string[] | null | undefined) {
-	if (!cardIds) return [];
-	const normalized = [...new Set(cardIds.map((id) => id.trim()).filter(Boolean))];
-	return normalized;
-}
-
-async function assertCardsExist(cardIds: string[]) {
-	if (cardIds.length === 0) return;
-
-	const cards = await db
-		.select({ id: project.id, type: project.type })
-		.from(project)
-		.where(inArray(project.id, cardIds));
-
-	if (cards.length !== cardIds.length) {
-		const missing = cardIds.filter((id) => !cards.some((card) => card.id === id));
-		throw new ProjectMutationError(422, `Unknown card dependency: ${missing.join(', ')}`);
-	}
-
-	const invalid = cards.filter((card) => card.type !== 'card');
-
-	if (invalid.length > 0) {
-		throw new ProjectMutationError(
-			422,
-			'App dependencies must be cards (type "card"). An app cannot depend on another app.'
-		);
-	}
-}
-
-async function syncAppCards(
-	projectId: string,
-	type: ProjectType,
-	cardIds: string[] | null
-): Promise<string[]> {
-	if (type !== 'app') {
-		await db.delete(appCard).where(eq(appCard.appId, projectId));
-		return [];
-	}
-
-	if (cardIds === null) {
-		const existing = await db
-			.select({ cardId: appCard.cardId })
-			.from(appCard)
-			.where(eq(appCard.appId, projectId));
-		return existing.map((row) => row.cardId);
-	}
-
-	await db.delete(appCard).where(eq(appCard.appId, projectId));
-
-	if (cardIds.length > 0) {
-		await db
-			.insert(appCard)
-			.values(cardIds.map((cardId) => ({ appId: projectId, cardId })))
-			.onConflictDoNothing();
-	}
-
-	return cardIds;
 }
 
 function requiredString(value: string | null | undefined, message: string) {

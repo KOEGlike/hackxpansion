@@ -5,7 +5,6 @@ import { project } from '$lib/server/db/schema';
 import { createProject, ProjectMutationError } from '$lib/server/projects/mutations';
 import { AriInboundError } from '$lib/server/ari/inbound';
 import { canSubmit, ProjectSubmissionError, submitProjectToAri } from '$lib/server/projects/submit';
-import { listSelectableCards, listCardDependencies } from '$lib/server/projects/queries';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -26,6 +25,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			status: project.status,
 			type: project.type,
 			hackatimeProjects: project.hackatime_projects,
+			requirements: project.requirements,
 			md1: project.md1,
 			md2: project.md2
 		})
@@ -35,16 +35,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const projectsWithReadiness = await Promise.all(
 		projects.map(async (project) => ({
 			...project,
-			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id }),
-			cardDependencies: project.type === 'app' ? await listCardDependencies(project.id) : []
+			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
 		}))
 	);
 
-	const selectableCards = await listSelectableCards();
-
 	return {
-		projects: projectsWithReadiness,
-		selectableCards
+		projects: projectsWithReadiness
 	};
 };
 
@@ -67,7 +63,7 @@ export const actions: Actions = {
 					demoUrl: stringFromForm(formData, 'demoUrl'),
 					thumbnailUrl: stringFromForm(formData, 'thumbnailUrl'),
 					hackatimeProjects: stringListFromForm(formData, 'hackatimeProjects'),
-					cardIds: stringListFromFormEntries(formData, 'cardIds')
+					requirements: stringFromForm(formData, 'requirements')
 				}
 			});
 
@@ -119,13 +115,6 @@ function stringListFromForm(formData: FormData, key: string) {
 	return stringFromForm(formData, key)
 		.split(',')
 		.map((value) => value.trim())
-		.filter(Boolean);
-}
-
-function stringListFromFormEntries(formData: FormData, key: string) {
-	return formData
-		.getAll(key)
-		.map((value) => (typeof value === 'string' ? value.trim() : ''))
 		.filter(Boolean);
 }
 

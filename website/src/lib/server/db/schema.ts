@@ -7,8 +7,6 @@ import {
 	timestamp,
 	pgEnum,
 	jsonb,
-	primaryKey,
-	index,
 	uniqueIndex
 } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
@@ -52,28 +50,13 @@ export const project = pgTable(
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		hackatime_projects: text('hackatime_projects').array()
+		hackatime_projects: text('hackatime_projects').array(),
+		requirements: text('requirements')
 	},
 	(table) => [
 		uniqueIndex('project_card_md_pair_uniq')
 			.on(table.md1, table.md2)
 			.where(sql`type = 'card' AND md1 IS NOT NULL AND md2 IS NOT NULL`)
-	]
-);
-
-export const appCard = pgTable(
-	'app_card',
-	{
-		appId: uuid('app_id')
-			.notNull()
-			.references(() => project.id, { onDelete: 'cascade' }),
-		cardId: uuid('card_id')
-			.notNull()
-			.references(() => project.id, { onDelete: 'cascade' })
-	},
-	(table) => [
-		primaryKey({ columns: [table.appId, table.cardId] }),
-		index('app_card_card_id_idx').on(table.cardId)
 	]
 );
 

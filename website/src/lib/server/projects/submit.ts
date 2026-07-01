@@ -13,7 +13,6 @@ import {
 	type ProjectStatus,
 	type ProjectType
 } from '$lib/server/projects/lifecycle';
-import { listCardDependencies } from '$lib/server/projects/queries';
 import { formatResistor } from '$lib/server/projects/resistors';
 import { and, eq } from 'drizzle-orm';
 
@@ -54,6 +53,7 @@ type ProjectForSubmission = {
 	status: ProjectStatus;
 	type: ProjectType;
 	hackatime_projects: string[] | null;
+	requirements: string | null;
 	md1: number | null;
 	md2: number | null;
 	makerEmail: string;
@@ -115,15 +115,13 @@ export async function submitProjectToAri({
 		.from(journal)
 		.where(eq(journal.projectId, projectId));
 
-	const cardDeps = projectForSubmission.type === 'app' ? await listCardDependencies(projectId) : [];
-
 	const extraMeta: Record<string, string> = {
 		...buildResistorMeta(
 			projectForSubmission.type,
 			projectForSubmission.md1,
 			projectForSubmission.md2
 		),
-		...buildCardDependencyMeta(cardDeps)
+		...buildRequirementsMeta(projectForSubmission.requirements)
 	};
 
 	const payload = buildAriIngestPayload({
@@ -236,6 +234,7 @@ async function getProjectForSubmission(
 			status: project.status,
 			type: project.type,
 			hackatime_projects: project.hackatime_projects,
+			requirements: project.requirements,
 			md1: project.md1,
 			md2: project.md2,
 			makerEmail: user.email,
@@ -283,22 +282,13 @@ function formatSubmissionChanges(changes: ProjectSubmissionChange[]) {
 	return changes.map((change) => change.message).join(' ');
 }
 
-function buildCardDependencyMeta(
-	cards: { id: string; title: string; repoUrl: string | null; status: string }[]
-): Record<string, string> {
-	if (cards.length === 0) return {};
+function buildRequirementsMeta(requirements: string | null): Record<string, string> {
+	const trimmed = requirements?.trim();
+	if (!trimmed) return {};
 
-	const meta: Record<string, string> = {
-		'Depends on cards': String(cards.length)
+	return {
+		'Required resources': trimmed
 	};
-
-	for (const card of cards) {
-		const label = `Card: ${card.title}`;
-		const link = card.repoUrl ?? card.id;
-		meta[label] = `${link} (status: ${card.status})`;
-	}
-
-	return meta;
 }
 
 function buildResistorMeta(

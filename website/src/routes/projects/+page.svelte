@@ -17,13 +17,6 @@
 		return value === 'app' ? 'app' : value === 'card' ? 'card' : undefined;
 	}
 
-	function isCardChecked(cardId: string) {
-		if (!form || !('values' in form) || !form.values) return false;
-		const values = form.values as Record<string, string>;
-		const ids = (values.cardIds ?? '').split(',').map((id) => id.trim());
-		return ids.includes(cardId);
-	}
-
 	function formatResistor(ohms: number | null): string {
 		if (ohms == null) return '—';
 		if (ohms >= 1000) {
@@ -42,8 +35,7 @@
 	<header>
 		<h1 class="text-4xl font-bold">Projects</h1>
 		<p class="text-slate-600">
-			Create a card (hardware) or an app (software) that builds on approved cards, then submit it to
-			Ari.
+			Create a card (hardware) or an app (software), then submit it to Ari.
 		</p>
 	</header>
 
@@ -86,32 +78,32 @@
 				<input name="title" required value={formValue('title')} class="rounded-md" />
 			</label>
 
-<label class="flex flex-col gap-1">
-			<span>Hackatime projects</span>
-			<input
-				name="hackatimeProjects"
-				placeholder="project-one, project-two"
-				value={formValue('hackatimeProjects')}
-				class="rounded-md"
-			/>
-		</label>
+			<label class="flex flex-col gap-1">
+				<span>Hackatime projects</span>
+				<input
+					name="hackatimeProjects"
+					placeholder="project-one, project-two"
+					value={formValue('hackatimeProjects')}
+					class="rounded-md"
+				/>
+			</label>
 
-		<label class="flex flex-col gap-1 md:col-span-2">
-			<span>Description</span>
-			<textarea name="description" rows="3" class="rounded-md"
-				>{formValue('description')}</textarea
-			>
-		</label>
+			<label class="flex flex-col gap-1 md:col-span-2">
+				<span>Description</span>
+				<textarea name="description" rows="3" class="rounded-md"
+					>{formValue('description')}</textarea
+				>
+			</label>
 
-		<label class="flex flex-col gap-1">
-			<span>Repo URL</span>
-			<input name="repoUrl" value={formValue('repoUrl')} class="rounded-md" />
-		</label>
+			<label class="flex flex-col gap-1">
+				<span>Repo URL</span>
+				<input name="repoUrl" value={formValue('repoUrl')} class="rounded-md" />
+			</label>
 
-		<label class="flex flex-col gap-1">
-			<span>Thumbnail URL</span>
-			<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="rounded-md" />
-		</label>
+			<label class="flex flex-col gap-1">
+				<span>Thumbnail URL</span>
+				<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="rounded-md" />
+			</label>
 
 			<label class="flex flex-col gap-1 md:col-span-2">
 				<span>Demo URL {selectedType === 'app' ? '*' : ''}</span>
@@ -127,39 +119,18 @@
 			</label>
 
 			{#if selectedType === 'app'}
-				<fieldset class="flex flex-col gap-2 md:col-span-2">
-					<span>Depends on cards * (any cards in the program)</span>
-					{#if data.selectableCards.length === 0}
-						<p class="text-sm text-slate-600">
-							No cards exist yet. An app needs at least one card to depend on.
-						</p>
-					{:else}
-						<div class="grid gap-2 md:grid-cols-2">
-							{#each data.selectableCards as card (card.id)}
-								<label
-									class="flex items-start gap-2 rounded-md border border-slate-400 bg-white/60 p-2"
-								>
-									<input
-										type="checkbox"
-										name="cardIds"
-										value={card.id}
-										checked={isCardChecked(card.id)}
-									/>
-									<span class="flex flex-col text-sm">
-										<span class="font-semibold">{card.title}</span>
-										<span class="text-xs text-slate-500">status: {card.status}</span>
-										{#if card.repoUrl}
-											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
-											<a class="underline" href={card.repoUrl} target="_blank" rel="noreferrer">
-												repo
-											</a>
-										{/if}
-									</span>
-								</label>
-							{/each}
-						</div>
-					{/if}
-				</fieldset>
+				<label class="flex flex-col gap-1 md:col-span-2">
+					<span>Required resources</span>
+					<textarea
+						name="requirements"
+						rows="3"
+						placeholder="e.g. Button&lt;A&gt;, I2C bus, 128x64 display"
+						class="rounded-md">{formValue('requirements')}</textarea
+					>
+					<span class="text-xs text-slate-500">
+						Describe the resource types this app depends on (interfaces, buses, peripherals).
+					</span>
+				</label>
 			{/if}
 
 			<div class="md:col-span-2">
@@ -237,23 +208,11 @@
 
 					{#if project.type === 'app'}
 						<div class="mt-4 rounded-md bg-blue-50 p-3 text-sm text-blue-950">
-							<p class="font-bold">Depends on {project.cardDependencies.length} card(s):</p>
-							{#if project.cardDependencies.length === 0}
-								<p>No card dependencies set.</p>
+							<p class="font-bold">Required resources:</p>
+							{#if project.requirements}
+								<p>{project.requirements}</p>
 							{:else}
-								<ul class="list-disc pl-5">
-									{#each project.cardDependencies as card (card.id)}
-										<li>
-											{card.title} (status: {card.status})
-											{#if card.repoUrl}
-												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
-												<a class="underline" href={card.repoUrl} target="_blank" rel="noreferrer"
-													>repo</a
-												>
-											{/if}
-										</li>
-									{/each}
-								</ul>
+								<p>No required resources described.</p>
 							{/if}
 						</div>
 					{/if}
