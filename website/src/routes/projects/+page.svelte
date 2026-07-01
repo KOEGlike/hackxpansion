@@ -86,32 +86,32 @@
 				<input name="title" required value={formValue('title')} class="rounded-md" />
 			</label>
 
-			<label class="flex flex-col gap-1">
-				<span>Hackatime projects *</span>
-				<input
-					name="hackatimeProjects"
-					placeholder="project-one, project-two"
-					value={formValue('hackatimeProjects')}
-					class="rounded-md"
-				/>
-			</label>
+<label class="flex flex-col gap-1">
+			<span>Hackatime projects</span>
+			<input
+				name="hackatimeProjects"
+				placeholder="project-one, project-two"
+				value={formValue('hackatimeProjects')}
+				class="rounded-md"
+			/>
+		</label>
 
-			<label class="flex flex-col gap-1 md:col-span-2">
-				<span>Description *</span>
-				<textarea name="description" required rows="3" class="rounded-md"
-					>{formValue('description')}</textarea
-				>
-			</label>
+		<label class="flex flex-col gap-1 md:col-span-2">
+			<span>Description</span>
+			<textarea name="description" rows="3" class="rounded-md"
+				>{formValue('description')}</textarea
+			>
+		</label>
 
-			<label class="flex flex-col gap-1">
-				<span>Repo URL *</span>
-				<input name="repoUrl" required value={formValue('repoUrl')} class="rounded-md" />
-			</label>
+		<label class="flex flex-col gap-1">
+			<span>Repo URL</span>
+			<input name="repoUrl" value={formValue('repoUrl')} class="rounded-md" />
+		</label>
 
-			<label class="flex flex-col gap-1">
-				<span>Thumbnail URL *</span>
-				<input name="thumbnailUrl" required value={formValue('thumbnailUrl')} class="rounded-md" />
-			</label>
+		<label class="flex flex-col gap-1">
+			<span>Thumbnail URL</span>
+			<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="rounded-md" />
+		</label>
 
 			<label class="flex flex-col gap-1 md:col-span-2">
 				<span>Demo URL {selectedType === 'app' ? '*' : ''}</span>
