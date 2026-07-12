@@ -5,33 +5,6 @@
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
-	let selectedType = $state<'card' | 'app'>(formTypeValue('type') ?? 'card');
-
-	function formValue(key: string) {
-		if (!form || !('values' in form) || !form.values) return '';
-
-		const value = (form.values as Record<string, unknown>)[key];
-		return typeof value === 'string' ? value : '';
-	}
-
-	function formTypeValue(key: string): 'card' | 'app' | undefined {
-		const value = formValue(key);
-		return value === 'app' ? 'app' : value === 'card' ? 'card' : undefined;
-	}
-
-	function isHackatimeProjectChecked(name: string) {
-		if (!form || !('values' in form) || !form.values) return false;
-		const value = form.values['hackatimeProjects'] as unknown;
-		if (Array.isArray(value)) return (value as string[]).includes(name);
-		if (typeof value === 'string' && value.length > 0) {
-			return value
-				.split(',')
-				.map((v) => v.trim())
-				.includes(name);
-		}
-		return false;
-	}
-
 	function formatResistor(ohms: number | null): string {
 		if (ohms == null) return '—';
 		if (ohms >= 1000) {

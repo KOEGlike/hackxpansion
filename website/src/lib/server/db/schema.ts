@@ -45,8 +45,8 @@ export const project = pgTable(
 		thumbnailUrl: text('thumbnail_url'),
 		status: projectStatus('status').notNull().default('not_submitted'),
 		type: projectType('type').notNull().default('card'),
-		md1: integer('md1'),
-		md2: integer('md2'),
+		md1: integer('md1').notNull(),
+		md2: integer('md2').notNull(),
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),

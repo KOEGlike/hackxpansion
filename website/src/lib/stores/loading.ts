@@ -3,7 +3,7 @@ import { asset } from '$app/paths';
 
 export const isLoading = writable(true);
 export const loadProgress = writable(0);
-export const imageCount = 390;
+export const imageCount = 391;
 export const preloadedFrames = writable<(HTMLImageElement | null)[]>([]);
 
 const extraImages = [asset('/ferris.webp')];

@@ -138,7 +138,11 @@
 			Not loading? Please wait a little longer or click me for the simple version of this website.</a
 		>
 
-		<img src="loading.webp" alt="loading animation" class="absolute right-0 bottom-0 h-32" />
+		<img
+			src={asset('/loading.webp')}
+			alt="loading animation"
+			class="absolute right-0 bottom-0 h-32"
+		/>
 	</div>
 {:else}
 	<div

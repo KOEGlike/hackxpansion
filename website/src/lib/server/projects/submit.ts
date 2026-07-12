@@ -86,17 +86,14 @@ export async function submitProjectToAri({
 	userId
 }: SubmitProjectToAriOptions): Promise<SubmitProjectToAriResult> {
 	const programId = env.ARI_PROGRAM_ID;
-	const signingSecret = env.ARI_IN_SECRET ?? env.ARI_SECRET;
+	const signingSecret = env.ARI_IN_SECRET;
 
 	if (!programId) {
 		throw new ProjectSubmissionError(500, 'ARI_PROGRAM_ID environment variable is not set');
 	}
 
 	if (!signingSecret) {
-		throw new ProjectSubmissionError(
-			500,
-			'ARI_IN_SECRET or ARI_SECRET environment variable is not set'
-		);
+		throw new ProjectSubmissionError(500, 'ARI_IN_SECRET environment variable is not set');
 	}
 
 	const projectForSubmission = await getProjectForSubmission(projectId, userId);
@@ -179,17 +176,14 @@ export async function withdrawProjectFromAri({
 	userId
 }: WithdrawProjectFromAriOptions): Promise<WithdrawProjectFromAriResult> {
 	const programId = env.ARI_PROGRAM_ID;
-	const signingSecret = env.ARI_IN_SECRET ?? env.ARI_SECRET;
+	const signingSecret = env.ARI_IN_SECRET;
 
 	if (!programId) {
 		throw new ProjectSubmissionError(500, 'ARI_PROGRAM_ID environment variable is not set');
 	}
 
 	if (!signingSecret) {
-		throw new ProjectSubmissionError(
-			500,
-			'ARI_IN_SECRET or ARI_SECRET environment variable is not set'
-		);
+		throw new ProjectSubmissionError(500, 'ARI_IN_SECRET environment variable is not set');
 	}
 
 	const [existingProject] = await db

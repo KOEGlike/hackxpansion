@@ -36,61 +36,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.from(project)
 		.where(eq(project.userId, locals.user.id));
 
-	const [projectsWithReadiness, availableHackatimeProjects] = await Promise.all([
-		Promise.all(
-			projects.map(async (project) => ({
-				...project,
-				readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
-			}))
-		),
-		safeListUserHackatimeProjects(currentUser.slackId)
-	]);
+	const projectsWithReadiness = await Promise.all(
+		projects.map(async (project) => ({
+			...project,
+			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
+		}))
+	);
 
-	return {
-		projects: projectsWithReadiness,
-		availableHackatimeProjects
-	};
+	return { projects: projectsWithReadiness };
 };
 
 export const actions: Actions = {
-	create: async ({ locals, request }) => {
-		if (!locals.user) {
-			redirect(302, '/demo/hc');
-		}
-
-		const formData = await request.formData();
-
-		try {
-			const selectedHackatimeProjects = stringListFromFormEntries(formData, 'hackatimeProjects');
-			const availableHackatimeProjects = await listUserHackatimeProjects(locals.user.slackId);
-			validateHackatimeProjects(selectedHackatimeProjects, availableHackatimeProjects);
-
-			const createdProject = await createProject({
-				userId: locals.user.id,
-				input: {
-					title: stringFromForm(formData, 'title'),
-					type: projectTypeFromForm(formData, 'type'),
-					description: stringFromForm(formData, 'description'),
-					repoUrl: stringFromForm(formData, 'repoUrl'),
-					demoUrl: stringFromForm(formData, 'demoUrl'),
-					thumbnailUrl: stringFromForm(formData, 'thumbnailUrl'),
-					hackatimeProjects: selectedHackatimeProjects,
-					requirements: stringFromForm(formData, 'requirements')
-				}
-			});
-
-			return { success: true, message: 'Project created.', projectId: createdProject.id };
-		} catch (err) {
-			return fail(getErrorStatus(err), {
-				success: false,
-				message: getErrorMessage(err),
-				values: {
-					...Object.fromEntries(formData.entries()),
-					hackatimeProjects: formData.getAll('hackatimeProjects')
-				}
-			});
-		}
-	},
 	submit: async ({ locals, request }) => {
 		if (!locals.user) {
 			redirect(302, '/demo/hc');
@@ -154,55 +110,8 @@ function stringFromForm(formData: FormData, key: string) {
 	return typeof value === 'string' ? value : '';
 }
 
-function stringListFromForm(formData: FormData, key: string) {
-	return stringFromForm(formData, key)
-		.split(',')
-		.map((value) => value.trim())
-		.filter(Boolean);
-}
-
-function stringListFromFormEntries(formData: FormData, key: string) {
-	return formData
-		.getAll(key)
-		.map((value) => (typeof value === 'string' ? value.trim() : ''))
-		.filter(Boolean);
-}
-
-function validateHackatimeProjects(selected: string[], available: string[]) {
-	if (selected.length === 0) {
-		throw new ProjectMutationError(422, 'Select at least one Hackatime project.');
-	}
-
-	if (available.length === 0) {
-		throw new HackatimeError(
-			422,
-			'No Hackatime projects were found for your account. Link Hackatime to your Hack Club account and try again.'
-		);
-	}
-
-	const known = new Set(available);
-	const unknown = selected.filter((name) => !known.has(name));
-
-	if (unknown.length > 0) {
-		throw new ProjectMutationError(
-			422,
-			`Unknown Hackatime project(s): ${unknown.join(', ')}. Choose from your Hackatime projects.`
-		);
-	}
-}
-
-function projectTypeFromForm(formData: FormData, key: string): 'card' | 'app' {
-	const value = stringFromForm(formData, key);
-	return value === 'app' ? 'app' : 'card';
-}
-
 function getErrorStatus(err: unknown) {
-	if (
-		err instanceof ProjectMutationError ||
-		err instanceof ProjectSubmissionError ||
-		err instanceof AriInboundError ||
-		err instanceof HackatimeError
-	) {
+	if (err instanceof ProjectSubmissionError || err instanceof AriInboundError) {
 		return err.status;
 	}
 
