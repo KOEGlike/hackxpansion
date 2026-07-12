@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import type { ActionData, PageServerData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -45,11 +47,17 @@
 </svelte:head>
 
 <main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">
-	<header>
-		<h1 class="text-4xl font-bold">Projects</h1>
-		<p class="text-slate-600">
-			Create a card (hardware) or an app (software), then submit it to Ari.
-		</p>
+	<header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+		<div>
+			<h1 class="text-4xl font-bold">Projects</h1>
+			<p class="text-slate-600">Create a project, fill in the basics, then submit it to Ari.</p>
+		</div>
+		<a
+			href={resolve('/projects/new')}
+			class="rounded-md bg-slate-800 px-4 py-2 text-center text-white hover:bg-slate-700"
+		>
+			New project
+		</a>
 	</header>
 
 	{#if form?.message}
@@ -57,118 +65,6 @@
 			{form.message}
 		</p>
 	{/if}
-
-	<section class="rounded-lg border-2 border-slate-700 bg-slate-100/70 p-5">
-		<h2 class="mb-4 text-2xl font-bold">Create project</h2>
-
-		<form method="post" action="?/create" class="grid gap-4 md:grid-cols-2">
-			<fieldset class="flex flex-col gap-1">
-				<span>Type *</span>
-				<label class="flex gap-2">
-					<input
-						type="radio"
-						name="type"
-						value="card"
-						checked={selectedType === 'card'}
-						onchange={() => (selectedType = 'card')}
-					/>
-					<span>Card (hardware)</span>
-				</label>
-				<label class="flex gap-2">
-					<input
-						type="radio"
-						name="type"
-						value="app"
-						checked={selectedType === 'app'}
-						onchange={() => (selectedType = 'app')}
-					/>
-					<span>App (software)</span>
-				</label>
-			</fieldset>
-
-			<label class="flex flex-col gap-1">
-				<span>Title *</span>
-				<input name="title" required value={formValue('title')} class="rounded-md" />
-			</label>
-
-			<label class="flex flex-col gap-1 md:col-span-2">
-				<span>Hackatime projects</span>
-				{#if data.availableHackatimeProjects.length === 0}
-					<p class="text-sm text-slate-600">
-						No Hackatime projects found for your account. Link Hackatime to your Hack Club account
-						to pick projects.
-					</p>
-				{:else}
-					<div class="flex flex-wrap gap-2">
-						{#each data.availableHackatimeProjects as name (name)}
-							<label
-								class="flex items-center gap-2 rounded-md border border-slate-400 bg-white/60 px-2 py-1 text-sm"
-							>
-								<input
-									type="checkbox"
-									name="hackatimeProjects"
-									value={name}
-									checked={isHackatimeProjectChecked(name)}
-								/>
-								<span>{name}</span>
-							</label>
-						{/each}
-					</div>
-				{/if}
-			</label>
-
-			<label class="flex flex-col gap-1 md:col-span-2">
-				<span>Description</span>
-				<textarea name="description" rows="3" class="rounded-md"
-					>{formValue('description')}</textarea
-				>
-			</label>
-
-			<label class="flex flex-col gap-1">
-				<span>Repo URL</span>
-				<input name="repoUrl" value={formValue('repoUrl')} class="rounded-md" />
-			</label>
-
-			<label class="flex flex-col gap-1">
-				<span>Thumbnail URL</span>
-				<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="rounded-md" />
-			</label>
-
-			<label class="flex flex-col gap-1 md:col-span-2">
-				<span>Demo URL {selectedType === 'app' ? '*' : ''}</span>
-				<input
-					name="demoUrl"
-					placeholder={selectedType === 'app'
-						? 'Required for apps (software)'
-						: 'Required before build review'}
-					required={selectedType === 'app'}
-					value={formValue('demoUrl')}
-					class="rounded-md"
-				/>
-			</label>
-
-			{#if selectedType === 'app'}
-				<label class="flex flex-col gap-1 md:col-span-2">
-					<span>Required resources</span>
-					<textarea
-						name="requirements"
-						rows="3"
-						placeholder="e.g. Button&lt;A&gt;, I2C bus, 128x64 display"
-						class="rounded-md">{formValue('requirements')}</textarea
-					>
-					<span class="text-xs text-slate-500">
-						Describe the resource types this app depends on (interfaces, buses, peripherals).
-					</span>
-				</label>
-			{/if}
-
-			<div class="md:col-span-2">
-				<button class="rounded-md bg-slate-800 px-4 py-2 text-white hover:bg-slate-700">
-					Create {selectedType}
-				</button>
-			</div>
-		</form>
-	</section>
 
 	<section class="flex flex-col gap-4">
 		<h2 class="text-2xl font-bold">Your projects</h2>
@@ -189,32 +85,44 @@
 							{/if}
 
 							<div>
-								<div class="flex items-center gap-2">
-									<h3 class="text-xl font-bold">{project.title}</h3>
-									<span
-										class="rounded-full px-2 py-0.5 text-xs font-semibold {project.type === 'app'
-											? 'bg-blue-100 text-blue-800'
-											: 'bg-amber-100 text-amber-800'}"
-									>
-										{project.type === 'app' ? 'App · software' : 'Card · hardware'}
-									</span>
+								<h3 class="text-xl font-bold">{project.title}</h3>
+								<div class="mt-1 flex items-center gap-2">
+									<ProjectStatusBadge status={project.status} />
 								</div>
-								<p class="text-sm text-slate-600">Status: {project.status}</p>
 								{#if project.description}
 									<p class="mt-2 max-w-2xl">{project.description}</p>
 								{/if}
 							</div>
 						</div>
 
-						<form method="post" action="?/submit">
-							<input type="hidden" name="projectId" value={project.id} />
-							<button
-								class="rounded-md bg-blue-700 px-4 py-2 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-400"
-								disabled={!project.readiness.canSubmit}
+						<div class="flex items-center gap-2">
+							<a
+								href={resolve(`/projects/${project.id}/edit`)}
+								class="rounded-md border border-slate-700 px-4 py-2 text-sm hover:bg-slate-100"
 							>
-								Submit {project.readiness.phase ?? 'to'} review
-							</button>
-						</form>
+								Edit
+							</a>
+							{#if project.status === 'waiting_design' || project.status === 'waiting_build'}
+								<form method="post" action="?/withdraw">
+									<input type="hidden" name="projectId" value={project.id} />
+									<button
+										class="rounded-md border border-red-700 px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+									>
+										Withdraw
+									</button>
+								</form>
+							{:else}
+								<form method="post" action="?/submit">
+									<input type="hidden" name="projectId" value={project.id} />
+									<button
+										class="rounded-md bg-blue-700 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+										disabled={!project.readiness.canSubmit}
+									>
+										Submit {project.readiness.phase ?? 'to'} review
+									</button>
+								</form>
+							{/if}
+						</div>
 					</div>
 
 					<div class="mt-4 grid gap-2 text-sm md:grid-cols-2">

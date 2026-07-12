@@ -1,4 +1,11 @@
-const HACKATIME_BASE_URL = 'https://hackatime.hackclub.com/api/v1';
+import { env } from '$env/dynamic/private';
+
+const HACKATIME_API_BASE = 'https://hackatime.hackclub.com/api/v1';
+
+export type HackatimeProjectWithStats = {
+	name: string;
+	totalSeconds: number;
+};
 
 export class HackatimeError extends Error {
 	constructor(
@@ -10,47 +17,38 @@ export class HackatimeError extends Error {
 	}
 }
 
-export async function listUserHackatimeProjects(slackId: string): Promise<string[]> {
-	const trimmed = slackId.trim();
-	if (!trimmed) return [];
+export async function getUserHackatimeProjects(slackId: string): Promise<string[]> {
+	const projects = await getUserHackatimeProjectsWithStats(slackId);
+	return projects.map((p) => p.name);
+}
 
-	const url = `${HACKATIME_BASE_URL}/users/${encodeURIComponent(trimmed)}/projects`;
-	let response: Response;
-	try {
-		response = await fetch(url, { headers: { Accept: 'application/json' } });
-	} catch (err) {
-		throw new HackatimeError(
-			502,
-			`Could not reach Hackatime to verify your projects: ${(err as Error).message}`
-		);
-	}
+export async function getUserHackatimeProjectsWithStats(
+	slackId: string
+): Promise<HackatimeProjectWithStats[]> {
+	const params = new URLSearchParams();
+	if (env.HACKATIME_START_DATE) params.set('start_date', env.HACKATIME_START_DATE);
+	if (env.HACKATIME_END_DATE) params.set('end_date', env.HACKATIME_END_DATE);
 
-	if (response.status === 404) {
-		throw new HackatimeError(
-			404,
-			`No Hackatime profile found for Slack ID "${trimmed}". Ensure Hackatime is linked to your Hack Club account.`
-		);
-	}
+	const query = params.toString() ? `?${params.toString()}` : '';
+	const response = await fetch(`${HACKATIME_API_BASE}/users/${slackId}/projects/details${query}`);
 
 	if (!response.ok) {
 		throw new HackatimeError(
-			502,
-			`Hackatime returned status ${response.status} while listing your projects.`
+			response.status,
+			`Failed to fetch Hackatime projects (status ${response.status})`
 		);
 	}
 
-	const body = (await response.json()) as { projects?: string[] };
-	const projects = Array.isArray(body.projects) ? body.projects : [];
+	const data = (await response.json()) as {
+		projects?: Array<{ name: string; total_seconds?: number }>;
+	};
 
-	return projects
-		.map((name) => (typeof name === 'string' ? name.trim() : ''))
-		.filter((name) => name.length > 0);
+	return (data.projects ?? []).map((p) => ({
+		name: p.name,
+		totalSeconds: p.total_seconds ?? 0
+	}));
 }
 
-export async function safeListUserHackatimeProjects(slackId: string): Promise<string[]> {
-	try {
-		return await listUserHackatimeProjects(slackId);
-	} catch {
-		return [];
-	}
+export function validateHackatimeProjectNames(submitted: string[], valid: string[]): string[] {
+	return submitted.filter((name) => !valid.includes(name));
 }

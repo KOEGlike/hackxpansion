@@ -171,6 +171,41 @@ export async function sendAriIngest(
 	);
 }
 
+export async function sendAriWithdraw(
+	externalId: string,
+	{ programId, signingSecret, baseUrl = 'https://ari.hackclub.com' }: SendAriIngestOptions
+): Promise<AriWithdrawResult> {
+	const rawBody = JSON.stringify({ external_id: externalId });
+	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
+	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}/withdraw`;
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-Ari-Signature': signature
+		},
+		body: rawBody
+	});
+	const responseBody = await response.text();
+
+	if (response.ok) {
+		return { status: response.status, body: responseBody };
+	}
+
+	console.error(`[ari/inbound] POST ${url} failed with status ${response.status}: ${responseBody}`);
+
+	throw new AriInboundError(
+		response.status,
+		`Ari rejected the withdrawal with status ${response.status}`,
+		responseBody
+	);
+}
+
+export type AriWithdrawResult = {
+	status: number;
+	body: string;
+};
+
 function requiredString(value: string | null | undefined, message: string) {
 	const trimmed = value?.trim();
 

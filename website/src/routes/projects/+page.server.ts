@@ -2,14 +2,13 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { project } from '$lib/server/db/schema';
-import { createProject, ProjectMutationError } from '$lib/server/projects/mutations';
 import { AriInboundError } from '$lib/server/ari/inbound';
-import { canSubmit, ProjectSubmissionError, submitProjectToAri } from '$lib/server/projects/submit';
 import {
-	HackatimeError,
-	listUserHackatimeProjects,
-	safeListUserHackatimeProjects
-} from '$lib/server/hackatime';
+	canSubmit,
+	ProjectSubmissionError,
+	submitProjectToAri,
+	withdrawProjectFromAri
+} from '$lib/server/projects/submit';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -110,6 +109,34 @@ export const actions: Actions = {
 			return {
 				success: true,
 				message: `Submitted ${result.phase} review to Ari.`,
+				projectId
+			};
+		} catch (err) {
+			return fail(getErrorStatus(err), {
+				success: false,
+				message: getErrorMessage(err),
+				projectId
+			});
+		}
+	},
+	withdraw: async ({ locals, request }) => {
+		if (!locals.user) {
+			redirect(302, '/demo/hc');
+		}
+
+		const formData = await request.formData();
+		const projectId = stringFromForm(formData, 'projectId');
+
+		if (!projectId) {
+			return fail(400, { success: false, message: 'Project ID is required.' });
+		}
+
+		try {
+			await withdrawProjectFromAri({ projectId, userId: locals.user.id });
+
+			return {
+				success: true,
+				message: 'Project withdrawn from Ari review.',
 				projectId
 			};
 		} catch (err) {

@@ -184,9 +184,9 @@ function normalizeProjectInput(input: ProjectInput) {
 		title: requiredString(input.title, 'Project title is required'),
 		type: normalizeProjectType(input.type),
 		description: optionalString(input.description),
-		repoUrl: optionalString(input.repoUrl),
-		demoUrl: optionalString(input.demoUrl),
-		thumbnailUrl: optionalString(input.thumbnailUrl),
+		repoUrl: validateUrl(input.repoUrl, 'Repository URL'),
+		demoUrl: validateUrl(input.demoUrl, 'Demo URL'),
+		thumbnailUrl: validateUrl(input.thumbnailUrl, 'Thumbnail URL'),
 		hackatimeProjects: normalizeStringArray(input.hackatimeProjects),
 		requirements: optionalString(input.requirements)
 	};
@@ -208,15 +208,15 @@ function normalizeProjectPatch(input: ProjectPatch) {
 	}
 
 	if ('repoUrl' in input) {
-		values.repoUrl = optionalString(input.repoUrl);
+		values.repoUrl = validateUrl(input.repoUrl, 'Repository URL');
 	}
 
 	if ('demoUrl' in input) {
-		values.demoUrl = optionalString(input.demoUrl);
+		values.demoUrl = validateUrl(input.demoUrl, 'Demo URL');
 	}
 
 	if ('thumbnailUrl' in input) {
-		values.thumbnailUrl = optionalString(input.thumbnailUrl);
+		values.thumbnailUrl = validateUrl(input.thumbnailUrl, 'Thumbnail URL');
 	}
 
 	if ('hackatimeProjects' in input) {
@@ -247,6 +247,24 @@ function requiredString(value: string | null | undefined, message: string) {
 function optionalString(value: string | null | undefined) {
 	const trimmed = value?.trim();
 	return trimmed ? trimmed : null;
+}
+
+function validateUrl(value: string | null | undefined, field: string) {
+	const trimmed = value?.trim();
+	if (!trimmed) return null;
+
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new ProjectMutationError(422, `${field} must be a valid URL.`);
+	}
+
+	if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+		throw new ProjectMutationError(422, `${field} must be an http or https URL.`);
+	}
+
+	return trimmed;
 }
 
 function normalizeStringArray(values: string[] | null | undefined) {

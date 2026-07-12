@@ -2,7 +2,9 @@ import { env } from '$env/dynamic/private';
 import {
 	buildAriIngestPayload,
 	sendAriIngest,
-	type AriIngestResult
+	sendAriWithdraw,
+	type AriIngestResult,
+	type AriWithdrawResult
 } from '$lib/server/ari/inbound';
 import { db } from '$lib/server/db';
 import { journal, project, user } from '$lib/server/db/schema';
@@ -156,6 +158,78 @@ export async function submitProjectToAri({
 	return {
 		projectId,
 		phase: readiness.phase,
+		status: updatedProject.status,
+		ari
+	};
+}
+
+export type WithdrawProjectFromAriOptions = {
+	projectId: string;
+	userId: string;
+};
+
+export type WithdrawProjectFromAriResult = {
+	projectId: string;
+	status: ProjectStatus;
+	ari: AriWithdrawResult;
+};
+
+export async function withdrawProjectFromAri({
+	projectId,
+	userId
+}: WithdrawProjectFromAriOptions): Promise<WithdrawProjectFromAriResult> {
+	const programId = env.ARI_PROGRAM_ID;
+	const signingSecret = env.ARI_IN_SECRET ?? env.ARI_SECRET;
+
+	if (!programId) {
+		throw new ProjectSubmissionError(500, 'ARI_PROGRAM_ID environment variable is not set');
+	}
+
+	if (!signingSecret) {
+		throw new ProjectSubmissionError(
+			500,
+			'ARI_IN_SECRET or ARI_SECRET environment variable is not set'
+		);
+	}
+
+	const [existingProject] = await db
+		.select({ status: project.status })
+		.from(project)
+		.where(and(eq(project.id, projectId), eq(project.userId, userId)))
+		.limit(1);
+
+	if (!existingProject) {
+		throw new ProjectSubmissionError(404, 'Project not found');
+	}
+
+	if (existingProject.status !== 'waiting_design' && existingProject.status !== 'waiting_build') {
+		throw new ProjectSubmissionError(
+			409,
+			'Project can only be withdrawn while it is waiting for Ari review'
+		);
+	}
+
+	const ari = await sendAriWithdraw(projectId, {
+		programId,
+		signingSecret,
+		baseUrl: env.ARI_BASE_URL
+	});
+
+	const revertedStatus: ProjectStatus =
+		existingProject.status === 'waiting_build' ? 'approved_design' : 'not_submitted';
+
+	const [updatedProject] = await db
+		.update(project)
+		.set({ status: revertedStatus })
+		.where(and(eq(project.id, projectId), eq(project.userId, userId)))
+		.returning({ status: project.status });
+
+	if (!updatedProject) {
+		throw new ProjectSubmissionError(404, 'Project not found');
+	}
+
+	return {
+		projectId,
 		status: updatedProject.status,
 		ari
 	};
