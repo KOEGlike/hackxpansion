@@ -71,7 +71,9 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				requirements: values.requirements
+				requirements: values.requirements,
+				md1: sql`NULL`,
+				md2: sql`NULL`
 			})
 			.returning(projectReturnFields);
 

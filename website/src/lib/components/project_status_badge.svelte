@@ -44,6 +44,6 @@
 	let badge = $derived(badges[status]);
 </script>
 
-<span class={`inline-block rounded-full px-3 py-0.5 text-xs font-semibold ${badge.classes}`}>
+<span class={`inline-block px-3 py-0.5 text-xs font-semibold ${badge.classes}`}>
 	{badge.label}
 </span>
