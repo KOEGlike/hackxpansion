@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { fade } from 'svelte/transition';
+	import { enhance } from '$app/forms';
 
 	type ModeSwitchRoute = '/' | '/simple';
 
@@ -16,10 +17,20 @@
 	transition:fade={{ duration: 100 }}
 >
 	<div class="flex h-fit w-fit flex-col items-end justify-end gap-0">
-		<a
-			href={resolve('/docs')}
-			class="content-box p-2 text-xl hover:content-box-hover active:content-box">Docs</a
-		>
+		<div class="flex flex-row gap-4">
+			<form method="post" action="/?/signIn" use:enhance>
+				<button class="content-box p-2 text-xl hover:content-box-hover active:content-box">
+					Sign In
+				</button>
+			</form>
+
+			<a
+				href={resolve('/docs')}
+				class="content-box p-2 text-xl hover:content-box-hover active:content-box"
+			>
+				Docs
+			</a>
+		</div>
 
 		<div class="relative w-fit">
 			<a

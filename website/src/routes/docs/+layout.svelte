@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import DocsBg from '$lib/components/docs_bg.svelte';
+	import GridBg from '$lib/components/grid_bg.svelte';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
@@ -33,7 +33,7 @@
 </a>
 
 <div class="relative min-h-screen w-screen">
-	<DocsBg />
+	<GridBg />
 	<div
 		class="relative z-10 flex h-fit w-screen flex-row p-3 {!hidden
 			? ' gap-2 sm:gap-4'

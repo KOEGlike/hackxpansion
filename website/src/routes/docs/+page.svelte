@@ -10,8 +10,8 @@ a custom console to use them in. And maybe even get other people's modules.
 have a bunch of people who are eager to help! Also check out our getting started guides and
 tutorials to learn more about making your first expansion card and programming drivers/apps.
 <br />
-You will need to track you time by writing a journal/making a time-lapse/streaming your work. This is
-a requirement to get the free console at the end, and it's also a great way to
+You will need to track your time by writing a journal/making a time-lapse/streaming your work. This is
+a requirement to get the free console at the end, and it's also a great way to get started with electronics.
 
 <h3>But I'm a beginner and don't know hardware</h3>
 No problem! We have guides and resources that will help you make your first module, even your first PCB
