@@ -12,7 +12,7 @@ import {
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
-		redirect(302, '/demo/hc');
+		redirect(302, '/');
 	}
 
 	return loadProjectFormHackatimeProjects(
@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
 	create: async ({ locals, request }) => {
 		if (!locals.user) {
-			redirect(302, '/demo/hc');
+			redirect(302, '/');
 		}
 
 		const formData = await request.formData();
@@ -55,6 +55,6 @@ export const actions: Actions = {
 			});
 		}
 
-		redirect(303, '/projects');
+		redirect(303, '/home/projects');
 	}
 };

@@ -34,7 +34,7 @@
 	}: {
 		action: string;
 		submitLabel: string;
-		cancelPath: '/projects';
+		cancelPath: '/home/projects';
 		cancelLabel?: string;
 		form: ProjectFormData | undefined;
 		initialValues: ProjectFormValues;
@@ -103,16 +103,11 @@
 	}
 </script>
 
-<form method="post" {action} class="grid gap-4 md:grid-cols-2">
+<form method="post" {action} class="grid gap-4 md:grid-cols-2 w-full min-h-full">
 	<label class="flex flex-col gap-1">
 		<span>Title *</span>
 		<input name="title" required value={formValue('title')} {disabled} />
 	</label>
-
-	<div class="flex flex-col gap-1">
-		<span>Hackatime projects</span>
-		<p class="text-xs text-slate-500">Required before submitting to Ari.</p>
-	</div>
 
 	<div class="md:col-span-2">
 		{#if hackatimeError}
@@ -143,7 +138,9 @@
 				</p>
 			{/if}
 
-			<div class="grid max-h-60 overflow-y-auto gap-1 border border-slate-300 p-2 md:grid-cols-2">
+			<div
+				class="grid w-full h-60 overflow-y-auto gap-1 border border-slate-300 p-2 md:grid-cols-2"
+			>
 				{#each hackatimeProjects as project (project.name)}
 					<label
 						hidden={!matchesHackatimeProjectSearch(project.name)}

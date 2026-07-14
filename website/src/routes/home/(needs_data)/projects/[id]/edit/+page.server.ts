@@ -16,7 +16,7 @@ import { eq, and } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) {
-		redirect(302, '/demo/hc');
+		redirect(302, '/');
 	}
 
 	const [existingProject] = await db
@@ -53,7 +53,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
 	edit: async ({ locals, params, request }) => {
 		if (!locals.user) {
-			redirect(302, '/demo/hc');
+			redirect(302, '/');
 		}
 
 		const formData = await request.formData();
@@ -85,6 +85,6 @@ export const actions: Actions = {
 			});
 		}
 
-		redirect(303, '/projects');
+		redirect(303, '/home/projects');
 	}
 };

@@ -65,4 +65,4 @@
 	};
 </script>
 
-<canvas class="pointer-events-none absolute inset-0 z-0 h-full w-full" bind:this={canvas}></canvas>
+<canvas class="pointer-events-none absolute inset-0 -z-5 h-full w-full" bind:this={canvas}></canvas>

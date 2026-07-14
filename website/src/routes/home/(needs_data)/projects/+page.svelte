@@ -26,7 +26,7 @@
 			<p class="text-slate-600">Create a project, fill in the basics, then submit it to Ari.</p>
 		</div>
 		<a
-			href={resolve('/projects/new')}
+			href={resolve('/home/projects/new')}
 			class=" bg-slate-800 px-4 py-2 text-center text-white hover:bg-slate-700"
 		>
 			New project
@@ -70,7 +70,7 @@
 
 						<div class="flex items-center gap-2">
 							<a
-								href={resolve(`/projects/${project.id}/edit`)}
+								href={resolve(`/home/projects/${project.id}/edit`)}
 								class=" border border-slate-700 px-4 py-2 text-sm hover:bg-slate-100"
 							>
 								Edit

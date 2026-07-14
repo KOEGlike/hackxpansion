@@ -17,6 +17,7 @@
 	const items = [
 		{ title: 'Home', href: '/home' },
 		{ title: 'Projects', href: '/home/projects' },
+		{ title: 'Shop', href: '/home/shop' },
 		{ title: 'Docs', href: '/docs' },
 		{ title: 'Explore', href: '/home/explore' },
 		{ title: 'Settings', href: '/home/settings' }
@@ -25,7 +26,7 @@
 
 <div class="relative h-screen w-screen">
 	<GridBg />
-	<div class="flex flex-row p-3 h-full">
+	<div class="flex flex-row p-3 h-full gap-3">
 		{#if hidden}
 			<button
 				class="fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
@@ -35,19 +36,30 @@
 			</button>
 		{:else}
 			<div
-				class="fixed flex h-full w-fit flex-col content-box p-1 sm:sticky sm:top-3 sm:left-0 justify-between"
+				class="fixed flex h-full w-fit flex-col content-box p-3 sm:sticky sm:top-3 sm:left-0 justify-between"
 			>
 				<div class="flex h-fit w-fit flex-col gap-2">
 					<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
 					<hr />
 					<div class="flex flex-col gap-1">
 						{#each items as item (item.href)}
-							<a href={resolve(item.href)} class="text-xl hover:underline mr-20">{item.title}</a>
+							<a href={resolve(item.href)} class="text-3xl hover:underline mr-30">{item.title}</a>
 						{/each}
 					</div>
 				</div>
-				<div>sdfasdfs</div>
+
+				{#if data.user}
+					<div class="flex flex-row gap-2">
+						<!-- svelte-ignore a11y_img_redundant_alt -->
+						<img src={data.user.image} alt="Profile picture" class="size-20" />
+						<div class="flex flex-col py-3 justify-between">
+							<p class="text-xl">{data.user.name}</p>
+							<p>{data.user.pronouns}</p>
+						</div>
+					</div>
+				{/if}
 			</div>
 		{/if}
+		{@render children()}
 	</div>
 </div>
