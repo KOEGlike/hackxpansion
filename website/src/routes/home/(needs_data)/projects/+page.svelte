@@ -116,17 +116,6 @@
 						{/if}
 					</div>
 
-					{#if project.type === 'app'}
-						<div class="mt-4 bg-blue-50 p-3 text-sm text-blue-950">
-							<p class="font-bold">Required resources:</p>
-							{#if project.requirements}
-								<p>{project.requirements}</p>
-							{:else}
-								<p>No required resources described.</p>
-							{/if}
-						</div>
-					{/if}
-
 					{#if !project.readiness.canSubmit}
 						<div class="mt-4 bg-amber-100 p-3 text-sm text-amber-950">
 							<p class="font-bold">Before submitting:</p>

@@ -28,7 +28,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			demoUrl: project.demoUrl,
 			thumbnailUrl: project.thumbnailUrl,
 			status: project.status,
-			hackatimeProjects: project.hackatime_projects
+			hackatimeProjects: project.hackatime_projects,
+			type: project.type
 		})
 		.from(project)
 		.where(and(eq(project.id, params.id), eq(project.userId, locals.user.id)))

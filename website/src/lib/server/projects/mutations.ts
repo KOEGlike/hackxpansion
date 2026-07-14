@@ -14,7 +14,6 @@ export type ProjectInput = {
 	demoUrl?: string | null;
 	thumbnailUrl?: string | null;
 	hackatimeProjects?: string[] | null;
-	requirements?: string | null;
 };
 
 export type ProjectPatch = Partial<ProjectInput>;
@@ -41,7 +40,6 @@ export type ProjectMutationResult = {
 	status: typeof project.$inferSelect.status;
 	userId: string;
 	hackatimeProjects: string[] | null;
-	requirements: string | null;
 	md1: ModuleResistor | null;
 	md2: ModuleResistor | null;
 };
@@ -71,7 +69,6 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				requirements: values.requirements,
 				md1: sql`NULL`,
 				md2: sql`NULL`
 			})
@@ -112,7 +109,6 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				requirements: values.requirements,
 				md1: pair.md1,
 				md2: pair.md2
 			})
@@ -176,7 +172,6 @@ const projectReturnFields = {
 	status: project.status,
 	userId: project.userId,
 	hackatimeProjects: project.hackatime_projects,
-	requirements: project.requirements,
 	md1: project.md1,
 	md2: project.md2
 };
@@ -189,8 +184,7 @@ function normalizeProjectInput(input: ProjectInput) {
 		repoUrl: validateUrl(input.repoUrl, 'Repository URL'),
 		demoUrl: validateUrl(input.demoUrl, 'Demo URL'),
 		thumbnailUrl: validateUrl(input.thumbnailUrl, 'Thumbnail URL'),
-		hackatimeProjects: normalizeStringArray(input.hackatimeProjects),
-		requirements: optionalString(input.requirements)
+		hackatimeProjects: normalizeStringArray(input.hackatimeProjects)
 	};
 }
 
@@ -223,10 +217,6 @@ function normalizeProjectPatch(input: ProjectPatch) {
 
 	if ('hackatimeProjects' in input) {
 		values.hackatime_projects = normalizeStringArray(input.hackatimeProjects);
-	}
-
-	if ('requirements' in input) {
-		values.requirements = optionalString(input.requirements);
 	}
 
 	return values;

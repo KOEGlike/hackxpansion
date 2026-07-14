@@ -50,8 +50,7 @@ export const project = pgTable(
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		hackatime_projects: text('hackatime_projects').array(),
-		requirements: text('requirements')
+		hackatime_projects: text('hackatime_projects').array()
 	},
 	(table) => [
 		uniqueIndex('project_card_md_pair_uniq')

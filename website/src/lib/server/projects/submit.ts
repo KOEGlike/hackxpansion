@@ -55,7 +55,6 @@ type ProjectForSubmission = {
 	status: ProjectStatus;
 	type: ProjectType;
 	hackatime_projects: string[] | null;
-	requirements: string | null;
 	md1: number | null;
 	md2: number | null;
 	makerEmail: string;
@@ -119,8 +118,7 @@ export async function submitProjectToAri({
 			projectForSubmission.type,
 			projectForSubmission.md1,
 			projectForSubmission.md2
-		),
-		...buildRequirementsMeta(projectForSubmission.requirements)
+		)
 	};
 
 	const payload = buildAriIngestPayload({
@@ -302,7 +300,6 @@ async function getProjectForSubmission(
 			status: project.status,
 			type: project.type,
 			hackatime_projects: project.hackatime_projects,
-			requirements: project.requirements,
 			md1: project.md1,
 			md2: project.md2,
 			makerEmail: user.email,
@@ -348,15 +345,6 @@ function getSubmissionReadinessErrorStatus(readiness: CanSubmitProjectResult) {
 
 function formatSubmissionChanges(changes: ProjectSubmissionChange[]) {
 	return changes.map((change) => change.message).join(' ');
-}
-
-function buildRequirementsMeta(requirements: string | null): Record<string, string> {
-	const trimmed = requirements?.trim();
-	if (!trimmed) return {};
-
-	return {
-		'Required resources': trimmed
-	};
 }
 
 function buildResistorMeta(

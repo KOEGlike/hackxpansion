@@ -29,7 +29,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 			status: project.status,
 			type: project.type,
 			hackatimeProjects: project.hackatime_projects,
-			requirements: project.requirements,
 			md1: project.md1,
 			md2: project.md2
 		})

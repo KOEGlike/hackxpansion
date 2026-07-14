@@ -15,6 +15,13 @@
       "when": 1782892084827,
       "tag": "0001_solid_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784052316143,
+      "tag": "0002_free_tattoo",
+      "breakpoints": true
     }
   ]
 }

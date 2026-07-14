@@ -6,6 +6,7 @@
 
 	const emptyProject = {
 		title: '',
+		type: 'card' as const,
 		description: '',
 		repoUrl: '',
 		demoUrl: '',

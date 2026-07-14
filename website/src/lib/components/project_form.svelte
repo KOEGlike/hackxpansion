@@ -12,6 +12,7 @@
 
 	type ProjectFormValues = {
 		title: string;
+		type?: 'card' | 'app' | null;
 		description?: string | null;
 		repoUrl?: string | null;
 		demoUrl?: string | null;
@@ -19,7 +20,7 @@
 		hackatimeProjects?: string[] | null;
 	};
 
-	type ProjectTextField = 'title' | 'description' | 'repoUrl' | 'demoUrl' | 'thumbnailUrl';
+	type ProjectTextField = 'title' | 'type' | 'description' | 'repoUrl' | 'demoUrl' | 'thumbnailUrl';
 
 	let {
 		action,
@@ -48,6 +49,14 @@
 	let visibleHackatimeProjects = $derived(
 		hackatimeProjects.filter((project) => matchesHackatimeProjectSearch(project.name))
 	);
+
+	let selectedType = $state<'card' | 'app'>((formValue('type') as 'card' | 'app') || 'card');
+	let isDropdownOpen = $state(false);
+
+	function selectType(value: 'card' | 'app') {
+		selectedType = value;
+		isDropdownOpen = false;
+	}
 
 	function formValue(key: ProjectTextField) {
 		if (form?.values) {
@@ -91,6 +100,8 @@
 		switch (key) {
 			case 'title':
 				return initialValues.title;
+			case 'type':
+				return initialValues.type ?? 'card';
 			case 'description':
 				return initialValues.description ?? '';
 			case 'repoUrl':
@@ -108,6 +119,53 @@
 		<span>Title *</span>
 		<input name="title" required value={formValue('title')} {disabled} />
 	</label>
+
+	<div class="flex flex-col gap-0.5 relative">
+		<span>Type *</span>
+		<input type="hidden" name="type" value={selectedType} required />
+
+		<button
+			type="button"
+			class="flex w-full items-center justify-between border border-slate-300 bg-white/70 px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
+			onclick={() => (isDropdownOpen = !isDropdownOpen)}
+			{disabled}
+		>
+			<span class="capitalize">{selectedType}</span>
+		</button>
+
+		{#if isDropdownOpen}
+			<button
+				type="button"
+				tabindex="-1"
+				aria-label="Close dropdown"
+				class="fixed inset-0 z-10 h-full w-full cursor-default"
+				onclick={() => (isDropdownOpen = false)}
+			></button>
+
+			<ul
+				class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-300 bg-white shadow-lg"
+			>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
+						onclick={() => selectType('card')}
+					>
+						Card
+					</button>
+				</li>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
+						onclick={() => selectType('app')}
+					>
+						App
+					</button>
+				</li>
+			</ul>
+		{/if}
+	</div>
 
 	<div class="md:col-span-2">
 		{#if hackatimeError}

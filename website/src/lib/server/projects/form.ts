@@ -5,6 +5,7 @@ import {
 	type HackatimeProjectWithStats
 } from '$lib/server/hackatime';
 import { ProjectMutationError, type ProjectInput } from '$lib/server/projects/mutations';
+import type { ProjectType } from '$lib/server/projects/lifecycle';
 
 export type ProjectFormHackatimeData = {
 	hackatimeProjects: HackatimeProjectWithStats[];
@@ -31,6 +32,7 @@ export async function loadProjectFormHackatimeProjects(
 export function projectInputFromForm(formData: FormData): ProjectInput {
 	return {
 		title: stringFromForm(formData, 'title'),
+		type: (stringFromForm(formData, 'type') as ProjectType) || undefined,
 		description: stringFromForm(formData, 'description'),
 		repoUrl: stringFromForm(formData, 'repoUrl'),
 		demoUrl: stringFromForm(formData, 'demoUrl'),

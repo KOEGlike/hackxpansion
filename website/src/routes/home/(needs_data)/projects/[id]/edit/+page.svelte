@@ -37,7 +37,7 @@
 		<ProjectForm
 			action="?/edit"
 			submitLabel="Save changes"
-			cancelPath="/projects"
+			cancelPath="/home/projects"
 			cancelLabel="Back to projects"
 			{form}
 			initialValues={data.project}
