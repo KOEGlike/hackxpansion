@@ -123,9 +123,9 @@
 </script>
 
 <form method="post" {action} class="grid gap-4 md:grid-cols-2 w-full min-h-full">
-	<label class="flex flex-col gap-1">
+	<label class="flex flex-col gap-0.5">
 		<span>Title *</span>
-		<input name="title" required value={formValue('title')} {disabled} />
+		<input name="title" required value={formValue('title')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
 	</label>
 
 	<DropdownSelect
@@ -170,7 +170,7 @@
 					bind:value={hackatimeProjectSearch}
 					placeholder="Search by project name"
 					autocomplete="off"
-					class="border border-slate-300 bg-white/70 px-3 py-2 text-sm"
+					class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
 				/>
 				<span class="text-xs text-slate-500">
 					Showing {visibleHackatimeProjects.length} of {hackatimeProjects.length}
@@ -184,7 +184,7 @@
 			{/if}
 
 			<div
-				class="grid w-full h-60 overflow-y-auto gap-1 border border-slate-300 p-2 md:grid-cols-2"
+				class="grid w-full h-60 overflow-y-auto gap-1 border border-slate-700 bg-white/70 p-2 md:grid-cols-2"
 			>
 				{#each hackatimeProjects as project (project.name)}
 					<label
@@ -208,17 +208,17 @@
 
 	<label class="flex flex-col gap-1 md:col-span-2">
 		<span>Description</span>
-		<textarea name="description" rows="3" {disabled}>{formValue('description')}</textarea>
+		<textarea name="description" rows="3" class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled}>{formValue('description')}</textarea>
 	</label>
 
 	<label class="flex flex-col gap-1">
 		<span>Repo URL</span>
-		<input name="repoUrl" value={formValue('repoUrl')} {disabled} />
+		<input name="repoUrl" value={formValue('repoUrl')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
 	</label>
 
 	<label class="flex flex-col gap-1">
 		<span>Thumbnail URL</span>
-		<input name="thumbnailUrl" value={formValue('thumbnailUrl')} {disabled} />
+		<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
 	</label>
 
 	<label class="flex flex-col gap-1 md:col-span-2">
@@ -227,6 +227,7 @@
 			name="demoUrl"
 			placeholder="Required before build review"
 			value={formValue('demoUrl')}
+			class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
 			{disabled}
 		/>
 	</label>

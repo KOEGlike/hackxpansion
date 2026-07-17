@@ -10,15 +10,7 @@
 	<title>Edit {data.project.title} · Hackxpansion</title>
 </svelte:head>
 
-<main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">
-	<header>
-		<h1 class="text-4xl font-bold">Edit project</h1>
-		<div class="mt-1 flex items-center gap-2">
-			<span class="text-slate-600">{data.project.title}</span>
-			<ProjectStatusBadge status={data.project.status} />
-		</div>
-	</header>
-
+<main class="mx-auto flex w-full flex-col gap-8 p-0 text-slate-800 min-h-full h-fit">
 	{#if form?.message}
 		<p class="border border-slate-700 bg-white/50 p-3 text-sm">
 			{form.message}
@@ -31,8 +23,12 @@
 		</div>
 	{/if}
 
-	<section class="border-2 border-slate-700 bg-slate-100/70 p-5">
-		<h2 class="mb-4 text-2xl font-bold">Project details</h2>
+	<section class="p-5 w-full min-h-full h-fit">
+		<h2 class="mb-4 text-2xl font-bold">Edit project</h2>
+		<div class="mb-4 flex items-center gap-2 text-slate-600">
+			<span>{data.project.title}</span>
+			<ProjectStatusBadge status={data.project.status} />
+		</div>
 
 		<ProjectForm
 			action="?/edit"

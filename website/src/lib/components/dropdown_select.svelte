@@ -38,7 +38,7 @@
 
 	<button
 		type="button"
-		class="flex w-full items-center justify-between border border-slate-300 bg-white/70 px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
+		class="flex w-full items-center justify-between border border-slate-700 bg-white/70 px-3 py-2 text-left text-sm cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50 {isOpen ? 'relative z-20' : ''}"
 		onclick={() => (isOpen = !isOpen)}
 		{disabled}
 	>
@@ -55,13 +55,13 @@
 		></button>
 
 		<ul
-			class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-300 bg-white shadow-lg"
+			class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-700 bg-white shadow-lg"
 		>
 			{#each options as option (option.value)}
 				<li>
 					<button
 						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 transition-colors {option.class ?? ''}"
+						class="w-full px-3 py-2 text-left text-sm cursor-pointer hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 transition-colors {option.class ?? ''}"
 						onclick={() => select(option.value)}
 					>
 						{option.label}

@@ -24,19 +24,19 @@
 	] as const;
 </script>
 
-<div class="relative h-screen w-screen">
+<div class="relative h-screen w-screen overflow-hidden">
 	<GridBg />
-	<div class="flex flex-row p-3 h-full gap-3">
+	<div class="flex flex-row h-full gap-3">
 		{#if hidden}
 			<button
-				class="fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
+				class="m-3 fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
 				onclick={() => (hidden = false)}
 			>
 				Open
 			</button>
 		{:else}
 			<div
-				class="fixed flex h-full w-fit flex-col content-box p-3 sm:sticky sm:top-3 sm:left-0 justify-between"
+				class="fixed flex h-[calc(100%-1.5rem)] w-fit flex-col content-box p-3 sm:sticky sm:top-3 sm:left-0 justify-between my-3 ml-3"
 			>
 				<div class="flex h-fit w-fit flex-col gap-2">
 					<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
@@ -60,6 +60,8 @@
 				{/if}
 			</div>
 		{/if}
-		{@render children()}
+		<div class="overflow-x-hidden overflow-y-scroll h-full w-full">
+			{@render children()}
+		</div>
 	</div>
 </div>

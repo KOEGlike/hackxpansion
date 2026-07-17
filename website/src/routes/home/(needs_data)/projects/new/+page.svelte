@@ -26,7 +26,7 @@
 		</p>
 	{/if}
 
-	<section class="border-3 border-slate-700 bg-slate-100/70 p-5 w-full min-h-full h-fit">
+	<section class="p-5 w-full min-h-full h-fit">
 		<h2 class="mb-4 text-2xl font-bold">Create project</h2>
 
 		<ProjectForm

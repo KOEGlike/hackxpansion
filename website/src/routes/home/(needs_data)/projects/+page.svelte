@@ -46,7 +46,7 @@
 			<p class=" border border-slate-500 bg-white/40 p-4">No projects yet.</p>
 		{:else}
 			{#each data.projects as project (project.id)}
-				<article class=" border-2 border-slate-700 bg-white/50 p-5">
+				<article class="content-box p-5">
 					<div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 						<div class="flex gap-4">
 							{#if project.thumbnailUrl}
@@ -62,7 +62,7 @@
 								<div class="mt-1 flex items-center gap-2">
 									<ProjectStatusBadge status={project.status} />
 									{#if project.tier}
-										<span class="rounded bg-slate-200 px-2 py-0.5 text-xs font-medium uppercase"
+										<span class=" bg-slate-200 px-2 py-0.5 text-xs font-medium uppercase"
 											>{project.tier}</span
 										>
 									{/if}
@@ -76,7 +76,7 @@
 						<div class="flex items-center gap-2">
 							<a
 								href={resolve(`/home/projects/${project.id}/edit`)}
-								class=" border border-slate-700 px-4 py-2 text-sm hover:bg-slate-100"
+								class="border border-slate-800 px-4 py-2 text-sm hover:bg-slate-800 hover:text-white"
 							>
 								Edit
 							</a>
@@ -93,7 +93,7 @@
 								<form method="post" action="?/submit">
 									<input type="hidden" name="projectId" value={project.id} />
 									<button
-										class=" bg-blue-700 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+										class=" bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
 										disabled={!project.readiness.canSubmit}
 									>
 										Submit {project.readiness.phase ?? 'to'} review
