@@ -91,6 +91,12 @@ async function getHackatimeMinutesForProject(
 	}
 }
 
+function assertCanEditJournal(projectStatus: string) {
+	if (!canEditProject(projectStatus as Parameters<typeof canEditProject>[0])) {
+		error(403, 'Cannot modify journals while the project is under review.');
+	}
+}
+
 export const actions: Actions = {
 	createJournal: async ({ locals, params, request }) => {
 		if (!locals.user) {
@@ -115,7 +121,7 @@ export const actions: Actions = {
 		}
 
 		const [existingProject] = await db
-			.select({ id: project.id })
+			.select({ id: project.id, status: project.status })
 			.from(project)
 			.where(and(eq(project.id, params.id), eq(project.userId, locals.user.id)))
 			.limit(1);
@@ -124,11 +130,73 @@ export const actions: Actions = {
 			error(404, 'Project not found');
 		}
 
+		assertCanEditJournal(existingProject.status);
+
 		await db.insert(journal).values({
 			durationInMinutes: duration,
 			text: textVal.trim(),
 			projectId: params.id
 		});
+
+		return { journalSuccess: true };
+	},
+
+	editJournal: async ({ locals, params, request }) => {
+		if (!locals.user) {
+			error(401, 'Unauthorized');
+		}
+
+		const formData = await request.formData();
+		const journalId = formData.get('journalId');
+		const durationStr = formData.get('durationInMinutes');
+		const textVal = formData.get('text');
+
+		if (!journalId || typeof journalId !== 'string') {
+			return fail(400, { journalError: 'Journal ID is required.' });
+		}
+
+		if (!durationStr || typeof durationStr !== 'string') {
+			return fail(400, { journalError: 'Duration is required.' });
+		}
+
+		if (!textVal || typeof textVal !== 'string' || !textVal.trim()) {
+			return fail(400, { journalError: 'Journal text is required.' });
+		}
+
+		const duration = parseInt(durationStr, 10);
+		if (isNaN(duration) || duration <= 0) {
+			return fail(400, { journalError: 'Duration must be a positive number.' });
+		}
+
+		const [existingProject] = await db
+			.select({ id: project.id, status: project.status })
+			.from(project)
+			.where(and(eq(project.id, params.id), eq(project.userId, locals.user.id)))
+			.limit(1);
+
+		if (!existingProject) {
+			error(404, 'Project not found');
+		}
+
+		assertCanEditJournal(existingProject.status);
+
+		const [existingJournal] = await db
+			.select({ id: journal.id })
+			.from(journal)
+			.where(and(eq(journal.id, journalId), eq(journal.projectId, params.id)))
+			.limit(1);
+
+		if (!existingJournal) {
+			return fail(404, { journalError: 'Journal entry not found.' });
+		}
+
+		await db
+			.update(journal)
+			.set({
+				durationInMinutes: duration,
+				text: textVal.trim()
+			})
+			.where(eq(journal.id, journalId));
 
 		return { journalSuccess: true };
 	},

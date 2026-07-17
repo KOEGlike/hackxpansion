@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { marked } from 'marked';
+	import DOMPurify from 'isomorphic-dompurify';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import type { ActionData, PageServerData } from './$types';
 
@@ -10,7 +11,16 @@
 	let textInput = $state('');
 	let journalTab: 'write' | 'preview' = $state('write');
 
-	let previewHtml = $derived(marked.parse(textInput || '', { async: false }) as string);
+	let editingJournalId = $state<string | null>(null);
+	let editDuration = $state('');
+	let editText = $state('');
+	let editTab: 'write' | 'preview' = $state('write');
+
+	function renderMarkdown(text: string): string {
+		return DOMPurify.sanitize(marked.parse(text, { async: false }) as string);
+	}
+
+	let previewHtml = $derived(renderMarkdown(textInput || ''));
 
 	function formatMinutes(minutes: number): string {
 		const h = Math.floor(minutes / 60);
@@ -42,16 +52,18 @@
 		return labels[event] ?? event;
 	}
 
-	function renderMarkdown(text: string): string {
-		return marked.parse(text, { async: false }) as string;
+	function cancelEdit() {
+		editingJournalId = null;
 	}
 
 	interface TimelineItem {
 		type: 'journal' | 'review';
+		id?: string;
 		date: Date;
 		label: string;
 		detail: string;
 		html: string | null;
+		durationMinutes?: number;
 		color: string;
 		borderColor: string;
 	}
@@ -81,10 +93,12 @@
 		for (const j of data.journals) {
 			items.push({
 				type: 'journal',
+				id: j.id,
 				date: new Date(j.createdAt),
 				label: `Journal entry — ${formatMinutes(j.durationInMinutes)}`,
 				detail: j.text,
 				html: renderMarkdown(j.text),
+				durationMinutes: j.durationInMinutes,
 				color: 'bg-slate-100',
 				borderColor: 'border-slate-700'
 			});
@@ -216,95 +230,113 @@
 		</div>
 	{/if}
 
-	<section class="content-box p-5">
-		<h2 class="mb-4 text-xl font-bold">Log journal entry</h2>
+	<section class="flex flex-col gap-4">
+		<h2 class="text-2xl font-bold">Timeline</h2>
 
 		{#if form?.journalSuccess}
-			<p class="mb-4 border border-green-700 bg-green-100 p-3 text-sm text-green-900">
-				Journal entry logged.
+			<p class="border border-green-700 bg-green-100 p-3 text-sm text-green-900">
+				Journal entry saved.
 			</p>
 		{/if}
 		{#if form?.journalError}
-			<p class="mb-4 border border-red-700 bg-red-100 p-3 text-sm text-red-900">
+			<p class="border border-red-700 bg-red-100 p-3 text-sm text-red-900">
 				{form.journalError}
 			</p>
 		{/if}
 
-		<form method="post" action="?/createJournal" class="flex flex-col gap-4">
-			<div class="flex flex-col gap-4 sm:flex-row sm:items-end">
-				<div class="flex-1">
-					<label for="duration" class="mb-1 block text-sm text-slate-600">Duration (minutes)</label>
-					<input
-						id="duration"
-						name="durationInMinutes"
-						type="number"
-						min="1"
-						required
-						bind:value={durationInput}
-						class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-					/>
-				</div>
-				<button
-					type="submit"
-					class="bg-slate-800 px-4 py-2 text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-					disabled={!durationInput || parseInt(durationInput) <= 0 || !textInput.trim()}
-				>
-					Log entry
-				</button>
-			</div>
-			<div>
-				<div class="mb-1 flex items-center gap-2">
-					<label for="text" class="text-sm text-slate-600">What did you work on?</label>
-					<button
-						type="button"
-						class="ml-auto border px-2 py-0.5 text-xs {journalTab === 'write'
-							? 'border-slate-700 bg-white/70'
-							: 'border-transparent bg-transparent text-slate-500'}"
-						onclick={() => (journalTab = 'write')}
+		<div class="flex flex-col gap-4">
+			{#if !isWaiting}
+				<div class="relative flex items-start gap-4">
+					{#if timeline.length > 0}
+						<div
+							class="absolute left-5 top-10 w-0.5 bg-slate-400"
+							style="height: calc(100% + 1rem)"
+						></div>
+					{/if}
+					<div
+						class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-slate-500 bg-white/50 text-xs font-bold text-slate-500"
 					>
-						Write
-					</button>
-					<button
-						type="button"
-						class="border px-2 py-0.5 text-xs {journalTab === 'preview'
-							? 'border-slate-700 bg-white/70'
-							: 'border-transparent bg-transparent text-slate-500'}"
-						onclick={() => (journalTab = 'preview')}
-					>
-						Preview
-					</button>
-				</div>
-				{#if journalTab === 'write'}
-					<textarea
-						id="text"
-						name="text"
-						rows="2"
-						required
-						bind:value={textInput}
-						class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-					></textarea>
-				{:else}
-					<div class="min-h-[3rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm">
-						{#if textInput.trim()}
-							<div class="prose prose-sm prose-slate max-w-none">{@html previewHtml}</div>
-						{:else}
-							<span class="text-slate-500">Nothing to preview.</span>
-						{/if}
+						J
 					</div>
-				{/if}
-			</div>
-		</form>
-	</section>
+					<div class="flex-1">
+						<p class="mb-2 text-sm font-semibold text-slate-600">New journal entry</p>
+						<form method="post" action="?/createJournal" class="flex flex-col gap-3">
+							<div>
+								<label for="new-duration" class="mb-1 block text-xs text-slate-500"
+									>Duration (minutes)</label
+								>
+								<input
+									id="new-duration"
+									name="durationInMinutes"
+									type="number"
+									min="1"
+									required
+									bind:value={durationInput}
+									class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+								/>
+							</div>
+							<div>
+								<div class="mb-1 flex items-center gap-2">
+									<label for="new-text" class="text-xs text-slate-500">What did you work on?</label>
+									<div class="ml-auto flex gap-1">
+										<button
+											type="button"
+											class="border px-2 py-0.5 text-xs {journalTab === 'write'
+												? 'border-slate-700 bg-white/70'
+												: 'border-transparent bg-transparent text-slate-500'}"
+											onclick={() => (journalTab = 'write')}
+										>
+											Write
+										</button>
+										<button
+											type="button"
+											class="border px-2 py-0.5 text-xs {journalTab === 'preview'
+												? 'border-slate-700 bg-white/70'
+												: 'border-transparent bg-transparent text-slate-500'}"
+											onclick={() => (journalTab = 'preview')}
+										>
+											Preview
+										</button>
+									</div>
+								</div>
+								{#if journalTab === 'write'}
+									<textarea
+										id="new-text"
+										name="text"
+										rows="3"
+										required
+										bind:value={textInput}
+										class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+									></textarea>
+								{:else}
+									<div class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm">
+										{#if textInput.trim()}
+											<div class="prose prose-sm prose-slate max-w-none">{@html previewHtml}</div>
+										{:else}
+											<span class="text-slate-500">Nothing to preview.</span>
+										{/if}
+									</div>
+								{/if}
+							</div>
+							<div class="flex justify-end">
+								<button
+									type="submit"
+									class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+									disabled={!durationInput || parseInt(durationInput) <= 0 || !textInput.trim()}
+								>
+									Log entry
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			{/if}
 
-	<section class="flex flex-col gap-4">
-		<h2 class="text-2xl font-bold">Timeline</h2>
-
-		{#if timeline.length === 0}
-			<p class="border border-slate-500 bg-white/40 p-4 text-sm">
-				No journal entries or reviews yet.
-			</p>
-		{:else}
-			<div class="flex flex-col gap-4">
+			{#if timeline.length === 0}
+				<p class="border border-slate-500 bg-white/40 p-4 text-sm">
+					No journal entries or reviews yet.
+				</p>
+			{:else}
 				{#each timeline as item, i (item.date.toISOString() + item.label)}
 					<div class="relative flex items-start gap-4">
 						{#if i < timeline.length - 1}
@@ -327,15 +359,114 @@
 								<p class="font-semibold">{item.label}</p>
 								<p class="text-xs text-slate-500">{formatDate(item.date)}</p>
 							</div>
-							{#if item.html}
-								<div class="prose prose-sm prose-slate mt-1 max-w-none">{@html item.html}</div>
+							{#if item.type === 'journal' && item.id && editingJournalId === item.id}
+								<form method="post" action="?/editJournal" class="mt-2 flex flex-col gap-3">
+									<input type="hidden" name="journalId" value={item.id} />
+									<div>
+										<label for="edit-duration" class="mb-1 block text-xs text-slate-500">
+											Duration (minutes)
+										</label>
+										<input
+											id="edit-duration"
+											name="durationInMinutes"
+											type="number"
+											min="1"
+											required
+											bind:value={editDuration}
+											class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+										/>
+									</div>
+									<div>
+										<div class="mb-1 flex items-center gap-2">
+											<label for="edit-text" class="text-xs text-slate-500"
+												>What did you work on?</label
+											>
+											<div class="ml-auto flex gap-1">
+												<button
+													type="button"
+													class="border px-2 py-0.5 text-xs {editTab === 'write'
+														? 'border-slate-700 bg-white/70'
+														: 'border-transparent bg-transparent text-slate-500'}"
+													onclick={() => (editTab = 'write')}
+												>
+													Write
+												</button>
+												<button
+													type="button"
+													class="border px-2 py-0.5 text-xs {editTab === 'preview'
+														? 'border-slate-700 bg-white/70'
+														: 'border-transparent bg-transparent text-slate-500'}"
+													onclick={() => (editTab = 'preview')}
+												>
+													Preview
+												</button>
+											</div>
+										</div>
+										{#if editTab === 'write'}
+											<textarea
+												id="edit-text"
+												name="text"
+												rows="3"
+												required
+												bind:value={editText}
+												class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+											></textarea>
+										{:else}
+											<div
+												class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm"
+											>
+												{#if editText.trim()}
+													<div class="prose prose-sm prose-slate max-w-none">
+														{@html renderMarkdown(editText)}
+													</div>
+												{:else}
+													<span class="text-slate-500">Nothing to preview.</span>
+												{/if}
+											</div>
+										{/if}
+									</div>
+									<div class="flex justify-end gap-2">
+										<button
+											type="button"
+											class="border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-200"
+											onclick={cancelEdit}
+										>
+											Cancel
+										</button>
+										<button
+											type="submit"
+											class="bg-slate-800 px-3 py-1.5 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+											disabled={!editDuration || parseInt(editDuration) <= 0 || !editText.trim()}
+										>
+											Save
+										</button>
+									</div>
+								</form>
 							{:else}
-								<p class="mt-1 text-sm text-slate-600">{item.detail}</p>
+								{#if item.html}
+									<div class="prose prose-sm prose-slate mt-1 max-w-none">{@html item.html}</div>
+								{:else}
+									<p class="mt-1 text-sm text-slate-600">{item.detail}</p>
+								{/if}
+								{#if item.type === 'journal' && item.id && !isWaiting}
+									<button
+										type="button"
+										class="mt-1 text-xs text-slate-500 hover:underline"
+										onclick={() => {
+											editingJournalId = item.id ?? null;
+											editDuration = String(item.durationMinutes ?? '');
+											editText = item.detail;
+											editTab = 'write';
+										}}
+									>
+										Edit
+									</button>
+								{/if}
 							{/if}
 						</div>
 					</div>
 				{/each}
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</section>
 </main>

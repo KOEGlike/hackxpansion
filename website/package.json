@@ -63,6 +63,7 @@
 		"sharp@0.34.5": true
 	},
 	"dependencies": {
+		"isomorphic-dompurify": "^3.19.0",
 		"marked": "^18.0.6"
 	}
 }
