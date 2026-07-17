@@ -263,10 +263,15 @@
 				No journal entries or reviews yet.
 			</p>
 		{:else}
-			<div class="relative flex flex-col gap-4">
-				<div class="absolute bottom-0 left-5 top-0 w-0.5 bg-slate-400"></div>
-				{#each timeline as item (item.date.toISOString() + item.label)}
+			<div class="flex flex-col gap-4">
+				{#each timeline as item, i (item.date.toISOString() + item.label)}
 					<div class="relative flex items-start gap-4">
+						{#if i < timeline.length - 1}
+							<div
+								class="absolute left-5 top-10 w-0.5 bg-slate-400"
+								style="height: calc(100% + 1rem)"
+							></div>
+						{/if}
 						<div
 							class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold {item.color} {item.borderColor}"
 						>
