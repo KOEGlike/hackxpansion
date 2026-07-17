@@ -71,6 +71,7 @@ export const journal = pgTable('journal', {
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
 	durationInMinutes: integer('duration_in_minutes').notNull(),
+	text: text('text').notNull(),
 	projectId: uuid('project_id')
 		.notNull()
 		.references(() => project.id, { onDelete: 'cascade' })

@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { project } from '$lib/server/db/schema';
+import { project, journal, review } from '$lib/server/db/schema';
 import { AriInboundError } from '$lib/server/ari/inbound';
 import {
 	canSubmit,
@@ -9,7 +9,7 @@ import {
 	submitProjectToAri,
 	withdrawProjectFromAri
 } from '$lib/server/projects/submit';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
@@ -31,14 +31,25 @@ export const load: PageServerLoad = async ({ locals }) => {
 			tier: project.tier,
 			hackatimeProjects: project.hackatime_projects,
 			md1: project.md1,
-			md2: project.md2
+			md2: project.md2,
+			totalJournalMinutes: sql<number>`COALESCE(SUM(${journal.durationInMinutes}), 0)`,
+			journalCount: sql<number>`COUNT(${journal.id})`,
+			totalApprovedMinutes: sql<number>`COALESCE(SUM(${review.approvedMinutes}) FILTER (WHERE ${review.event} = 'approved'), 0)`,
+			reviewCount: sql<number>`COUNT(${review.id})`
 		})
 		.from(project)
-		.where(eq(project.userId, locals.user.id));
+		.leftJoin(journal, eq(journal.projectId, project.id))
+		.leftJoin(review, eq(review.projectId, project.id))
+		.where(eq(project.userId, locals.user.id))
+		.groupBy(project.id);
 
 	const projectsWithReadiness = await Promise.all(
 		projects.map(async (project) => ({
 			...project,
+			totalJournalMinutes: Number(project.totalJournalMinutes),
+			journalCount: Number(project.journalCount),
+			totalApprovedMinutes: Number(project.totalApprovedMinutes),
+			reviewCount: Number(project.reviewCount),
 			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
 		}))
 	);

@@ -110,7 +110,8 @@ export async function submitProjectToAri({
 	const projectJournals = await db
 		.select({
 			createdAt: journal.createdAt,
-			durationInMinutes: journal.durationInMinutes
+			durationInMinutes: journal.durationInMinutes,
+			text: journal.text
 		})
 		.from(journal)
 		.where(eq(journal.projectId, projectId));
@@ -281,7 +282,10 @@ function getProjectSubmissionReadiness(
 	}
 
 	if (!projectForSubmission.tier) {
-		changes.push({ field: 'tier', message: 'Select a tier (PRO, Advanced, or Basic) before submitting.' });
+		changes.push({
+			field: 'tier',
+			message: 'Select a tier (PRO, Advanced, or Basic) before submitting.'
+		});
 	}
 
 	return {

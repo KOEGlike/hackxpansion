@@ -5,6 +5,14 @@
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
+	function formatMinutes(minutes: number): string {
+		const h = Math.floor(minutes / 60);
+		const m = minutes % 60;
+		if (h === 0) return `${m}m`;
+		if (m === 0) return `${h}h`;
+		return `${h}h ${m}m`;
+	}
+
 	function formatResistor(ohms: number | null): string {
 		if (ohms == null) return '—';
 		if (ohms >= 1000) {
@@ -58,7 +66,11 @@
 							{/if}
 
 							<div>
-								<h3 class="text-xl font-bold">{project.title}</h3>
+								<h3 class="text-xl font-bold">
+									<a href={resolve(`/home/projects/${project.id}`)} class="hover:underline"
+										>{project.title}</a
+									>
+								</h3>
 								<div class="mt-1 flex items-center gap-2">
 									<ProjectStatusBadge status={project.status} />
 									{#if project.tier}
@@ -119,6 +131,13 @@
 								{formatResistor(project.md2)}
 							</p>
 						{/if}
+					</div>
+
+					<div class="mt-4 flex gap-4 text-sm text-slate-600">
+						<span>{project.journalCount} journal{project.journalCount === 1 ? '' : 's'}</span>
+						<span>{formatMinutes(project.totalJournalMinutes)} journaled</span>
+						<span>{project.reviewCount} review{project.reviewCount === 1 ? '' : 's'}</span>
+						<span>{formatMinutes(project.totalApprovedMinutes)} approved</span>
 					</div>
 
 					{#if !project.readiness.canSubmit}

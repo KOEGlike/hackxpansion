@@ -46,6 +46,7 @@ export type MakerForAriIngest = {
 export type JournalForAriIngest = {
 	createdAt: Date;
 	durationInMinutes: number;
+	text: string;
 };
 
 export type BuildAriIngestPayloadOptions = {
@@ -98,7 +99,7 @@ export function buildAriIngestPayload({
 		.map((entry) => ({
 			at: entry.createdAt.toISOString(),
 			minutes: entry.durationInMinutes,
-			text: `${formatPhase(phase)} journal entry`
+			text: entry.text
 		}));
 
 	if (hackatimeProjects.length === 0) {
@@ -144,6 +145,7 @@ export async function sendAriIngest(
 	const rawBody = JSON.stringify(payload);
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
 	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}`;
+	console.log('URL: ', url);
 	const response = await fetch(url, {
 		method: 'POST',
 		headers: {
