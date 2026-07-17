@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import DropdownSelect from '$lib/components/dropdown_select.svelte';
 
 	type ProjectFormData = {
 		values?: Record<string, unknown>;
@@ -60,20 +61,8 @@
 		hackatimeProjects.filter((project) => matchesHackatimeProjectSearch(project.name))
 	);
 
-	let selectedType = $state<'card' | 'app'>((formValue('type') as 'card' | 'app') || 'card');
-	let isDropdownOpen = $state(false);
+	let selectedType = $state<string | null>((formValue('type') as string) || 'card');
 	let selectedTier = $state<string | null>((formValue('tier') as string) || null);
-	let isTierDropdownOpen = $state(false);
-
-	function selectType(value: 'card' | 'app') {
-		selectedType = value;
-		isDropdownOpen = false;
-	}
-
-	function selectTier(value: string | null) {
-		selectedTier = value;
-		isTierDropdownOpen = false;
-	}
 
 	function formValue(key: ProjectTextField) {
 		if (form?.values) {
@@ -139,117 +128,31 @@
 		<input name="title" required value={formValue('title')} {disabled} />
 	</label>
 
-	<div class="flex flex-col gap-0.5 relative">
-		<span>Type *</span>
-		<input type="hidden" name="type" value={selectedType} required />
+	<DropdownSelect
+		name="type"
+		label="Type"
+		options={[
+			{ value: 'card', label: 'Card', class: 'capitalize' },
+			{ value: 'app', label: 'App', class: 'capitalize' }
+		]}
+		bind:value={selectedType}
+		required
+		{disabled}
+	/>
 
-		<button
-			type="button"
-			class="flex w-full items-center justify-between border border-slate-300 bg-white/70 px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
-			onclick={() => (isDropdownOpen = !isDropdownOpen)}
-			{disabled}
-		>
-			<span class="capitalize">{selectedType}</span>
-		</button>
-
-		{#if isDropdownOpen}
-			<button
-				type="button"
-				tabindex="-1"
-				aria-label="Close dropdown"
-				class="fixed inset-0 z-10 h-full w-full cursor-default"
-				onclick={() => (isDropdownOpen = false)}
-			></button>
-
-			<ul
-				class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-300 bg-white shadow-lg"
-			>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
-						onclick={() => selectType('card')}
-					>
-						Card
-					</button>
-				</li>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
-						onclick={() => selectType('app')}
-					>
-						App
-					</button>
-				</li>
-			</ul>
-		{/if}
-	</div>
-
-	<div class="flex flex-col gap-0.5 relative">
-		<span>Tier</span>
-		<input type="hidden" name="tier" value={selectedTier ?? ''} />
-
-		<button
-			type="button"
-			class="flex w-full items-center justify-between border border-slate-300 bg-white/70 px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
-			onclick={() => (isTierDropdownOpen = !isTierDropdownOpen)}
-			{disabled}
-		>
-			<span class="capitalize">{selectedTier ?? 'Select a tier'}</span>
-		</button>
-
-		{#if isTierDropdownOpen}
-			<button
-				type="button"
-				tabindex="-1"
-				aria-label="Close dropdown"
-				class="fixed inset-0 z-10 h-full w-full cursor-default"
-				onclick={() => (isTierDropdownOpen = false)}
-			></button>
-
-			<ul
-				class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-300 bg-white shadow-lg"
-			>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
-						onclick={() => selectTier(null)}
-					>
-						None
-					</button>
-				</li>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 uppercase transition-colors"
-						onclick={() => selectTier('pro')}
-					>
-						PRO
-					</button>
-				</li>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
-						onclick={() => selectTier('advanced')}
-					>
-						Advanced
-					</button>
-				</li>
-				<li>
-					<button
-						type="button"
-						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
-						onclick={() => selectTier('basic')}
-					>
-						Basic
-					</button>
-				</li>
-			</ul>
-		{/if}
-	</div>
+	<DropdownSelect
+		name="tier"
+		label="Tier"
+		options={[
+			{ value: null, label: 'None', class: 'capitalize' },
+			{ value: 'pro', label: 'PRO', class: 'uppercase' },
+			{ value: 'advanced', label: 'Advanced', class: 'capitalize' },
+			{ value: 'basic', label: 'Basic', class: 'capitalize' }
+		]}
+		bind:value={selectedTier}
+		placeholder="Select a tier"
+		{disabled}
+	/>
 
 	<div class="md:col-span-2">
 		{#if hackatimeError}
