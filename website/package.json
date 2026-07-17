@@ -61,5 +61,8 @@
 		"better-sqlite3@12.11.1": true,
 		"fsevents@2.3.3": true,
 		"sharp@0.34.5": true
+	},
+	"dependencies": {
+		"marked": "^18.0.6"
 	}
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { marked } from 'marked';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import type { ActionData, PageServerData } from './$types';
 
@@ -7,6 +8,9 @@
 
 	let durationInput = $state('');
 	let textInput = $state('');
+	let journalTab: 'write' | 'preview' = $state('write');
+
+	let previewHtml = $derived(marked.parse(textInput || '', { async: false }) as string);
 
 	function formatMinutes(minutes: number): string {
 		const h = Math.floor(minutes / 60);
@@ -38,11 +42,16 @@
 		return labels[event] ?? event;
 	}
 
+	function renderMarkdown(text: string): string {
+		return marked.parse(text, { async: false }) as string;
+	}
+
 	interface TimelineItem {
 		type: 'journal' | 'review';
 		date: Date;
 		label: string;
 		detail: string;
+		html: string | null;
 		color: string;
 		borderColor: string;
 	}
@@ -73,8 +82,9 @@
 			items.push({
 				type: 'journal',
 				date: new Date(j.createdAt),
-				label: 'Journal entry',
-				detail: `${formatMinutes(j.durationInMinutes)} — ${j.text}`,
+				label: `Journal entry — ${formatMinutes(j.durationInMinutes)}`,
+				detail: j.text,
+				html: renderMarkdown(j.text),
 				color: 'bg-slate-100',
 				borderColor: 'border-slate-700'
 			});
@@ -90,6 +100,7 @@
 				date: new Date(r.receivedAt),
 				label: `Review: ${reviewEventLabel(r.event)}`,
 				detail,
+				html: null,
 				color: c.bg,
 				borderColor: c.border
 			});
@@ -242,15 +253,45 @@
 				</button>
 			</div>
 			<div>
-				<label for="text" class="mb-1 block text-sm text-slate-600">What did you work on?</label>
-				<textarea
-					id="text"
-					name="text"
-					rows="2"
-					required
-					bind:value={textInput}
-					class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-				></textarea>
+				<div class="mb-1 flex items-center gap-2">
+					<label for="text" class="text-sm text-slate-600">What did you work on?</label>
+					<button
+						type="button"
+						class="ml-auto border px-2 py-0.5 text-xs {journalTab === 'write'
+							? 'border-slate-700 bg-white/70'
+							: 'border-transparent bg-transparent text-slate-500'}"
+						onclick={() => (journalTab = 'write')}
+					>
+						Write
+					</button>
+					<button
+						type="button"
+						class="border px-2 py-0.5 text-xs {journalTab === 'preview'
+							? 'border-slate-700 bg-white/70'
+							: 'border-transparent bg-transparent text-slate-500'}"
+						onclick={() => (journalTab = 'preview')}
+					>
+						Preview
+					</button>
+				</div>
+				{#if journalTab === 'write'}
+					<textarea
+						id="text"
+						name="text"
+						rows="2"
+						required
+						bind:value={textInput}
+						class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+					></textarea>
+				{:else}
+					<div class="min-h-[3rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm">
+						{#if textInput.trim()}
+							<div class="prose prose-sm prose-slate max-w-none">{@html previewHtml}</div>
+						{:else}
+							<span class="text-slate-500">Nothing to preview.</span>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		</form>
 	</section>
@@ -286,7 +327,11 @@
 								<p class="font-semibold">{item.label}</p>
 								<p class="text-xs text-slate-500">{formatDate(item.date)}</p>
 							</div>
-							<p class="text-sm text-slate-600">{item.detail}</p>
+							{#if item.html}
+								<div class="prose prose-sm prose-slate mt-1 max-w-none">{@html item.html}</div>
+							{:else}
+								<p class="mt-1 text-sm text-slate-600">{item.detail}</p>
+							{/if}
 						</div>
 					</div>
 				{/each}
