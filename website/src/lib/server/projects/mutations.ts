@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { project } from '$lib/server/db/schema';
-import { canEditProject, type ProjectType } from '$lib/server/projects/lifecycle';
+import { canEditProject, type ProjectTier, type ProjectType } from '$lib/server/projects/lifecycle';
 import { findNextAvailableResistorPair, type ModuleResistor } from '$lib/server/projects/resistors';
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
 
@@ -9,6 +9,7 @@ const MODULE_RESISTOR_ADVISORY_LOCK_KEY = 0x6d6470; // 'mdp'
 export type ProjectInput = {
 	title: string;
 	type?: ProjectType;
+	tier?: ProjectTier;
 	description?: string | null;
 	repoUrl?: string | null;
 	demoUrl?: string | null;
@@ -180,6 +181,7 @@ function normalizeProjectInput(input: ProjectInput) {
 	return {
 		title: requiredString(input.title, 'Project title is required'),
 		type: normalizeProjectType(input.type),
+		tier: input.tier ?? null,
 		description: optionalString(input.description),
 		repoUrl: validateUrl(input.repoUrl, 'Repository URL'),
 		demoUrl: validateUrl(input.demoUrl, 'Demo URL'),
@@ -197,6 +199,10 @@ function normalizeProjectPatch(input: ProjectPatch) {
 
 	if ('type' in input) {
 		values.type = normalizeProjectType(input.type);
+	}
+
+	if ('tier' in input) {
+		values.tier = input.tier ?? null;
 	}
 
 	if ('description' in input) {

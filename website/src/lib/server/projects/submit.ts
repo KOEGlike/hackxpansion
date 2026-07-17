@@ -13,6 +13,7 @@ import {
 	trackForProjectType,
 	type ProjectReviewPhase,
 	type ProjectStatus,
+	type ProjectTier,
 	type ProjectType
 } from '$lib/server/projects/lifecycle';
 import { formatResistor } from '$lib/server/projects/resistors';
@@ -31,7 +32,7 @@ export type SubmitProjectToAriResult = {
 };
 
 export type ProjectSubmissionChangeField =
-	'status' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'hackatimeProjects' | 'demoUrl';
+	'status' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'hackatimeProjects' | 'demoUrl' | 'tier';
 
 export type ProjectSubmissionChange = {
 	field: ProjectSubmissionChangeField;
@@ -54,6 +55,7 @@ type ProjectForSubmission = {
 	thumbnailUrl: string | null;
 	status: ProjectStatus;
 	type: ProjectType;
+	tier: ProjectTier;
 	hackatime_projects: string[] | null;
 	md1: number | null;
 	md2: number | null;
@@ -118,7 +120,8 @@ export async function submitProjectToAri({
 			projectForSubmission.type,
 			projectForSubmission.md1,
 			projectForSubmission.md2
-		)
+		),
+		...buildTierMeta(projectForSubmission.tier)
 	};
 
 	const payload = buildAriIngestPayload({
@@ -277,6 +280,10 @@ function getProjectSubmissionReadiness(
 		});
 	}
 
+	if (!projectForSubmission.tier) {
+		changes.push({ field: 'tier', message: 'Select a tier (PRO, Advanced, or Basic) before submitting.' });
+	}
+
 	return {
 		canSubmit: changes.length === 0,
 		phase: nextSubmission.phase,
@@ -299,6 +306,7 @@ async function getProjectForSubmission(
 			thumbnailUrl: project.thumbnailUrl,
 			status: project.status,
 			type: project.type,
+			tier: project.tier,
 			hackatime_projects: project.hackatime_projects,
 			md1: project.md1,
 			md2: project.md2,
@@ -345,6 +353,13 @@ function getSubmissionReadinessErrorStatus(readiness: CanSubmitProjectResult) {
 
 function formatSubmissionChanges(changes: ProjectSubmissionChange[]) {
 	return changes.map((change) => change.message).join(' ');
+}
+
+function buildTierMeta(tier: ProjectTier): Record<string, string> {
+	if (!tier) return {};
+
+	const label = tier === 'pro' ? 'PRO' : tier === 'advanced' ? 'Advanced' : 'Basic';
+	return { 'Project Tier': label };
 }
 
 function buildResistorMeta(

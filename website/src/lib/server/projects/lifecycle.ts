@@ -3,6 +3,7 @@ import type { project } from '$lib/server/db/schema';
 
 export type ProjectStatus = typeof project.$inferSelect.status;
 export type ProjectType = typeof project.$inferSelect.type;
+export type ProjectTier = typeof project.$inferSelect.tier;
 export type ProjectReviewPhase = 'design' | 'build';
 
 export const trackForProjectType = (type: ProjectType): 'hardware' | 'software' =>

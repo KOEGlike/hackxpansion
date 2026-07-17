@@ -61,6 +61,11 @@
 								<h3 class="text-xl font-bold">{project.title}</h3>
 								<div class="mt-1 flex items-center gap-2">
 									<ProjectStatusBadge status={project.status} />
+									{#if project.tier}
+										<span class="rounded bg-slate-200 px-2 py-0.5 text-xs font-medium uppercase"
+											>{project.tier}</span
+										>
+									{/if}
 								</div>
 								{#if project.description}
 									<p class="mt-2 max-w-2xl">{project.description}</p>

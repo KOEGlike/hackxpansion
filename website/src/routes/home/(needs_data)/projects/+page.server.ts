@@ -28,6 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			thumbnailUrl: project.thumbnailUrl,
 			status: project.status,
 			type: project.type,
+			tier: project.tier,
 			hackatimeProjects: project.hackatime_projects,
 			md1: project.md1,
 			md2: project.md2

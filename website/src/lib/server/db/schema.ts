@@ -32,6 +32,8 @@ export const projectStatus = pgEnum('project_status', [
 
 export const projectType = pgEnum('project_type', ['card', 'app']);
 
+export const projectTier = pgEnum('project_tier', ['pro', 'advanced', 'basic']);
+
 export const project = pgTable(
 	'project',
 	{
@@ -45,6 +47,7 @@ export const project = pgTable(
 		thumbnailUrl: text('thumbnail_url'),
 		status: projectStatus('status').notNull().default('not_submitted'),
 		type: projectType('type').notNull().default('card'),
+		tier: projectTier('tier'),
 		md1: integer('md1').notNull(),
 		md2: integer('md2').notNull(),
 		userId: text('user_id')

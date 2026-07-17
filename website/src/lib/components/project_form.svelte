@@ -10,9 +10,12 @@
 		totalSeconds: number;
 	};
 
+	type Tier = 'pro' | 'advanced' | 'basic';
+
 	type ProjectFormValues = {
 		title: string;
 		type?: 'card' | 'app' | null;
+		tier?: Tier | null;
 		description?: string | null;
 		repoUrl?: string | null;
 		demoUrl?: string | null;
@@ -20,7 +23,14 @@
 		hackatimeProjects?: string[] | null;
 	};
 
-	type ProjectTextField = 'title' | 'type' | 'description' | 'repoUrl' | 'demoUrl' | 'thumbnailUrl';
+	type ProjectTextField =
+		| 'title'
+		| 'type'
+		| 'tier'
+		| 'description'
+		| 'repoUrl'
+		| 'demoUrl'
+		| 'thumbnailUrl';
 
 	let {
 		action,
@@ -52,10 +62,17 @@
 
 	let selectedType = $state<'card' | 'app'>((formValue('type') as 'card' | 'app') || 'card');
 	let isDropdownOpen = $state(false);
+	let selectedTier = $state<string | null>((formValue('tier') as string) || null);
+	let isTierDropdownOpen = $state(false);
 
 	function selectType(value: 'card' | 'app') {
 		selectedType = value;
 		isDropdownOpen = false;
+	}
+
+	function selectTier(value: string | null) {
+		selectedTier = value;
+		isTierDropdownOpen = false;
 	}
 
 	function formValue(key: ProjectTextField) {
@@ -102,6 +119,8 @@
 				return initialValues.title;
 			case 'type':
 				return initialValues.type ?? 'card';
+			case 'tier':
+				return initialValues.tier ?? '';
 			case 'description':
 				return initialValues.description ?? '';
 			case 'repoUrl':
@@ -161,6 +180,71 @@
 						onclick={() => selectType('app')}
 					>
 						App
+					</button>
+				</li>
+			</ul>
+		{/if}
+	</div>
+
+	<div class="flex flex-col gap-0.5 relative">
+		<span>Tier</span>
+		<input type="hidden" name="tier" value={selectedTier ?? ''} />
+
+		<button
+			type="button"
+			class="flex w-full items-center justify-between border border-slate-300 bg-white/70 px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
+			onclick={() => (isTierDropdownOpen = !isTierDropdownOpen)}
+			{disabled}
+		>
+			<span class="capitalize">{selectedTier ?? 'Select a tier'}</span>
+		</button>
+
+		{#if isTierDropdownOpen}
+			<button
+				type="button"
+				tabindex="-1"
+				aria-label="Close dropdown"
+				class="fixed inset-0 z-10 h-full w-full cursor-default"
+				onclick={() => (isTierDropdownOpen = false)}
+			></button>
+
+			<ul
+				class="absolute top-[calc(100%+4px)] left-0 z-20 w-full border border-slate-300 bg-white shadow-lg"
+			>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
+						onclick={() => selectTier(null)}
+					>
+						None
+					</button>
+				</li>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 uppercase transition-colors"
+						onclick={() => selectTier('pro')}
+					>
+						PRO
+					</button>
+				</li>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
+						onclick={() => selectTier('advanced')}
+					>
+						Advanced
+					</button>
+				</li>
+				<li>
+					<button
+						type="button"
+						class="w-full px-3 py-2 text-left text-sm hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-200 capitalize transition-colors"
+						onclick={() => selectTier('basic')}
+					>
+						Basic
 					</button>
 				</li>
 			</ul>
