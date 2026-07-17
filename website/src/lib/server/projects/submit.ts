@@ -374,8 +374,6 @@ function buildResistorMeta(
 	if (type !== 'card' || md1 == null || md2 == null) return {};
 
 	return {
-		'Module ID MD1': `${formatResistor(md1)}Ω`,
-		'Module ID MD2': `${formatResistor(md2)}Ω`,
 		'Module ID pair': `${formatResistor(md1)}Ω / ${formatResistor(md2)}Ω`
 	};
 }
