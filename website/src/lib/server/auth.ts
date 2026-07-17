@@ -8,6 +8,8 @@ import { genericOAuth } from 'better-auth/plugins';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
+	trustHost: true,
+	trustedOrigins: [env.ORIGIN, env.ORIGIN.replace('https://', 'http://')],
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'pg' }),
 	user: {
