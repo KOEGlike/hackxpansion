@@ -19,8 +19,13 @@
 <div
 	class={`landing-step-heading ${centered ? 'items-center text-center' : ''} ${extraClass}`.trim()}
 >
-	<h1 class="landing-step-title">{title}</h1>
+	<h2 class="landing-step-title">{title}</h2>
 	{#if descriptionVisible}
-		<h2 class="w-85 landing-step-description" transition:fade={{ duration: 100 }}>{description}</h2>
+		<p
+			class="w-[calc(100%-2rem)] max-w-100 landing-step-description"
+			transition:fade={{ duration: 100 }}
+		>
+			{description}
+		</p>
 	{/if}
 </div>

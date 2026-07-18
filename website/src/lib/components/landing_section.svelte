@@ -4,10 +4,14 @@
 </script>
 
 <div class="flex flex-col items-center justify-center gap-0 pt-[32vh]">
-	<h1 class="text-[3.4rem] font-bold text-slate-700 sm:text-7xl">{landingContent.hero.title}</h1>
-	<h2 class="w-85 text-center text-xl font-normal text-slate-500 sm:w-100 sm:text-2xl">
+	<h1 class="max-w-full text-center text-[clamp(2.5rem,14vw,4.5rem)] font-bold text-slate-700">
+		{landingContent.hero.title}
+	</h1>
+	<p
+		class="w-[calc(100%-2rem)] max-w-100 text-center text-xl font-normal text-slate-600 sm:text-2xl"
+	>
 		{landingContent.hero.subtitle}
-	</h2>
+	</p>
 	<a
 		href="https://meko.fillout.com/hackxpansion"
 		target="_blank"

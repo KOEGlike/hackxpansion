@@ -5,7 +5,7 @@ import { resolve } from '$app/paths';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
-		redirect(308, '/home');
+		redirect(302, resolve('/home'));
 	}
 
 	return {};

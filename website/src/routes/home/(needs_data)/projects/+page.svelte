@@ -1,25 +1,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
+	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
+	import { formatResistor as formatResistorValue } from '$lib/projects/resistors';
 	import type { ActionData, PageServerData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
 
-	function formatMinutes(minutes: number): string {
-		const h = Math.floor(minutes / 60);
-		const m = minutes % 60;
-		if (h === 0) return `${m}m`;
-		if (m === 0) return `${h}h`;
-		return `${h}h ${m}m`;
-	}
-
 	function formatResistor(ohms: number | null): string {
 		if (ohms == null) return '—';
-		if (ohms >= 1000) {
-			const kilo = ohms / 1000;
-			return `${kilo}k`;
-		}
-		return `${ohms}`;
+		return formatResistorValue(ohms);
 	}
 </script>
 
@@ -44,6 +34,11 @@
 	{#if form?.message}
 		<p class=" border border-slate-700 bg-white/50 p-3 text-sm">
 			{form.message}
+		</p>
+	{/if}
+	{#if data.hackatimeError}
+		<p class="border border-amber-700 bg-amber-100 p-3 text-sm text-amber-950">
+			{data.hackatimeError} Project totals currently include journals only.
 		</p>
 	{/if}
 
@@ -92,7 +87,7 @@
 							>
 								Edit
 							</a>
-							{#if project.status === 'waiting_design' || project.status === 'waiting_build'}
+							{#if isWaitingForReview(project.status)}
 								<form method="post" action="?/withdraw">
 									<input type="hidden" name="projectId" value={project.id} />
 									<button
@@ -149,7 +144,7 @@
 						<div class="mt-4 bg-amber-100 p-3 text-sm text-amber-950">
 							<p class="font-bold">Before submitting:</p>
 							<ul class="list-disc pl-5">
-								{#each project.readiness.changes as change (change.field)}
+								{#each project.readiness.changes as change (`${change.field}:${change.message}`)}
 									<li>{change.message}</li>
 								{/each}
 							</ul>

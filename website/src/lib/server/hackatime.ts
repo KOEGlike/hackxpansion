@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { fetchWithTimeout } from '$lib/server/http';
 
 const HACKATIME_API_BASE = 'https://hackatime.hackclub.com/api/v1';
 
@@ -30,7 +31,9 @@ export async function getUserHackatimeProjectsWithStats(
 	if (env.HACKATIME_END_DATE) params.set('end_date', env.HACKATIME_END_DATE);
 
 	const query = params.toString() ? `?${params.toString()}` : '';
-	const response = await fetch(`${HACKATIME_API_BASE}/users/${slackId}/projects/details${query}`);
+	const response = await fetchWithTimeout(
+		`${HACKATIME_API_BASE}/users/${encodeURIComponent(slackId)}/projects/details${query}`
+	);
 
 	if (!response.ok) {
 		throw new HackatimeError(
@@ -43,10 +46,18 @@ export async function getUserHackatimeProjectsWithStats(
 		projects?: Array<{ name: string; total_seconds?: number }>;
 	};
 
-	return (data.projects ?? []).map((p) => ({
-		name: p.name,
-		totalSeconds: p.total_seconds ?? 0
-	}));
+	if (!Array.isArray(data.projects)) return [];
+
+	return data.projects
+		.filter(
+			(project) =>
+				typeof project?.name === 'string' &&
+				(project.total_seconds === undefined || Number.isFinite(project.total_seconds))
+		)
+		.map((project) => ({
+			name: project.name,
+			totalSeconds: Math.max(0, project.total_seconds ?? 0)
+		}));
 }
 
 export function validateHackatimeProjectNames(submitted: string[], valid: string[]): string[] {

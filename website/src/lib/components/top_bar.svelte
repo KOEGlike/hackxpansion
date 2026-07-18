@@ -10,15 +10,17 @@
 	}: {
 		href: ModeSwitchRoute;
 	} = $props();
+
+	let destinationMode = $derived(href === '/' ? 'animated' : 'simple');
 </script>
 
-<div
+<header
 	class="absolute flex h-fit w-full flex-row-reverse items-start justify-between p-3"
 	transition:fade={{ duration: 100 }}
 >
 	<div class="flex h-fit w-fit flex-col items-end justify-end gap-0">
 		<div class="flex flex-row gap-4">
-			<form method="post" action="/?/signIn" use:enhance>
+			<form method="post" action={`${resolve('/')}?/signIn`} use:enhance>
 				<button class="content-box p-2 text-xl hover:content-box-hover active:content-box">
 					Sign In
 				</button>
@@ -35,21 +37,16 @@
 		<div class="relative w-fit">
 			<a
 				class="peer w-fit text-slate-700/80 hover:text-slate-700"
-				class:underline={href != '/'}
 				href={resolve(href)}
+				aria-label={`Switch to the ${destinationMode} version`}
 			>
-				animated
+				{destinationMode}
 			</a>
 
 			<p
-				class="pointer-events-none absolute top-1/2 right-[calc(100%+10px)] w-max -translate-y-1/2 text-slate-500 opacity-0 transition-opacity duration-200 peer-hover:opacity-100"
+				class="pointer-events-none absolute top-1/2 right-[calc(100%+10px)] w-max -translate-y-1/2 text-slate-600 opacity-0 transition-opacity duration-200 peer-hover:opacity-100"
 			>
-				go to
-				{#if href == '/'}
-					animated
-				{:else}
-					simple
-				{/if} version of this website
+				go to the {destinationMode} version of this website
 			</p>
 		</div>
 	</div>
@@ -57,7 +54,7 @@
 	<a
 		href="https://hackclub.com/"
 		target="_blank"
-		rel="noopener noreferrer z-50"
+		rel="noopener noreferrer"
 		transition:fade={{ duration: 100 }}
 		aria-label="Hack Club"
 		class="h-fit w-fit"
@@ -80,4 +77,4 @@
 			/>
 		</svg>
 	</a>
-</div>
+</header>

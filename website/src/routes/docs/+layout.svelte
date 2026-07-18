@@ -2,16 +2,15 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import GridBg from '$lib/components/grid_bg.svelte';
-	import { onMount } from 'svelte';
+	import { MediaQuery } from 'svelte/reactivity';
 
-	onMount(() => {
-		let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-		if (vw < 640) {
-			hidden = true;
-		}
-	});
-
+	// eslint-disable-next-line svelte/prefer-writable-derived -- users can override the viewport default
 	let hidden = $state(false);
+	const smallViewport = new MediaQuery('(max-width: 639px)', false);
+
+	$effect(() => {
+		hidden = smallViewport.current;
+	});
 
 	let { children } = $props();
 </script>
@@ -19,7 +18,7 @@
 <a
 	class="fixed top-3 right-3 z-50 h-12.5 w-12.5 content-box p-0.5"
 	href={resolve('/')}
-	aria-label="Home Page"
+	aria-label="HackXPansion home"
 >
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -40,80 +39,69 @@
 			: 'gap-1 sm:gap-2'}"
 	>
 		{#if !hidden}
-			<div class="fixed flex h-fit w-fit flex-col content-box p-2 sm:sticky sm:top-3 sm:left-0">
-				<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
-				<a
-					class="text-2xl hover:underline"
-					href={resolve('/docs')}
-					class:underline={page.url.pathname === resolve('/docs')}
+			<aside
+				id="docs-sidebar"
+				class="fixed flex h-fit w-fit flex-col content-box p-2 sm:sticky sm:top-3 sm:left-0"
+			>
+				<button
+					class="w-fit hover:underline"
+					onclick={() => (hidden = true)}
+					aria-controls="docs-sidebar"
+					aria-expanded="true"
 				>
-					Documentation
-				</a>
+					Close
+				</button>
+				<nav aria-label="Documentation" class="flex flex-col">
+					<a
+						class="text-2xl hover:underline"
+						href={resolve('/docs')}
+						class:underline={page.url.pathname === resolve('/docs')}
+						aria-current={page.url.pathname === resolve('/docs') ? 'page' : undefined}
+					>
+						Documentation
+					</a>
 
-				<a
-					href={resolve('/docs/quickstart')}
-					class="text-lg hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/quickstart')}
-				>
-					Getting Started
-				</a>
+					<a
+						href={resolve('/docs/quickstart')}
+						class="text-lg hover:underline"
+						class:underline={page.url.pathname === resolve('/docs/quickstart')}
+						aria-current={page.url.pathname === resolve('/docs/quickstart') ? 'page' : undefined}
+					>
+						Getting Started
+					</a>
 
-				<a
-					href={resolve('/docs/quickstart/first-card')}
-					class="indent-4 hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/quickstart/first-card')}
-				>
-					First card
-				</a>
-				<a
-					href={resolve('/docs/quickstart/first-driver')}
-					class="indent-4 hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/quickstart/first-driver')}
-				>
-					First Driver
-				</a>
-
-				<a
-					href={resolve('/docs/detailed')}
-					class="text-lg hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/detailed')}
-				>
-					Detailed
-				</a>
-				<a
-					href={resolve('/docs/detailed/card')}
-					class="indent-4 hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/detailed/card')}
-				>
-					Card
-				</a>
-				<a
-					href={resolve('/docs/detailed/api')}
-					class="indent-4 hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/detailed/api')}
-				>
-					Driver API
-				</a>
-				<a
-					href={resolve('/docs/detailed/device')}
-					class="indent-4 hover:underline"
-					class:underline={page.url.pathname === resolve('/docs/detailed/device')}
-				>
-					Device
-				</a>
-			</div>
+					<a
+						href={resolve('/docs/detailed')}
+						class="text-lg hover:underline"
+						class:underline={page.url.pathname === resolve('/docs/detailed')}
+						aria-current={page.url.pathname === resolve('/docs/detailed') ? 'page' : undefined}
+					>
+						Detailed
+					</a>
+					<a
+						href={resolve('/docs/detailed/card')}
+						class="indent-4 hover:underline"
+						class:underline={page.url.pathname === resolve('/docs/detailed/card')}
+						aria-current={page.url.pathname === resolve('/docs/detailed/card') ? 'page' : undefined}
+					>
+						Card
+					</a>
+				</nav>
+			</aside>
 		{:else}
 			<button
 				class="fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
 				onclick={() => (hidden = false)}
+				aria-controls="docs-sidebar"
+				aria-expanded="false"
 			>
 				Open
 			</button>
 		{/if}
-		<div
+		<main
 			class="prose prose-lg max-w-none pt-8 sm:max-w-7/12 sm:pt-0 prose-headings:my-2 prose-headings:text-slate-700 prose-p:text-slate-700"
 		>
 			{@render children()}
-		</div>
+		</main>
 	</div>
 </div>

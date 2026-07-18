@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { marked } from 'marked';
-	import DOMPurify from 'isomorphic-dompurify';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
+	import JournalEditor from '$lib/components/journal_editor.svelte';
+	import Markdown from '$lib/components/markdown.svelte';
+	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
+	import { isValidJournalDuration } from '$lib/projects/journal';
 	import type { ActionData, PageServerData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -15,20 +17,6 @@
 	let editDuration = $state('');
 	let editText = $state('');
 	let editTab: 'write' | 'preview' = $state('write');
-
-	function renderMarkdown(text: string): string {
-		return DOMPurify.sanitize(marked.parse(text, { async: false }) as string);
-	}
-
-	let previewHtml = $derived(renderMarkdown(textInput || ''));
-
-	function formatMinutes(minutes: number): string {
-		const h = Math.floor(minutes / 60);
-		const m = minutes % 60;
-		if (h === 0) return `${m}m`;
-		if (m === 0) return `${h}h`;
-		return `${h}h ${m}m`;
-	}
 
 	function formatDate(date: Date | string): string {
 		const d = new Date(date);
@@ -62,7 +50,6 @@
 		date: Date;
 		label: string;
 		detail: string;
-		html: string | null;
 		durationMinutes?: number;
 		color: string;
 		borderColor: string;
@@ -93,7 +80,6 @@
 				date: new Date(j.createdAt),
 				label: `Journal entry — ${formatMinutes(j.durationInMinutes)}`,
 				detail: j.text,
-				html: renderMarkdown(j.text),
 				durationMinutes: j.durationInMinutes,
 				color: 'bg-slate-100',
 				borderColor: 'border-slate-700'
@@ -104,10 +90,10 @@
 			const c = reviewColor(r.event);
 			items.push({
 				type: 'review',
+				id: r.id,
 				date: new Date(r.receivedAt),
 				label: `Review: ${reviewEventLabel(r.event)}`,
 				detail: r.noteToMaker ?? 'Review outcome recorded.',
-				html: null,
 				color: c.bg,
 				borderColor: c.border
 			});
@@ -117,9 +103,7 @@
 		return items;
 	});
 
-	let isWaiting = $derived(
-		data.project.status === 'waiting_design' || data.project.status === 'waiting_build'
-	);
+	let isWaiting = $derived(isWaitingForReview(data.project.status));
 </script>
 
 <svelte:head>
@@ -140,12 +124,28 @@
 				<p class="mt-1 max-w-2xl text-slate-600">{data.project.description}</p>
 			{/if}
 			<div class="mt-2 flex gap-3 text-sm">
+				<!-- eslint-disable svelte/no-navigation-without-resolve -- validated external URLs -->
 				{#if data.project.repoUrl}
-					<a class="underline" href={data.project.repoUrl} target="_blank" rel="external"> Repo </a>
+					<a
+						class="underline"
+						href={data.project.repoUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Repo
+					</a>
 				{/if}
 				{#if data.project.demoUrl}
-					<a class="underline" href={data.project.demoUrl} target="_blank" rel="external"> Demo </a>
+					<a
+						class="underline"
+						href={data.project.demoUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Demo
+					</a>
 				{/if}
+				<!-- eslint-enable svelte/no-navigation-without-resolve -->
 			</div>
 		</div>
 
@@ -201,22 +201,29 @@
 		<article class="content-box p-4">
 			<p class="text-xs uppercase tracking-wide text-slate-600">Hackatime</p>
 			<p class="mt-1 text-2xl font-bold">
-				{formatMinutes(data.hackatimeMinutes)}
+				{data.hackatime.error ? 'Unavailable' : formatMinutes(data.hackatime.minutes)}
 			</p>
 		</article>
 		<article class="content-box p-4">
 			<p class="text-xs uppercase tracking-wide text-slate-600">Total tracked</p>
 			<p class="mt-1 text-2xl font-bold">
-				{formatMinutes(data.stats.totalJournalMinutes + data.hackatimeMinutes)}
+				{data.hackatime.error
+					? formatMinutes(data.stats.totalJournalMinutes)
+					: formatMinutes(data.stats.totalJournalMinutes + data.hackatime.minutes)}
 			</p>
 		</article>
 	</section>
+	{#if data.hackatime.error}
+		<p class="border border-amber-700 bg-amber-100 p-3 text-sm text-amber-950">
+			{data.hackatime.error} Totals shown here exclude Hackatime.
+		</p>
+	{/if}
 
 	{#if !data.readiness.canSubmit && !isWaiting && data.readiness.changes.length > 0}
 		<div class="bg-amber-100 p-3 text-sm text-amber-950">
 			<p class="font-bold">Before submitting:</p>
 			<ul class="list-disc pl-5">
-				{#each data.readiness.changes as change (change.field)}
+				{#each data.readiness.changes as change (`${change.field}:${change.message}`)}
 					<li>{change.message}</li>
 				{/each}
 			</ul>
@@ -254,68 +261,17 @@
 					<div class="flex-1">
 						<p class="mb-2 text-sm font-semibold text-slate-600">New journal entry</p>
 						<form method="post" action="?/createJournal" class="flex flex-col gap-3">
-							<div>
-								<label for="new-duration" class="mb-1 block text-xs text-slate-500"
-									>Duration (minutes)</label
-								>
-								<input
-									id="new-duration"
-									name="durationInMinutes"
-									type="number"
-									min="1"
-									required
-									bind:value={durationInput}
-									class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-								/>
-							</div>
-							<div>
-								<div class="mb-1 flex items-center gap-2">
-									<label for="new-text" class="text-xs text-slate-500">What did you work on?</label>
-									<div class="ml-auto flex gap-1">
-										<button
-											type="button"
-											class="border px-2 py-0.5 text-xs {journalTab === 'write'
-												? 'border-slate-700 bg-white/70'
-												: 'border-transparent bg-transparent text-slate-500'}"
-											onclick={() => (journalTab = 'write')}
-										>
-											Write
-										</button>
-										<button
-											type="button"
-											class="border px-2 py-0.5 text-xs {journalTab === 'preview'
-												? 'border-slate-700 bg-white/70'
-												: 'border-transparent bg-transparent text-slate-500'}"
-											onclick={() => (journalTab = 'preview')}
-										>
-											Preview
-										</button>
-									</div>
-								</div>
-								{#if journalTab === 'write'}
-									<textarea
-										id="new-text"
-										name="text"
-										rows="3"
-										required
-										bind:value={textInput}
-										class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-									></textarea>
-								{:else}
-									<div class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm">
-										{#if textInput.trim()}
-											<div class="prose prose-sm prose-slate max-w-none">{@html previewHtml}</div>
-										{:else}
-											<span class="text-slate-500">Nothing to preview.</span>
-										{/if}
-									</div>
-								{/if}
-							</div>
+							<JournalEditor
+								idPrefix="new"
+								bind:duration={durationInput}
+								bind:text={textInput}
+								bind:tab={journalTab}
+							/>
 							<div class="flex justify-end">
 								<button
 									type="submit"
 									class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-									disabled={!durationInput || parseInt(durationInput) <= 0 || !textInput.trim()}
+									disabled={!isValidJournalDuration(durationInput) || !textInput.trim()}
 								>
 									Log entry
 								</button>
@@ -330,7 +286,7 @@
 					No journal entries or reviews yet.
 				</p>
 			{:else}
-				{#each timeline as item, i (item.date.toISOString() + item.label)}
+				{#each timeline as item, i (`${item.type}:${item.id}`)}
 					<div class="relative flex items-start gap-4">
 						{#if i < timeline.length - 1}
 							<div
@@ -355,69 +311,12 @@
 							{#if item.type === 'journal' && item.id && editingJournalId === item.id}
 								<form method="post" action="?/editJournal" class="mt-2 flex flex-col gap-3">
 									<input type="hidden" name="journalId" value={item.id} />
-									<div>
-										<label for="edit-duration" class="mb-1 block text-xs text-slate-500">
-											Duration (minutes)
-										</label>
-										<input
-											id="edit-duration"
-											name="durationInMinutes"
-											type="number"
-											min="1"
-											required
-											bind:value={editDuration}
-											class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-										/>
-									</div>
-									<div>
-										<div class="mb-1 flex items-center gap-2">
-											<label for="edit-text" class="text-xs text-slate-500"
-												>What did you work on?</label
-											>
-											<div class="ml-auto flex gap-1">
-												<button
-													type="button"
-													class="border px-2 py-0.5 text-xs {editTab === 'write'
-														? 'border-slate-700 bg-white/70'
-														: 'border-transparent bg-transparent text-slate-500'}"
-													onclick={() => (editTab = 'write')}
-												>
-													Write
-												</button>
-												<button
-													type="button"
-													class="border px-2 py-0.5 text-xs {editTab === 'preview'
-														? 'border-slate-700 bg-white/70'
-														: 'border-transparent bg-transparent text-slate-500'}"
-													onclick={() => (editTab = 'preview')}
-												>
-													Preview
-												</button>
-											</div>
-										</div>
-										{#if editTab === 'write'}
-											<textarea
-												id="edit-text"
-												name="text"
-												rows="3"
-												required
-												bind:value={editText}
-												class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-											></textarea>
-										{:else}
-											<div
-												class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm"
-											>
-												{#if editText.trim()}
-													<div class="prose prose-sm prose-slate max-w-none">
-														{@html renderMarkdown(editText)}
-													</div>
-												{:else}
-													<span class="text-slate-500">Nothing to preview.</span>
-												{/if}
-											</div>
-										{/if}
-									</div>
+									<JournalEditor
+										idPrefix={`edit-${item.id}`}
+										bind:duration={editDuration}
+										bind:text={editText}
+										bind:tab={editTab}
+									/>
 									<div class="flex justify-end gap-2">
 										<button
 											type="button"
@@ -429,15 +328,15 @@
 										<button
 											type="submit"
 											class="bg-slate-800 px-3 py-1.5 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-											disabled={!editDuration || parseInt(editDuration) <= 0 || !editText.trim()}
+											disabled={!isValidJournalDuration(editDuration) || !editText.trim()}
 										>
 											Save
 										</button>
 									</div>
 								</form>
 							{:else}
-								{#if item.html}
-									<div class="prose prose-sm prose-slate mt-1 max-w-none">{@html item.html}</div>
+								{#if item.type === 'journal'}
+									<div class="mt-1"><Markdown text={item.detail} /></div>
 								{:else}
 									<p class="mt-1 text-sm text-slate-600">{item.detail}</p>
 								{/if}

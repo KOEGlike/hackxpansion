@@ -1,9 +1,10 @@
-import type { Event } from '$lib/server/ari/outbound';
-import type { project } from '$lib/server/db/schema';
+import {
+	isWaitingForReview,
+	type ProjectStatus,
+	type ProjectType,
+	type ReviewEvent
+} from './domain';
 
-export type ProjectStatus = typeof project.$inferSelect.status;
-export type ProjectType = typeof project.$inferSelect.type;
-export type ProjectTier = typeof project.$inferSelect.tier;
 export type ProjectReviewPhase = 'design' | 'build';
 
 export const trackForProjectType = (type: ProjectType): 'hardware' | 'software' =>
@@ -15,7 +16,7 @@ export type NextProjectSubmission = {
 };
 
 export function canEditProject(status: ProjectStatus) {
-	return status !== 'waiting_design' && status !== 'waiting_build';
+	return !isWaitingForReview(status);
 }
 
 export function getNextProjectSubmission(status: ProjectStatus): NextProjectSubmission | null {
@@ -33,7 +34,7 @@ export function getNextProjectSubmission(status: ProjectStatus): NextProjectSubm
 
 export function getProjectStatusAfterAriEvent(
 	status: ProjectStatus,
-	event: Event
+	event: ReviewEvent
 ): ProjectStatus | null {
 	switch (event) {
 		case 'review.approved':

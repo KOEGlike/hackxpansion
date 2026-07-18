@@ -1,7 +1,13 @@
 import { db } from '$lib/server/db';
 import { project } from '$lib/server/db/schema';
-import { canEditProject, type ProjectTier, type ProjectType } from '$lib/server/projects/lifecycle';
-import { findNextAvailableResistorPair, type ModuleResistor } from '$lib/server/projects/resistors';
+import { canEditProject } from '$lib/projects/lifecycle';
+import {
+	isProjectTier,
+	isProjectType,
+	type ProjectTier,
+	type ProjectType
+} from '$lib/projects/domain';
+import { findNextAvailableResistorPair, type ModuleResistor } from '$lib/projects/resistors';
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
 
 const MODULE_RESISTOR_ADVISORY_LOCK_KEY = 0x6d6470; // 'mdp'
@@ -34,6 +40,7 @@ export type ProjectMutationResult = {
 	id: string;
 	title: string;
 	type: ProjectType;
+	tier: ProjectTier;
 	description: string | null;
 	repoUrl: string | null;
 	demoUrl: string | null;
@@ -65,13 +72,14 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				userId,
 				title: values.title,
 				type: values.type,
+				tier: values.tier,
 				description: values.description,
 				repoUrl: values.repoUrl,
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				md1: sql`NULL`,
-				md2: sql`NULL`
+				md1: null,
+				md2: null
 			})
 			.returning(projectReturnFields);
 
@@ -105,6 +113,7 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				userId,
 				title: values.title,
 				type: values.type,
+				tier: values.tier,
 				description: values.description,
 				repoUrl: values.repoUrl,
 				demoUrl: values.demoUrl,
@@ -126,46 +135,74 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 }
 
 export async function editProject({ projectId, userId, input }: EditProjectOptions) {
-	const [existingProject] = await db
-		.select({ status: project.status, type: project.type })
-		.from(project)
-		.where(and(eq(project.id, projectId), eq(project.userId, userId)))
-		.limit(1);
-
-	if (!existingProject) {
-		throw new ProjectMutationError(404, 'Project not found');
-	}
-
-	if (!canEditProject(existingProject.status)) {
-		throw new ProjectMutationError(
-			409,
-			'Project cannot be edited while it is waiting for Ari review'
-		);
-	}
-
 	const values = normalizeProjectPatch(input);
 
 	if (Object.keys(values).length === 0) {
 		throw new ProjectMutationError(400, 'No project changes provided');
 	}
 
-	const [updatedProject] = await db
-		.update(project)
-		.set(values)
-		.where(and(eq(project.id, projectId), eq(project.userId, userId)))
-		.returning(projectReturnFields);
+	return db.transaction(async (tx) => {
+		const [existingProject] = await tx
+			.select({ status: project.status, type: project.type })
+			.from(project)
+			.where(and(eq(project.id, projectId), eq(project.userId, userId)))
+			.limit(1)
+			.for('update');
 
-	if (!updatedProject) {
-		throw new ProjectMutationError(404, 'Project not found');
-	}
+		if (!existingProject) {
+			throw new ProjectMutationError(404, 'Project not found');
+		}
 
-	return { ...updatedProject };
+		if (!canEditProject(existingProject.status)) {
+			throw new ProjectMutationError(
+				409,
+				'Project cannot be edited while it is waiting for Ari review'
+			);
+		}
+
+		if (values.type && values.type !== existingProject.type) {
+			if (values.type === 'app') {
+				values.md1 = null;
+				values.md2 = null;
+			} else {
+				await tx.execute(sql`SELECT pg_advisory_xact_lock(${MODULE_RESISTOR_ADVISORY_LOCK_KEY})`);
+				const usedPairs = await tx
+					.select({ md1: project.md1, md2: project.md2 })
+					.from(project)
+					.where(and(eq(project.type, 'card'), isNotNull(project.md1), isNotNull(project.md2)));
+				const pair = findNextAvailableResistorPair(usedPairs);
+
+				if (!pair) {
+					throw new ProjectMutationError(
+						503,
+						'All module resistor pairs are taken. No unique md1/md2 combination is available.'
+					);
+				}
+
+				values.md1 = pair.md1;
+				values.md2 = pair.md2;
+			}
+		}
+
+		const [updatedProject] = await tx
+			.update(project)
+			.set(values)
+			.where(and(eq(project.id, projectId), eq(project.userId, userId)))
+			.returning(projectReturnFields);
+
+		if (!updatedProject) {
+			throw new ProjectMutationError(404, 'Project not found');
+		}
+
+		return { ...updatedProject };
+	});
 }
 
 const projectReturnFields = {
 	id: project.id,
 	title: project.title,
 	type: project.type,
+	tier: project.tier,
 	description: project.description,
 	repoUrl: project.repoUrl,
 	demoUrl: project.demoUrl,
@@ -181,7 +218,7 @@ function normalizeProjectInput(input: ProjectInput) {
 	return {
 		title: requiredString(input.title, 'Project title is required'),
 		type: normalizeProjectType(input.type),
-		tier: input.tier ?? null,
+		tier: normalizeProjectTier(input.tier),
 		description: optionalString(input.description),
 		repoUrl: validateUrl(input.repoUrl, 'Repository URL'),
 		demoUrl: validateUrl(input.demoUrl, 'Demo URL'),
@@ -202,7 +239,7 @@ function normalizeProjectPatch(input: ProjectPatch) {
 	}
 
 	if ('tier' in input) {
-		values.tier = input.tier ?? null;
+		values.tier = normalizeProjectTier(input.tier);
 	}
 
 	if ('description' in input) {
@@ -229,7 +266,19 @@ function normalizeProjectPatch(input: ProjectPatch) {
 }
 
 function normalizeProjectType(type: ProjectType | undefined): ProjectType {
-	return type === 'app' ? 'app' : 'card';
+	if (type === undefined) return 'card';
+	if (!isProjectType(type)) {
+		throw new ProjectMutationError(422, 'Project type must be Card or App.');
+	}
+	return type;
+}
+
+function normalizeProjectTier(tier: ProjectTier | undefined): ProjectTier {
+	if (tier === undefined || tier === null) return null;
+	if (!isProjectTier(tier)) {
+		throw new ProjectMutationError(422, 'Project tier must be PRO, Advanced, or Basic.');
+	}
+	return tier;
 }
 
 function requiredString(value: string | null | undefined, message: string) {

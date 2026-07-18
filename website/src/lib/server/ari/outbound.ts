@@ -1,18 +1,13 @@
 import { Buffer } from 'node:buffer';
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import {
+	reviewEventTypeValues,
+	type ReviewEvent,
+	type ReviewEventType
+} from '$lib/projects/domain';
 
-export const eventTypeArray = [
-	'approved',
-	'changes',
-	'rejected',
-	'reverted',
-	'requeued',
-	'fraud'
-] as const;
-
-export type ReviewEventType = (typeof eventTypeArray)[number];
-
-export type Event = `review.${ReviewEventType}`;
+export const eventTypeArray = reviewEventTypeValues;
+export type Event = ReviewEvent;
 
 export type ReviewDecision = 'approved' | 'changes' | 'rejected';
 
@@ -90,6 +85,8 @@ export type ProcessedOutboundRequest = {
 };
 
 const SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
+const MAX_WEBHOOK_BODY_BYTES = 1_000_000;
+const MAX_MINUTES_VALUE = 10_000_000;
 
 export class OutboundWebhookError extends Error {
 	constructor(
@@ -110,12 +107,12 @@ export function normalizeMinutesBreakdown(
 ): MinutesBreakdown | null {
 	if (!breakdown) return null;
 
-	return {
-		hackatime: breakdown.hackatime ?? 0,
-		journals: breakdown.journals ?? 0,
-		lapse: breakdown.lapse ?? 0,
-		program: breakdown.program ?? 0
-	};
+	return Object.fromEntries(
+		(['hackatime', 'journals', 'lapse', 'program'] as const).map((key) => [
+			key,
+			validMinutes(breakdown[key], `review.minutes_breakdown.${key}`)
+		])
+	) as MinutesBreakdown;
 }
 
 export async function processOutboundRequest(
@@ -136,7 +133,7 @@ export async function processOutboundRequest(
 
 	assertFreshTimestamp(timestamp);
 
-	const rawBody = Buffer.from(await request.arrayBuffer());
+	const rawBody = await readLimitedBody(request);
 	const expectedSignature = createHmac('sha256', signingSecret)
 		.update(timestamp)
 		.update('.')
@@ -212,6 +209,24 @@ function parseOutboundBody(rawBody: Buffer): OutboundBody {
 		throw new OutboundWebhookError(422, 'Ari payload requires review');
 	}
 
+	if (parsed.review.minutes_breakdown !== undefined) {
+		if (!isRecord(parsed.review.minutes_breakdown)) {
+			throw new OutboundWebhookError(422, 'review.minutes_breakdown must be an object');
+		}
+		normalizeMinutesBreakdown(parsed.review.minutes_breakdown);
+	}
+
+	if (parsed.review.approved_minutes !== undefined) {
+		validMinutes(parsed.review.approved_minutes, 'review.approved_minutes');
+	}
+
+	if (parsed.review.approved_hours !== undefined) {
+		const hours = parsed.review.approved_hours;
+		if (typeof hours !== 'number' || !Number.isFinite(hours) || hours < 0) {
+			throw new OutboundWebhookError(422, 'review.approved_hours must be a non-negative number');
+		}
+	}
+
 	return parsed as OutboundBody;
 }
 
@@ -224,4 +239,45 @@ function isOutboundEvent(value: unknown): value is Event {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function validMinutes(value: unknown, field: string) {
+	const minutes = value ?? 0;
+	if (
+		!Number.isSafeInteger(minutes) ||
+		Number(minutes) < 0 ||
+		Number(minutes) > MAX_MINUTES_VALUE
+	) {
+		throw new OutboundWebhookError(
+			422,
+			`${field} must be a non-negative integer no greater than ${MAX_MINUTES_VALUE}`
+		);
+	}
+	return Number(minutes);
+}
+
+async function readLimitedBody(request: Request) {
+	const contentLength = Number(request.headers.get('content-length'));
+	if (Number.isFinite(contentLength) && contentLength > MAX_WEBHOOK_BODY_BYTES) {
+		throw new OutboundWebhookError(413, 'Ari payload is too large');
+	}
+
+	if (!request.body) return Buffer.alloc(0);
+
+	const reader = request.body.getReader();
+	const chunks: Uint8Array[] = [];
+	let totalBytes = 0;
+
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		totalBytes += value.byteLength;
+		if (totalBytes > MAX_WEBHOOK_BODY_BYTES) {
+			await reader.cancel();
+			throw new OutboundWebhookError(413, 'Ari payload is too large');
+		}
+		chunks.push(value);
+	}
+
+	return Buffer.concat(chunks, totalBytes);
 }

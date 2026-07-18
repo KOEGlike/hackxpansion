@@ -1,5 +1,7 @@
 import { createHmac } from 'node:crypto';
-import type { ProjectReviewPhase } from '$lib/server/projects/lifecycle';
+import type { ProjectReviewPhase } from '$lib/projects/lifecycle';
+import { getSubmissionRequirementChanges } from '$lib/projects/submission';
+import { fetchWithTimeout } from '$lib/server/http';
 
 export type InboundEvidence = 'commits' | 'elapsed' | 'devlog';
 export type InboundTrack = 'software' | 'hardware';
@@ -50,6 +52,7 @@ export type JournalForAriIngest = {
 };
 
 export type BuildAriIngestPayloadOptions = {
+	externalId: string;
 	project: ProjectForAriIngest;
 	maker: MakerForAriIngest;
 	journals: JournalForAriIngest[];
@@ -82,6 +85,7 @@ export class AriInboundError extends Error {
 }
 
 export function buildAriIngestPayload({
+	externalId,
 	project,
 	maker,
 	journals,
@@ -89,11 +93,27 @@ export function buildAriIngestPayload({
 	track = 'hardware',
 	extraMeta
 }: BuildAriIngestPayloadOptions): AriIngestPayload {
-	const description = requiredString(project.description, 'Project description is required');
-	const repoUrl = requiredString(project.repoUrl, 'Project repo URL is required');
-	const thumbnailUrl = requiredString(project.thumbnailUrl, 'Project thumbnail URL is required');
 	const hackatimeProjects =
 		project.hackatime_projects?.filter((name) => name.trim().length > 0) ?? [];
+	const requirementChanges = getSubmissionRequirementChanges({
+		phase,
+		type: track === 'software' ? 'app' : 'card',
+		tier: null,
+		description: project.description,
+		repoUrl: project.repoUrl,
+		demoUrl: project.demoUrl,
+		thumbnailUrl: project.thumbnailUrl,
+		hackatimeProjects,
+		requireTier: false
+	});
+
+	if (requirementChanges.length > 0) {
+		throw new AriInboundError(422, requirementChanges.map((change) => change.message).join(' '));
+	}
+
+	const description = project.description!.trim();
+	const repoUrl = project.repoUrl!.trim();
+	const thumbnailUrl = project.thumbnailUrl!.trim();
 	const ariJournals = journals
 		.filter((entry) => entry.durationInMinutes > 0)
 		.map((entry) => ({
@@ -102,20 +122,8 @@ export function buildAriIngestPayload({
 			text: entry.text
 		}));
 
-	if (hackatimeProjects.length === 0) {
-		throw new AriInboundError(422, 'Add at least one Hackatime project before submitting to Ari');
-	}
-
-	if (phase === 'build' && !project.demoUrl?.trim()) {
-		throw new AriInboundError(422, 'Project demo URL is required for build review');
-	}
-
-	if (track === 'software' && !project.demoUrl?.trim()) {
-		throw new AriInboundError(422, 'Project demo URL is required for software submissions');
-	}
-
 	return {
-		external_id: project.id,
+		external_id: externalId,
 		title: project.title,
 		description,
 		maker: {
@@ -146,7 +154,7 @@ export async function sendAriIngest(
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
 	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}`;
 	console.log('URL: ', url);
-	const response = await fetch(url, {
+	const response = await fetchWithTimeout(url, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -180,7 +188,7 @@ export async function sendAriWithdraw(
 	const rawBody = JSON.stringify({ external_id: externalId });
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
 	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}/withdraw`;
-	const response = await fetch(url, {
+	const response = await fetchWithTimeout(url, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

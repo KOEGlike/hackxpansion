@@ -1,6 +1,7 @@
 import { auth } from '$lib/server/auth';
 
 import { redirect, type Actions } from '@sveltejs/kit';
+import { resolve } from '$app/paths';
 
 export const actions: Actions = {
 	signOut: async (event) => {
@@ -8,6 +9,6 @@ export const actions: Actions = {
 			headers: event.request.headers
 		});
 
-		return redirect(302, '/');
+		redirect(303, resolve('/'));
 	}
 };

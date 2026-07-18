@@ -1,12 +1,5 @@
 <script lang="ts">
-	type ProjectStatus =
-		| 'not_submitted'
-		| 'waiting_design'
-		| 'rejected_design'
-		| 'approved_design'
-		| 'waiting_build'
-		| 'rejected_build'
-		| 'approved_build';
+	import type { ProjectStatus } from '$lib/projects/domain';
 
 	let { status }: { status: ProjectStatus } = $props();
 

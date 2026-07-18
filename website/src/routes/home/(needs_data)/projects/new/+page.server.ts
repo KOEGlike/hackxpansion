@@ -1,60 +1,30 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { createProject } from '$lib/server/projects/mutations';
-import {
-	formValuesToObject,
-	getErrorMessage,
-	getInvalidProjectHackatimeProjects,
-	getProjectMutationErrorStatus,
-	loadProjectFormHackatimeProjects,
-	projectInputFromForm
-} from '$lib/server/projects/form';
+import { loadProjectFormHackatimeProjects } from '$lib/server/projects/form';
+import { handleProjectFormAction } from '$lib/server/projects/actions';
+import { requireUser } from '$lib/server/guards';
+import { resolve } from '$app/paths';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) {
-		redirect(302, '/');
-	}
+	const user = requireUser(locals);
 
 	return loadProjectFormHackatimeProjects(
-		locals.user.slackId,
+		user.slackId,
 		'Could not load Hackatime projects. You can still create the project.'
 	);
 };
 
 export const actions: Actions = {
 	create: async ({ locals, request }) => {
-		if (!locals.user) {
-			redirect(302, '/');
-		}
+		const user = requireUser(locals);
+		const failure = await handleProjectFormAction({
+			request,
+			slackId: user.slackId,
+			mutate: (input) => createProject({ userId: user.id, input })
+		});
+		if (failure) return failure;
 
-		const formData = await request.formData();
-		const input = projectInputFromForm(formData);
-		const invalidHackatimeProjects = await getInvalidProjectHackatimeProjects(
-			locals.user.slackId,
-			input.hackatimeProjects ?? []
-		);
-
-		if (invalidHackatimeProjects.length > 0) {
-			return fail(422, {
-				success: false,
-				message: `Invalid Hackatime projects: ${invalidHackatimeProjects.join(', ')}`,
-				values: formValuesToObject(formData)
-			});
-		}
-
-		try {
-			await createProject({
-				userId: locals.user.id,
-				input
-			});
-		} catch (err) {
-			return fail(getProjectMutationErrorStatus(err), {
-				success: false,
-				message: getErrorMessage(err),
-				values: formValuesToObject(formData)
-			});
-		}
-
-		redirect(303, '/home/projects');
+		redirect(303, resolve('/home/projects'));
 	}
 };

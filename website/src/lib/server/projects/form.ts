@@ -5,7 +5,7 @@ import {
 	type HackatimeProjectWithStats
 } from '$lib/server/hackatime';
 import { ProjectMutationError, type ProjectInput } from '$lib/server/projects/mutations';
-import type { ProjectType, ProjectTier } from '$lib/server/projects/lifecycle';
+import { isProjectTier, isProjectType } from '$lib/projects/domain';
 
 export type ProjectFormHackatimeData = {
 	hackatimeProjects: HackatimeProjectWithStats[];
@@ -30,10 +30,21 @@ export async function loadProjectFormHackatimeProjects(
 }
 
 export function projectInputFromForm(formData: FormData): ProjectInput {
+	const type = stringFromForm(formData, 'type');
+	const tier = stringFromForm(formData, 'tier');
+
+	if (!isProjectType(type)) {
+		throw new ProjectMutationError(422, 'Project type must be Card or App.');
+	}
+	if (tier && !isProjectTier(tier)) {
+		throw new ProjectMutationError(422, 'Project tier must be PRO, Advanced, or Basic.');
+	}
+	const normalizedTier = tier && isProjectTier(tier) ? tier : null;
+
 	return {
 		title: stringFromForm(formData, 'title'),
-		type: (stringFromForm(formData, 'type') as ProjectType) || undefined,
-		tier: (stringFromForm(formData, 'tier') as ProjectTier) || undefined,
+		type,
+		tier: normalizedTier,
 		description: stringFromForm(formData, 'description'),
 		repoUrl: stringFromForm(formData, 'repoUrl'),
 		demoUrl: stringFromForm(formData, 'demoUrl'),
@@ -45,12 +56,8 @@ export function projectInputFromForm(formData: FormData): ProjectInput {
 export async function getInvalidProjectHackatimeProjects(slackId: string, selected: string[]) {
 	if (selected.length === 0) return [];
 
-	try {
-		const validProjects = await getUserHackatimeProjects(slackId);
-		return validateHackatimeProjectNames(selected, validProjects);
-	} catch {
-		return [];
-	}
+	const validProjects = await getUserHackatimeProjects(slackId);
+	return validateHackatimeProjectNames(selected, validProjects);
 }
 
 export function formValuesToObject(formData: FormData): Record<string, string | string[]> {
@@ -69,22 +76,6 @@ export function formValuesToObject(formData: FormData): Record<string, string | 
 		}
 	}
 	return values;
-}
-
-export function getProjectMutationErrorStatus(err: unknown) {
-	if (err instanceof ProjectMutationError) {
-		return err.status;
-	}
-
-	return 500;
-}
-
-export function getErrorMessage(err: unknown) {
-	if (err instanceof Error) {
-		return err.message;
-	}
-
-	return 'Something went wrong.';
 }
 
 function stringFromForm(formData: FormData, key: string) {

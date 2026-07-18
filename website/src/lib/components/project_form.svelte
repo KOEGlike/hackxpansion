@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import DropdownSelect from '$lib/components/dropdown_select.svelte';
+	import type { ProjectTier, ProjectType } from '$lib/projects/domain';
 
 	type ProjectFormData = {
 		values?: Record<string, unknown>;
@@ -11,12 +12,10 @@
 		totalSeconds: number;
 	};
 
-	type Tier = 'pro' | 'advanced' | 'basic';
-
 	type ProjectFormValues = {
 		title: string;
-		type?: 'card' | 'app' | null;
-		tier?: Tier | null;
+		type?: ProjectType | null;
+		tier?: ProjectTier;
 		description?: string | null;
 		repoUrl?: string | null;
 		demoUrl?: string | null;
@@ -25,13 +24,7 @@
 	};
 
 	type ProjectTextField =
-		| 'title'
-		| 'type'
-		| 'tier'
-		| 'description'
-		| 'repoUrl'
-		| 'demoUrl'
-		| 'thumbnailUrl';
+		'title' | 'type' | 'tier' | 'description' | 'repoUrl' | 'demoUrl' | 'thumbnailUrl';
 
 	let {
 		action,
@@ -59,6 +52,11 @@
 	let normalizedHackatimeProjectSearch = $derived(hackatimeProjectSearch.trim().toLowerCase());
 	let visibleHackatimeProjects = $derived(
 		hackatimeProjects.filter((project) => matchesHackatimeProjectSearch(project.name))
+	);
+	let unavailableSelectedProjects = $derived(
+		formValueList('hackatimeProjects').filter(
+			(name) => !hackatimeProjects.some((project) => project.name === name)
+		)
 	);
 
 	let selectedType = $state<string | null>((formValue('type') as string) || 'card');
@@ -125,7 +123,13 @@
 <form method="post" {action} class="grid gap-4 md:grid-cols-2 w-full min-h-full">
 	<label class="flex flex-col gap-0.5">
 		<span>Title *</span>
-		<input name="title" required value={formValue('title')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
+		<input
+			name="title"
+			required
+			value={formValue('title')}
+			class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
+			{disabled}
+		/>
 	</label>
 
 	<DropdownSelect
@@ -155,8 +159,13 @@
 	/>
 
 	<div class="md:col-span-2">
+		{#each unavailableSelectedProjects as projectName (projectName)}
+			<input type="hidden" name="hackatimeProjects" value={projectName} {disabled} />
+		{/each}
 		{#if hackatimeError}
-			<p class="text-sm text-amber-700">{hackatimeError}</p>
+			<p class="text-sm text-amber-700">
+				{hackatimeError} Existing selections will be preserved.
+			</p>
 		{/if}
 		{#if hackatimeProjects.length === 0}
 			<p class="text-sm text-slate-500">
@@ -208,22 +217,40 @@
 
 	<label class="flex flex-col gap-1 md:col-span-2">
 		<span>Description</span>
-		<textarea name="description" rows="3" class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled}>{formValue('description')}</textarea>
+		<textarea
+			name="description"
+			rows="3"
+			class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
+			{disabled}>{formValue('description')}</textarea
+		>
 	</label>
 
 	<label class="flex flex-col gap-1">
 		<span>Repo URL</span>
-		<input name="repoUrl" value={formValue('repoUrl')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
+		<input
+			type="url"
+			name="repoUrl"
+			value={formValue('repoUrl')}
+			class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
+			{disabled}
+		/>
 	</label>
 
 	<label class="flex flex-col gap-1">
 		<span>Thumbnail URL</span>
-		<input name="thumbnailUrl" value={formValue('thumbnailUrl')} class="border border-slate-700 bg-white/70 px-3 py-2 text-sm" {disabled} />
+		<input
+			type="url"
+			name="thumbnailUrl"
+			value={formValue('thumbnailUrl')}
+			class="border border-slate-700 bg-white/70 px-3 py-2 text-sm"
+			{disabled}
+		/>
 	</label>
 
 	<label class="flex flex-col gap-1 md:col-span-2">
 		<span>Demo URL</span>
 		<input
+			type="url"
 			name="demoUrl"
 			placeholder="Required before build review"
 			value={formValue('demoUrl')}

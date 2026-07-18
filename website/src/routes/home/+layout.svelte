@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import GridBg from '$lib/components/grid_bg.svelte';
-	import { onMount } from 'svelte';
+	import { MediaQuery } from 'svelte/reactivity';
 
 	let { data, children } = $props();
 
-	onMount(() => {
-		let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-		if (vw < 640) {
-			hidden = true;
-		}
-	});
-
+	// eslint-disable-next-line svelte/prefer-writable-derived -- users can override the viewport default
 	let hidden = $state(false);
+	const smallViewport = new MediaQuery('(max-width: 639px)', false);
+
+	$effect(() => {
+		hidden = smallViewport.current;
+	});
 
 	const items = [
 		{ title: 'Home', href: '/home' },
@@ -31,34 +31,52 @@
 			<button
 				class="m-3 fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
 				onclick={() => (hidden = false)}
+				aria-controls="home-sidebar"
+				aria-expanded="false"
 			>
 				Open
 			</button>
 		{:else}
-			<div
+			<aside
+				id="home-sidebar"
 				class="fixed flex h-[calc(100%-1.5rem)] w-fit flex-col content-box p-3 sm:sticky sm:top-3 sm:left-0 justify-between my-3 ml-3"
 			>
 				<div class="flex h-fit w-fit flex-col gap-2">
-					<button class="w-fit hover:underline" onclick={() => (hidden = true)}>Close</button>
+					<button
+						class="w-fit hover:underline"
+						onclick={() => (hidden = true)}
+						aria-controls="home-sidebar"
+						aria-expanded="true"
+					>
+						Close
+					</button>
 					<hr />
-					<div class="flex flex-col gap-1">
+					<nav aria-label="Account navigation" class="flex flex-col gap-1">
 						{#each items as item (item.href)}
-							<a href={resolve(item.href)} class="text-3xl hover:underline mr-30">{item.title}</a>
+							<a
+								href={resolve(item.href)}
+								class="text-3xl hover:underline mr-30"
+								aria-current={page.url.pathname === resolve(item.href) ? 'page' : undefined}
+							>
+								{item.title}
+							</a>
 						{/each}
-					</div>
+					</nav>
 				</div>
 
 				{#if data.user}
-					<div class="flex flex-row gap-2">
-						<!-- svelte-ignore a11y_img_redundant_alt -->
-						<img src={data.user.image} alt="Profile picture" class="size-20" />
+					<section aria-label="Account" class="flex flex-row gap-2">
+						<img src={data.user.image} alt="" class="size-20" />
 						<div class="flex flex-col py-3 justify-between">
 							<p class="text-xl">{data.user.name}</p>
 							<p>{data.user.pronouns}</p>
+							<form method="post" action={`${resolve('/home')}?/signOut`}>
+								<button class="w-fit hover:underline">Sign out</button>
+							</form>
 						</div>
-					</div>
+					</section>
 				{/if}
-			</div>
+			</aside>
 		{/if}
 		<div class="overflow-x-hidden overflow-y-scroll h-full w-full">
 			{@render children()}

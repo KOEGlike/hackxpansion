@@ -1,5 +1,7 @@
-<h3>Detailed Documentation</h3>
+<svelte:head><title>Detailed Documentation · HackXPansion</title></svelte:head>
 
-The aim of this section is to give in depth documentation on the modules, console, drivers, apps,
-and the whole firmware architecture of the HackXPansion console. Use this if you got stuck and don't
-know where to go.
+<h1>Detailed Documentation</h1>
+<p>
+	This section describes modules, the console, drivers, apps, and the HackXPansion firmware
+	architecture in greater depth. Use it as a reference while designing or debugging a project.
+</p>

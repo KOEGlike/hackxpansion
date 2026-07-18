@@ -3,6 +3,15 @@ import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { env } from '$env/dynamic/private';
+import { base } from '$app/paths';
+
+const providerOwnedUserFields = new Set([
+	'slackId',
+	'verificationStatus',
+	'given_name',
+	'yswsEligible',
+	'pronouns'
+]);
 
 export const handle: Handle = async ({ event, resolve }) => {
 	let request = event.request;
@@ -11,7 +20,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 		request = new Request(request.url.replace('http://', 'https://'), request);
 	}
 
-	if (event.url.pathname.startsWith('/api/auth/')) {
+	if (event.url.pathname.startsWith(`${base}/api/auth/`)) {
+		if (
+			event.url.pathname === `${base}/api/auth/update-user` &&
+			request.method === 'POST' &&
+			(await updatesProviderOwnedField(request))
+		) {
+			return Response.json(
+				{ message: 'Provider-owned profile fields cannot be updated directly' },
+				{ status: 400 }
+			);
+		}
 		return auth.handler(request);
 	}
 
@@ -24,3 +43,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	return svelteKitHandler({ event, resolve, auth, building });
 };
+
+async function updatesProviderOwnedField(request: Request) {
+	try {
+		const body = (await request.clone().json()) as unknown;
+		return (
+			typeof body === 'object' &&
+			body !== null &&
+			!Array.isArray(body) &&
+			Object.keys(body).some((field) => providerOwnedUserFields.has(field))
+		);
+	} catch {
+		return true;
+	}
+}

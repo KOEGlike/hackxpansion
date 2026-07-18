@@ -5,13 +5,18 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
 import { genericOAuth } from 'better-auth/plugins';
+import { base } from '$app/paths';
+import { fetchWithTimeout } from '$lib/server/http';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
-	trustHost: true,
+	basePath: `${base}/api/auth`,
 	trustedOrigins: [env.ORIGIN, env.ORIGIN.replace('https://', 'http://')],
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'pg' }),
+	account: {
+		encryptOAuthTokens: true
+	},
 	user: {
 		additionalFields: {
 			slackId: {
@@ -44,9 +49,10 @@ export const auth = betterAuth({
 					discoveryUrl: 'https://auth.hackclub.com/.well-known/openid-configuration',
 					clientId: env.HACKCLUB_CLIENT_ID,
 					clientSecret: env.HACKCLUB_CLIENT_SECRET,
+					overrideUserInfo: true,
 					scopes: ['openid', 'email', 'name', 'profile', 'verification_status', 'slack_id'],
 					getUserInfo: async (tokens) => {
-						const res = await fetch('https://auth.hackclub.com/oauth/userinfo', {
+						const res = await fetchWithTimeout('https://auth.hackclub.com/oauth/userinfo', {
 							headers: {
 								Authorization: `Bearer ${tokens.accessToken}`
 							}
@@ -55,13 +61,20 @@ export const auth = betterAuth({
 						if (!res.ok) return null;
 
 						const data = await res.json();
+						let slackData = {};
 
-						const slack_info = await fetch(`https://cachet.dunkirk.sh/users/${data.slack_id}`);
-						const slack_data = await slack_info.json();
+						try {
+							const slackResponse = await fetchWithTimeout(
+								`https://cachet.dunkirk.sh/users/${encodeURIComponent(data.slack_id)}`
+							);
+							if (slackResponse.ok) slackData = await slackResponse.json();
+						} catch {
+							// Cachet enriches the profile but must not make OAuth unavailable.
+						}
 
 						return {
-							...data,
-							...slack_data
+							...slackData,
+							...data
 						};
 					},
 					mapProfileToUser: (profile) => ({

@@ -1,4 +1,7 @@
-<h3>Quick Start Guides</h3>
+<svelte:head><title>Quick Start · HackXPansion</title></svelte:head>
 
-These are some beginner guides to get you started making your first modules and writing your first
-drivers and apps.
+<h1>Quick Start Guides</h1>
+<p>
+	These beginner guides introduce the process for making modules and writing drivers and apps. More
+	step-by-step guides will be linked here as they are completed.
+</p>

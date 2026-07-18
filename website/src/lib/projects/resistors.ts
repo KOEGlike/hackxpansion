@@ -19,7 +19,7 @@ export function isModuleResistor(value: number): value is ModuleResistor {
 	return (E24_RESISTOR_VALUES as readonly number[]).includes(value);
 }
 
-export function formatResistor(ohms: ModuleResistor): string {
+export function formatResistor(ohms: number): string {
 	if (ohms >= 1000) {
 		const kilo = ohms / 1000;
 		return `${kilo}k`;

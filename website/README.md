@@ -1,26 +1,51 @@
-# Hackxpansion Website
+# HackXPansion Website
 
-This is where all of the docs live, and also a cool landing page
+SvelteKit website for the landing page, documentation, authenticated project tracking, and Ari
+review integration.
 
-## Developing
+## Requirements
 
-Once you've cloned the project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- Node.js 22.12 or newer
+- PostgreSQL 18
+
+## Development
+
+Install dependencies and configure the variables documented in `.env.example`. Start the local
+database and apply the current Drizzle schema:
+
+```sh
+npm install
+npm run db:start
+npm run db:push
+```
+
+Then start SvelteKit:
 
 ```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Use `npm run db:generate` when creating a new migration from the current schema. Commit the generated
+SQL and metadata together.
 
-To create a production version :
+## Production
+
+The application requires a Node server for authentication, database-backed pages, form actions, and
+Ari webhooks. It cannot be hosted as a static GitHub Pages site.
 
 ```sh
+npm ci
 npm run build
+ORIGIN=https://example.com HOST=127.0.0.1 PORT=3000 npm start
 ```
 
-You can preview the production build with `npm run preview`.
+Set `BASE_PATH` while building when the server is mounted below the origin root. Place a reverse
+proxy in front of the Node process for TLS and configure it to forward the original host and protocol.
 
-> To deploy, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Quality Checks
+
+```sh
+npm run check
+npm run lint
+npm test
+```

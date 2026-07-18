@@ -18,9 +18,11 @@
 
 <TopBar href="/" />
 
-<div class="flex h-fit w-full flex-col items-center justify-start gap-15 px-10 pb-30 sm:gap-30">
+<main
+	class="flex h-fit w-full flex-col items-center justify-start gap-15 px-4 pb-30 sm:gap-30 sm:px-10"
+>
 	<div
-		class="flex h-screen w-screen flex-col items-center justify-between gap-0 bg-cover bg-center"
+		class="flex min-h-svh w-full flex-col items-center justify-between gap-0 bg-cover bg-center"
 		style:background-image="url({asset(`/renders/0000.webp`)})"
 	>
 		<LandingSection />
@@ -35,5 +37,5 @@
 			reversed={step.reversed}
 		/>
 	{/each}
-</div>
+</main>
 <Footer />

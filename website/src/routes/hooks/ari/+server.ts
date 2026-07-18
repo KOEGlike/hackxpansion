@@ -4,34 +4,53 @@ import {
 	fromOutboundEvent,
 	normalizeMinutesBreakdown,
 	OutboundWebhookError,
-	processOutboundRequest
+	processOutboundRequest,
+	type MinutesBreakdown,
+	type OutboundBody
 } from '$lib/server/ari/outbound';
 import { db } from '$lib/server/db';
-import { project, review } from '$lib/server/db/schema';
-import { getProjectStatusAfterAriEvent } from '$lib/server/projects/lifecycle';
+import { project, review, user } from '$lib/server/db/schema';
+import { getProjectStatusAfterAriEvent } from '$lib/projects/lifecycle';
+import { isUuid } from '$lib/projects/domain';
 import { env } from '$env/dynamic/private';
-import { eq } from 'drizzle-orm';
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { and, eq } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
 	if (!env.ARI_OUT_SECRET) {
-		error(500, 'ARI_OUT_SECRET environment variable is not set');
+		error(500, 'Ari webhooks are not configured');
 	}
 
 	try {
 		const { body, headers } = await processOutboundRequest(request, env.ARI_OUT_SECRET);
-		const projectId = await findProjectId(body.external_id);
-
 		const result = await db.transaction(async (tx) => {
+			const [activeProject] = await tx
+				.select({
+					id: project.id,
+					status: project.status,
+					makerEmail: user.email,
+					makerSlackId: user.slackId
+				})
+				.from(project)
+				.innerJoin(user, eq(project.userId, user.id))
+				.where(eq(project.activeAriExternalId, body.external_id))
+				.limit(1)
+				.for('update', { of: project });
+
+			const associatedProjectId = activeProject?.id ?? (await findAssociatedProjectId(tx, body));
+			if (!associatedProjectId) {
+				throw new OutboundWebhookError(404, 'Ari delivery does not match a known project');
+			}
+
+			if (activeProject) assertMakerMatches(activeProject, body);
+
 			const inserted = await tx
 				.insert(review)
 				.values({
 					event: fromOutboundEvent(body.event),
 					ariId: body.id,
 					deliveryId: headers.delivery_id,
-					projectId,
-					minutesBreakdown: normalizeMinutesBreakdown(body.review.minutes_breakdown),
+					projectId: associatedProjectId,
+					minutesBreakdown: getMinutesBreakdown(body),
 					noteToMaker: body.review.note_to_maker ?? null,
 					auditNote: body.review.audit_note ?? null,
 					fields: body.review.fields ?? null,
@@ -43,41 +62,40 @@ export const POST: RequestHandler = async ({ request }) => {
 				.onConflictDoNothing({ target: review.deliveryId })
 				.returning({ id: review.id });
 
-			if (inserted.length === 0) {
-				return { duplicate: true as const };
-			}
+			if (inserted.length === 0) return { duplicate: true as const };
 
 			let projectStatus = null;
-
-			if (projectId) {
-				const [projectRow] = await tx
-					.select({ status: project.status })
-					.from(project)
-					.where(eq(project.id, projectId))
-					.limit(1);
-				const nextStatus = projectRow
-					? getProjectStatusAfterAriEvent(projectRow.status, body.event)
-					: null;
-
+			if (activeProject) {
+				const nextStatus = getProjectStatusAfterAriEvent(activeProject.status, body.event);
 				if (nextStatus) {
 					const [updatedProject] = await tx
 						.update(project)
 						.set({ status: nextStatus })
-						.where(eq(project.id, projectId))
+						.where(
+							and(
+								eq(project.id, activeProject.id),
+								eq(project.activeAriExternalId, body.external_id)
+							)
+						)
 						.returning({ status: project.status });
-
 					projectStatus = updatedProject?.status ?? null;
 				}
 			}
 
-			return { duplicate: false as const, id: inserted[0].id, projectStatus };
+			return {
+				duplicate: false as const,
+				id: inserted[0].id,
+				projectStatus,
+				stale: !activeProject
+			};
 		});
 
-		if (result.duplicate) {
-			return json({ status: 'duplicate' });
-		}
-
-		return json({ status: 'ok', id: result.id, project_status: result.projectStatus });
+		if (result.duplicate) return json({ status: 'duplicate' });
+		return json({
+			status: result.stale ? 'recorded_stale' : 'ok',
+			id: result.id,
+			project_status: result.projectStatus
+		});
 	} catch (err) {
 		if (err instanceof OutboundWebhookError) {
 			console.error(`[ari/outbound] ${err.status} ${err.message}`);
@@ -89,14 +107,41 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 };
 
-async function findProjectId(externalId: string) {
-	if (!UUID_REGEX.test(externalId)) return null;
+type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-	const [row] = await db
+async function findAssociatedProjectId(tx: Transaction, body: OutboundBody) {
+	const projectId = body.external_id.split(':', 1)[0];
+	if (!isUuid(projectId)) return null;
+
+	const [row] = await tx
 		.select({ id: project.id })
 		.from(project)
-		.where(eq(project.id, externalId))
+		.where(eq(project.id, projectId))
 		.limit(1);
-
 	return row?.id ?? null;
+}
+
+function assertMakerMatches(
+	activeProject: { makerEmail: string; makerSlackId: string },
+	body: OutboundBody
+) {
+	const emailMatches = activeProject.makerEmail.toLowerCase() === body.maker.email.toLowerCase();
+	const slackMatches =
+		body.maker.slack_id === null || body.maker.slack_id === activeProject.makerSlackId;
+	if (!emailMatches || !slackMatches) {
+		throw new OutboundWebhookError(422, 'Ari delivery maker does not match the project owner');
+	}
+}
+
+function getMinutesBreakdown(body: OutboundBody): MinutesBreakdown | null {
+	if (body.review.minutes_breakdown) {
+		return normalizeMinutesBreakdown(body.review.minutes_breakdown);
+	}
+	if (body.review.approved_minutes !== undefined) {
+		return normalizeMinutesBreakdown({ program: body.review.approved_minutes });
+	}
+	if (body.review.approved_hours !== undefined) {
+		return normalizeMinutesBreakdown({ program: Math.round(body.review.approved_hours * 60) });
+	}
+	return null;
 }
