@@ -43,13 +43,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const [stats] = await db
 		.select({
 			totalJournalMinutes: sql<number>`COALESCE(SUM(${journal.durationInMinutes}), 0)`,
-			journalCount: sql<number>`COUNT(${journal.id})`,
-			totalApprovedMinutes: sql<number>`COALESCE(SUM(${review.approvedMinutes}) FILTER (WHERE ${review.event} = 'approved'), 0)`,
-			reviewCount: sql<number>`COUNT(${review.id})`
+			journalCount: sql<number>`COUNT(${journal.id})`
 		})
 		.from(project)
 		.leftJoin(journal, eq(journal.projectId, project.id))
-		.leftJoin(review, eq(review.projectId, project.id))
 		.where(eq(project.id, params.id))
 		.groupBy(project.id);
 
@@ -64,9 +61,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		reviews,
 		stats: {
 			totalJournalMinutes: Number(stats?.totalJournalMinutes ?? 0),
-			journalCount: Number(stats?.journalCount ?? 0),
-			totalApprovedMinutes: Number(stats?.totalApprovedMinutes ?? 0),
-			reviewCount: Number(stats?.reviewCount ?? 0)
+			journalCount: Number(stats?.journalCount ?? 0)
 		},
 		readiness,
 		canEdit: canEditProject(existingProject.status),

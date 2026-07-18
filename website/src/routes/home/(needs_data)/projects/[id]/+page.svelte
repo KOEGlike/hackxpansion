@@ -68,22 +68,18 @@
 		borderColor: string;
 	}
 
-	function reviewColor(event: string): { bg: string; border: string; detailPrefix: string } {
+	function reviewColor(event: string): { bg: string; border: string } {
 		switch (event) {
 			case 'approved':
-				return { bg: 'bg-green-100', border: 'border-green-700', detailPrefix: 'approved' };
+				return { bg: 'bg-green-100', border: 'border-green-700' };
 			case 'changes':
-				return {
-					bg: 'bg-amber-100',
-					border: 'border-amber-700',
-					detailPrefix: 'changes requested'
-				};
+				return { bg: 'bg-amber-100', border: 'border-amber-700' };
 			case 'rejected':
-				return { bg: 'bg-red-100', border: 'border-red-700', detailPrefix: 'rejected' };
+				return { bg: 'bg-red-100', border: 'border-red-700' };
 			case 'fraud':
-				return { bg: 'bg-red-100', border: 'border-red-700', detailPrefix: 'fraud detected' };
+				return { bg: 'bg-red-100', border: 'border-red-700' };
 			default:
-				return { bg: 'bg-blue-100', border: 'border-blue-700', detailPrefix: 'outcome' };
+				return { bg: 'bg-blue-100', border: 'border-blue-700' };
 		}
 	}
 
@@ -106,14 +102,11 @@
 
 		for (const r of data.reviews) {
 			const c = reviewColor(r.event);
-			const detail = r.noteToMaker
-				? `${formatMinutes(r.approvedMinutes ?? 0)} ${c.detailPrefix} — ${r.noteToMaker}`
-				: `${formatMinutes(r.approvedMinutes ?? 0)} ${c.detailPrefix}`;
 			items.push({
 				type: 'review',
 				date: new Date(r.receivedAt),
 				label: `Review: ${reviewEventLabel(r.event)}`,
-				detail,
+				detail: r.noteToMaker ?? 'Review outcome recorded.',
 				html: null,
 				color: c.bg,
 				borderColor: c.border
@@ -212,9 +205,9 @@
 			</p>
 		</article>
 		<article class="content-box p-4">
-			<p class="text-xs uppercase tracking-wide text-slate-600">Approved time</p>
+			<p class="text-xs uppercase tracking-wide text-slate-600">Total tracked</p>
 			<p class="mt-1 text-2xl font-bold">
-				{formatMinutes(data.stats.totalApprovedMinutes)}
+				{formatMinutes(data.stats.totalJournalMinutes + data.hackatimeMinutes)}
 			</p>
 		</article>
 	</section>

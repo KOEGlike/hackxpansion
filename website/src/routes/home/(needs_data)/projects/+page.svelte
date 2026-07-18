@@ -115,29 +115,34 @@
 						</div>
 					</div>
 
-					<div class="mt-4 grid gap-2 text-sm md:grid-cols-2">
+					<div class="mt-4 flex flex-row gap-4">
 						{#if project.repoUrl}
 							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 							<a class="underline" href={project.repoUrl} target="_blank" rel="noreferrer">Repo</a>
+							|
 						{/if}
 						{#if project.demoUrl}
 							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 							<a class="underline" href={project.demoUrl} target="_blank" rel="noreferrer">Demo</a>
+							|
 						{/if}
-						<p>Hackatime: {project.hackatimeProjects?.join(', ') || 'none'}</p>
 						{#if project.type === 'card'}
 							<p>
-								Module ID resistors: MD1 = {formatResistor(project.md1)}, MD2 =
-								{formatResistor(project.md2)}
+								MD1:{formatResistor(project.md1)} MD2:{formatResistor(project.md2)}
 							</p>
+							|
 						{/if}
+						<p>Hackatime:{project.hackatimeProjects?.join(',') || 'none'}</p>
 					</div>
 
 					<div class="mt-4 flex gap-4 text-sm text-slate-600">
 						<span>{project.journalCount} journal{project.journalCount === 1 ? '' : 's'}</span>
-						<span>{formatMinutes(project.totalJournalMinutes)} journaled</span>
+						|
+						<span class="font-semibold text-slate-700"
+							>{formatMinutes(project.totalTrackedMinutes)} total tracked</span
+						>
+						|
 						<span>{project.reviewCount} review{project.reviewCount === 1 ? '' : 's'}</span>
-						<span>{formatMinutes(project.totalApprovedMinutes)} approved</span>
 					</div>
 
 					{#if !project.readiness.canSubmit}

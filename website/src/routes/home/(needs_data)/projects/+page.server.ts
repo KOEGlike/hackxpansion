@@ -9,6 +9,7 @@ import {
 	submitProjectToAri,
 	withdrawProjectFromAri
 } from '$lib/server/projects/submit';
+import { getUserHackatimeProjectsWithStats } from '$lib/server/hackatime';
 import { eq, sql } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -31,27 +32,62 @@ export const load: PageServerLoad = async ({ locals }) => {
 			tier: project.tier,
 			hackatimeProjects: project.hackatime_projects,
 			md1: project.md1,
-			md2: project.md2,
-			totalJournalMinutes: sql<number>`COALESCE(SUM(${journal.durationInMinutes}), 0)`,
-			journalCount: sql<number>`COUNT(${journal.id})`,
-			totalApprovedMinutes: sql<number>`COALESCE(SUM(${review.approvedMinutes}) FILTER (WHERE ${review.event} = 'approved'), 0)`,
-			reviewCount: sql<number>`COUNT(${review.id})`
+			md2: project.md2
 		})
 		.from(project)
-		.leftJoin(journal, eq(journal.projectId, project.id))
-		.leftJoin(review, eq(review.projectId, project.id))
-		.where(eq(project.userId, locals.user.id))
-		.groupBy(project.id);
+		.where(eq(project.userId, locals.user.id));
+
+	const [journalStats, reviewStats, hackatimeStats] = await Promise.all([
+		db
+			.select({
+				projectId: journal.projectId,
+				totalJournalMinutes: sql<number>`COALESCE(SUM(${journal.durationInMinutes}), 0)`,
+				journalCount: sql<number>`COUNT(${journal.id})`
+			})
+			.from(journal)
+			.innerJoin(project, eq(journal.projectId, project.id))
+			.where(eq(project.userId, currentUser.id))
+			.groupBy(journal.projectId),
+		db
+			.select({
+				projectId: review.projectId,
+				reviewCount: sql<number>`COUNT(${review.id})`
+			})
+			.from(review)
+			.innerJoin(project, eq(review.projectId, project.id))
+			.where(eq(project.userId, currentUser.id))
+			.groupBy(review.projectId),
+		getUserHackatimeProjectsWithStats(currentUser.slackId).catch(() => [])
+	]);
+
+	const journalStatsByProject = new Map(journalStats.map((stats) => [stats.projectId, stats]));
+	const reviewCountByProject = new Map(
+		reviewStats.map((stats) => [stats.projectId, Number(stats.reviewCount)])
+	);
+	const hackatimeSecondsByProject = new Map(
+		hackatimeStats.map((stats) => [stats.name, stats.totalSeconds])
+	);
 
 	const projectsWithReadiness = await Promise.all(
-		projects.map(async (project) => ({
-			...project,
-			totalJournalMinutes: Number(project.totalJournalMinutes),
-			journalCount: Number(project.journalCount),
-			totalApprovedMinutes: Number(project.totalApprovedMinutes),
-			reviewCount: Number(project.reviewCount),
-			readiness: await canSubmit({ projectId: project.id, userId: currentUser.id })
-		}))
+		projects.map(async (currentProject) => {
+			const currentJournalStats = journalStatsByProject.get(currentProject.id);
+			const totalJournalMinutes = Number(currentJournalStats?.totalJournalMinutes ?? 0);
+			const hackatimeMinutes = Math.round(
+				(currentProject.hackatimeProjects ?? []).reduce(
+					(total, name) => total + (hackatimeSecondsByProject.get(name) ?? 0),
+					0
+				) / 60
+			);
+
+			return {
+				...currentProject,
+				totalJournalMinutes,
+				journalCount: Number(currentJournalStats?.journalCount ?? 0),
+				reviewCount: reviewCountByProject.get(currentProject.id) ?? 0,
+				totalTrackedMinutes: totalJournalMinutes + hackatimeMinutes,
+				readiness: await canSubmit({ projectId: currentProject.id, userId: currentUser.id })
+			};
+		})
 	);
 
 	return { projects: projectsWithReadiness };
