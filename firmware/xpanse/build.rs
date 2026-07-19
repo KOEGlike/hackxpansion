@@ -14,7 +14,10 @@ use std::io::Write;
 use std::path::PathBuf;
 
 fn main() {
-    slint_build::compile("ui/app_picker.slint").unwrap();
+    let slint_config = slint_build::CompilerConfiguration::new()
+        .embed_resources(slint_build::EmbedResourcesKind::EmbedForSoftwareRenderer);
+    slint_build::compile_with_config("ui/app_picker.slint", slint_config)
+        .expect("failed to compile app picker UI");
     // Put `memory.x` in our output directory and ensure it's
     // on the linker search path.
     let out = &PathBuf::from(env::var_os("OUT_DIR").unwrap());

@@ -9,6 +9,19 @@ pub struct HardwareSpiBus<'d, I: Instance> {
 }
 
 impl<'d, I: Instance> HardwareSpiBus<'d, I> {
+    pub fn validate_config(config: &spi::Config) -> Result<(), SpiError> {
+        let clock = embassy_rp::clocks::clk_peri_freq() as u64;
+        let frequency = config.frequency as u64;
+        if frequency == 0 || frequency > clock / 2 {
+            return Err(SpiError::InvalidFrequency);
+        }
+        let ratio = clock.div_ceil(2 * frequency);
+        if ratio > 127 * 256 {
+            return Err(SpiError::InvalidFrequency);
+        }
+        Ok(())
+    }
+
     pub fn new<TxDma, RxDma, Irq>(
         peri: Peri<'d, I>,
         clk: Peri<'d, impl embassy_rp::spi::ClkPin<I> + 'd>,
@@ -18,7 +31,7 @@ impl<'d, I: Instance> HardwareSpiBus<'d, I> {
         rx_dma: Peri<'d, RxDma>,
         irq: Irq,
         config: spi::Config,
-    ) -> Self
+    ) -> Result<Self, SpiError>
     where
         TxDma: ChannelInstance,
         RxDma: ChannelInstance,
@@ -26,8 +39,9 @@ impl<'d, I: Instance> HardwareSpiBus<'d, I> {
             + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
             + 'd,
     {
+        Self::validate_config(&config)?;
         let spi = Spi::new(peri, clk, mosi, miso, tx_dma, rx_dma, irq, config);
-        Self { spi }
+        Ok(Self { spi })
     }
 }
 

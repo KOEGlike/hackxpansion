@@ -37,7 +37,7 @@ fn main() -> ! {
     let r = split_resources!(p);
 
     unsafe {
-        embedded_alloc::init!(HEAP, 1024);
+        embedded_alloc::init!(HEAP, 64 * 1024);
     }
 
     spawn_core1(

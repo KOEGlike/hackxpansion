@@ -14,6 +14,8 @@ use mipidsi::{
 
 pub const HIGHT: u16 = 240;
 pub const WIDTH: u16 = 320;
+const PANEL_WIDTH: u16 = 240;
+const PANEL_HEIGHT: u16 = 320;
 
 // Update your type definition to use ExclusiveDevice
 pub type Display<T> = mipidsi::Display<
@@ -54,7 +56,7 @@ pub fn init_display<T: Instance>(
     let di = SpiInterface::new(display_spi, dcx, buffer);
 
     Builder::new(ST7789, di)
-        .display_size(WIDTH, HIGHT)
+        .display_size(PANEL_WIDTH, PANEL_HEIGHT)
         .reset_pin(rst)
         .orientation(Orientation::new().rotate(Rotation::Deg90))
         .init(&mut Delay)

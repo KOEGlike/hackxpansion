@@ -7,6 +7,7 @@ pub enum SpiError {
     Overrun,
     ModeFault,
     Crc,
+    InvalidFrequency,
     Other,
 }
 
@@ -16,6 +17,7 @@ impl embedded_hal::spi::Error for SpiError {
             SpiError::Overrun => embedded_hal::spi::ErrorKind::Overrun,
             SpiError::ModeFault => embedded_hal::spi::ErrorKind::ModeFault,
             SpiError::Crc => embedded_hal::spi::ErrorKind::FrameFormat,
+            SpiError::InvalidFrequency => embedded_hal::spi::ErrorKind::Other,
             SpiError::Other => embedded_hal::spi::ErrorKind::Other,
         }
     }
@@ -41,6 +43,8 @@ pub enum SpiBusVersion {
 }
 
 pub trait DynSpiBus {
+    fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>>;
+
     fn write<'a>(
         &'a mut self,
         data: &'a [u8],
@@ -64,14 +68,17 @@ pub trait DynSpiBus {
 }
 
 pub trait DynSpiBusBlocking {
+    fn flush_blocking(&mut self) -> Result<(), SpiError>;
     fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError>;
     fn read_blocking(&mut self, data: &mut [u8]) -> Result<(), SpiError>;
     fn transfer_blocking(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError>;
+    fn transfer_in_place_blocking(&mut self, words: &mut [u8]) -> Result<(), SpiError>;
 }
 
-pub trait DynSpiBusCombined: DynSpiBus + DynSpiBusBlocking {}
-impl<T: DynSpiBus + DynSpiBusBlocking> DynSpiBusCombined for T {}
+pub trait DynSpiBusCombined: DynSpiBus + DynSpiBusBlocking + Send {}
+impl<T: DynSpiBus + DynSpiBusBlocking + Send> DynSpiBusCombined for T {}
 
+#[must_use = "dropping a bus handle does not return its startup resources"]
 pub struct SpiBusHandle {
     inner: Box<dyn DynSpiBusCombined>,
     version: SpiBusVersion,
@@ -84,6 +91,10 @@ impl SpiBusHandle {
 
     pub fn version(&self) -> SpiBusVersion {
         self.version
+    }
+
+    pub async fn flush(&mut self) -> Result<(), SpiError> {
+        self.inner.flush().await
     }
 
     pub async fn write(&mut self, data: &[u8]) -> Result<(), SpiError> {
@@ -102,6 +113,10 @@ impl SpiBusHandle {
         self.inner.transfer_in_place(words).await
     }
 
+    pub fn flush_blocking(&mut self) -> Result<(), SpiError> {
+        self.inner.flush_blocking()
+    }
+
     pub fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError> {
         self.inner.write_blocking(data)
     }
@@ -113,6 +128,10 @@ impl SpiBusHandle {
     pub fn transfer_blocking(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
         self.inner.transfer_blocking(read, write)
     }
+
+    pub fn transfer_in_place_blocking(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.inner.transfer_in_place_blocking(words)
+    }
 }
 
 // ── embedded-hal trait impls on SpiBusHandle ──────────────────────────
@@ -123,7 +142,7 @@ impl embedded_hal::spi::ErrorType for SpiBusHandle {
 
 impl embedded_hal::spi::SpiBus<u8> for SpiBusHandle {
     fn flush(&mut self) -> Result<(), SpiError> {
-        Ok(())
+        self.flush_blocking()
     }
 
     fn read(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
@@ -139,18 +158,13 @@ impl embedded_hal::spi::SpiBus<u8> for SpiBusHandle {
     }
 
     fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
-        let len = words.len();
-        for i in 0..len {
-            let w = words[i];
-            self.transfer_blocking(&mut words[i..i + 1], &[w])?;
-        }
-        Ok(())
+        self.transfer_in_place_blocking(words)
     }
 }
 
 impl embedded_hal_async::spi::SpiBus<u8> for SpiBusHandle {
     async fn flush(&mut self) -> Result<(), SpiError> {
-        Ok(())
+        self.flush().await
     }
 
     async fn read(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
@@ -170,39 +184,18 @@ impl embedded_hal_async::spi::SpiBus<u8> for SpiBusHandle {
     }
 }
 
-impl embedded_hal_async::spi::SpiDevice<u8> for SpiBusHandle {
-    async fn transaction(
-        &mut self,
-        operations: &mut [embedded_hal::spi::Operation<'_, u8>],
-    ) -> Result<(), SpiError> {
-        for op in operations {
-            match op {
-                embedded_hal::spi::Operation::Read(buf) => {
-                    self.inner.read(buf).await?;
-                }
-                embedded_hal::spi::Operation::Write(buf) => {
-                    self.inner.write(buf).await?;
-                }
-                embedded_hal::spi::Operation::Transfer(read, write) => {
-                    self.inner.transfer(read, write).await?;
-                }
-                embedded_hal::spi::Operation::TransferInPlace(buf) => {
-                    self.inner.transfer_in_place(buf).await?;
-                }
-                embedded_hal::spi::Operation::DelayNs(_) => {}
-            }
-        }
-        Ok(())
-    }
-}
-
 // Blanket impls: anything implementing embedded-hal SpiBus<u8> gets our traits for free
 
 impl<T> DynSpiBusBlocking for T
 where
     T: embedded_hal::spi::SpiBus<u8>,
     T::Error: Into<SpiError>,
+    T: Send,
 {
+    fn flush_blocking(&mut self) -> Result<(), SpiError> {
+        self.flush().map_err(|e| e.into())
+    }
+
     fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError> {
         self.write(data).map_err(|e| e.into())
     }
@@ -214,13 +207,26 @@ where
     fn transfer_blocking(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
         self.transfer(read, write).map_err(|e| e.into())
     }
+
+    fn transfer_in_place_blocking(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
+        self.transfer_in_place(words).map_err(|e| e.into())
+    }
 }
 
 impl<T> DynSpiBus for T
 where
     T: embedded_hal_async::spi::SpiBus<u8>,
     T::Error: Into<SpiError>,
+    T: Send,
 {
+    fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>> {
+        Box::pin(async move {
+            embedded_hal_async::spi::SpiBus::flush(self)
+                .await
+                .map_err(|e| e.into())
+        })
+    }
+
     fn write<'a>(
         &'a mut self,
         data: &'a [u8],

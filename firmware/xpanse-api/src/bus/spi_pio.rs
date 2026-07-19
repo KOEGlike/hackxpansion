@@ -11,6 +11,18 @@ pub struct PioSpiBus<'d, PIO: embassy_rp::pio::Instance, const SM: usize> {
 }
 
 impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> PioSpiBus<'d, PIO, SM> {
+    pub fn validate_config(config: &spi::Config) -> Result<(), SpiError> {
+        let clock = embassy_rp::clocks::clk_sys_freq() as u64;
+        let target = (config.frequency as u64).saturating_mul(4);
+        if target == 0 || target > clock || target > u32::MAX as u64 {
+            return Err(SpiError::InvalidFrequency);
+        }
+        if clock > target.saturating_mul(65_536) {
+            return Err(SpiError::InvalidFrequency);
+        }
+        Ok(())
+    }
+
     pub fn new<TxDma, RxDma, Irq>(
         common: &mut Common<'d, PIO>,
         sm: StateMachine<'d, PIO, SM>,
@@ -21,7 +33,7 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> PioSpiBus<'d, PIO, SM>
         rx_dma: Peri<'d, RxDma>,
         irq: Irq,
         config: spi::Config,
-    ) -> Self
+    ) -> Result<Self, SpiError>
     where
         TxDma: ChannelInstance,
         RxDma: ChannelInstance,
@@ -29,8 +41,9 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM: usize> PioSpiBus<'d, PIO, SM>
             + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
             + 'd,
     {
+        Self::validate_config(&config)?;
         let spi = pio_spi::Spi::new(common, sm, clk, mosi, miso, tx_dma, rx_dma, irq, config);
-        Self { spi }
+        Ok(Self { spi })
     }
 }
 

@@ -5730,11 +5730,9 @@ name = "test-driver"
 version = "0.1.0"
 dependencies = [
  "defmt 1.1.0",
- "embassy-executor",
  "embassy-rp",
- "embassy-sync",
- "fixed",
- "pio",
+ "embassy-time",
+ "embedded-hal-bus",
  "ti-adc-expander",
  "xpanse-api",
 ]

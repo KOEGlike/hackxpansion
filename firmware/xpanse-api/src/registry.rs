@@ -51,14 +51,42 @@ impl ResourceId {
 }
 
 pub struct RegisteredResource<T> {
-    pub id: ResourceId,
-    pub slot: ModuleSlot,
-    pub module_id: ModuleID,
+    id: ResourceId,
+    slot: ModuleSlot,
+    module_id: ModuleID,
     pub resource: T,
 }
 
 pub struct CapabilityList<T> {
-    pub items: Vec<RegisteredResource<T>>,
+    items: Vec<RegisteredResource<T>>,
+}
+
+impl<T> RegisteredResource<T> {
+    pub const fn id(&self) -> ResourceId {
+        self.id
+    }
+
+    pub const fn slot(&self) -> ModuleSlot {
+        self.slot
+    }
+
+    pub const fn module_id(&self) -> ModuleID {
+        self.module_id
+    }
+}
+
+impl<T> CapabilityList<T> {
+    pub fn iter(&self) -> impl Iterator<Item = &RegisteredResource<T>> {
+        self.items.iter()
+    }
+
+    pub fn len(&self) -> usize {
+        self.items.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
 }
 
 impl<T> Default for CapabilityList<T> {
@@ -70,6 +98,11 @@ impl<T> Default for CapabilityList<T> {
 pub struct Registry {
     entries: BTreeMap<TypeId, Box<dyn Any + Send>>,
     next_generated_resource_id: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
+pub enum RegistryError {
+    SlotMismatch,
 }
 
 impl Default for Registry {
@@ -103,7 +136,8 @@ impl Registry {
             .checked_add(1)
             .expect("generated resource id counter overflowed");
 
-        self.register_with_id(slot, module_id, id, resource);
+        self.register_with_id(slot, module_id, id, resource)
+            .expect("generated resource IDs do not contain a slot");
     }
 
     /// Registers a resource with an explicit physical identity.
@@ -118,7 +152,13 @@ impl Registry {
         module_id: ModuleID,
         id: ResourceId,
         resource: T,
-    ) {
+    ) -> Result<(), RegistryError> {
+        if let Some((id_slot, _)) = id.physical_parts()
+            && id_slot != slot
+        {
+            return Err(RegistryError::SlotMismatch);
+        }
+
         self.entries
             .entry(TypeId::of::<CapabilityList<T>>())
             .or_insert_with(|| Box::new(CapabilityList::<T>::default()))
@@ -131,12 +171,13 @@ impl Registry {
                 module_id,
                 resource,
             });
+        Ok(())
     }
 
-    pub fn capabilities<T: 'static + Send>(&mut self) -> Option<&mut CapabilityList<T>> {
+    pub fn capabilities<T: 'static + Send>(&self) -> Option<&CapabilityList<T>> {
         self.entries
-            .get_mut(&TypeId::of::<CapabilityList<T>>())
-            .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
+            .get(&TypeId::of::<CapabilityList<T>>())
+            .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())
     }
 
     /// Returns how many logical resources of type `T` are currently available.
@@ -211,7 +252,8 @@ impl Registry {
             resource.module_id,
             resource.id,
             resource.resource,
-        );
+        )
+        .expect("returned resources retain their original slot");
     }
 
     pub fn take_resource<T: 'static + Send>(&mut self) -> Option<RegisteredResource<T>> {

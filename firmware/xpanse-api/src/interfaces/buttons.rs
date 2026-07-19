@@ -7,6 +7,7 @@ use embassy_rp::{
     Peri,
     gpio::{AnyPin, Input, Pull},
 };
+use embassy_time::Timer;
 
 mod private {
     pub trait Sealed {}
@@ -28,6 +29,7 @@ role!(A, B, X, Y, Up, Down, Left, Right);
 
 pub trait Button<R: ButtonRole>: Send {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
+    fn is_pressed(&self) -> bool;
 }
 
 pub struct SingleButton<R: ButtonRole> {
@@ -47,8 +49,23 @@ impl<R: ButtonRole> SingleButton<R> {
 impl<R: ButtonRole> Button<R> for SingleButton<R> {
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
         Box::pin(async move {
-            self.pin.wait_for_low().await;
+            while self.pin.is_low() {
+                self.pin.wait_for_high().await;
+                Timer::after_millis(20).await;
+            }
+
+            loop {
+                self.pin.wait_for_low().await;
+                Timer::after_millis(20).await;
+                if self.pin.is_low() {
+                    return;
+                }
+            }
         })
+    }
+
+    fn is_pressed(&self) -> bool {
+        self.pin.is_low()
     }
 }
 

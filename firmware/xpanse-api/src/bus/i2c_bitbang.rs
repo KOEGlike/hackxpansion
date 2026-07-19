@@ -1,7 +1,9 @@
 use crate::bus::i2c::I2cError;
 use embassy_rp::Peri;
 use embassy_rp::gpio::{Level, OutputOpenDrain};
-use embassy_time::{Duration, Timer};
+use embassy_time::{Duration, TICK_HZ, Timer, with_timeout};
+
+const CLOCK_STRETCH_TIMEOUT: Duration = Duration::from_millis(25);
 
 /// Bit-banged I2C master using open-drain GPIO for SCL/SDA.
 ///
@@ -16,28 +18,45 @@ pub struct BitBangI2cBus<'d> {
     half_period: Duration,
 }
 
+struct BusIdleGuard<'d> {
+    scl: *mut OutputOpenDrain<'d>,
+    sda: *mut OutputOpenDrain<'d>,
+}
+
+impl Drop for BusIdleGuard<'_> {
+    fn drop(&mut self) {
+        // SAFETY: the guard is created and dropped entirely within an operation
+        // that exclusively borrows the bus. The GPIO drivers cannot move or be
+        // accessed elsewhere while that operation future is alive.
+        unsafe {
+            (*self.sda).set_high();
+            (*self.scl).set_high();
+        }
+    }
+}
+
 impl<'d> BitBangI2cBus<'d> {
     pub fn new(
         scl: Peri<'d, impl embassy_rp::gpio::Pin>,
         sda: Peri<'d, impl embassy_rp::gpio::Pin>,
         frequency_hz: u32,
-    ) -> Self {
+    ) -> Result<Self, I2cError> {
+        if frequency_hz == 0 || frequency_hz as u64 > TICK_HZ / 2 {
+            return Err(I2cError::Other);
+        }
+
         let mut scl = OutputOpenDrain::new(scl, Level::High);
         let mut sda = OutputOpenDrain::new(sda, Level::High);
         scl.set_pullup(true);
         sda.set_pullup(true);
 
-        let half_period = if frequency_hz > 0 {
-            Duration::from_micros(500_000 / frequency_hz as u64)
-        } else {
-            Duration::from_micros(5)
-        };
+        let half_period = Duration::from_hz(frequency_hz as u64 * 2);
 
-        Self {
+        Ok(Self {
             scl,
             sda,
             half_period,
-        }
+        })
     }
 
     fn release_scl(&mut self) {
@@ -60,101 +79,180 @@ impl<'d> BitBangI2cBus<'d> {
         self.sda.is_high()
     }
 
-    async fn wait_scl_high(&mut self) {
-        // Clock stretching: wait for the slave to release SCL.
-        loop {
-            self.release_scl();
-            Timer::after(self.half_period).await;
-            if self.scl.is_high() {
-                return;
-            }
+    async fn wait_scl_high(&mut self) -> Result<(), I2cError> {
+        self.release_scl();
+        if self.scl.is_low()
+            && with_timeout(CLOCK_STRETCH_TIMEOUT, self.scl.wait_for_high())
+                .await
+                .is_err()
+        {
+            return Err(I2cError::Abort);
         }
+        Ok(())
     }
 
     async fn delay(&mut self) {
         Timer::after(self.half_period).await;
     }
 
-    async fn start(&mut self) {
-        // From idle (both high), SDA falls while SCL is high.
+    async fn start(&mut self) -> Result<(), I2cError> {
         self.release_sda();
-        self.release_scl();
+        self.delay().await;
+        self.wait_scl_high().await?;
+        if !self.sda_high() {
+            self.release_scl();
+            self.release_sda();
+            return Err(I2cError::Abort);
+        }
         self.delay().await;
         self.pull_sda_low();
         self.delay().await;
         self.pull_scl_low();
-        self.delay().await;
+        Ok(())
     }
 
-    async fn stop(&mut self) {
-        // SDA rises while SCL is high.
+    async fn stop(&mut self) -> Result<(), I2cError> {
         self.pull_sda_low();
         self.delay().await;
-        self.wait_scl_high().await;
+        let clock_result = self.wait_scl_high().await;
+        if clock_result.is_ok() {
+            self.delay().await;
+        }
         self.release_sda();
+        self.release_scl();
         self.delay().await;
+        clock_result
     }
 
-    async fn write_bit(&mut self, bit: bool) {
+    async fn write_bit(&mut self, bit: bool) -> Result<(), I2cError> {
         if bit {
             self.release_sda();
         } else {
             self.pull_sda_low();
         }
         self.delay().await;
-        self.wait_scl_high().await;
+        self.wait_scl_high().await?;
+        if bit && !self.sda_high() {
+            self.release_sda();
+            self.release_scl();
+            return Err(I2cError::ArbitrationLoss);
+        }
         self.delay().await;
         self.pull_scl_low();
+        Ok(())
     }
 
-    async fn read_bit(&mut self) -> bool {
+    async fn read_bit(&mut self) -> Result<bool, I2cError> {
         self.release_sda();
         self.delay().await;
-        self.wait_scl_high().await;
+        self.wait_scl_high().await?;
         let bit = self.sda_high();
         self.delay().await;
         self.pull_scl_low();
-        bit
+        Ok(bit)
     }
 
     /// Write one byte, return true if ACK received.
-    async fn write_byte(&mut self, byte: u8) -> bool {
+    async fn write_byte(&mut self, byte: u8) -> Result<bool, I2cError> {
         for i in (0..8).rev() {
-            self.write_bit((byte >> i) & 1 != 0).await;
+            self.write_bit((byte >> i) & 1 != 0).await?;
         }
         // ACK is low (slave pulls SDA low).
-        !self.read_bit().await
+        Ok(!self.read_bit().await?)
     }
 
     /// Read one byte. Send ACK if `ack` is true, NACK otherwise.
-    async fn read_byte(&mut self, ack: bool) -> u8 {
+    async fn read_byte(&mut self, ack: bool) -> Result<u8, I2cError> {
         let mut byte = 0u8;
         for _ in 0..8 {
             byte <<= 1;
-            if self.read_bit().await {
+            if self.read_bit().await? {
                 byte |= 1;
             }
         }
         // Master sends ACK (low) or NACK (high).
-        self.write_bit(!ack).await;
-        byte
+        self.write_bit(!ack).await?;
+        Ok(byte)
     }
 
     async fn write_bytes(&mut self, bytes: &[u8]) -> Result<(), I2cError> {
         for &b in bytes {
-            if !self.write_byte(b).await {
+            if !self.write_byte(b).await? {
                 return Err(I2cError::Abort);
             }
         }
         Ok(())
     }
 
-    async fn read_bytes(&mut self, buf: &mut [u8]) -> Result<(), I2cError> {
-        let len = buf.len();
-        for (i, byte) in buf.iter_mut().enumerate() {
-            *byte = self.read_byte(i < len - 1).await;
+    async fn transfer(
+        &mut self,
+        address: u8,
+        operations: &mut [embedded_hal::i2c::Operation<'_>],
+    ) -> Result<(), I2cError> {
+        use embedded_hal::i2c::Operation;
+
+        let mut read_direction = None;
+        for index in 0..operations.len() {
+            let is_read = matches!(&operations[index], Operation::Read(_));
+            let next_is_read = matches!(operations.get(index + 1), Some(Operation::Read(_)));
+
+            if read_direction != Some(is_read) {
+                if read_direction.is_some() {
+                    self.start().await?;
+                }
+                if !self.write_byte((address << 1) | u8::from(is_read)).await? {
+                    return Err(I2cError::Abort);
+                }
+                read_direction = Some(is_read);
+            }
+
+            match &mut operations[index] {
+                Operation::Read(buf) => {
+                    let len = buf.len();
+                    for (byte_index, byte) in buf.iter_mut().enumerate() {
+                        let ack = byte_index + 1 < len || next_is_read;
+                        *byte = self.read_byte(ack).await?;
+                    }
+                }
+                Operation::Write(buf) => self.write_bytes(buf).await?,
+            }
         }
         Ok(())
+    }
+
+    async fn transaction_impl(
+        &mut self,
+        address: u8,
+        operations: &mut [embedded_hal::i2c::Operation<'_>],
+    ) -> Result<(), I2cError> {
+        use embedded_hal::i2c::Operation;
+
+        if address > 0x7f {
+            return Err(I2cError::AddressOutOfRange);
+        }
+        if operations.iter().any(|operation| match operation {
+            Operation::Read(buf) => buf.is_empty(),
+            Operation::Write(buf) => buf.is_empty(),
+        }) {
+            return Err(I2cError::InvalidBufferLength);
+        }
+        if operations.is_empty() {
+            return Ok(());
+        }
+
+        let _idle_guard = BusIdleGuard {
+            scl: &mut self.scl,
+            sda: &mut self.sda,
+        };
+        self.start().await?;
+        let transfer_result = self.transfer(address, operations).await;
+        if transfer_result == Err(I2cError::ArbitrationLoss) {
+            self.release_sda();
+            self.release_scl();
+            return transfer_result;
+        }
+        let stop_result = self.stop().await;
+        transfer_result.and(stop_result)
     }
 }
 
@@ -168,18 +266,8 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress> for Bi
         address: embedded_hal::i2c::SevenBitAddress,
         read: &mut [u8],
     ) -> Result<(), I2cError> {
-        if read.is_empty() {
-            return Err(I2cError::InvalidBufferLength);
-        }
-        self.start().await;
-        // Address + R bit
-        if !self.write_byte((address << 1) | 1).await {
-            self.stop().await;
-            return Err(I2cError::Abort);
-        }
-        self.read_bytes(read).await?;
-        self.stop().await;
-        Ok(())
+        self.transaction_impl(address, &mut [embedded_hal::i2c::Operation::Read(read)])
+            .await
     }
 
     async fn write(
@@ -187,17 +275,8 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress> for Bi
         address: embedded_hal::i2c::SevenBitAddress,
         write: &[u8],
     ) -> Result<(), I2cError> {
-        if write.is_empty() {
-            return Err(I2cError::InvalidBufferLength);
-        }
-        self.start().await;
-        if !self.write_byte(address << 1).await {
-            self.stop().await;
-            return Err(I2cError::Abort);
-        }
-        self.write_bytes(write).await?;
-        self.stop().await;
-        Ok(())
+        self.transaction_impl(address, &mut [embedded_hal::i2c::Operation::Write(write)])
+            .await
     }
 
     async fn write_read(
@@ -206,25 +285,14 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress> for Bi
         write: &[u8],
         read: &mut [u8],
     ) -> Result<(), I2cError> {
-        if write.is_empty() || read.is_empty() {
-            return Err(I2cError::InvalidBufferLength);
-        }
-        self.start().await;
-        // Write phase
-        if !self.write_byte(address << 1).await {
-            self.stop().await;
-            return Err(I2cError::Abort);
-        }
-        self.write_bytes(write).await?;
-        // Repeated start for read phase
-        self.start().await;
-        if !self.write_byte((address << 1) | 1).await {
-            self.stop().await;
-            return Err(I2cError::Abort);
-        }
-        self.read_bytes(read).await?;
-        self.stop().await;
-        Ok(())
+        self.transaction_impl(
+            address,
+            &mut [
+                embedded_hal::i2c::Operation::Write(write),
+                embedded_hal::i2c::Operation::Read(read),
+            ],
+        )
+        .await
     }
 
     async fn transaction(
@@ -232,61 +300,6 @@ impl<'d> embedded_hal_async::i2c::I2c<embedded_hal::i2c::SevenBitAddress> for Bi
         address: embedded_hal::i2c::SevenBitAddress,
         operations: &mut [embedded_hal::i2c::Operation<'_>],
     ) -> Result<(), I2cError> {
-        use embedded_hal::i2c::Operation;
-
-        if operations.is_empty() {
-            return Ok(());
-        }
-
-        self.start().await;
-
-        let len = operations.len();
-        let mut first = true;
-        let mut last_op_was_read = false;
-
-        for (i, op) in operations.iter_mut().enumerate() {
-            let is_read = matches!(op, Operation::Read(_));
-            let last = i == len - 1;
-
-            // (Re)start with the correct R/W bit.
-            if !first || last_op_was_read != is_read {
-                self.start().await;
-            }
-            first = false;
-
-            let addr_byte = (address << 1) | u8::from(is_read);
-            if !self.write_byte(addr_byte).await {
-                self.stop().await;
-                return Err(I2cError::Abort);
-            }
-
-            match op {
-                Operation::Read(buf) => {
-                    if buf.is_empty() {
-                        self.stop().await;
-                        return Err(I2cError::InvalidBufferLength);
-                    }
-                    let len = buf.len();
-                    for (j, byte) in buf.iter_mut().enumerate() {
-                        *byte = self.read_byte(j < len - 1).await;
-                    }
-                }
-                Operation::Write(buf) => {
-                    if buf.is_empty() {
-                        self.stop().await;
-                        return Err(I2cError::InvalidBufferLength);
-                    }
-                    self.write_bytes(buf).await?;
-                }
-            }
-
-            last_op_was_read = is_read;
-
-            if last {
-                self.stop().await;
-            }
-        }
-
-        Ok(())
+        self.transaction_impl(address, operations).await
     }
 }

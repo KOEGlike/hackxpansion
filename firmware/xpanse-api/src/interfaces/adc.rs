@@ -39,8 +39,8 @@ pub enum AdcError {
     ConversionFailed,
 }
 
-/// 12-bit ADC max value.
-const ADC_MAX: f64 = 4095.0;
+/// Number of quantization levels in the 12-bit ADC.
+const ADC_LEVELS: f64 = 4096.0;
 
 /// Temperature sensor calibration constants (RP235x datasheet §12.10.4).
 const T_REF: f64 = 27.0;
@@ -69,7 +69,7 @@ impl AdcService {
 
     async fn read_temp_celsius(&mut self) -> Result<f64, AdcError> {
         let raw = self.read_temp_raw().await?;
-        let voltage = raw as f64 * AVDD / ADC_MAX;
+        let voltage = raw as f64 * AVDD / ADC_LEVELS;
         let temp = T_REF - (voltage - V_REF) / SLOPE;
         Ok(temp)
     }
@@ -119,16 +119,23 @@ pub async fn read_temperature_raw() -> Result<u16, AdcError> {
 ///
 /// The `pull` argument configures the pin's pull resistor during the read; the
 /// pad is restored to its GPIO defaults when the internal channel is dropped.
-pub async fn read_adc_pin(pin: Peri<'_, impl AdcPin>, pull: Pull) -> Result<u16, AdcError> {
+pub async fn read_adc_pin<P: AdcPin>(
+    pin: &mut Peri<'static, P>,
+    pull: Pull,
+) -> Result<u16, AdcError> {
     let mutex = adc_mutex().ok_or(AdcError::NotInitialized)?;
     let mut guard = mutex.lock().await;
-    guard.read_pin_raw(pin, pull).await
+    // TODO: remove reborrow
+    guard.read_pin_raw(pin.reborrow(), pull).await
 }
 
 /// Read an ADC GPIO pin and convert the result to a voltage (0..=AVDD volts).
-pub async fn read_adc_voltage(pin: Peri<'_, impl AdcPin>, pull: Pull) -> Result<f64, AdcError> {
+pub async fn read_adc_voltage<P: AdcPin>(
+    pin: &mut Peri<'static, P>,
+    pull: Pull,
+) -> Result<f64, AdcError> {
     let raw = read_adc_pin(pin, pull).await?;
-    Ok(raw as f64 * AVDD / ADC_MAX)
+    Ok(raw as f64 * AVDD / ADC_LEVELS)
 }
 
 fn adc_mutex() -> Option<&'static AdcMutex> {

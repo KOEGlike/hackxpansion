@@ -1,10 +1,14 @@
 extern crate alloc;
 
-use alloc::{rc::Rc, vec::Vec};
+use alloc::{boxed::Box, rc::Rc, vec::Vec};
 
+use embassy_futures::select::{Either, select as select_future};
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
 use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
-use xpanse_api::registry::Registry;
+use xpanse_api::{
+    interfaces::buttons::{A, Button},
+    registry::{RegisteredResource, Registry},
+};
 slint::include_modules!();
 
 use crate::app_loader::{self, AppDescriptor};
@@ -44,31 +48,43 @@ fn send_app_picker_input(input: AppPickerInput) -> bool {
     APP_PICKER_INPUT.try_send(input).is_ok()
 }
 
-pub(crate) async fn pick_app(registry: &Registry) -> &'static AppDescriptor {
+pub(crate) fn create_app_picker() -> Result<AppPickerUI, slint::PlatformError> {
+    AppPickerUI::new()
+}
+
+pub(crate) async fn pick_app(
+    registry: &mut Registry,
+    app_picker: &AppPickerUI,
+) -> &'static AppDescriptor {
     loop {
         clear_app_picker_input();
+        attach_app_picker(app_picker);
 
         let app_count = app_loader::runnable_app_count(registry);
         let mut selected_index = (app_count > 0).then_some(0);
 
-        let app_picker = AppPickerUI::new().unwrap();
         app_picker.set_apps(runnable_app_names(registry));
-        set_picker_selected_index(&app_picker, selected_index);
-        app_picker.show().unwrap();
+        set_picker_selected_index(app_picker, selected_index);
+        if app_picker.show().is_err() {
+            defmt::error!("app picker: failed to show UI");
+            core::future::pending::<()>().await;
+        }
+
+        let mut select_button = registry.take_resource::<Box<dyn Button<A>>>();
 
         let selected_index = loop {
-            match APP_PICKER_INPUT.receive().await {
+            match receive_app_picker_input(select_button.as_mut()).await {
                 AppPickerInput::Up | AppPickerInput::Left => {
                     move_picker_selection(
                         &mut selected_index,
                         app_count,
                         SelectionDirection::Previous,
                     );
-                    set_picker_selected_index(&app_picker, selected_index);
+                    set_picker_selected_index(app_picker, selected_index);
                 }
                 AppPickerInput::Down | AppPickerInput::Right => {
                     move_picker_selection(&mut selected_index, app_count, SelectionDirection::Next);
-                    set_picker_selected_index(&app_picker, selected_index);
+                    set_picker_selected_index(app_picker, selected_index);
                 }
                 AppPickerInput::Select => {
                     if let Some(selected_index) = selected_index {
@@ -78,13 +94,43 @@ pub(crate) async fn pick_app(registry: &Registry) -> &'static AppDescriptor {
             }
         };
 
-        app_picker.hide().unwrap();
+        if app_picker.hide().is_err() {
+            defmt::error!("app picker: failed to hide UI");
+        }
+        if let Some(select_button) = select_button {
+            registry.return_resource(select_button);
+        }
 
         if let Some(app) = app_loader::runnable_app_at(registry, selected_index) {
             return app;
         }
 
         defmt::warn!("app picker returned an invalid selection");
+    }
+}
+
+fn attach_app_picker(app_picker: &AppPickerUI) {
+    use slint::private_unstable_api::re_exports::{VRc, WindowInner};
+
+    let component = VRc::into_dyn(app_picker.clone_strong().into());
+    WindowInner::from_pub(app_picker.window()).set_component(&component);
+}
+
+async fn receive_app_picker_input(
+    select_button: Option<&mut RegisteredResource<Box<dyn Button<A>>>>,
+) -> AppPickerInput {
+    let Some(select_button) = select_button else {
+        return APP_PICKER_INPUT.receive().await;
+    };
+
+    match select_future(
+        select_button.resource.wait_for_pressed(),
+        APP_PICKER_INPUT.receive(),
+    )
+    .await
+    {
+        Either::First(()) => AppPickerInput::Select,
+        Either::Second(input) => input,
     }
 }
 

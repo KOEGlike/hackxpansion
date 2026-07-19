@@ -1,68 +1,128 @@
 use crate::bus::spi::SpiError;
 use embassy_rp::Peri;
 use embassy_rp::gpio::{Input, Level, Output};
-use embassy_time::{Duration, Timer};
+use embassy_rp::spi::{Config, Phase, Polarity};
+use embassy_time::{Duration, TICK_HZ, Timer};
 
 pub struct BitBangSpiBus<'d> {
     clk: Output<'d>,
     mosi: Output<'d>,
     miso: Input<'d>,
     half_bit: Duration,
+    idle_level: Level,
+    active_level: Level,
+    capture_on_first_transition: bool,
+}
+
+struct ClockIdleGuard<'a, 'd> {
+    clock: &'a mut Output<'d>,
+    idle_level: Level,
+}
+
+impl Drop for ClockIdleGuard<'_, '_> {
+    fn drop(&mut self) {
+        self.clock.set_level(self.idle_level);
+    }
 }
 
 impl<'d> BitBangSpiBus<'d> {
+    pub fn validate_config(config: &Config) -> Result<(), SpiError> {
+        if config.frequency == 0 || config.frequency as u64 > TICK_HZ / 2 {
+            return Err(SpiError::InvalidFrequency);
+        }
+        Ok(())
+    }
+
     pub fn new(
         clk: Peri<'d, impl embassy_rp::gpio::Pin>,
         mosi: Peri<'d, impl embassy_rp::gpio::Pin>,
         miso: Peri<'d, impl embassy_rp::gpio::Pin>,
-        frequency_hz: u32,
-    ) -> Self {
-        let clk = Output::new(clk, Level::Low);
+        config: Config,
+    ) -> Result<Self, SpiError> {
+        Self::validate_config(&config)?;
+
+        let idle_level = match config.polarity {
+            Polarity::IdleLow => Level::Low,
+            Polarity::IdleHigh => Level::High,
+        };
+        let active_level = match idle_level {
+            Level::Low => Level::High,
+            Level::High => Level::Low,
+        };
+        let clk = Output::new(clk, idle_level);
         let mosi = Output::new(mosi, Level::Low);
         let miso = Input::new(miso, embassy_rp::gpio::Pull::None);
+        let divisor = 2 * config.frequency as u64;
+        let half_bit_ns = 1_000_000_000u64.div_ceil(divisor);
 
-        let half_bit = if frequency_hz > 0 {
-            Duration::from_micros(1_000_000 / (2 * frequency_hz as u64))
-        } else {
-            Duration::from_micros(10)
-        };
-
-        Self {
+        Ok(Self {
             clk,
             mosi,
             miso,
-            half_bit,
-        }
+            half_bit: Duration::from_nanos(half_bit_ns),
+            idle_level,
+            active_level,
+            capture_on_first_transition: matches!(config.phase, Phase::CaptureOnFirstTransition),
+        })
     }
 
     fn transfer_byte_blocking(&mut self, write_byte: u8) -> u8 {
         let mut read_byte = 0u8;
         for i in (0..8).rev() {
             let bit = (write_byte >> i) & 1;
-            self.mosi.set_level(Level::from(bit != 0));
-            self.clk.set_high();
-            embassy_time::block_for(self.half_bit);
-            if self.miso.is_high() {
-                read_byte |= 1 << i;
+            if self.capture_on_first_transition {
+                self.mosi.set_level(Level::from(bit != 0));
+                embassy_time::block_for(self.half_bit);
+                self.clk.set_level(self.active_level);
+                if self.miso.is_high() {
+                    read_byte |= 1 << i;
+                }
+                embassy_time::block_for(self.half_bit);
+                self.clk.set_level(self.idle_level);
+            } else {
+                self.clk.set_level(self.active_level);
+                self.mosi.set_level(Level::from(bit != 0));
+                embassy_time::block_for(self.half_bit);
+                self.clk.set_level(self.idle_level);
+                if self.miso.is_high() {
+                    read_byte |= 1 << i;
+                }
+                embassy_time::block_for(self.half_bit);
             }
-            self.clk.set_low();
-            embassy_time::block_for(self.half_bit);
         }
         read_byte
     }
 
     async fn transfer_byte(&mut self, write_byte: u8) -> u8 {
+        let clock = &mut self.clk;
+        let mosi = &mut self.mosi;
+        let miso = &self.miso;
+        let clock = ClockIdleGuard {
+            clock,
+            idle_level: self.idle_level,
+        };
         let mut read_byte = 0u8;
         for i in (0..8).rev() {
             let bit = (write_byte >> i) & 1;
-            self.mosi.set_level(Level::from(bit != 0));
-            self.clk.set_high();
-            Timer::after(self.half_bit).await;
-            if self.miso.is_high() {
-                read_byte |= 1 << i;
+            if self.capture_on_first_transition {
+                mosi.set_level(Level::from(bit != 0));
+                Timer::after(self.half_bit).await;
+                clock.clock.set_level(self.active_level);
+                if miso.is_high() {
+                    read_byte |= 1 << i;
+                }
+                Timer::after(self.half_bit).await;
+                clock.clock.set_level(self.idle_level);
+            } else {
+                clock.clock.set_level(self.active_level);
+                mosi.set_level(Level::from(bit != 0));
+                Timer::after(self.half_bit).await;
+                clock.clock.set_level(self.idle_level);
+                if miso.is_high() {
+                    read_byte |= 1 << i;
+                }
+                Timer::after(self.half_bit).await;
             }
-            self.clk.set_low();
-            Timer::after(self.half_bit).await;
         }
         read_byte
     }
@@ -92,9 +152,12 @@ impl<'d> embedded_hal::spi::SpiBus<u8> for BitBangSpiBus<'d> {
     }
 
     fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
-        let len = read.len().min(write.len());
+        let len = read.len().max(write.len());
         for i in 0..len {
-            read[i] = self.transfer_byte_blocking(write[i]);
+            let read_byte = self.transfer_byte_blocking(write.get(i).copied().unwrap_or(0xFF));
+            if let Some(byte) = read.get_mut(i) {
+                *byte = read_byte;
+            }
         }
         Ok(())
     }
@@ -127,9 +190,14 @@ impl<'d> embedded_hal_async::spi::SpiBus<u8> for BitBangSpiBus<'d> {
     }
 
     async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
-        let len = read.len().min(write.len());
+        let len = read.len().max(write.len());
         for i in 0..len {
-            read[i] = self.transfer_byte(write[i]).await;
+            let read_byte = self
+                .transfer_byte(write.get(i).copied().unwrap_or(0xFF))
+                .await;
+            if let Some(byte) = read.get_mut(i) {
+                *byte = read_byte;
+            }
         }
         Ok(())
     }

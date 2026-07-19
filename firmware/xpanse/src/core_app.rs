@@ -4,17 +4,18 @@ use alloc::{boxed::Box, rc::Rc};
 use core::future::Future;
 
 use embassy_futures::select::{Either, select as select_future};
+use embassy_rp::gpio::{Level, Output};
 use embassy_time::{Duration, Instant, Timer};
 use embedded_graphics::{
     draw_target::DrawTarget,
     geometry::{Point, Size},
-    pixelcolor::Rgb565,
+    pixelcolor::{Rgb565, raw::RawU16},
     primitives::Rectangle,
 };
 
 use crate::{
     app_loader::run_app,
-    app_picker::pick_app,
+    app_picker::{create_app_picker, pick_app},
     core_driver::take_registry,
     display::{self, init_display},
     resource_split::*,
@@ -33,6 +34,7 @@ static SLINT_BUFFER: StaticCell<[Rgb565Pixel; display::WIDTH as usize * display:
 
 #[embassy_executor::task]
 pub async fn ui_core_task(display_peris: DisplayPeris) {
+    let mut backlight = Output::new(display_peris.backlight, Level::Low);
     let driver_buffer = DRIVER_BUFFER.init([0_u8; 512]);
     let mut disp = init_display(
         display_peris.spi,
@@ -43,12 +45,17 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         display_peris.dc.into(),
         driver_buffer,
     );
+    backlight.set_high();
 
     let window = MinimalSoftwareWindow::new(Default::default());
-    slint::platform::set_platform(Box::new(XpansePlatform {
+    if slint::platform::set_platform(Box::new(XpansePlatform {
         window: window.clone(),
     }))
-    .unwrap();
+    .is_err()
+    {
+        defmt::error!("ui_core: failed to initialize Slint platform");
+        return;
+    }
 
     window.set_size(slint::PhysicalSize::new(
         display::WIDTH as u32,
@@ -62,12 +69,20 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     let mut registry = take_registry().await;
     defmt::info!("ui_core: registry received");
 
+    let app_picker = match create_app_picker() {
+        Ok(app_picker) => app_picker,
+        Err(_) => {
+            defmt::error!("ui_core: failed to create app picker");
+            return;
+        }
+    };
+
     loop {
         let app = drive_ui_until(
             &window,
             &mut disp,
             &mut slint_buffer[..],
-            pick_app(&registry),
+            pick_app(&mut registry, &app_picker),
         )
         .await;
 
@@ -116,14 +131,19 @@ where
 
     window.draw_if_needed(|renderer| {
         renderer.render(slint_buffer, display::WIDTH as usize);
-        disp.fill_contiguous(
-            &Rectangle {
-                top_left: Point::zero(),
-                size: Size::new(display::WIDTH as u32, display::HIGHT as u32),
-            },
-            slint_buffer.iter().map(slint_rgb565_into_embedded_graphics),
-        )
-        .unwrap();
+        if disp
+            .fill_contiguous(
+                &Rectangle {
+                    top_left: Point::zero(),
+                    size: Size::new(display::WIDTH as u32, display::HIGHT as u32),
+                },
+                slint_buffer.iter().map(slint_rgb565_into_embedded_graphics),
+            )
+            .is_err()
+        {
+            defmt::error!("ui_core: failed to draw display frame");
+            window.request_redraw();
+        }
     });
 }
 
@@ -141,8 +161,7 @@ async fn wait_for_next_ui_tick(window: &MinimalSoftwareWindow) {
 }
 
 fn slint_rgb565_into_embedded_graphics(rgb: &Rgb565Pixel) -> Rgb565 {
-    let rgb: rgb::RGB<u8> = (*rgb).into();
-    Rgb565::new(rgb.r, rgb.g, rgb.b)
+    Rgb565::from(RawU16::new(rgb.0))
 }
 
 struct XpansePlatform {

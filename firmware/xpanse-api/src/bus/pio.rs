@@ -20,6 +20,25 @@ use crate::bus::spi_pio::PioSpiBus;
 use crate::bus::uart::{DynUartBus, UartBusHandle, UartBusVersion};
 use crate::bus::uart_pio::PioUartBus;
 
+pub(crate) const PIO_UART_INSTRUCTIONS: u8 = 14;
+
+pub(crate) fn spi_program_instructions(config: &spi::Config) -> u8 {
+    match config.phase {
+        spi::Phase::CaptureOnFirstTransition => 2,
+        spi::Phase::CaptureOnSecondTransition => 3,
+    }
+}
+
+pub(crate) fn gpio_base_for_pins(pins: &[u8]) -> Option<bool> {
+    if pins.iter().all(|pin| *pin < 32) {
+        Some(false)
+    } else if pins.iter().all(|pin| *pin >= 16) {
+        Some(true)
+    } else {
+        None
+    }
+}
+
 /// A `StateMachine` with the SM number erased at runtime.
 ///
 /// Drivers that load custom PIO programs match on this enum to recover the
@@ -40,6 +59,7 @@ pub enum AnyStateMachine<'d, PIO: Instance + 'static> {
 /// with `'static` lifetime (because the `Common` inside `BusAllocator` is
 /// `Common<'static, PIO>`), so a driver can load a program, configure the SM,
 /// and then keep the `LoadedProgram` + `StateMachine` after the borrow ends.
+#[must_use = "custom PIO access reserves its block for the rest of the boot"]
 pub enum PioAccess<'a> {
     Block0 {
         common: &'a mut Common<'static, PIO0>,
@@ -75,9 +95,11 @@ struct PioSlot<PIO: Instance + 'static> {
     _irq1: Irq<'static, PIO, 1>,
     _irq2: Irq<'static, PIO, 2>,
     _irq3: Irq<'static, PIO, 3>,
+    gpio_base_high: Option<bool>,
+    reserved_instructions: u8,
 }
 
-impl<PIO: Instance + 'static> PioSlot<PIO> {
+impl<PIO: Instance + Send + 'static> PioSlot<PIO> {
     fn new(pio: Pio<'static, PIO>) -> Self {
         let Pio {
             common,
@@ -103,7 +125,21 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
             _irq1: irq1,
             _irq2: irq2,
             _irq3: irq3,
+            gpio_base_high: None,
+            reserved_instructions: 0,
         }
+    }
+
+    fn can_reserve(&self, gpio_base_high: bool, instructions: u8) -> bool {
+        self.gpio_base_high
+            .is_none_or(|current| current == gpio_base_high)
+            && self.reserved_instructions.saturating_add(instructions) <= 32
+    }
+
+    fn reserve(&mut self, gpio_base_high: bool, instructions: u8) {
+        debug_assert!(self.can_reserve(gpio_base_high, instructions));
+        self.gpio_base_high = Some(gpio_base_high);
+        self.reserved_instructions += instructions;
     }
 
     fn has_sm(&self, sm: Sm) -> bool {
@@ -127,6 +163,8 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
     fn build_spi<TxDma, RxDma, Irq>(
         &mut self,
         sm: Sm,
+        gpio_base_high: bool,
+        instructions: u8,
         clk: Peri<'static, impl PioPin>,
         mosi: Peri<'static, impl PioPin>,
         miso: Peri<'static, impl PioPin>,
@@ -145,17 +183,23 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
         macro_rules! take {
             ($field:ident) => {
                 match self.$field.take() {
-                    Some(sm) => Some(Box::new(PioSpiBus::new(
-                        &mut self.common,
-                        sm,
-                        clk,
-                        mosi,
-                        miso,
-                        tx_dma,
-                        rx_dma,
-                        irq,
-                        config,
-                    )) as Box<dyn DynSpiBusCombined>),
+                    Some(sm) => {
+                        self.reserve(gpio_base_high, instructions);
+                        Some(Box::new(
+                            PioSpiBus::new(
+                                &mut self.common,
+                                sm,
+                                clk,
+                                mosi,
+                                miso,
+                                tx_dma,
+                                rx_dma,
+                                irq,
+                                config,
+                            )
+                            .expect("PIO SPI configuration was validated before allocation"),
+                        ) as Box<dyn DynSpiBusCombined>)
+                    }
                     None => None,
                 }
             };
@@ -173,6 +217,8 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
         &mut self,
         sm_tx: Sm,
         sm_rx: Sm,
+        gpio_base_high: bool,
+        instructions: u8,
         tx_pin: Peri<'static, impl PioPin>,
         rx_pin: Peri<'static, impl PioPin>,
         baud_rate: u32,
@@ -180,14 +226,13 @@ impl<PIO: Instance + 'static> PioSlot<PIO> {
         macro_rules! pair {
             ($txf:ident, $rxf:ident) => {
                 match (self.$txf.take(), self.$rxf.take()) {
-                    (Some(t), Some(r)) => Some(Box::new(PioUartBus::new(
-                        &mut self.common,
-                        t,
-                        r,
-                        tx_pin,
-                        rx_pin,
-                        baud_rate,
-                    )) as Box<dyn DynUartBus>),
+                    (Some(t), Some(r)) => {
+                        self.reserve(gpio_base_high, instructions);
+                        Some(Box::new(
+                            PioUartBus::new(&mut self.common, t, r, tx_pin, rx_pin, baud_rate)
+                                .expect("PIO UART baud was validated before allocation"),
+                        ) as Box<dyn DynUartBus>)
+                    }
                     (Some(t), None) => {
                         self.$txf = Some(t);
                         None
@@ -242,6 +287,8 @@ impl PioManager {
         &mut self,
         block: PioBlock,
         sm: Sm,
+        gpio_base_high: bool,
+        instructions: u8,
         clk: Peri<'static, impl PioPin>,
         mosi: Peri<'static, impl PioPin>,
         miso: Peri<'static, impl PioPin>,
@@ -261,17 +308,56 @@ impl PioManager {
             PioBlock::Block0 => self
                 .pio0
                 .as_mut()
-                .and_then(|slot| slot.build_spi(sm, clk, mosi, miso, tx_dma, rx_dma, irq, config))
+                .and_then(|slot| {
+                    slot.build_spi(
+                        sm,
+                        gpio_base_high,
+                        instructions,
+                        clk,
+                        mosi,
+                        miso,
+                        tx_dma,
+                        rx_dma,
+                        irq,
+                        config,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM was not free"),
             PioBlock::Block1 => self
                 .pio1
                 .as_mut()
-                .and_then(|slot| slot.build_spi(sm, clk, mosi, miso, tx_dma, rx_dma, irq, config))
+                .and_then(|slot| {
+                    slot.build_spi(
+                        sm,
+                        gpio_base_high,
+                        instructions,
+                        clk,
+                        mosi,
+                        miso,
+                        tx_dma,
+                        rx_dma,
+                        irq,
+                        config,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM was not free"),
             PioBlock::Block2 => self
                 .pio2
                 .as_mut()
-                .and_then(|slot| slot.build_spi(sm, clk, mosi, miso, tx_dma, rx_dma, irq, config))
+                .and_then(|slot| {
+                    slot.build_spi(
+                        sm,
+                        gpio_base_high,
+                        instructions,
+                        clk,
+                        mosi,
+                        miso,
+                        tx_dma,
+                        rx_dma,
+                        irq,
+                        config,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM was not free"),
         };
         SpiBusHandle::new(bus, SpiBusVersion::Pio)
@@ -284,6 +370,8 @@ impl PioManager {
         block: PioBlock,
         sm_tx: Sm,
         sm_rx: Sm,
+        gpio_base_high: bool,
+        instructions: u8,
         tx_pin: Peri<'static, impl PioPin>,
         rx_pin: Peri<'static, impl PioPin>,
         baud_rate: u32,
@@ -292,17 +380,47 @@ impl PioManager {
             PioBlock::Block0 => self
                 .pio0
                 .as_mut()
-                .and_then(|slot| slot.build_uart(sm_tx, sm_rx, tx_pin, rx_pin, baud_rate))
+                .and_then(|slot| {
+                    slot.build_uart(
+                        sm_tx,
+                        sm_rx,
+                        gpio_base_high,
+                        instructions,
+                        tx_pin,
+                        rx_pin,
+                        baud_rate,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM pair was not free"),
             PioBlock::Block1 => self
                 .pio1
                 .as_mut()
-                .and_then(|slot| slot.build_uart(sm_tx, sm_rx, tx_pin, rx_pin, baud_rate))
+                .and_then(|slot| {
+                    slot.build_uart(
+                        sm_tx,
+                        sm_rx,
+                        gpio_base_high,
+                        instructions,
+                        tx_pin,
+                        rx_pin,
+                        baud_rate,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM pair was not free"),
             PioBlock::Block2 => self
                 .pio2
                 .as_mut()
-                .and_then(|slot| slot.build_uart(sm_tx, sm_rx, tx_pin, rx_pin, baud_rate))
+                .and_then(|slot| {
+                    slot.build_uart(
+                        sm_tx,
+                        sm_rx,
+                        gpio_base_high,
+                        instructions,
+                        tx_pin,
+                        rx_pin,
+                        baud_rate,
+                    )
+                })
                 .expect("PIO SM allocation invariant: SM pair was not free"),
         };
         UartBusHandle::new(bus, UartBusVersion::Pio)
@@ -316,18 +434,34 @@ impl PioManager {
         rx_pin: Peri<'static, impl PioPin>,
         baud_rate: u32,
     ) -> Option<UartBusHandle> {
-        let (block, sm_tx, sm_rx) = self.find_free_sm_pair()?;
-        Some(self.build_uart_at(block, sm_tx, sm_rx, tx_pin, rx_pin, baud_rate))
+        let gpio_base_high = gpio_base_for_pins(&[tx_pin.pin()])?;
+        if gpio_base_for_pins(&[rx_pin.pin()])? != gpio_base_high {
+            return None;
+        }
+        let (block, sm_tx, sm_rx) =
+            self.find_free_sm_pair(gpio_base_high, PIO_UART_INSTRUCTIONS)?;
+        Some(self.build_uart_at(
+            block,
+            sm_tx,
+            sm_rx,
+            gpio_base_high,
+            PIO_UART_INSTRUCTIONS,
+            tx_pin,
+            rx_pin,
+            baud_rate,
+        ))
     }
 
     /// Hand out one free state machine on any block, together with the block's
     /// `Common` handle.  Drivers use this to load custom PIO programs.
-    pub fn request_pio(&mut self) -> Option<PioAccess<'_>> {
-        let (block, sm) = self.find_free_sm()?;
+    pub fn request_pio(&mut self, pin: &Peri<'static, impl PioPin>) -> Option<PioAccess<'_>> {
+        let gpio_base_high = gpio_base_for_pins(&[pin.pin()])?;
+        let (block, sm) = self.find_free_sm(gpio_base_high, 32)?;
         match block {
             PioBlock::Block0 => {
                 let slot = self.pio0.as_mut()?;
                 let sm = slot.take_any_sm(sm)?;
+                slot.reserve(gpio_base_high, 32);
                 Some(PioAccess::Block0 {
                     common: &mut slot.common,
                     sm,
@@ -336,6 +470,7 @@ impl PioManager {
             PioBlock::Block1 => {
                 let slot = self.pio1.as_mut()?;
                 let sm = slot.take_any_sm(sm)?;
+                slot.reserve(gpio_base_high, 32);
                 Some(PioAccess::Block1 {
                     common: &mut slot.common,
                     sm,
@@ -344,6 +479,7 @@ impl PioManager {
             PioBlock::Block2 => {
                 let slot = self.pio2.as_mut()?;
                 let sm = slot.take_any_sm(sm)?;
+                slot.reserve(gpio_base_high, 32);
                 Some(PioAccess::Block2 {
                     common: &mut slot.common,
                     sm,
@@ -352,24 +488,28 @@ impl PioManager {
         }
     }
 
-    pub(crate) fn find_free_sm(&self) -> Option<(PioBlock, Sm)> {
+    pub(crate) fn find_free_sm(
+        &self,
+        gpio_base_high: bool,
+        instructions: u8,
+    ) -> Option<(PioBlock, Sm)> {
         if let Some(slot) = &self.pio0 {
             for sm in Sm::ALL {
-                if slot.has_sm(sm) {
+                if slot.has_sm(sm) && slot.can_reserve(gpio_base_high, instructions) {
                     return Some((PioBlock::Block0, sm));
                 }
             }
         }
         if let Some(slot) = &self.pio1 {
             for sm in Sm::ALL {
-                if slot.has_sm(sm) {
+                if slot.has_sm(sm) && slot.can_reserve(gpio_base_high, instructions) {
                     return Some((PioBlock::Block1, sm));
                 }
             }
         }
         if let Some(slot) = &self.pio2 {
             for sm in Sm::ALL {
-                if slot.has_sm(sm) {
+                if slot.has_sm(sm) && slot.can_reserve(gpio_base_high, instructions) {
                     return Some((PioBlock::Block2, sm));
                 }
             }
@@ -377,18 +517,25 @@ impl PioManager {
         None
     }
 
-    pub(crate) fn find_free_sm_pair(&self) -> Option<(PioBlock, Sm, Sm)> {
+    pub(crate) fn find_free_sm_pair(
+        &self,
+        gpio_base_high: bool,
+        instructions: u8,
+    ) -> Option<(PioBlock, Sm, Sm)> {
         if let Some(slot) = &self.pio0
+            && slot.can_reserve(gpio_base_high, instructions)
             && let Some((a, b)) = two_free_sms(slot)
         {
             return Some((PioBlock::Block0, a, b));
         }
         if let Some(slot) = &self.pio1
+            && slot.can_reserve(gpio_base_high, instructions)
             && let Some((a, b)) = two_free_sms(slot)
         {
             return Some((PioBlock::Block1, a, b));
         }
         if let Some(slot) = &self.pio2
+            && slot.can_reserve(gpio_base_high, instructions)
             && let Some((a, b)) = two_free_sms(slot)
         {
             return Some((PioBlock::Block2, a, b));
@@ -397,7 +544,7 @@ impl PioManager {
     }
 }
 
-fn two_free_sms<PIO: Instance + 'static>(slot: &PioSlot<PIO>) -> Option<(Sm, Sm)> {
+fn two_free_sms<PIO: Instance + Send + 'static>(slot: &PioSlot<PIO>) -> Option<(Sm, Sm)> {
     let mut free = Sm::ALL.into_iter().filter(|sm| slot.has_sm(*sm));
     match (free.next(), free.next()) {
         (Some(a), Some(b)) => Some((a, b)),
@@ -425,7 +572,7 @@ fn two_free_sms<PIO: Instance + 'static>(slot: &PioSlot<PIO>) -> Option<(Sm, Sm)
 ///     MyDriver::new(common, sm, &program)
 /// }
 ///
-/// let handle = allocator.request_pio()?;
+/// let handle = allocator.request_pio(&pin)?;
 /// let driver = with_pio!(handle, common, sm, my_init(common, sm));
 /// ```
 #[macro_export]

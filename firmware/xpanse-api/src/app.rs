@@ -17,9 +17,7 @@ pub trait App: Send {
     where
         Self: Sized;
 
-    fn release(self, _registry: &mut Registry)
+    fn release(self, registry: &mut Registry)
     where
-        Self: Sized,
-    {
-    }
+        Self: Sized;
 }

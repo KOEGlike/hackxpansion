@@ -72,10 +72,15 @@ pub const BOTTOM_RESISTOR: f64 = 10_000.0;
 pub const AVDD: f64 = 3.3;
 
 impl ModuleDetectResistor {
-    pub fn from_voltage(voltage: f64) -> Self {
-        let safe_voltage = voltage.max(0.001);
+    pub fn from_voltage(voltage: f64) -> Option<Self> {
+        if !voltage.is_finite() || voltage <= 0.0 || voltage >= AVDD {
+            return None;
+        }
 
-        let calculated_resistor = (AVDD * BOTTOM_RESISTOR) / safe_voltage - BOTTOM_RESISTOR;
+        let calculated_resistor = (AVDD * BOTTOM_RESISTOR) / voltage - BOTTOM_RESISTOR;
+        if !calculated_resistor.is_finite() || !(950.0..=105_000.0).contains(&calculated_resistor) {
+            return None;
+        }
 
         let (_, closest_resistor) = RESISTOR_MAP
             .iter()
@@ -89,7 +94,7 @@ impl ModuleDetectResistor {
             })
             .expect("RESISTOR_MAP should never be empty");
 
-        *closest_resistor
+        Some(*closest_resistor)
     }
 }
 

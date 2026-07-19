@@ -1,2 +1,3 @@
 [toolchain]
-channel = "nightly"
+channel = "stable"
+targets = ["thumbv8m.main-none-eabihf"]

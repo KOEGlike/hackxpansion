@@ -5,6 +5,11 @@ use core::pin::Pin;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum UartError {
     BufferFull,
+    InvalidBaudRate,
+    Overrun,
+    Break,
+    Parity,
+    Framing,
     Other,
 }
 
@@ -23,8 +28,14 @@ impl embedded_io_async::Error for UartError {
 }
 
 impl From<embassy_rp::uart::Error> for UartError {
-    fn from(_: embassy_rp::uart::Error) -> Self {
-        UartError::Other
+    fn from(error: embassy_rp::uart::Error) -> Self {
+        match error {
+            embassy_rp::uart::Error::Overrun => Self::Overrun,
+            embassy_rp::uart::Error::Break => Self::Break,
+            embassy_rp::uart::Error::Parity => Self::Parity,
+            embassy_rp::uart::Error::Framing => Self::Framing,
+            _ => Self::Other,
+        }
     }
 }
 
@@ -35,7 +46,7 @@ pub enum UartBusVersion {
     BitBang,
 }
 
-pub trait DynUartBus {
+pub trait DynUartBus: Send {
     fn write<'a>(
         &'a mut self,
         buf: &'a [u8],
@@ -47,6 +58,7 @@ pub trait DynUartBus {
     fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), UartError>> + 'a>>;
 }
 
+#[must_use = "dropping a bus handle does not return its startup resources"]
 pub struct UartBusHandle {
     inner: Box<dyn DynUartBus>,
     version: UartBusVersion,
@@ -85,6 +97,7 @@ impl embedded_io_async::Write for UartBusHandle {
 impl<T> DynUartBus for T
 where
     T: embedded_io_async::Read<Error = UartError> + embedded_io_async::Write<Error = UartError>,
+    T: Send,
 {
     fn write<'a>(
         &'a mut self,
