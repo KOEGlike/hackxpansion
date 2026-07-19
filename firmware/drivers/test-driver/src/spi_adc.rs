@@ -73,7 +73,7 @@ impl<G: BankPins> Driver<G> for SpiAdcDriver {
         let mut config = spi::Config::default();
         config.frequency = 400_000;
         let spi = bus_allocator
-            .create_spi_bitbang::<G::SPI>(gpio_bank.gpio2, gpio_bank.gpio4, gpio_bank.gpio3, config)
+            .create_spi_bitbang(gpio_bank.gpio2, gpio_bank.gpio4, gpio_bank.gpio3, config)
             .map_err(|_| DriverError::InitFailed)?;
 
         let chip_select = Output::new(gpio_bank.gpio9.into(), Level::High);

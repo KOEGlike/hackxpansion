@@ -379,9 +379,9 @@ impl BusAllocator {
     /// zero-sized `bind_interrupts!` type.
     pub fn create_spi_hardware<I, TxDma, RxDma, Irq>(
         &mut self,
-        clk: Peri<'static, impl ClkPin<I> + PioPin>,
-        mosi: Peri<'static, impl MosiPin<I> + PioPin>,
-        miso: Peri<'static, impl MisoPin<I> + PioPin>,
+        clk: Peri<'static, impl ClkPin<I>>,
+        mosi: Peri<'static, impl MosiPin<I>>,
+        miso: Peri<'static, impl MisoPin<I>>,
         irq: Irq,
         config: spi::Config,
     ) -> Result<SpiBusHandle, AllocatorError>
@@ -424,16 +424,15 @@ impl BusAllocator {
     }
 
     /// Build a PIO-backed SPI bus (async via DMA) on any free PIO state machine.
-    pub fn create_spi_pio<I, TxDma, RxDma, Irq>(
+    pub fn create_spi_pio<TxDma, RxDma, Irq>(
         &mut self,
-        clk: Peri<'static, impl ClkPin<I> + PioPin>,
-        mosi: Peri<'static, impl MosiPin<I> + PioPin>,
-        miso: Peri<'static, impl MisoPin<I> + PioPin>,
+        clk: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        mosi: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        miso: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
         irq: Irq,
         config: spi::Config,
     ) -> Result<SpiBusHandle, AllocatorError>
     where
-        I: SpiHw,
         TxDma: DmaChannel,
         RxDma: DmaChannel,
         Irq: Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
@@ -477,11 +476,11 @@ impl BusAllocator {
     }
 
     /// Build a bit-banged SPI bus using only GPIO. Invalid frequencies are rejected.
-    pub fn create_spi_bitbang<I: SpiHw>(
+    pub fn create_spi_bitbang(
         &mut self,
-        clk: Peri<'static, impl ClkPin<I> + PioPin>,
-        mosi: Peri<'static, impl MosiPin<I> + PioPin>,
-        miso: Peri<'static, impl MisoPin<I> + PioPin>,
+        clk: Peri<'static, impl embassy_rp::gpio::Pin>,
+        mosi: Peri<'static, impl embassy_rp::gpio::Pin>,
+        miso: Peri<'static, impl embassy_rp::gpio::Pin>,
         config: spi::Config,
     ) -> Result<SpiBusHandle, AllocatorError> {
         BitBangSpiBus::validate_config(&config)
@@ -492,6 +491,123 @@ impl BusAllocator {
             Box::new(bus),
             crate::bus::spi::SpiBusVersion::BitBang,
         ))
+    }
+
+    /// Build a SPI bus, preferring PIO then bit-bang.
+    /// There is
+    ///
+    pub fn create_spi_no_hardware<TxDma, RxDma, Irq>(
+        &mut self,
+        clk: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        mosi: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        miso: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        irq: Irq,
+        config: spi::Config,
+    ) -> Result<SpiBusHandle, AllocatorError>
+    where
+        TxDma: DmaChannel,
+        RxDma: DmaChannel,
+        Irq: Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
+            + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
+            + 'static,
+    {
+        crate::bus::spi_pio::PioSpiBus::<PIO0, 0>::validate_config(&config)
+            .map_err(|_| AllocatorError::InvalidConfiguration)?;
+        if core::any::TypeId::of::<TxDma>() == core::any::TypeId::of::<RxDma>() {
+            return Err(AllocatorError::InvalidConfiguration);
+        }
+
+        let gpio_base_high = gpio_base_for_pins(&[clk.pin(), mosi.pin(), miso.pin()])
+            .ok_or(AllocatorError::InvalidConfiguration);
+        let instructions = spi_program_instructions(&config);
+        let tx_dma = self.request_dma::<TxDma>();
+        let rx_dma = self.request_dma::<RxDma>();
+
+        match (gpio_base_high, tx_dma, rx_dma) {
+            (Ok(gpio_base_high), Ok(tx_dma), Ok(rx_dma)) => {
+                if let Ok((block, sm)) = self
+                    .pio_manager
+                    .find_free_sm(gpio_base_high, instructions)
+                    .ok_or(AllocatorError::Exhausted)
+                {
+                    return Ok(self.pio_manager.build_spi_at(
+                        block,
+                        sm,
+                        gpio_base_high,
+                        instructions,
+                        clk,
+                        mosi,
+                        miso,
+                        tx_dma,
+                        rx_dma,
+                        irq,
+                        config,
+                    ));
+                }
+            }
+            (_, tx_dma, rx_dma) => {
+                if let Ok(tx_dma) = tx_dma {
+                    self.release_dma(tx_dma);
+                }
+
+                if let Ok(rx_dma) = rx_dma {
+                    self.release_dma(rx_dma);
+                }
+            }
+        }
+
+        self.create_spi_bitbang(clk, mosi, miso, config)
+    }
+
+    pub fn create_spi<I, TxDma, RxDma, Irq>(
+        &mut self,
+        clk: Peri<'static, impl ClkPin<I> + PioPin>,
+        mosi: Peri<'static, impl MosiPin<I> + PioPin>,
+        miso: Peri<'static, impl MisoPin<I> + PioPin>,
+        irq: Irq,
+        config: spi::Config,
+    ) -> Result<SpiBusHandle, AllocatorError>
+    where
+        I: SpiHw,
+        TxDma: DmaChannel,
+        RxDma: DmaChannel,
+        Irq: Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
+            + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
+            + 'static,
+    {
+        HardwareSpiBus::<I>::validate_config(&config)
+            .map_err(|_| AllocatorError::InvalidConfiguration)?;
+        if core::any::TypeId::of::<TxDma>() == core::any::TypeId::of::<RxDma>() {
+            return Err(AllocatorError::InvalidConfiguration);
+        }
+
+        let peri = self.request_spi_hardware::<I>();
+        let tx_dma = self.request_dma::<TxDma>();
+        let rx_dma = self.request_dma::<RxDma>();
+
+        match (peri, tx_dma, rx_dma) {
+            (Ok(peri), Ok(tx_dma), Ok(rx_dma)) => {
+                let bus = HardwareSpiBus::new(peri, clk, mosi, miso, tx_dma, rx_dma, irq, config)
+                    .expect("SPI configuration was validated before allocation");
+                Ok(SpiBusHandle::new(
+                    Box::new(bus),
+                    crate::bus::spi::SpiBusVersion::Hardware,
+                ))
+            }
+            (peri, tx_dma, rx_dma) => {
+                if let Ok(peri) = peri {
+                    self.release_spi_hardware(peri);
+                }
+                if let Ok(tx_dma) = tx_dma {
+                    self.release_dma(tx_dma);
+                }
+                if let Ok(rx_dma) = rx_dma {
+                    self.release_dma(rx_dma);
+                }
+
+                self.create_spi_no_hardware::<TxDma, RxDma, Irq>(clk, mosi, miso, irq, config)
+            }
+        }
     }
 
     // ── I2C ──────────────────────────────────────────────────────────
@@ -512,8 +628,8 @@ impl BusAllocator {
     /// binding is the board's `bind_interrupts!` type for the I2C interrupt.
     pub fn create_i2c_hardware<I, Irq>(
         &mut self,
-        scl: Peri<'static, impl i2c::SclPin<I> + PioPin>,
-        sda: Peri<'static, impl i2c::SdaPin<I> + PioPin>,
+        scl: Peri<'static, impl i2c::SclPin<I>>,
+        sda: Peri<'static, impl i2c::SdaPin<I>>,
         irq: Irq,
         config: i2c::Config,
     ) -> Result<I2cBusHandle, AllocatorError>
@@ -535,10 +651,10 @@ impl BusAllocator {
     /// Build a bit-banged I2C bus using two GPIO pins with open-drain
     /// capability. Frequencies outside the timer's range are rejected.
     /// `scl`/`sda` are role-checked against `I` at compile time.
-    pub fn create_i2c_bitbang<I: I2cHw>(
+    pub fn create_i2c_bitbang(
         &mut self,
-        scl: Peri<'static, impl i2c::SclPin<I> + PioPin>,
-        sda: Peri<'static, impl i2c::SdaPin<I> + PioPin>,
+        scl: Peri<'static, impl embassy_rp::gpio::Pin>,
+        sda: Peri<'static, impl embassy_rp::gpio::Pin>,
         frequency_hz: u32,
     ) -> Result<I2cBusHandle, AllocatorError> {
         let bus = BitBangI2cBus::new(scl, sda, frequency_hz)
@@ -565,8 +681,8 @@ impl BusAllocator {
     /// at compile time. The DMA channels are pulled from the allocator's pool.
     pub fn create_uart_hardware<I, TxDma, RxDma, Irq>(
         &mut self,
-        tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
-        rx: Peri<'static, impl uart::RxPin<I> + PioPin>,
+        tx: Peri<'static, impl uart::TxPin<I>>,
+        rx: Peri<'static, impl uart::RxPin<I>>,
         irq: Irq,
         config: uart::Config,
     ) -> Result<UartBusHandle, AllocatorError>
@@ -611,10 +727,10 @@ impl BusAllocator {
 
     /// Build a PIO-backed UART bus on any two free state machines of one block.
     /// PIO UART uses FIFO polling (no DMA required).
-    pub fn create_uart_pio<I: UartHw>(
+    pub fn create_uart_pio(
         &mut self,
-        tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
-        rx: Peri<'static, impl uart::RxPin<I> + PioPin>,
+        tx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        rx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
         baud_rate: u32,
     ) -> Result<UartBusHandle, AllocatorError> {
         crate::bus::uart_pio::PioUartBus::<PIO0, 0, 1>::validate_baud(baud_rate)
@@ -630,10 +746,10 @@ impl BusAllocator {
     }
 
     /// Build a bit-banged UART bus using only GPIO at a representable baud.
-    pub fn create_uart_bitbang<I: UartHw>(
+    pub fn create_uart_bitbang(
         &mut self,
-        tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
-        rx: Peri<'static, impl uart::RxPin<I> + PioPin>,
+        tx: Peri<'static, impl embassy_rp::gpio::Pin>,
+        rx: Peri<'static, impl embassy_rp::gpio::Pin>,
         baud_rate: u32,
     ) -> Result<UartBusHandle, AllocatorError> {
         BitBangUartBus::validate_baud(baud_rate)
@@ -648,22 +764,25 @@ impl BusAllocator {
 
     /// Build a UART bus, preferring PIO then bit-bang. Hardware UART requires
     /// DMA — request it explicitly with
-    /// [`create_uart_hardware`](Self::create_uart_hardware).
-    pub fn create_uart<I: UartHw>(
+    /// [`create_uart_hardware`](Self::create_uart_hardware) or
+    /// [`create_uart`](Self::create_uart).
+    ///
+    /// Returns an error if all fallbacks fail, or there was an error with the configuration.
+    pub fn create_uart_no_hardware(
         &mut self,
-        tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
-        rx: Peri<'static, impl uart::RxPin<I> + PioPin>,
+        tx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        rx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
         baud_rate: u32,
     ) -> Result<UartBusHandle, AllocatorError> {
+        crate::bus::uart_pio::PioUartBus::<PIO0, 0, 1>::validate_baud(baud_rate)
+            .map_err(|_| AllocatorError::InvalidConfiguration)?;
+
         let tx_base = gpio_base_for_pins(&[tx.pin()]);
         let rx_base = gpio_base_for_pins(&[rx.pin()]);
-        if let (Some(gpio_base_high), true, Ok(())) = (
-            tx_base,
-            tx_base == rx_base,
-            crate::bus::uart_pio::PioUartBus::<PIO0, 0, 1>::validate_baud(baud_rate),
-        ) && let Some((block, sm_tx, sm_rx)) = self
-            .pio_manager
-            .find_free_sm_pair(gpio_base_high, crate::bus::pio::PIO_UART_INSTRUCTIONS)
+        if let (Some(gpio_base_high), true) = (tx_base, tx_base == rx_base)
+            && let Some((block, sm_tx, sm_rx)) = self
+                .pio_manager
+                .find_free_sm_pair(gpio_base_high, crate::bus::pio::PIO_UART_INSTRUCTIONS)
         {
             return Ok(self.pio_manager.build_uart_at(
                 block,
@@ -676,14 +795,68 @@ impl BusAllocator {
                 baud_rate,
             ));
         }
-        BitBangUartBus::validate_baud(baud_rate)
+        self.create_uart_bitbang(tx, rx, baud_rate)
+    }
+
+    /// Tries to create a UART bus using hardware UART peripherals and DMA channels, if that fails, falls back to PIO UART,
+    /// if that also fails, falls back to bit-bang UART.
+    ///
+    /// Returns an error if all three fallbacks fail, or there was an error with the configuration.
+    pub fn create_uart<I, TxDma, RxDma, Irq>(
+        &mut self,
+        tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
+        rx: Peri<'static, impl uart::RxPin<I> + PioPin>,
+        irq: Irq,
+        config: uart::Config,
+    ) -> Result<UartBusHandle, AllocatorError>
+    where
+        I: UartHw,
+        TxDma: DmaChannel,
+        RxDma: DmaChannel,
+        Irq: Binding<I::Interrupt, uart::InterruptHandler<I>>
+            + Binding<TxDma::Interrupt, dma::InterruptHandler<TxDma>>
+            + Binding<RxDma::Interrupt, dma::InterruptHandler<RxDma>>
+            + 'static,
+    {
+        HardwareUartBus::validate_config(&config)
             .map_err(|_| AllocatorError::InvalidConfiguration)?;
-        let bus = BitBangUartBus::new(tx, rx, baud_rate)
-            .map_err(|_| AllocatorError::InvalidConfiguration)?;
-        Ok(UartBusHandle::new(
-            Box::new(bus),
-            crate::bus::uart::UartBusVersion::BitBang,
-        ))
+
+        if core::any::TypeId::of::<TxDma>() == core::any::TypeId::of::<RxDma>() {
+            return Err(AllocatorError::InvalidConfiguration);
+        }
+
+        let peri = self.request_uart_hardware::<I>();
+        let tx_dma = self.request_dma::<TxDma>();
+        let rx_dma = self.request_dma::<RxDma>();
+
+        match (peri, tx_dma, rx_dma) {
+            // Success path: We get direct ownership of the unwrapped values
+            (Ok(peri), Ok(tx_dma), Ok(rx_dma)) => {
+                let bus = HardwareUartBus::new(peri, tx, rx, irq, tx_dma, rx_dma, config)
+                    .expect("UART configuration was validated before allocation");
+
+                Ok(UartBusHandle::new(
+                    Box::new(bus),
+                    crate::bus::uart::UartBusVersion::Hardware,
+                ))
+            }
+
+            // Failure path: At least one is an Err.
+            // We re-bind the original Results to these variables and clean up.
+            (peri, tx_dma, rx_dma) => {
+                if let Ok(peri) = peri {
+                    self.release_uart_hardware(peri);
+                }
+                if let Ok(tx_dma) = tx_dma {
+                    self.release_dma(tx_dma);
+                }
+                if let Ok(rx_dma) = rx_dma {
+                    self.release_dma(rx_dma);
+                }
+
+                self.create_uart_no_hardware(tx, rx, config.baudrate)
+            }
+        }
     }
 
     // ── PIO ─────────────────────────────────────────────────────────
