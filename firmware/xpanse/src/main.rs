@@ -34,12 +34,17 @@ static HEAP: Heap = Heap::empty();
 #[cortex_m_rt::entry]
 fn main() -> ! {
     let p = embassy_rp::init(Default::default());
+    info!("boot: RP235x peripherals initialized");
+
     let r = split_resources!(p);
+    info!("boot: board resources assigned");
 
     unsafe {
         embedded_alloc::init!(HEAP, 64 * 1024);
     }
+    info!("boot: 64 KiB heap initialized");
 
+    info!("boot: starting core 1");
     spawn_core1(
         p.CORE1,
         unsafe { &mut *core::ptr::addr_of_mut!(CORE1_STACK) },
@@ -57,7 +62,9 @@ fn main() -> ! {
             });
         },
     );
+    info!("boot: core 1 launched");
 
+    info!("boot: starting core 0 UI executor");
     let executor0 = EXECUTOR0.init(Executor::new());
     executor0.run(|spawner| spawner.spawn(unwrap!(ui_core_task(r.display))));
 }

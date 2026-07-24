@@ -16,7 +16,7 @@ use embedded_graphics::{
 use crate::{
     app_loader::run_app,
     app_picker::{create_app_picker, pick_app},
-    core_driver::take_registry,
+    core_driver::{start_app_core, take_registry},
     display::{self, init_display},
     resource_split::*,
 };
@@ -34,6 +34,9 @@ static SLINT_BUFFER: StaticCell<[Rgb565Pixel; display::WIDTH as usize * display:
 
 #[embassy_executor::task]
 pub async fn ui_core_task(display_peris: DisplayPeris) {
+    defmt::info!("ui_core: task started on core 0");
+    defmt::info!("ui_core: initializing display");
+
     let mut backlight = Output::new(display_peris.backlight, Level::Low);
     let driver_buffer = DRIVER_BUFFER.init([0_u8; 512]);
     let mut disp = init_display(
@@ -46,7 +49,9 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         driver_buffer,
     );
     backlight.set_high();
+    defmt::info!("ui_core: display initialized, backlight enabled");
 
+    defmt::info!("ui_core: initializing Slint platform");
     let window = MinimalSoftwareWindow::new(Default::default());
     if slint::platform::set_platform(Box::new(XpansePlatform {
         window: window.clone(),
@@ -64,8 +69,14 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
 
     let slint_buffer =
         SLINT_BUFFER.init([Rgb565Pixel(0); display::WIDTH as usize * display::HIGHT as usize]);
+    defmt::info!(
+        "ui_core: Slint platform ready at {}x{}",
+        display::WIDTH,
+        display::HIGHT
+    );
 
     defmt::info!("ui_core: waiting for registry from core 1");
+    start_app_core();
     let mut registry = take_registry().await;
     defmt::info!("ui_core: registry received");
 
@@ -76,6 +87,7 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
             return;
         }
     };
+    defmt::info!("ui_core: boot complete, app picker ready");
 
     loop {
         let app = drive_ui_until(

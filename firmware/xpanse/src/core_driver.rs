@@ -8,7 +8,9 @@ use xpanse_api::interfaces::adc;
 use xpanse_api::metadata::{ModuleID, ModuleSlot};
 
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, signal::Signal};
-use embassy_time::Timer;
+use embassy_time::{Duration, Timer, with_timeout};
+
+const MODULE_DETECTION_TIMEOUT: Duration = Duration::from_millis(100);
 
 macro_rules! gpio_bank_from_peris {
     ($peri:expr) => {
@@ -31,6 +33,11 @@ macro_rules! gpio_bank_from_peris {
 }
 
 static REGISTRY_HANDOFF: Signal<CriticalSectionRawMutex, Registry> = Signal::new();
+static APP_CORE_START: Signal<CriticalSectionRawMutex, ()> = Signal::new();
+
+pub fn start_app_core() {
+    APP_CORE_START.signal(());
+}
 
 pub async fn take_registry() -> Registry {
     REGISTRY_HANDOFF.wait().await
@@ -45,11 +52,16 @@ pub async fn app_core_task(
     mut i2c_pins: I2cPinPeris,
     mut remaining_peris: RemainingPeris,
 ) {
+    APP_CORE_START.wait().await;
+    defmt::info!("app_core: started on core 1");
+
     let gpio_bank_0 = gpio_bank_from_peris!(gpio_bank_0);
     let gpio_bank_1 = gpio_bank_from_peris!(gpio_bank_1);
     let gpio_bank_2 = gpio_bank_from_peris!(gpio_bank_2);
     let gpio_bank_3 = gpio_bank_from_peris!(gpio_bank_3);
+    defmt::info!("app_core: GPIO banks initialized");
 
+    defmt::info!("app_core: initializing module-detection ADC");
     let module_ids = {
         let module_adc = match init_adc(
             remaining_peris.i2c1.reborrow(),
@@ -58,7 +70,10 @@ pub async fn app_core_task(
         )
         .await
         {
-            Ok(adc) => Some(adc),
+            Ok(adc) => {
+                defmt::info!("app_core: module-detection ADC initialized");
+                Some(adc)
+            }
             Err(error) => {
                 defmt::warn!("module ADC initialization attempt 1 failed: {:?}", error);
                 Timer::after_millis(20).await;
@@ -108,8 +123,11 @@ pub async fn app_core_task(
         }
     };
 
+    defmt::info!("app_core: initializing internal ADC");
     adc::init_adc(remaining_peris.adc, remaining_peris.adc_temp);
+    defmt::info!("app_core: internal ADC initialized");
 
+    defmt::info!("app_core: creating bus allocator");
     let mut bus_allocator = BusAllocator::new(
         None,
         Some(remaining_peris.spi1),
@@ -141,6 +159,7 @@ pub async fn app_core_task(
     );
 
     let mut registry = Registry::new();
+    defmt::info!("app_core: loading module drivers");
 
     load_driver(
         module_ids[0],
@@ -180,19 +199,33 @@ pub async fn app_core_task(
 }
 
 async fn detect_module(adc: &mut crate::adc::Adc<'_>, slot: ModuleSlot) -> Option<ModuleID> {
+    defmt::info!("app_core: detecting module in {:?}", slot);
+
     for attempt in 1..=3 {
-        match adc_mapping::map_adc(adc, slot).await {
-            Ok(id) => return id,
-            Err(error) => {
+        match with_timeout(MODULE_DETECTION_TIMEOUT, adc_mapping::map_adc(adc, slot)).await {
+            Ok(Ok(Some(id))) => {
+                defmt::info!("app_core: detected module {:?} in {:?}", id, slot);
+                return Some(id);
+            }
+            Ok(Ok(None)) => {
+                defmt::info!("app_core: no module detected in {:?}", slot);
+                return None;
+            }
+            Ok(Err(error)) => {
                 defmt::warn!(
                     "module detection attempt {} failed for {:?}: {:?}",
                     attempt,
                     slot,
                     error
                 );
-                Timer::after_millis(10).await;
             }
+            Err(_) => defmt::warn!(
+                "module detection attempt {} timed out for {:?}",
+                attempt,
+                slot
+            ),
         }
+        Timer::after_millis(10).await;
     }
     defmt::error!("module detection failed for {:?}", slot);
     None

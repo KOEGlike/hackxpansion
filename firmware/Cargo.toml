@@ -2,6 +2,9 @@
 resolver = "2"
 members = ["xpanse", "xpanse-api", "drivers/test-driver", "apps/example-app"]
 
+[profile.release]
+debug = 2
+
 [workspace.dependencies]
 xpanse-api = { path = "./xpanse-api/" }
 
