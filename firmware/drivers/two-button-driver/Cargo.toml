@@ -1,0 +1,13 @@
+[package]
+edition = "2024"
+name = "two-button-driver"
+version = "0.1.0"
+license = "GPL-3.0"
+
+[dependencies]
+xpanse-api = { workspace = true }
+
+embassy-rp = { workspace = true }
+embassy-time = { workspace = true }
+embedded-hal-bus = { workspace = true }
+defmt = { workspace = true }

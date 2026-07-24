@@ -90,5 +90,9 @@ embedded-sdmmc = "0.9.0"
 
 pio = "0.3"
 
+# Drivers
 test-driver = { path = "./drivers/test-driver/" }
+two-button-driver = { path = "./drivers/two-button-driver/" }
+
+# Apps
 example-app = { path = "./apps/example-app/" }

@@ -61,7 +61,11 @@ portable-atomic = { workspace = true }
 log = { workspace = true }
 embedded-sdmmc = { workspace = true }
 
+# Drivers
 test-driver = { workspace = true }
+two-button-driver = { workspace = true }
+
+# Apps
 example-app = { workspace = true }
 
 [build-dependencies]
