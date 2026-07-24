@@ -2,12 +2,12 @@ extern crate alloc;
 
 use alloc::{boxed::Box, rc::Rc, vec::Vec};
 
-use embassy_futures::select::{Either, Either3, select as select_future, select3};
+use embassy_futures::select::{Either5, select5};
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
 use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 use xpanse_api::{
-    interfaces::buttons::{A, B, Button},
-    registry::{RegisteredResource, Registry},
+    interfaces::buttons::{A, B, Button, ButtonRole, Down, Up},
+    registry::{RegisteredResource, Registry, ResourceId},
 };
 slint::include_modules!();
 
@@ -71,10 +71,18 @@ pub(crate) async fn pick_app(
             core::future::pending::<()>().await;
         }
 
-        let (mut select_button, mut cycle_button) = take_picker_buttons(registry);
+        let (mut select_button, mut cycle_button, mut up_button, mut down_button) =
+            take_picker_buttons(registry);
 
         let selected_index = loop {
-            match receive_app_picker_input(select_button.as_mut(), cycle_button.as_mut()).await {
+            match receive_app_picker_input(
+                select_button.as_mut(),
+                cycle_button.as_mut(),
+                up_button.as_mut(),
+                down_button.as_mut(),
+            )
+            .await
+            {
                 AppPickerInput::Up | AppPickerInput::Left => {
                     move_picker_selection(
                         &mut selected_index,
@@ -104,6 +112,12 @@ pub(crate) async fn pick_app(
         if let Some(cycle_button) = cycle_button {
             registry.return_resource(cycle_button);
         }
+        if let Some(up_button) = up_button {
+            registry.return_resource(up_button);
+        }
+        if let Some(down_button) = down_button {
+            registry.return_resource(down_button);
+        }
 
         if let Some(app) = app_loader::runnable_app_at(registry, selected_index) {
             return app;
@@ -123,56 +137,80 @@ fn attach_app_picker(app_picker: &AppPickerUI) {
 async fn receive_app_picker_input(
     select_button: Option<&mut RegisteredResource<Box<dyn Button<A>>>>,
     cycle_button: Option<&mut RegisteredResource<Box<dyn Button<B>>>>,
+    up_button: Option<&mut RegisteredResource<Box<dyn Button<Up>>>>,
+    down_button: Option<&mut RegisteredResource<Box<dyn Button<Down>>>>,
 ) -> AppPickerInput {
-    match (select_button, cycle_button) {
-        (Some(select_button), Some(cycle_button)) => match select3(
-            select_button.resource.wait_for_pressed(),
-            cycle_button.resource.wait_for_pressed(),
-            APP_PICKER_INPUT.receive(),
-        )
-        .await
-        {
-            Either3::First(()) => AppPickerInput::Select,
-            Either3::Second(()) => AppPickerInput::Cycle,
-            Either3::Third(input) => input,
-        },
-        (Some(select_button), None) => match select_future(
-            select_button.resource.wait_for_pressed(),
-            APP_PICKER_INPUT.receive(),
-        )
-        .await
-        {
-            Either::First(()) => AppPickerInput::Select,
-            Either::Second(input) => input,
-        },
-        (None, Some(cycle_button)) => match select_future(
-            cycle_button.resource.wait_for_pressed(),
-            APP_PICKER_INPUT.receive(),
-        )
-        .await
-        {
-            Either::First(()) => AppPickerInput::Cycle,
-            Either::Second(input) => input,
-        },
-        (None, None) => APP_PICKER_INPUT.receive().await,
+    match select5(
+        wait_for_picker_button(select_button, AppPickerInput::Select),
+        wait_for_picker_button(cycle_button, AppPickerInput::Cycle),
+        wait_for_picker_button(up_button, AppPickerInput::Up),
+        wait_for_picker_button(down_button, AppPickerInput::Down),
+        APP_PICKER_INPUT.receive(),
+    )
+    .await
+    {
+        Either5::First(input)
+        | Either5::Second(input)
+        | Either5::Third(input)
+        | Either5::Fourth(input)
+        | Either5::Fifth(input) => input,
     }
 }
 
 type PickerButton<R> = Option<RegisteredResource<Box<dyn Button<R>>>>;
 
-fn take_picker_buttons(registry: &mut Registry) -> (PickerButton<A>, PickerButton<B>) {
-    if let Some((select, cycle)) =
-        registry.take_distinct2::<Box<dyn Button<A>>, Box<dyn Button<B>>>()
-    {
-        return (Some(select), Some(cycle));
+async fn wait_for_picker_button<R: ButtonRole>(
+    button: Option<&mut RegisteredResource<Box<dyn Button<R>>>>,
+    input: AppPickerInput,
+) -> AppPickerInput {
+    match button {
+        Some(button) => {
+            button.resource.wait_for_pressed().await;
+            input
+        }
+        None => core::future::pending().await,
+    }
+}
+
+fn take_picker_buttons(
+    registry: &mut Registry,
+) -> (
+    PickerButton<A>,
+    PickerButton<B>,
+    PickerButton<Up>,
+    PickerButton<Down>,
+) {
+    let mut ids = Vec::new();
+    let select = take_button_with_distinct_id(registry, &mut ids);
+    let cycle = take_button_with_distinct_id(registry, &mut ids);
+    let up = take_button_with_distinct_id(registry, &mut ids);
+    let down = take_button_with_distinct_id(registry, &mut ids);
+
+    (select, cycle, up, down)
+}
+
+fn take_button_with_distinct_id<R: ButtonRole>(
+    registry: &mut Registry,
+    ids: &mut Vec<ResourceId>,
+) -> PickerButton<R> {
+    let mut aliases = Vec::new();
+
+    let button = loop {
+        match registry.take_resource::<Box<dyn Button<R>>>() {
+            Some(button) if !ids.contains(&button.id()) => break Some(button),
+            Some(alias) => aliases.push(alias),
+            None => break None,
+        }
+    };
+
+    for alias in aliases {
+        registry.return_resource(alias);
+    }
+    if let Some(button) = &button {
+        ids.push(button.id());
     }
 
-    let select = registry.take_resource::<Box<dyn Button<A>>>();
-    if select.is_some() {
-        (select, None)
-    } else {
-        (None, registry.take_resource::<Box<dyn Button<B>>>())
-    }
+    button
 }
 
 fn clear_app_picker_input() {
