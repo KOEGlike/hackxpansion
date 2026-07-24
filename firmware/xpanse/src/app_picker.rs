@@ -2,11 +2,11 @@ extern crate alloc;
 
 use alloc::{boxed::Box, rc::Rc, vec::Vec};
 
-use embassy_futures::select::{Either, select as select_future};
+use embassy_futures::select::{Either, Either3, select as select_future, select3};
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
 use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 use xpanse_api::{
-    interfaces::buttons::{A, Button},
+    interfaces::buttons::{A, B, Button},
     registry::{RegisteredResource, Registry},
 };
 slint::include_modules!();
@@ -21,6 +21,7 @@ enum AppPickerInput {
     Down,
     Left,
     Right,
+    Cycle,
     Select,
 }
 
@@ -70,10 +71,10 @@ pub(crate) async fn pick_app(
             core::future::pending::<()>().await;
         }
 
-        let mut select_button = registry.take_resource::<Box<dyn Button<A>>>();
+        let (mut select_button, mut cycle_button) = take_picker_buttons(registry);
 
         let selected_index = loop {
-            match receive_app_picker_input(select_button.as_mut()).await {
+            match receive_app_picker_input(select_button.as_mut(), cycle_button.as_mut()).await {
                 AppPickerInput::Up | AppPickerInput::Left => {
                     move_picker_selection(
                         &mut selected_index,
@@ -82,7 +83,7 @@ pub(crate) async fn pick_app(
                     );
                     set_picker_selected_index(app_picker, selected_index);
                 }
-                AppPickerInput::Down | AppPickerInput::Right => {
+                AppPickerInput::Down | AppPickerInput::Right | AppPickerInput::Cycle => {
                     move_picker_selection(&mut selected_index, app_count, SelectionDirection::Next);
                     set_picker_selected_index(app_picker, selected_index);
                 }
@@ -99,6 +100,9 @@ pub(crate) async fn pick_app(
         }
         if let Some(select_button) = select_button {
             registry.return_resource(select_button);
+        }
+        if let Some(cycle_button) = cycle_button {
+            registry.return_resource(cycle_button);
         }
 
         if let Some(app) = app_loader::runnable_app_at(registry, selected_index) {
@@ -118,19 +122,56 @@ fn attach_app_picker(app_picker: &AppPickerUI) {
 
 async fn receive_app_picker_input(
     select_button: Option<&mut RegisteredResource<Box<dyn Button<A>>>>,
+    cycle_button: Option<&mut RegisteredResource<Box<dyn Button<B>>>>,
 ) -> AppPickerInput {
-    let Some(select_button) = select_button else {
-        return APP_PICKER_INPUT.receive().await;
-    };
+    match (select_button, cycle_button) {
+        (Some(select_button), Some(cycle_button)) => match select3(
+            select_button.resource.wait_for_pressed(),
+            cycle_button.resource.wait_for_pressed(),
+            APP_PICKER_INPUT.receive(),
+        )
+        .await
+        {
+            Either3::First(()) => AppPickerInput::Select,
+            Either3::Second(()) => AppPickerInput::Cycle,
+            Either3::Third(input) => input,
+        },
+        (Some(select_button), None) => match select_future(
+            select_button.resource.wait_for_pressed(),
+            APP_PICKER_INPUT.receive(),
+        )
+        .await
+        {
+            Either::First(()) => AppPickerInput::Select,
+            Either::Second(input) => input,
+        },
+        (None, Some(cycle_button)) => match select_future(
+            cycle_button.resource.wait_for_pressed(),
+            APP_PICKER_INPUT.receive(),
+        )
+        .await
+        {
+            Either::First(()) => AppPickerInput::Cycle,
+            Either::Second(input) => input,
+        },
+        (None, None) => APP_PICKER_INPUT.receive().await,
+    }
+}
 
-    match select_future(
-        select_button.resource.wait_for_pressed(),
-        APP_PICKER_INPUT.receive(),
-    )
-    .await
+type PickerButton<R> = Option<RegisteredResource<Box<dyn Button<R>>>>;
+
+fn take_picker_buttons(registry: &mut Registry) -> (PickerButton<A>, PickerButton<B>) {
+    if let Some((select, cycle)) =
+        registry.take_distinct2::<Box<dyn Button<A>>, Box<dyn Button<B>>>()
     {
-        Either::First(()) => AppPickerInput::Select,
-        Either::Second(input) => input,
+        return (Some(select), Some(cycle));
+    }
+
+    let select = registry.take_resource::<Box<dyn Button<A>>>();
+    if select.is_some() {
+        (select, None)
+    } else {
+        (None, registry.take_resource::<Box<dyn Button<B>>>())
     }
 }
 
