@@ -9,7 +9,7 @@ use mipidsi::interface::SpiInterface;
 use mipidsi::{
     Builder,
     models::ST7789,
-    options::{Orientation, Rotation},
+    options::{ColorInversion, Orientation, Rotation},
 };
 
 pub const HIGHT: u16 = 240;
@@ -59,6 +59,7 @@ pub fn init_display<T: Instance>(
         .display_size(PANEL_WIDTH, PANEL_HEIGHT)
         .reset_pin(rst)
         .orientation(Orientation::new().rotate(Rotation::Deg90))
+        .invert_colors(ColorInversion::Inverted)
         .init(&mut Delay)
         .unwrap()
 }

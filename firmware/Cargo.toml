@@ -93,6 +93,7 @@ pio = "0.3"
 # Drivers
 test-driver = { path = "./drivers/test-driver/" }
 two-button-driver = { path = "./drivers/two-button-driver/" }
+four-button-driver = { path = "./drivers/four-button-driver/" }
 
 # Apps
 example-app = { path = "./apps/example-app/" }

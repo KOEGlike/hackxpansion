@@ -64,6 +64,7 @@ embedded-sdmmc = { workspace = true }
 # Drivers
 test-driver = { workspace = true }
 two-button-driver = { workspace = true }
+four-button-driver = { workspace = true }
 
 # Apps
 example-app = { workspace = true }

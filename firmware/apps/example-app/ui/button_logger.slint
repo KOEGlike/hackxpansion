@@ -1,0 +1,27 @@
+export component ButtonLoggerUI inherits Window {
+    in-out property <int> count: 0;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #ffffff;
+    }
+
+    VerticalLayout {
+        width: parent.width;
+        height: parent.height;
+        alignment: center;
+
+        Text {
+            text: "Clicks: " + root.count;
+            color: #008000;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "Hold A to exit";
+            color: #000000;
+            horizontal-alignment: center;
+        }
+    }
+}

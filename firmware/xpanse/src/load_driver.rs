@@ -14,6 +14,14 @@ pub async fn load_driver<G: BankPins>(
     bus: &mut BusAllocator,
 ) {
     match id {
+        Some(id) if id == four_button_driver::FourButtonDriver::ID => {
+            match four_button_driver::FourButtonDriver::create(bank, slot, registry, bus).await {
+                Ok(()) => defmt::info!("Four button driver initialized in {:?}", slot),
+                Err(error) => {
+                    defmt::error!("Four button driver init failed in {:?}: {:?}", slot, error)
+                }
+            }
+        }
         Some(id) if id == two_button_driver::TwoButtonDriver::ID => {
             match two_button_driver::TwoButtonDriver::create(bank, slot, registry, bus).await {
                 Ok(()) => defmt::info!("Two button driver initialized in {:?}", slot),

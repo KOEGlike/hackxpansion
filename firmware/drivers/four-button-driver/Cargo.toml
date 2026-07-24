@@ -1,0 +1,8 @@
+[package]
+edition = "2024"
+name = "four-button-driver"
+version = "0.1.0"
+license = "GPL-3.0"
+
+[dependencies]
+xpanse-api = { workspace = true }

@@ -1,4 +1,4 @@
-use alloc::boxed::Box;
+use alloc::{boxed::Box, sync::Arc};
 use core::future::Future;
 use core::marker::PhantomData;
 use core::pin::Pin;
@@ -7,6 +7,7 @@ use embassy_rp::{
     Peri,
     gpio::{AnyPin, Input, Pull},
 };
+use embassy_sync::blocking_mutex::CriticalSectionMutex;
 use embassy_time::Timer;
 
 mod private {
@@ -35,6 +36,17 @@ pub trait Button<R: ButtonRole>: Send {
 pub struct SingleButton<R: ButtonRole> {
     pin: Input<'static>,
     _role: PhantomData<R>,
+}
+
+struct SharedButton<R: ButtonRole> {
+    pin: Arc<CriticalSectionMutex<Input<'static>>>,
+    _role: PhantomData<R>,
+}
+
+impl<R: ButtonRole> SharedButton<R> {
+    fn is_low(&self) -> bool {
+        self.pin.lock(Input::is_low)
+    }
 }
 
 impl<R: ButtonRole> SingleButton<R> {
@@ -69,6 +81,44 @@ impl<R: ButtonRole> Button<R> for SingleButton<R> {
     }
 }
 
+impl<R: ButtonRole> Button<R> for SharedButton<R> {
+    fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>> {
+        Box::pin(async move {
+            while self.is_low() {
+                Timer::after_millis(20).await;
+            }
+
+            loop {
+                Timer::after_millis(20).await;
+                if self.is_low() {
+                    return;
+                }
+            }
+        })
+    }
+
+    fn is_pressed(&self) -> bool {
+        self.is_low()
+    }
+}
+
 pub fn pin_button<R: ButtonRole>(pin: Peri<'static, AnyPin>) -> Box<dyn Button<R>> {
     Box::new(SingleButton::<R>::new(pin))
+}
+
+/// Creates two logical button roles backed by one physical GPIO input.
+pub fn aliased_pin_buttons<R: ButtonRole, Alias: ButtonRole>(
+    pin: Peri<'static, AnyPin>,
+) -> (Box<dyn Button<R>>, Box<dyn Button<Alias>>) {
+    let pin = Arc::new(CriticalSectionMutex::new(Input::new(pin, Pull::Up)));
+    (
+        Box::new(SharedButton::<R> {
+            pin: pin.clone(),
+            _role: PhantomData,
+        }),
+        Box::new(SharedButton::<Alias> {
+            pin,
+            _role: PhantomData,
+        }),
+    )
 }

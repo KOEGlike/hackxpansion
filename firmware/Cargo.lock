@@ -1913,6 +1913,7 @@ dependencies = [
  "defmt 1.1.0",
  "embassy-time",
  "slint",
+ "slint-build",
  "xpanse-api",
 ]
 
@@ -2156,6 +2157,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "four-button-driver"
+version = "0.1.0"
+dependencies = [
+ "xpanse-api",
 ]
 
 [[package]]
@@ -6997,6 +7005,7 @@ dependencies = [
  "example-app",
  "fixed",
  "fixed-macro",
+ "four-button-driver",
  "heapless 0.9.3",
  "libm",
  "log",

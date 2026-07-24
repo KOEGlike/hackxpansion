@@ -13,24 +13,7 @@ use xpanse_api::{
     registry::{RegisteredResource, Registry},
 };
 
-slint::slint! {
-    export component ButtonLoggerUI inherits Window {
-        in-out property <int> count: 0;
-        VerticalLayout {
-            alignment: center;
-            Text {
-                text: "Clicks: " + root.count;
-                color: green;
-                horizontal-alignment: center;
-            }
-            Text {
-                text: "Hold A to exit";
-                color: white;
-                horizontal-alignment: center;
-            }
-        }
-    }
-}
+slint::include_modules!();
 
 pub struct ButtonLoggerApp {
     button: RegisteredResource<Box<dyn Button<A>>>,
