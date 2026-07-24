@@ -261,7 +261,7 @@
 
 	<div class="flex items-center gap-4 md:col-span-2">
 		<button
-			class="bg-slate-800 px-4 py-2 text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+			class="bg-slate-800 px-4 py-2 text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400 cursor-pointer"
 			{disabled}
 		>
 			{submitLabel}

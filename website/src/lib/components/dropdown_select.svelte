@@ -95,7 +95,7 @@
 
 <div class="relative flex flex-col gap-0.5">
 	<span id={labelId}>
-		{label}{#if required}<span aria-hidden="true"> *</span>{/if}
+		{label}{#if required}<span aria-hidden="true">{' '}*</span>{/if}
 	</span>
 	<input type="hidden" {name} value={value ?? ''} />
 

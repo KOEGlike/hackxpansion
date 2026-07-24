@@ -71,7 +71,7 @@
 							<p class="text-xl">{data.user.name}</p>
 							<p>{data.user.pronouns}</p>
 							<form method="post" action={`${resolve('/home')}?/signOut`}>
-								<button class="w-fit hover:underline">Sign out</button>
+								<button class="w-fit hover:underline cursor-pointer">Sign out</button>
 							</form>
 						</div>
 					</section>
