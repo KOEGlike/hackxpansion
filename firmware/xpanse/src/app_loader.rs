@@ -5,11 +5,18 @@ use core::{future::Future, pin::Pin};
 
 use xpanse_api::{app::App, registry::Registry};
 
-const APP_CATALOG: &[AppDescriptor] = &[AppDescriptor {
-    name: example_app::ButtonLoggerApp::NAME,
-    can_run: example_app::ButtonLoggerApp::can_run,
-    run: run_app_impl::<example_app::ButtonLoggerApp>,
-}];
+const APP_CATALOG: &[AppDescriptor] = &[
+    AppDescriptor {
+        name: example_app::ButtonLoggerApp::NAME,
+        can_run: example_app::ButtonLoggerApp::can_run,
+        run: run_app_impl::<example_app::ButtonLoggerApp>,
+    },
+    AppDescriptor {
+        name: cube_game::CubeGameApp::NAME,
+        can_run: cube_game::CubeGameApp::can_run,
+        run: run_app_impl::<cube_game::CubeGameApp>,
+    },
+];
 
 type AppFuture<'a> = Pin<Box<dyn Future<Output = ()> + 'a>>;
 type AppRunner = for<'a> fn(&'a mut Registry) -> AppFuture<'a>;

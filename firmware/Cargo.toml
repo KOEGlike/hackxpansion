@@ -97,3 +97,4 @@ four-button-driver = { path = "./drivers/four-button-driver/" }
 
 # Apps
 example-app = { path = "./apps/example-app/" }
+cube-game = { path = "./apps/cube-game/" }

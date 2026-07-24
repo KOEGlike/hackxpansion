@@ -1039,6 +1039,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "cube-game"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.1.0",
+ "embassy-futures",
+ "embassy-time",
+ "slint",
+ "slint-build",
+ "xpanse-api",
+]
+
+[[package]]
 name = "cursor-icon"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6980,6 +6992,7 @@ dependencies = [
  "cortex-m",
  "cortex-m-rt",
  "critical-section",
+ "cube-game",
  "defmt 1.1.0",
  "defmt-rtt",
  "display-interface",

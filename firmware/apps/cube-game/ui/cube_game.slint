@@ -1,0 +1,50 @@
+export component CubeGameUI inherits Window {
+    in property <int> cube-x: 144;
+    in property <int> cube-y: 104;
+    in property <color> cube-color: #e53935;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #f4f7fb;
+    }
+
+    Text {
+        x: 0px;
+        y: 8px;
+        width: parent.width;
+        text: "D-pad: move    A: color    B: exit";
+        color: #18202b;
+        font-size: 14px;
+        horizontal-alignment: center;
+    }
+
+    Rectangle {
+        x: root.cube-x * 1px + 6px;
+        y: root.cube-y * 1px + 6px;
+        width: 34px;
+        height: 34px;
+        background: #80909cab;
+        border-radius: 3px;
+    }
+
+    Rectangle {
+        x: root.cube-x * 1px;
+        y: root.cube-y * 1px;
+        width: 34px;
+        height: 34px;
+        background: root.cube-color;
+        border-width: 2px;
+        border-color: #18202b;
+        border-radius: 3px;
+
+        Rectangle {
+            x: 4px;
+            y: 4px;
+            width: 22px;
+            height: 4px;
+            background: #80ffffff;
+            border-radius: 2px;
+        }
+    }
+}
