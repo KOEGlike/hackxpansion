@@ -16,7 +16,7 @@ use embedded_graphics::{
 use crate::{
     app_loader::run_app,
     app_picker::{create_app_picker, pick_app},
-    core_driver::{start_app_core, take_registry},
+    core_driver::take_registry,
     display::{self, init_display},
     resource_split::*,
 };
@@ -76,7 +76,6 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     );
 
     defmt::info!("ui_core: waiting for registry from core 1");
-    start_app_core();
     let mut registry = take_registry().await;
     defmt::info!("ui_core: registry received");
 

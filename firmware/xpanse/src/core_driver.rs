@@ -33,11 +33,6 @@ macro_rules! gpio_bank_from_peris {
 }
 
 static REGISTRY_HANDOFF: Signal<CriticalSectionRawMutex, Registry> = Signal::new();
-static APP_CORE_START: Signal<CriticalSectionRawMutex, ()> = Signal::new();
-
-pub fn start_app_core() {
-    APP_CORE_START.signal(());
-}
 
 pub async fn take_registry() -> Registry {
     REGISTRY_HANDOFF.wait().await
@@ -50,9 +45,8 @@ pub async fn app_core_task(
     gpio_bank_2: GpioBankPeris2,
     gpio_bank_3: GpioBankPeris3,
     mut i2c_pins: I2cPinPeris,
-    mut remaining_peris: RemainingPeris,
+    remaining_peris: RemainingPeris,
 ) {
-    APP_CORE_START.wait().await;
     defmt::info!("app_core: started on core 1");
 
     let gpio_bank_0 = gpio_bank_from_peris!(gpio_bank_0);
@@ -63,63 +57,29 @@ pub async fn app_core_task(
 
     defmt::info!("app_core: initializing module-detection ADC");
     let module_ids = {
-        let module_adc = match init_adc(
-            remaining_peris.i2c1.reborrow(),
-            i2c_pins.sda.reborrow(),
-            i2c_pins.scl.reborrow(),
-        )
-        .await
-        {
+        let module_adc = match init_adc(i2c_pins.sda.reborrow(), i2c_pins.scl.reborrow()).await {
             Ok(adc) => {
                 defmt::info!("app_core: module-detection ADC initialized");
                 Some(adc)
             }
             Err(error) => {
-                defmt::warn!("module ADC initialization attempt 1 failed: {:?}", error);
-                Timer::after_millis(20).await;
-                match init_adc(
-                    remaining_peris.i2c1.reborrow(),
-                    i2c_pins.sda.reborrow(),
-                    i2c_pins.scl.reborrow(),
-                )
-                .await
-                {
-                    Ok(adc) => Some(adc),
-                    Err(error) => {
-                        defmt::warn!("module ADC initialization attempt 2 failed: {:?}", error);
-                        Timer::after_millis(20).await;
-                        match init_adc(
-                            remaining_peris.i2c1.reborrow(),
-                            i2c_pins.sda.reborrow(),
-                            i2c_pins.scl.reborrow(),
-                        )
-                        .await
-                        {
-                            Ok(adc) => Some(adc),
-                            Err(error) => {
-                                defmt::warn!(
-                                    "module ADC initialization attempt 3 failed: {:?}",
-                                    error
-                                );
-                                None
-                            }
-                        }
-                    }
-                }
+                defmt::error!(
+                    "app_core: module-detection ADC initialization failed: {:?}",
+                    error
+                );
+                None
             }
         };
 
         match module_adc {
-            Some(mut module_adc) => [
-                detect_module(&mut module_adc, ModuleSlot::FrontRight).await,
-                detect_module(&mut module_adc, ModuleSlot::FrontLeft).await,
-                detect_module(&mut module_adc, ModuleSlot::BackRight).await,
-                detect_module(&mut module_adc, ModuleSlot::BackLeft).await,
-            ],
-            None => {
-                defmt::error!("module ADC initialization failed after three attempts");
-                [None; 4]
+            Some(mut module_adc) => {
+                let front_right = detect_module(&mut module_adc, ModuleSlot::FrontRight).await;
+                let front_left = detect_module(&mut module_adc, ModuleSlot::FrontLeft).await;
+                let back_right = detect_module(&mut module_adc, ModuleSlot::BackRight).await;
+                let back_left = detect_module(&mut module_adc, ModuleSlot::BackLeft).await;
+                [front_right, front_left, back_right, back_left]
             }
+            None => [None; 4],
         }
     };
 
@@ -159,8 +119,8 @@ pub async fn app_core_task(
     );
 
     let mut registry = Registry::new();
-    defmt::info!("app_core: loading module drivers");
 
+    defmt::info!("app_core: loading module drivers");
     load_driver(
         module_ids[0],
         gpio_bank_0,
@@ -194,7 +154,7 @@ pub async fn app_core_task(
     )
     .await;
 
-    defmt::info!("drivers loaded, handing registry to core 0");
+    defmt::info!("app_core: drivers loaded, handing registry to core 0");
     REGISTRY_HANDOFF.signal(registry);
 }
 
@@ -211,22 +171,20 @@ async fn detect_module(adc: &mut crate::adc::Adc<'_>, slot: ModuleSlot) -> Optio
                 defmt::info!("app_core: no module detected in {:?}", slot);
                 return None;
             }
-            Ok(Err(error)) => {
-                defmt::warn!(
-                    "module detection attempt {} failed for {:?}: {:?}",
-                    attempt,
-                    slot,
-                    error
-                );
-            }
+            Ok(Err(error)) => defmt::warn!(
+                "app_core: module detection attempt {} failed for {:?}: {:?}",
+                attempt,
+                slot,
+                error
+            ),
             Err(_) => defmt::warn!(
-                "module detection attempt {} timed out for {:?}",
+                "app_core: module detection attempt {} timed out for {:?}",
                 attempt,
                 slot
             ),
         }
         Timer::after_millis(10).await;
     }
-    defmt::error!("module detection failed for {:?}", slot);
+    defmt::error!("app_core: module detection failed for {:?}", slot);
     None
 }

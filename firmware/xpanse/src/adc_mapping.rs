@@ -1,5 +1,5 @@
-use embassy_rp::i2c;
 use libm::pow;
+use xpanse_api::bus::i2c::I2cError;
 use xpanse_api::metadata::{AVDD, ModuleDetectResistor, ModuleID, ModuleSlot};
 
 use crate::adc;
@@ -7,7 +7,7 @@ use crate::adc;
 pub async fn map_adc<'a>(
     adc: &mut adc::Adc<'a>,
     slot: ModuleSlot,
-) -> Result<Option<ModuleID>, i2c::Error> {
+) -> Result<Option<ModuleID>, I2cError> {
     let (md0_reading, md1_reading) = match slot {
         ModuleSlot::FrontRight => (adc.read_ch2().await?, adc.read_ch3().await?),
         ModuleSlot::FrontLeft => (adc.read_ch0().await?, adc.read_ch1().await?),
