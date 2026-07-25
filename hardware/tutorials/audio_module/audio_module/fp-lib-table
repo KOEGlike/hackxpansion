@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "Hackxpansion") (type "KiCad") (uri "C:/Users/lenovo/Documents/men/pcb_man/projects/hackxpansion/kicad_lib/Hackxpansion.pretty") (options "") (descr ""))
+)
