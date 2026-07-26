@@ -50,6 +50,9 @@ Configure `.env`, including `POSTGRES_PASSWORD`, then build and start the stack:
 docker compose up --build -d
 ```
 
+For a Portainer Git stack, configure the variables from `.env.example` in Portainer's stack
+environment instead. The ignored local `.env` file is not required inside the deployment checkout.
+
 The one-shot `migrate` service applies pending Drizzle migrations after PostgreSQL becomes healthy.
 The app starts only after migration succeeds. Migrations can also be run manually with
 `npm run compose:migrate`, and the full stack can be started with `npm run compose:up`.
