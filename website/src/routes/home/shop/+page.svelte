@@ -17,7 +17,7 @@
 		<p class="mt-2">
 			Ordering details will appear here when they are available. In the meantime, continue working
 			on <a href={resolve('/home/projects')} class="underline">your projects</a> or review the
-			<a href={resolve('/docs')} class="underline">documentation</a>.
+			<a href={resolve('/home/docs')} class="underline">documentation</a>.
 		</p>
 	</section>
 </main>

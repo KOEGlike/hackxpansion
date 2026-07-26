@@ -27,7 +27,7 @@
 			</form>
 
 			<a
-				href={resolve('/docs')}
+				href={resolve('/home/docs')}
 				class="content-box p-2 text-xl hover:content-box-hover active:content-box"
 			>
 				Docs

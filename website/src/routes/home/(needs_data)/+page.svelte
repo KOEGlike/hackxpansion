@@ -19,7 +19,7 @@
 				<h3 class="text-xl font-bold">Your projects</h3>
 				<p>Create a card or app, track its progress, and prepare it for review.</p>
 			</a>
-			<a href={resolve('/docs')} class="content-box p-5 hover:content-box-hover">
+			<a href={resolve('/home/docs')} class="content-box p-5 hover:content-box-hover">
 				<h3 class="text-xl font-bold">Documentation</h3>
 				<p>Learn how HackXPansion works and review the available technical details.</p>
 			</a>

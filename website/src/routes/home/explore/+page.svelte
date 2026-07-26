@@ -17,7 +17,7 @@
 		<p class="mt-2">
 			Projects will appear here when the community showcase is available. You can still manage
 			<a href={resolve('/home/projects')} class="underline">your projects</a> and use the
-			<a href={resolve('/docs')} class="underline">documentation</a> while you build.
+			<a href={resolve('/home/docs')} class="underline">documentation</a> while you build.
 		</p>
 	</section>
 </main>

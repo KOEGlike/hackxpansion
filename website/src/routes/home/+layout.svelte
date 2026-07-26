@@ -19,9 +19,18 @@
 		{ title: 'Home', href: '/home' },
 		{ title: 'Projects', href: '/home/projects' },
 		{ title: 'Shop', href: '/home/shop' },
-		{ title: 'Docs', href: '/docs' },
+		{ title: 'Docs', href: '/home/docs' },
 		{ title: 'Explore', href: '/home/explore' },
 		{ title: 'Settings', href: '/home/settings' }
+	] as const;
+	const docsItems = [
+		{ title: 'Getting Started', href: '/home/docs/quickstart', indent: false },
+		{ title: 'First Card', href: '/home/docs/quickstart/first-card', indent: true },
+		{ title: 'First Driver', href: '/home/docs/quickstart/first-driver', indent: true },
+		{ title: 'Detailed', href: '/home/docs/detailed', indent: false },
+		{ title: 'Device', href: '/home/docs/detailed/device', indent: true },
+		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
+		{ title: 'API', href: '/home/docs/detailed/api', indent: true }
 	] as const;
 
 	function isCurrentPage(href: (typeof items)[number]['href']) {
@@ -30,6 +39,10 @@
 			page.url.pathname === pathname ||
 			(href !== '/home' && page.url.pathname.startsWith(`${pathname}/`))
 		);
+	}
+
+	function isExactPage(href: (typeof docsItems)[number]['href']) {
+		return page.url.pathname === resolve(href);
 	}
 </script>
 
@@ -70,6 +83,21 @@
 							>
 								{item.title}
 							</a>
+							{#if item.href === '/home/docs' && isCurrentPage(item.href)}
+								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
+									{#each docsItems as docsItem (docsItem.href)}
+										<a
+											href={resolve(docsItem.href)}
+											class="text-lg hover:underline"
+											class:ml-4={docsItem.indent}
+											class:underline={isExactPage(docsItem.href)}
+											aria-current={isExactPage(docsItem.href) ? 'page' : undefined}
+										>
+											{docsItem.title}
+										</a>
+									{/each}
+								</div>
+							{/if}
 						{/each}
 					</nav>
 				</div>
