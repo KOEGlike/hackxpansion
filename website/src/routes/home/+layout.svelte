@@ -23,6 +23,14 @@
 		{ title: 'Explore', href: '/home/explore' },
 		{ title: 'Settings', href: '/home/settings' }
 	] as const;
+
+	function isCurrentPage(href: (typeof items)[number]['href']) {
+		const pathname = resolve(href);
+		return (
+			page.url.pathname === pathname ||
+			(href !== '/home' && page.url.pathname.startsWith(`${pathname}/`))
+		);
+	}
 </script>
 
 <div class="relative h-screen w-screen overflow-hidden">
@@ -57,7 +65,8 @@
 							<a
 								href={resolve(item.href)}
 								class="text-3xl hover:underline mr-30"
-								aria-current={page.url.pathname === resolve(item.href) ? 'page' : undefined}
+								class:underline={isCurrentPage(item.href)}
+								aria-current={isCurrentPage(item.href) ? 'page' : undefined}
 							>
 								{item.title}
 							</a>
