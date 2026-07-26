@@ -5,6 +5,8 @@
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
+	let hoveredMd0 = $state<number | null>(null);
+	let hoveredMd1 = $state<number | null>(null);
 
 	let projectsByPair = $derived.by(
 		() =>
@@ -27,6 +29,21 @@
 			case 'created':
 				return 'bg-slate-300 hover:bg-slate-400';
 		}
+	}
+
+	function highlightClasses(md0: number, md1: number) {
+		if (hoveredMd0 === md0 && hoveredMd1 === md1) {
+			return 'ring-2 ring-slate-700 ring-inset brightness-110';
+		}
+		if (hoveredMd0 === md0 || hoveredMd1 === md1) {
+			return 'ring-1 ring-slate-400 ring-inset brightness-105';
+		}
+		return '';
+	}
+
+	function clearHighlight() {
+		hoveredMd0 = null;
+		hoveredMd1 = null;
 	}
 </script>
 
@@ -55,49 +72,89 @@
 		>
 	</section>
 
-	<div class="content-box max-h-[calc(100vh-14rem)] min-w-0 overflow-auto p-3">
-		<table class="border-separate border-spacing-1 text-xs">
-			<caption class="sr-only">Project occupancy by MD0 rows and MD1 columns</caption>
-			<thead>
-				<tr>
-					<th class="sticky top-0 left-0 z-30 bg-white px-2 py-1 text-right">MD0 \ MD1</th>
-					{#each E24_RESISTOR_VALUES as md1 (md1)}
-						<th class="sticky top-0 z-20 h-18 min-w-8 bg-white align-bottom font-medium">
-							<span class="inline-block -rotate-45 whitespace-nowrap">{formatResistor(md1)}</span>
-						</th>
-					{/each}
-				</tr>
-			</thead>
-			<tbody>
-				{#each E24_RESISTOR_VALUES as md0 (md0)}
-					<tr>
-						<th class="sticky left-0 z-10 bg-white px-2 py-1 text-right font-medium">
-							{formatResistor(md0)}
-						</th>
-						{#each E24_RESISTOR_VALUES as md1 (md1)}
-							{@const project = projectsByPair.get(`${md0}:${md1}`)}
-							<td class="p-0">
-								{#if project}
-									<a
-										href={resolve(`/explore/${getPublicProjectKey(project)}`)}
-										class="block size-8 border border-slate-700 transition-colors focus:outline-2 focus:outline-offset-1 focus:outline-slate-900 {cellClasses(
-											project.status
-										)}"
-										title={`${project.title} — MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
-										aria-label={`Open ${project.title}, MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
-									></a>
-								{:else}
-									<span
-										class="block size-8 border border-slate-300 bg-slate-100"
-										title={`No project — MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
-										aria-label={`No project, MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
-									></span>
-								{/if}
-							</td>
+	<div class="content-box min-w-0 p-1">
+		<div
+			class="grid min-w-0 grid-cols-[1.5rem_minmax(0,1fr)_1.5rem] grid-rows-[1.5rem_minmax(0,1fr)_1.5rem]"
+		>
+			<p
+				class="col-start-2 row-start-1 flex items-center justify-center text-base font-bold tracking-wide"
+			>
+				MD1
+			</p>
+			<div class="col-start-1 row-start-2 flex items-center justify-center" aria-hidden="true">
+				<span class="rotate-180 text-base font-bold tracking-wide [writing-mode:vertical-rl]"
+					>MD0</span
+				>
+			</div>
+			<div class="col-start-2 row-start-2 max-h-[calc(100vh-18rem)] min-w-0 overflow-auto">
+				<table class="border-separate border-spacing-1 text-xs" onmouseleave={clearHighlight}>
+					<caption class="sr-only">Project occupancy by MD0 rows and MD1 columns</caption>
+					<thead>
+						<tr>
+							<th class="invisible size-8 min-w-8 p-0" aria-hidden="true"></th>
+							{#each E24_RESISTOR_VALUES as md1 (md1)}
+								<th
+									class="sticky top-0 z-20 size-8 min-w-8 max-w-8 border border-slate-400 p-0 align-middle font-medium {hoveredMd1 ===
+									md1
+										? 'bg-slate-300 text-slate-900'
+										: 'bg-white'}"
+								>
+									<span class="whitespace-nowrap">{formatResistor(md1)}</span>
+								</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody>
+						{#each E24_RESISTOR_VALUES as md0 (md0)}
+							<tr>
+								<th
+									class="sticky left-0 z-10 size-8 min-w-8 max-w-8 border border-slate-400 p-0 text-center font-medium {hoveredMd0 ===
+									md0
+										? 'bg-slate-300 text-slate-900'
+										: 'bg-white'}"
+								>
+									{formatResistor(md0)}
+								</th>
+								{#each E24_RESISTOR_VALUES as md1 (md1)}
+									{@const project = projectsByPair.get(`${md0}:${md1}`)}
+									<td
+										class="p-0"
+										onmouseenter={() => {
+											hoveredMd0 = md0;
+											hoveredMd1 = md1;
+										}}
+									>
+										{#if project}
+											<a
+												href={resolve(`/explore/${getPublicProjectKey(project)}`)}
+												class="block size-8 border border-slate-400 transition-colors focus:outline-2 focus:outline-offset-1 focus:outline-slate-900 {cellClasses(
+													project.status
+												)} {highlightClasses(md0, md1)}"
+												title={`${project.title} — MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
+												aria-label={`Open ${project.title}, MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
+												onfocus={() => {
+													hoveredMd0 = md0;
+													hoveredMd1 = md1;
+												}}
+												onblur={clearHighlight}
+											></a>
+										{:else}
+											<span
+												class="block size-8 border border-slate-400 bg-slate-100 transition {highlightClasses(
+													md0,
+													md1
+												)}"
+												title={`No project — MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
+												aria-label={`No project, MD0 ${formatResistor(md0)}, MD1 ${formatResistor(md1)}`}
+											></span>
+										{/if}
+									</td>
+								{/each}
+							</tr>
 						{/each}
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </main>
