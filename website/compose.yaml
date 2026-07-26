@@ -6,9 +6,46 @@ services:
       - 127.0.0.1:5432:5432
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: local
     volumes:
       - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      args:
+        BASE_PATH: ${BASE_PATH:-}
+    restart: always
+    init: true
+    ports:
+      - 127.0.0.1:${APP_PORT:-3000}:3000
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/local
+      ORIGIN: ${COMPOSE_ORIGIN:-http://localhost:3000}
+      HOST: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  schema:
+    build:
+      context: .
+      target: schema
+    profiles: [tools]
+    environment:
+      DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/local
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:

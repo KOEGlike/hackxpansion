@@ -42,6 +42,28 @@ ORIGIN=https://example.com HOST=127.0.0.1 PORT=3000 npm start
 Set `BASE_PATH` while building when the server is mounted below the origin root. Place a reverse
 proxy in front of the Node process for TLS and configure it to forward the original host and protocol.
 
+### Docker Compose
+
+Configure `.env`, including `POSTGRES_PASSWORD`, then push the current Drizzle schema and start
+PostgreSQL and the app:
+
+```sh
+docker compose run --build --rm schema
+docker compose up --build -d
+```
+
+The schema command is also available as `npm run compose:schema`, and the full stack can be started
+with `npm run compose:up`. The app is served at `http://localhost:3000` by default. Set `APP_PORT` to
+change the host port and `COMPOSE_ORIGIN` to the app's public origin, for example:
+
+```sh
+APP_PORT=8080 COMPOSE_ORIGIN=https://example.com docker compose up --build -d
+```
+
+Schema pushes are intentionally a separate one-off service so app restarts cannot apply unexpected
+database changes. For deployed environments, prefer committed migrations and replace the schema
+service command with `npm run db:migrate` once migrations are checked in.
+
 ## Quality Checks
 
 ```sh

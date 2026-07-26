@@ -17,14 +17,14 @@ import {
 	projectTierValues,
 	projectTypeValues,
 	reviewEventTypeValues
-} from '$lib/projects/domain';
-import {
-	type FraudReview,
-	type MinutesBreakdown,
-	type OutboundBody,
-	type OutboundCollaborator,
-	type ReviewField,
-	type Reviewer
+} from '../../projects/domain';
+import type {
+	FraudReview,
+	MinutesBreakdown,
+	OutboundBody,
+	OutboundCollaborator,
+	ReviewField,
+	Reviewer
 } from '../ari/outbound';
 
 export const projectStatus = pgEnum('project_status', projectStatusValues);
