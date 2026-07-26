@@ -22,7 +22,7 @@ use crate::{
 };
 use slint::platform::{
     Platform,
-    software_renderer::{MinimalSoftwareWindow, Rgb565Pixel},
+    software_renderer::{MinimalSoftwareWindow, RepaintBufferType, Rgb565Pixel},
 };
 use static_cell::StaticCell;
 
@@ -52,7 +52,7 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
     defmt::info!("ui_core: display initialized, backlight enabled");
 
     defmt::info!("ui_core: initializing Slint platform");
-    let window = MinimalSoftwareWindow::new(Default::default());
+    let window = MinimalSoftwareWindow::new(RepaintBufferType::ReusedBuffer);
     if slint::platform::set_platform(Box::new(XpansePlatform {
         window: window.clone(),
     }))
@@ -141,17 +141,37 @@ where
     slint::platform::update_timers_and_animations();
 
     window.draw_if_needed(|renderer| {
-        renderer.render(slint_buffer, display::WIDTH as usize);
-        if disp
-            .fill_contiguous(
-                &Rectangle {
-                    top_left: Point::zero(),
-                    size: Size::new(display::WIDTH as u32, display::HIGHT as u32),
-                },
-                slint_buffer.iter().map(slint_rgb565_into_embedded_graphics),
-            )
-            .is_err()
-        {
+        let dirty_region = renderer.render(slint_buffer, display::WIDTH as usize);
+        let mut draw_failed = false;
+
+        for (origin, size) in dirty_region.iter() {
+            let x = origin.x as usize;
+            let y = origin.y as usize;
+            let width = size.width as usize;
+            let height = size.height as usize;
+            let pixels = (y..y + height).flat_map(|row| {
+                let start = row * display::WIDTH as usize + x;
+                slint_buffer[start..start + width]
+                    .iter()
+                    .map(slint_rgb565_into_embedded_graphics)
+            });
+
+            if disp
+                .fill_contiguous(
+                    &Rectangle {
+                        top_left: Point::new(origin.x, origin.y),
+                        size: Size::new(size.width, size.height),
+                    },
+                    pixels,
+                )
+                .is_err()
+            {
+                draw_failed = true;
+                break;
+            }
+        }
+
+        if draw_failed {
             defmt::error!("ui_core: failed to draw display frame");
             window.request_redraw();
         }
