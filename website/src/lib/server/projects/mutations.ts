@@ -48,8 +48,8 @@ export type ProjectMutationResult = {
 	status: typeof project.$inferSelect.status;
 	userId: string;
 	hackatimeProjects: string[] | null;
+	md0: ModuleResistor | null;
 	md1: ModuleResistor | null;
-	md2: ModuleResistor | null;
 };
 
 export class ProjectMutationError extends Error {
@@ -78,8 +78,8 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				md1: null,
-				md2: null
+				md0: null,
+				md1: null
 			})
 			.returning(projectReturnFields);
 
@@ -94,16 +94,16 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 		await tx.execute(sql`SELECT pg_advisory_xact_lock(${MODULE_RESISTOR_ADVISORY_LOCK_KEY})`);
 
 		const usedPairs = await tx
-			.select({ md1: project.md1, md2: project.md2 })
+			.select({ md0: project.md0, md1: project.md1 })
 			.from(project)
-			.where(and(eq(project.type, 'card'), isNotNull(project.md1), isNotNull(project.md2)));
+			.where(and(eq(project.type, 'card'), isNotNull(project.md0), isNotNull(project.md1)));
 
 		const pair = findNextAvailableResistorPair(usedPairs);
 
 		if (!pair) {
 			throw new ProjectMutationError(
 				503,
-				'All module resistor pairs are taken. No unique md1/md2 combination is available.'
+				'All module resistor pairs are taken. No unique md0/md1 combination is available.'
 			);
 		}
 
@@ -119,8 +119,8 @@ export async function createProject({ userId, input }: CreateProjectOptions) {
 				demoUrl: values.demoUrl,
 				thumbnailUrl: values.thumbnailUrl,
 				hackatime_projects: values.hackatimeProjects,
-				md1: pair.md1,
-				md2: pair.md2
+				md0: pair.md0,
+				md1: pair.md1
 			})
 			.returning(projectReturnFields);
 
@@ -162,25 +162,25 @@ export async function editProject({ projectId, userId, input }: EditProjectOptio
 
 		if (values.type && values.type !== existingProject.type) {
 			if (values.type === 'app') {
+				values.md0 = null;
 				values.md1 = null;
-				values.md2 = null;
 			} else {
 				await tx.execute(sql`SELECT pg_advisory_xact_lock(${MODULE_RESISTOR_ADVISORY_LOCK_KEY})`);
 				const usedPairs = await tx
-					.select({ md1: project.md1, md2: project.md2 })
+					.select({ md0: project.md0, md1: project.md1 })
 					.from(project)
-					.where(and(eq(project.type, 'card'), isNotNull(project.md1), isNotNull(project.md2)));
+					.where(and(eq(project.type, 'card'), isNotNull(project.md0), isNotNull(project.md1)));
 				const pair = findNextAvailableResistorPair(usedPairs);
 
 				if (!pair) {
 					throw new ProjectMutationError(
 						503,
-						'All module resistor pairs are taken. No unique md1/md2 combination is available.'
+						'All module resistor pairs are taken. No unique md0/md1 combination is available.'
 					);
 				}
 
+				values.md0 = pair.md0;
 				values.md1 = pair.md1;
-				values.md2 = pair.md2;
 			}
 		}
 
@@ -210,8 +210,8 @@ const projectReturnFields = {
 	status: project.status,
 	userId: project.userId,
 	hackatimeProjects: project.hackatime_projects,
-	md1: project.md1,
-	md2: project.md2
+	md0: project.md0,
+	md1: project.md1
 };
 
 function normalizeProjectInput(input: ProjectInput) {

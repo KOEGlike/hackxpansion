@@ -30,31 +30,31 @@ export function formatResistorSlug(ohms: ModuleResistor): string {
 }
 
 export function parseResistorPairSlug(value: string): {
+	md0: ModuleResistor;
 	md1: ModuleResistor;
-	md2: ModuleResistor;
 } | null {
-	const [md1Slug, md2Slug, extra] = value.toLowerCase().split(':');
-	if (!md1Slug || !md2Slug || extra !== undefined) return null;
+	const [md0Slug, md1Slug, extra] = value.toLowerCase().split(':');
+	if (!md0Slug || !md1Slug || extra !== undefined) return null;
 
+	const md0 = parseResistorSlug(md0Slug);
 	const md1 = parseResistorSlug(md1Slug);
-	const md2 = parseResistorSlug(md2Slug);
-	return md1 && md2 ? { md1, md2 } : null;
+	return md0 && md1 ? { md0, md1 } : null;
 }
 
 export function getPublicProjectKey(project: {
 	id: string;
 	type: ProjectType;
+	md0: number | null;
 	md1: number | null;
-	md2: number | null;
 }): string {
 	if (
 		project.type === 'card' &&
+		project.md0 !== null &&
 		project.md1 !== null &&
-		project.md2 !== null &&
-		isModuleResistor(project.md1) &&
-		isModuleResistor(project.md2)
+		isModuleResistor(project.md0) &&
+		isModuleResistor(project.md1)
 	) {
-		return `${formatResistorSlug(project.md1)}:${formatResistorSlug(project.md2)}`;
+		return `${formatResistorSlug(project.md0)}:${formatResistorSlug(project.md1)}`;
 	}
 	return project.id;
 }

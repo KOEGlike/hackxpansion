@@ -13,8 +13,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		: resistorPair
 			? and(
 					eq(project.type, 'card'),
-					eq(project.md1, resistorPair.md1),
-					eq(project.md2, resistorPair.md2)
+					eq(project.md0, resistorPair.md0),
+					eq(project.md1, resistorPair.md1)
 				)
 			: null;
 
@@ -31,8 +31,8 @@ export const load: PageServerLoad = async ({ params }) => {
 			status: project.status,
 			type: project.type,
 			tier: project.tier,
+			md0: project.md0,
 			md1: project.md1,
-			md2: project.md2,
 			currencyPaidOut: project.currencyPaidOut,
 			makerName: user.name,
 			makerImage: user.image

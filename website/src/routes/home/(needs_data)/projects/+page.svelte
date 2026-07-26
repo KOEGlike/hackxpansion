@@ -124,7 +124,7 @@
 						{/if}
 						{#if project.type === 'card'}
 							<p>
-								MD1:{formatResistor(project.md1)} MD2:{formatResistor(project.md2)}
+								MD0:{formatResistor(project.md0)} MD1:{formatResistor(project.md1)}
 							</p>
 							|
 						{/if}

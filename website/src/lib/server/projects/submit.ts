@@ -42,8 +42,8 @@ type ProjectForSubmission = {
 	type: ProjectType;
 	tier: ProjectTier;
 	hackatimeProjects: string[] | null;
+	md0: number | null;
 	md1: number | null;
-	md2: number | null;
 	makerEmail: string;
 	makerName: string;
 	makerSlackId: string;
@@ -98,7 +98,7 @@ export async function submitProjectToAri({
 			phase: claim.phase,
 			track: trackForProjectType(claim.project.type),
 			extraMeta: {
-				...buildResistorMeta(claim.project.type, claim.project.md1, claim.project.md2),
+				...buildResistorMeta(claim.project.type, claim.project.md0, claim.project.md1),
 				...buildTierMeta(claim.project.tier)
 			}
 		});
@@ -270,8 +270,8 @@ const projectForSubmissionFields = {
 	type: project.type,
 	tier: project.tier,
 	hackatimeProjects: project.hackatime_projects,
+	md0: project.md0,
 	md1: project.md1,
-	md2: project.md2,
 	makerEmail: user.email,
 	makerName: user.name,
 	makerSlackId: user.slackId
@@ -299,9 +299,9 @@ function buildTierMeta(tier: ProjectTier): Record<string, string> {
 
 function buildResistorMeta(
 	type: ProjectType,
-	md1: number | null,
-	md2: number | null
+	md0: number | null,
+	md1: number | null
 ): Record<string, string> {
-	if (type !== 'card' || md1 == null || md2 == null) return {};
-	return { 'Module ID pair': `${formatResistor(md1)}Ω / ${formatResistor(md2)}Ω` };
+	if (type !== 'card' || md0 == null || md1 == null) return {};
+	return { 'Module ID pair': `${formatResistor(md0)}Ω / ${formatResistor(md1)}Ω` };
 }

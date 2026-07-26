@@ -10,12 +10,12 @@ export const load: PageServerLoad = async () => {
 			title: project.title,
 			status: project.status,
 			type: project.type,
-			md1: project.md1,
-			md2: project.md2
+			md0: project.md0,
+			md1: project.md1
 		})
 		.from(project)
-		.where(and(eq(project.type, 'card'), isNotNull(project.md1), isNotNull(project.md2)))
-		.orderBy(asc(project.md1), asc(project.md2));
+		.where(and(eq(project.type, 'card'), isNotNull(project.md0), isNotNull(project.md1)))
+		.orderBy(asc(project.md0), asc(project.md1));
 
 	return { projects };
 };

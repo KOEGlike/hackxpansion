@@ -114,9 +114,9 @@
 						{/if}
 
 						<div class="mt-auto flex flex-wrap items-center justify-between gap-3 text-sm">
-							{#if project.md1 !== null && project.md2 !== null}
+							{#if project.md0 !== null && project.md1 !== null}
 								<span class="text-slate-600">
-									MD1 {formatResistor(project.md1)} · MD2 {formatResistor(project.md2)}
+									MD0 {formatResistor(project.md0)} · MD1 {formatResistor(project.md1)}
 								</span>
 							{:else}
 								<span class="text-slate-600">Software app</span>

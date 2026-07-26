@@ -11,8 +11,8 @@ export const E24_RESISTOR_VALUES = [
 export type ModuleResistor = (typeof E24_RESISTOR_VALUES)[number];
 
 export type ModuleResistorPair = {
+	md0: ModuleResistor;
 	md1: ModuleResistor;
-	md2: ModuleResistor;
 };
 
 export function isModuleResistor(value: number): value is ModuleResistor {
@@ -28,18 +28,18 @@ export function formatResistor(ohms: number): string {
 }
 
 export function findNextAvailableResistorPair(
-	used: Array<{ md1: number | null; md2: number | null }>
+	used: Array<{ md0: number | null; md1: number | null }>
 ): ModuleResistorPair | null {
 	const usedSet = new Set(
 		used
-			.filter((pair): pair is { md1: number; md2: number } => pair.md1 != null && pair.md2 != null)
-			.map((pair) => `${pair.md1}:${pair.md2}`)
+			.filter((pair): pair is { md0: number; md1: number } => pair.md0 != null && pair.md1 != null)
+			.map((pair) => `${pair.md0}:${pair.md1}`)
 	);
 
-	for (const md1 of E24_RESISTOR_VALUES) {
-		for (const md2 of E24_RESISTOR_VALUES) {
-			if (!usedSet.has(`${md1}:${md2}`)) {
-				return { md1, md2 };
+	for (const md0 of E24_RESISTOR_VALUES) {
+		for (const md1 of E24_RESISTOR_VALUES) {
+			if (!usedSet.has(`${md0}:${md1}`)) {
+				return { md0, md1 };
 			}
 		}
 	}

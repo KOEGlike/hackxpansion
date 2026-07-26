@@ -32,8 +32,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			type: project.type,
 			tier: project.tier,
 			currencyPaidOut: project.currencyPaidOut,
+			md0: project.md0,
 			md1: project.md1,
-			md2: project.md2,
 			hackatimeProjects: project.hackatime_projects
 		})
 		.from(project)

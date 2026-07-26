@@ -26,8 +26,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 			tier: project.tier,
 			currencyPaidOut: project.currencyPaidOut,
 			hackatimeProjects: project.hackatime_projects,
-			md1: project.md1,
-			md2: project.md2
+			md0: project.md0,
+			md1: project.md1
 		})
 		.from(project)
 		.where(eq(project.userId, currentUser.id));

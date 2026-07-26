@@ -122,9 +122,9 @@ describe('project utilities', () => {
 	it('allocates the first unused resistor pair', () => {
 		const first = E24_RESISTOR_VALUES[0];
 		const second = E24_RESISTOR_VALUES[1];
-		expect(findNextAvailableResistorPair([{ md1: first, md2: first }])).toEqual({
-			md1: first,
-			md2: second
+		expect(findNextAvailableResistorPair([{ md0: first, md1: first }])).toEqual({
+			md0: first,
+			md1: second
 		});
 	});
 
@@ -142,10 +142,10 @@ describe('project utilities', () => {
 
 	it('formats and parses public resistor-pair project keys', () => {
 		expect(formatResistorSlug(1500)).toBe('1k5');
-		expect(parseResistorPairSlug('1k5:1k6')).toEqual({ md1: 1500, md2: 1600 });
+		expect(parseResistorPairSlug('1k5:1k6')).toEqual({ md0: 1500, md1: 1600 });
 		expect(parseResistorPairSlug('1.5k:1k6')).toBeNull();
 		expect(parseResistorPairSlug('1k5:999k')).toBeNull();
-		expect(getPublicProjectKey({ id: 'project-id', type: 'card', md1: 1500, md2: 1600 })).toBe(
+		expect(getPublicProjectKey({ id: 'project-id', type: 'card', md0: 1500, md1: 1600 })).toBe(
 			'1k5:1k6'
 		);
 	});

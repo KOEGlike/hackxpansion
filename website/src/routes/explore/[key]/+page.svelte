@@ -72,14 +72,14 @@
 				{/if}
 
 				<dl class="grid gap-4 sm:grid-cols-2">
-					{#if data.project.md1 !== null && data.project.md2 !== null}
+					{#if data.project.md0 !== null && data.project.md1 !== null}
+						<div class="border border-slate-400 bg-white/50 p-3">
+							<dt class="text-xs uppercase tracking-wide text-slate-600">MD0</dt>
+							<dd class="text-xl font-bold">{formatResistor(data.project.md0)}</dd>
+						</div>
 						<div class="border border-slate-400 bg-white/50 p-3">
 							<dt class="text-xs uppercase tracking-wide text-slate-600">MD1</dt>
 							<dd class="text-xl font-bold">{formatResistor(data.project.md1)}</dd>
-						</div>
-						<div class="border border-slate-400 bg-white/50 p-3">
-							<dt class="text-xs uppercase tracking-wide text-slate-600">MD2</dt>
-							<dd class="text-xl font-bold">{formatResistor(data.project.md2)}</dd>
 						</div>
 					{/if}
 				</dl>

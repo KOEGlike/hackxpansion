@@ -27,8 +27,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			status: project.status,
 			type: project.type,
 			tier: project.tier,
+			md0: project.md0,
 			md1: project.md1,
-			md2: project.md2,
 			currencyPaidOut: project.currencyPaidOut,
 			makerName: user.name,
 			makerImage: user.image
