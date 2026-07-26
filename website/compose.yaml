@@ -35,12 +35,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
-  schema:
+  migrate:
     build:
       context: .
-      target: schema
-    profiles: [tools]
+      target: migrate
+    restart: 'no'
     environment:
       DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/local
     depends_on:

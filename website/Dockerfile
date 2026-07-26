@@ -9,10 +9,10 @@ FROM dependencies AS source
 
 COPY . .
 
-FROM source AS schema
+FROM source AS migrate
 
 USER node
-CMD ["npm", "run", "db:push"]
+CMD ["npm", "run", "db:migrate"]
 
 FROM source AS build
 

@@ -44,25 +44,28 @@ proxy in front of the Node process for TLS and configure it to forward the origi
 
 ### Docker Compose
 
-Configure `.env`, including `POSTGRES_PASSWORD`, then push the current Drizzle schema and start
-PostgreSQL and the app:
+Configure `.env`, including `POSTGRES_PASSWORD`, then build and start the stack:
 
 ```sh
-docker compose run --build --rm schema
 docker compose up --build -d
 ```
 
-The schema command is also available as `npm run compose:schema`, and the full stack can be started
-with `npm run compose:up`. The app is served at `http://localhost:3000` by default. Set `APP_PORT` to
-change the host port and `COMPOSE_ORIGIN` to the app's public origin, for example:
+The one-shot `migrate` service applies pending Drizzle migrations after PostgreSQL becomes healthy.
+The app starts only after migration succeeds. Migrations can also be run manually with
+`npm run compose:migrate`, and the full stack can be started with `npm run compose:up`.
+
+The app is served at `http://localhost:3000` by default. Set `APP_PORT` to change the host port and
+`COMPOSE_ORIGIN` to the app's public origin, for example:
 
 ```sh
 APP_PORT=8080 COMPOSE_ORIGIN=https://example.com docker compose up --build -d
 ```
 
-Schema pushes are intentionally a separate one-off service so app restarts cannot apply unexpected
-database changes. For deployed environments, prefer committed migrations and replace the schema
-service command with `npm run db:migrate` once migrations are checked in.
+Generate and commit a new migration with `npm run db:generate` whenever the schema changes.
+
+The initial migration expects a fresh database. A database previously initialized with `db:push`
+has no Drizzle migration history; recreate that database or baseline it before enabling automatic
+migrations if its existing data must be preserved.
 
 ## Quality Checks
 
