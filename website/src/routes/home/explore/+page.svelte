@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import CoinIcon from '$lib/components/coin_icon.svelte';
+	import DropdownSelect from '$lib/components/dropdown_select.svelte';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import { getPublicProjectKey, type ExploreFilter } from '$lib/projects/explore';
 	import { formatResistor } from '$lib/projects/resistors';
@@ -46,20 +47,12 @@
 				class="border border-slate-700 bg-white/80 px-3 py-2 font-normal"
 			/>
 		</label>
-		<label class="flex flex-col gap-1 text-sm font-semibold" for="project-status">
-			Status
-			<select
-				id="project-status"
-				name="status"
-				class="border border-slate-700 bg-white/80 px-3 py-2 font-normal"
-			>
-				{#each filterOptions as option (option.value)}
-					<option value={option.value} selected={data.filters.status === option.value}>
-						{option.label}
-					</option>
-				{/each}
-			</select>
-		</label>
+		<DropdownSelect
+			name="status"
+			label="Status"
+			options={filterOptions}
+			value={data.filters.status}
+		/>
 		<div class="flex gap-2">
 			<button class="bg-slate-800 px-4 py-2 text-white hover:bg-slate-700">Filter</button>
 			<a
