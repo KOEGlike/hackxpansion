@@ -19,6 +19,12 @@ export const auth = betterAuth({
 	},
 	user: {
 		additionalFields: {
+			currency: {
+				type: 'number',
+				required: true,
+				defaultValue: 0,
+				input: false
+			},
 			slackId: {
 				type: 'string',
 				required: true

@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { isProjectTier, isProjectType, isWaitingForReview } from './domain';
 import { isValidJournalDuration, MAX_JOURNAL_DURATION_MINUTES } from './journal';
-import { getNextProjectSubmission, getProjectStatusAfterAriEvent } from './lifecycle';
+import {
+	getApprovalCurrencyPayout,
+	getNextProjectSubmission,
+	getProjectStatusAfterAriEvent
+} from './lifecycle';
 import { E24_RESISTOR_VALUES, findNextAvailableResistorPair } from './resistors';
 import { getProjectSubmissionReadiness } from './submission';
 import { sumHackatimeMinutes } from './time';
@@ -52,6 +56,20 @@ describe('project lifecycle', () => {
 		expect(getProjectStatusAfterAriEvent('rejected_build', 'review.requeued')).toBe(
 			'waiting_build'
 		);
+	});
+
+	it('awards design currency by tier and one currency for builds', () => {
+		expect(getApprovalCurrencyPayout('waiting_design', 'pro')).toEqual({
+			phase: 'design',
+			amount: 3
+		});
+		expect(getApprovalCurrencyPayout('waiting_design', 'advanced')?.amount).toBe(2);
+		expect(getApprovalCurrencyPayout('waiting_design', 'basic')?.amount).toBe(1);
+		expect(getApprovalCurrencyPayout('waiting_build', null)).toEqual({
+			phase: 'build',
+			amount: 1
+		});
+		expect(getApprovalCurrencyPayout('approved_design', 'pro')).toBeNull();
 	});
 });
 

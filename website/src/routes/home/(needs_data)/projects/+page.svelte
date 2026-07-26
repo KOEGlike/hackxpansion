@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
+	import CoinIcon from '$lib/components/coin_icon.svelte';
 	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
 	import { formatResistor as formatResistorValue } from '$lib/projects/resistors';
 	import type { ActionData, PageServerData } from './$types';
@@ -130,7 +131,7 @@
 						<p>Hackatime:{project.hackatimeProjects?.join(',') || 'none'}</p>
 					</div>
 
-					<div class="mt-4 flex gap-4 text-sm text-slate-600">
+					<div class="mt-4 flex flex-wrap gap-4 text-sm text-slate-600">
 						<span>{project.journalCount} journal{project.journalCount === 1 ? '' : 's'}</span>
 						|
 						<span class="font-semibold text-slate-700"
@@ -138,6 +139,14 @@
 						>
 						|
 						<span>{project.reviewCount} review{project.reviewCount === 1 ? '' : 's'}</span>
+						|
+						<span
+							class="flex items-center gap-1 font-semibold text-slate-700"
+							aria-label={`${project.currencyPaidOut} currency paid out`}
+						>
+							<CoinIcon />
+							<span aria-hidden="true">{project.currencyPaidOut} paid</span>
+						</span>
 					</div>
 
 					{#if !project.readiness.canSubmit}

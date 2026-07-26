@@ -7,6 +7,7 @@ import {
 	timestamp,
 	pgEnum,
 	jsonb,
+	boolean,
 	uniqueIndex,
 	index,
 	check
@@ -47,6 +48,9 @@ export const project = pgTable(
 		status: projectStatus('status').notNull().default('not_submitted'),
 		type: projectType('type').notNull().default('card'),
 		tier: projectTier('tier'),
+		currencyPaidOut: integer('currency_paid_out').default(0).notNull(),
+		designCurrencyAwarded: boolean('design_currency_awarded').default(false).notNull(),
+		buildCurrencyAwarded: boolean('build_currency_awarded').default(false).notNull(),
 		md1: integer('md1'),
 		md2: integer('md2'),
 		activeAriExternalId: text('active_ari_external_id'),
@@ -62,6 +66,7 @@ export const project = pgTable(
 			'project_resistor_assignment',
 			sql`(${table.type} = 'app' AND ${table.md1} IS NULL AND ${table.md2} IS NULL) OR (${table.type} = 'card' AND ${table.md1} IS NOT NULL AND ${table.md2} IS NOT NULL)`
 		),
+		check('project_currency_paid_out_nonnegative', sql`${table.currencyPaidOut} >= 0`),
 		uniqueIndex('project_card_md_pair_uniq')
 			.on(table.md1, table.md2)
 			.where(sql`type = 'card' AND md1 IS NOT NULL AND md2 IS NOT NULL`)

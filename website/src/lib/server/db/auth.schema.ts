@@ -1,23 +1,28 @@
-import { relations } from 'drizzle-orm';
-import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { pgTable, text, timestamp, boolean, integer, index, check } from 'drizzle-orm/pg-core';
 
-export const user = pgTable('user', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	email: text('email').notNull().unique(),
-	emailVerified: boolean('email_verified').default(false).notNull(),
-	image: text('image'),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at')
-		.defaultNow()
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull(),
-	slackId: text('slack_id').notNull(),
-	verificationStatus: text('verification_status').notNull(),
-	given_name: text('given_name'),
-	yswsEligible: boolean('ysws_eligible').notNull(),
-	pronouns: text('pronouns')
-});
+export const user = pgTable(
+	'user',
+	{
+		id: text('id').primaryKey(),
+		name: text('name').notNull(),
+		email: text('email').notNull().unique(),
+		emailVerified: boolean('email_verified').default(false).notNull(),
+		image: text('image'),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at')
+			.defaultNow()
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull(),
+		slackId: text('slack_id').notNull(),
+		verificationStatus: text('verification_status').notNull(),
+		given_name: text('given_name'),
+		yswsEligible: boolean('ysws_eligible').notNull(),
+		pronouns: text('pronouns'),
+		currency: integer('currency').default(0).notNull()
+	},
+	(table) => [check('user_currency_nonnegative', sql`${table.currency} >= 0`)]
+);
 
 export const session = pgTable(
 	'session',

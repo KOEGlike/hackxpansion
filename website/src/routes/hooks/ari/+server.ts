@@ -10,10 +10,10 @@ import {
 } from '$lib/server/ari/outbound';
 import { db } from '$lib/server/db';
 import { project, review, user } from '$lib/server/db/schema';
-import { getProjectStatusAfterAriEvent } from '$lib/projects/lifecycle';
+import { getApprovalCurrencyPayout, getProjectStatusAfterAriEvent } from '$lib/projects/lifecycle';
 import { isUuid } from '$lib/projects/domain';
 import { env } from '$env/dynamic/private';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
 	if (!env.ARI_OUT_SECRET) {
@@ -27,6 +27,10 @@ export const POST: RequestHandler = async ({ request }) => {
 				.select({
 					id: project.id,
 					status: project.status,
+					tier: project.tier,
+					userId: project.userId,
+					designCurrencyAwarded: project.designCurrencyAwarded,
+					buildCurrencyAwarded: project.buildCurrencyAwarded,
 					makerEmail: user.email,
 					makerSlackId: user.slackId
 				})
@@ -65,12 +69,32 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (inserted.length === 0) return { duplicate: true as const };
 
 			let projectStatus = null;
+			let currencyAwarded = 0;
 			if (activeProject) {
 				const nextStatus = getProjectStatusAfterAriEvent(activeProject.status, body.event);
 				if (nextStatus) {
+					const payout =
+						body.event === 'review.approved'
+							? getApprovalCurrencyPayout(activeProject.status, activeProject.tier)
+							: null;
+					const payoutAlreadyAwarded =
+						payout?.phase === 'design'
+							? activeProject.designCurrencyAwarded
+							: payout?.phase === 'build'
+								? activeProject.buildCurrencyAwarded
+								: false;
+					const payoutUpdates =
+						payout && !payoutAlreadyAwarded
+							? {
+									currencyPaidOut: sql`${project.currencyPaidOut} + ${payout.amount}`,
+									...(payout.phase === 'design'
+										? { designCurrencyAwarded: true }
+										: { buildCurrencyAwarded: true })
+								}
+							: {};
 					const [updatedProject] = await tx
 						.update(project)
-						.set({ status: nextStatus })
+						.set({ status: nextStatus, ...payoutUpdates })
 						.where(
 							and(
 								eq(project.id, activeProject.id),
@@ -79,6 +103,14 @@ export const POST: RequestHandler = async ({ request }) => {
 						)
 						.returning({ status: project.status });
 					projectStatus = updatedProject?.status ?? null;
+
+					if (updatedProject && payout && !payoutAlreadyAwarded) {
+						await tx
+							.update(user)
+							.set({ currency: sql`${user.currency} + ${payout.amount}` })
+							.where(eq(user.id, activeProject.userId));
+						currencyAwarded = payout.amount;
+					}
 				}
 			}
 
@@ -86,6 +118,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				duplicate: false as const,
 				id: inserted[0].id,
 				projectStatus,
+				currencyAwarded,
 				stale: !activeProject
 			};
 		});
@@ -94,7 +127,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({
 			status: result.stale ? 'recorded_stale' : 'ok',
 			id: result.id,
-			project_status: result.projectStatus
+			project_status: result.projectStatus,
+			currency_awarded: result.currencyAwarded
 		});
 	} catch (err) {
 		if (err instanceof OutboundWebhookError) {

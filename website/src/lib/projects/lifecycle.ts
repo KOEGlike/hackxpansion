@@ -1,11 +1,17 @@
 import {
 	isWaitingForReview,
 	type ProjectStatus,
+	type ProjectTier,
 	type ProjectType,
 	type ReviewEvent
 } from './domain';
 
 export type ProjectReviewPhase = 'design' | 'build';
+
+export type ApprovalCurrencyPayout = {
+	phase: ProjectReviewPhase;
+	amount: number;
+};
 
 export const trackForProjectType = (type: ProjectType): 'hardware' | 'software' =>
 	type === 'app' ? 'software' : 'hardware';
@@ -56,6 +62,17 @@ export function getProjectStatusAfterAriEvent(
 		case 'review.fraud':
 			return null;
 	}
+}
+
+export function getApprovalCurrencyPayout(
+	status: ProjectStatus,
+	tier: ProjectTier
+): ApprovalCurrencyPayout | null {
+	if (status === 'waiting_build') return { phase: 'build', amount: 1 };
+	if (status !== 'waiting_design' || tier === null) return null;
+
+	const amountByTier = { pro: 3, advanced: 2, basic: 1 } as const;
+	return { phase: 'design', amount: amountByTier[tier] };
 }
 
 function getWaitingStatusForCurrentPhase(status: ProjectStatus): ProjectStatus | null {

@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import GridBg from '$lib/components/grid_bg.svelte';
+	import CoinIcon from '$lib/components/coin_icon.svelte';
 	import { MediaQuery } from 'svelte/reactivity';
 
 	let { data, children } = $props();
@@ -69,7 +70,13 @@
 						<img src={data.user.image} alt="" class="size-20" />
 						<div class="flex flex-col py-3 justify-between">
 							<p class="text-xl">{data.user.name}</p>
-							<p>{data.user.pronouns}</p>
+							<p
+								class="flex items-center gap-1 font-semibold"
+								aria-label={`Currency balance: ${data.user.currency}`}
+							>
+								<CoinIcon class="size-5" />
+								<span aria-hidden="true">{data.user.currency}</span>
+							</p>
 							<form method="post" action={`${resolve('/home')}?/signOut`}>
 								<button class="w-fit hover:underline cursor-pointer">Sign out</button>
 							</form>

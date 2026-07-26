@@ -3,6 +3,7 @@
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import JournalEditor from '$lib/components/journal_editor.svelte';
 	import Markdown from '$lib/components/markdown.svelte';
+	import CoinIcon from '$lib/components/coin_icon.svelte';
 	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
 	import { isValidJournalDuration } from '$lib/projects/journal';
 	import type { ActionData, PageServerData } from './$types';
@@ -187,7 +188,17 @@
 		</p>
 	{/if}
 
-	<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+	<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+		<article class="content-box p-4">
+			<p class="text-xs uppercase tracking-wide text-slate-600">Currency paid</p>
+			<p
+				class="mt-1 flex items-center gap-1 text-2xl font-bold"
+				aria-label={`${data.project.currencyPaidOut} currency paid out`}
+			>
+				<CoinIcon class="size-6" />
+				<span aria-hidden="true">{data.project.currencyPaidOut}</span>
+			</p>
+		</article>
 		<article class="content-box p-4">
 			<p class="text-xs uppercase tracking-wide text-slate-600">Journal entries</p>
 			<p class="mt-1 text-2xl font-bold">{data.stats.journalCount}</p>
