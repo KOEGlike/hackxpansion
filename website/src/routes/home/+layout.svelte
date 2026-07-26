@@ -32,6 +32,10 @@
 		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
 		{ title: 'API', href: '/home/docs/detailed/api', indent: true }
 	] as const;
+	const exploreItems = [
+		{ title: 'Project Feed', href: '/home/explore' },
+		{ title: 'Project Matrix', href: '/home/explore/matrix' }
+	] as const;
 
 	function isCurrentPage(href: (typeof items)[number]['href']) {
 		const pathname = resolve(href);
@@ -41,7 +45,9 @@
 		);
 	}
 
-	function isExactPage(href: (typeof docsItems)[number]['href']) {
+	function isExactPage(
+		href: (typeof docsItems)[number]['href'] | (typeof exploreItems)[number]['href']
+	) {
 		return page.url.pathname === resolve(href);
 	}
 </script>
@@ -94,6 +100,20 @@
 											aria-current={isExactPage(docsItem.href) ? 'page' : undefined}
 										>
 											{docsItem.title}
+										</a>
+									{/each}
+								</div>
+							{/if}
+							{#if item.href === '/home/explore' && isCurrentPage(item.href)}
+								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
+									{#each exploreItems as exploreItem (exploreItem.href)}
+										<a
+											href={resolve(exploreItem.href)}
+											class="text-lg hover:underline"
+											class:underline={isExactPage(exploreItem.href)}
+											aria-current={isExactPage(exploreItem.href) ? 'page' : undefined}
+										>
+											{exploreItem.title}
 										</a>
 									{/each}
 								</div>

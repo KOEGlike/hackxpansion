@@ -9,6 +9,12 @@ import {
 import { E24_RESISTOR_VALUES, findNextAvailableResistorPair } from './resistors';
 import { getProjectSubmissionReadiness } from './submission';
 import { sumHackatimeMinutes } from './time';
+import {
+	formatResistorSlug,
+	getProjectProgress,
+	getPublicProjectKey,
+	parseResistorPairSlug
+} from './explore';
 
 const readyProject = {
 	status: 'not_submitted' as const,
@@ -132,5 +138,23 @@ describe('project utilities', () => {
 				]
 			)
 		).toBe(2);
+	});
+
+	it('formats and parses public resistor-pair project keys', () => {
+		expect(formatResistorSlug(1500)).toBe('1k5');
+		expect(parseResistorPairSlug('1k5:1k6')).toEqual({ md1: 1500, md2: 1600 });
+		expect(parseResistorPairSlug('1.5k:1k6')).toBeNull();
+		expect(parseResistorPairSlug('1k5:999k')).toBeNull();
+		expect(getPublicProjectKey({ id: 'project-id', type: 'card', md1: 1500, md2: 1600 })).toBe(
+			'1k5:1k6'
+		);
+	});
+
+	it('maps project statuses to matrix intensity', () => {
+		expect(getProjectProgress('not_submitted')).toBe('created');
+		expect(getProjectProgress('waiting_design')).toBe('created');
+		expect(getProjectProgress('approved_design')).toBe('design_approved');
+		expect(getProjectProgress('waiting_build')).toBe('design_approved');
+		expect(getProjectProgress('approved_build')).toBe('build_approved');
 	});
 });
