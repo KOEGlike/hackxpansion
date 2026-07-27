@@ -593,6 +593,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
+name = "button-logger"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.1.0",
+ "embassy-time",
+ "slint",
+ "slint-build",
+ "xpanse-api",
+]
+
+[[package]]
 name = "by_address"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1916,17 +1927,6 @@ checksum = "8be9f3dfaaffdae2972880079a491a1a8bb7cbed0b8dd7a347f668b4150a3b93"
 dependencies = [
  "event-listener",
  "pin-project-lite",
-]
-
-[[package]]
-name = "example-app"
-version = "0.1.0"
-dependencies = [
- "defmt 1.1.0",
- "embassy-time",
- "slint",
- "slint-build",
- "xpanse-api",
 ]
 
 [[package]]
@@ -7001,6 +7001,7 @@ name = "xpanse"
 version = "0.1.0"
 dependencies = [
  "assign-resources",
+ "button-logger",
  "byte-slice-cast",
  "cortex-m",
  "cortex-m-rt",
@@ -7028,7 +7029,6 @@ dependencies = [
  "embedded-io-async 0.7.0",
  "embedded-sdmmc",
  "embedded-storage",
- "example-app",
  "fixed",
  "fixed-macro",
  "four-button-driver",

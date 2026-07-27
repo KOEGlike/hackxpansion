@@ -7,9 +7,9 @@ use xpanse_api::{app::App, registry::Registry};
 
 const APP_CATALOG: &[AppDescriptor] = &[
     AppDescriptor {
-        name: example_app::ButtonLoggerApp::NAME,
-        can_run: example_app::ButtonLoggerApp::can_run,
-        run: run_app_impl::<example_app::ButtonLoggerApp>,
+        name: button_logger::ButtonLoggerApp::NAME,
+        can_run: button_logger::ButtonLoggerApp::can_run,
+        run: run_app_impl::<button_logger::ButtonLoggerApp>,
     },
     AppDescriptor {
         name: cube_game::CubeGameApp::NAME,

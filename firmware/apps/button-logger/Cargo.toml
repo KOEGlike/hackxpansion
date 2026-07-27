@@ -1,6 +1,6 @@
 [package]
 edition = "2024"
-name = "example-app"
+name = "button-logger"
 version = "0.1.0"
 license = "GPL-3.0"
 

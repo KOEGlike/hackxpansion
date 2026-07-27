@@ -67,7 +67,7 @@ two-button-driver = { workspace = true }
 four-button-driver = { workspace = true }
 
 # Apps
-example-app = { workspace = true }
+button-logger = { workspace = true }
 cube-game = { workspace = true }
 snake-game = { workspace = true }
 
