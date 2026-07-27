@@ -5502,6 +5502,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "snake-game"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.1.0",
+ "embassy-futures",
+ "embassy-time",
+ "heapless 0.9.3",
+ "slint",
+ "slint-build",
+ "xpanse-api",
+]
+
+[[package]]
 name = "softbuffer"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7031,6 +7044,7 @@ dependencies = [
  "slint",
  "slint-build",
  "smart-leds",
+ "snake-game",
  "static_cell",
  "test-driver",
  "ti-adc-expander",

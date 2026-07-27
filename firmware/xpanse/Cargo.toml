@@ -69,6 +69,7 @@ four-button-driver = { workspace = true }
 # Apps
 example-app = { workspace = true }
 cube-game = { workspace = true }
+snake-game = { workspace = true }
 
 [build-dependencies]
 slint-build = { workspace = true }

@@ -16,6 +16,11 @@ const APP_CATALOG: &[AppDescriptor] = &[
         can_run: cube_game::CubeGameApp::can_run,
         run: run_app_impl::<cube_game::CubeGameApp>,
     },
+    AppDescriptor {
+        name: snake_game::SnakeGameApp::NAME,
+        can_run: snake_game::SnakeGameApp::can_run,
+        run: run_app_impl::<snake_game::SnakeGameApp>,
+    },
 ];
 
 type AppFuture<'a> = Pin<Box<dyn Future<Output = ()> + 'a>>;

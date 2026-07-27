@@ -1,0 +1,113 @@
+export struct SnakeCell {
+    x: int,
+    y: int,
+}
+
+export component SnakeGameUI inherits Window {
+    in property <[SnakeCell]> snake-cells;
+    in property <int> food-x: -1;
+    in property <int> food-y: -1;
+    in property <int> score: 0;
+    in property <bool> game-over: false;
+    in property <bool> won: false;
+
+    background: #07131d;
+
+    Text {
+        x: 10px;
+        y: 5px;
+        text: "SNAKE // SCORE " + root.score;
+        color: #d7fbf4;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    Text {
+        x: 184px;
+        y: 7px;
+        width: 126px;
+        text: "UP + DOWN: EXIT";
+        color: #5e8a88;
+        font-size: 10px;
+        horizontal-alignment: right;
+    }
+
+    Rectangle {
+        x: 8px;
+        y: 33px;
+        width: 304px;
+        height: 199px;
+        background: #0d2530;
+        border-width: 2px;
+        border-color: #24505a;
+        border-radius: 4px;
+    }
+
+    Rectangle {
+        x: 10px;
+        y: 35px;
+        width: 300px;
+        height: 195px;
+        background: #091a24;
+    }
+
+    Rectangle {
+        visible: root.food-x >= 0;
+        x: 10px + root.food-x * 15px + 3px;
+        y: 35px + root.food-y * 15px + 3px;
+        width: 9px;
+        height: 9px;
+        background: #ff9f43;
+        border-radius: 5px;
+    }
+
+    for segment[index] in root.snake-cells: Rectangle {
+        x: 10px + segment.x * 15px + 1px;
+        y: 35px + segment.y * 15px + 1px;
+        width: 13px;
+        height: 13px;
+        background: index == 0 ? #56f2c7 : #20b99a;
+        border-radius: index == 0 ? 4px : 2px;
+
+        Rectangle {
+            visible: index == 0;
+            x: 8px;
+            y: 3px;
+            width: 2px;
+            height: 2px;
+            background: #07131d;
+            border-radius: 1px;
+        }
+    }
+
+    Rectangle {
+        visible: root.game-over;
+        x: 34px;
+        y: 76px;
+        width: 252px;
+        height: 104px;
+        background: #e6081621;
+        border-width: 2px;
+        border-color: root.won ? #56f2c7 : #ff5864;
+        border-radius: 6px;
+
+        Text {
+            y: 17px;
+            width: parent.width;
+            text: root.won ? "BOARD CLEARED" : "SIGNAL LOST";
+            color: root.won ? #56f2c7 : #ff7b84;
+            font-size: 20px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            y: 58px;
+            width: parent.width;
+            text: "PRESS A DIRECTION TO RETURN";
+            color: #b5d4d0;
+            font-size: 11px;
+            horizontal-alignment: center;
+        }
+    }
+}

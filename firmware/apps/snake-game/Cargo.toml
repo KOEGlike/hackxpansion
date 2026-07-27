@@ -1,0 +1,17 @@
+[package]
+edition = "2024"
+name = "snake-game"
+version = "0.1.0"
+license = "GPL-3.0"
+
+[dependencies]
+xpanse-api = { workspace = true }
+
+defmt = { workspace = true }
+embassy-futures = { workspace = true }
+embassy-time = { workspace = true }
+heapless = { workspace = true }
+slint = { workspace = true }
+
+[build-dependencies]
+slint-build = { workspace = true }
