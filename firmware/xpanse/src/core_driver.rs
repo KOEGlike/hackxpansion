@@ -5,6 +5,7 @@ use crate::load_driver::load_driver;
 use crate::{adc::init_adc, adc_mapping, resource_split::*};
 use xpanse_api::bus::allocator::BusAllocator;
 use xpanse_api::interfaces::adc;
+use xpanse_api::interfaces::usb::UsbPeripheral;
 use xpanse_api::metadata::{ModuleID, ModuleSlot};
 
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, signal::Signal};
@@ -119,6 +120,7 @@ pub async fn app_core_task(
     );
 
     let mut registry = Registry::new();
+    registry.register_platform::<UsbPeripheral>(remaining_peris.usb);
 
     defmt::info!("app_core: loading module drivers");
     load_driver(

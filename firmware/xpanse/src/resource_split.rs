@@ -86,6 +86,7 @@ assign_resources! {
         pio2: PIO2,
         adc: ADC,
         adc_temp: ADC_TEMP_SENSOR,
+        usb: USB,
         flash: FLASH,
         dma_ch0: DMA_CH0,
         dma_ch1: DMA_CH1,
