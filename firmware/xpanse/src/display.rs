@@ -17,6 +17,12 @@ pub const WIDTH: u16 = 320;
 const PANEL_WIDTH: u16 = 240;
 const PANEL_HEIGHT: u16 = 320;
 
+#[derive(Debug, Clone, Copy, defmt::Format)]
+pub enum InitError {
+    CsError,
+    MipiError,
+}
+
 // Update your type definition to use ExclusiveDevice
 pub type Display<T> = mipidsi::Display<
     SpiInterface<
@@ -36,7 +42,7 @@ pub fn init_display<T: Instance>(
     display_cs: Peri<'static, AnyPin>,
     dcx: Peri<'static, AnyPin>,
     buffer: &'static mut [u8],
-) -> Display<T> {
+) -> Result<Display<T>, InitError> {
     let mut display_config = spi::Config::default();
     display_config.frequency = 64_000_000;
     display_config.phase = spi::Phase::CaptureOnSecondTransition;
@@ -50,7 +56,10 @@ pub fn init_display<T: Instance>(
     let display_cs = Output::new(display_cs, Level::High);
 
     // Give the display exclusive ownership of the SPI bus
-    let display_spi = ExclusiveDevice::new(spi, display_cs, Delay).unwrap();
+    let display_spi = ExclusiveDevice::new(spi, display_cs, Delay).map_err(|e| {
+        defmt::error!("cs error: {:?}", e);
+        InitError::CsError
+    })?;
 
     // Display interface abstraction from SPI and DC
     let di = SpiInterface::new(display_spi, dcx, buffer);
@@ -61,5 +70,5 @@ pub fn init_display<T: Instance>(
         .orientation(Orientation::new().rotate(Rotation::Deg90))
         .invert_colors(ColorInversion::Inverted)
         .init(&mut Delay)
-        .unwrap()
+        .map_err(|_| InitError::MipiError)
 }

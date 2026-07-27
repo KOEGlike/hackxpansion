@@ -39,7 +39,7 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
 
     let mut backlight = Output::new(display_peris.backlight, Level::Low);
     let driver_buffer = DRIVER_BUFFER.init([0_u8; 512]);
-    let mut disp = init_display(
+    let mut disp = match init_display(
         display_peris.spi,
         display_peris.clk,
         display_peris.mosi,
@@ -47,7 +47,13 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         display_peris.cs.into(),
         display_peris.dc.into(),
         driver_buffer,
-    );
+    ) {
+        Ok(disp) => disp,
+        Err(e) => {
+            defmt::error!("ui_core: failed to initialize display: {:#?}", e);
+            return;
+        }
+    };
     backlight.set_high();
     defmt::info!("ui_core: display initialized, backlight enabled");
 
