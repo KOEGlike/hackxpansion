@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use alloc::{boxed::Box, vec::Vec};
+use alloc::boxed::Box;
 use core::{future::Future, pin::Pin};
 
 use embassy_futures::select::{Either, Either6, select, select6};
@@ -10,8 +10,8 @@ use embassy_time::Timer;
 use slint::{Color, ComponentHandle};
 use xpanse_api::{
     app::App,
-    interfaces::buttons::{A, B, Button, ButtonRole, Down, Left, Right, Up},
-    registry::{RegisteredResource, Registry, ResourceId},
+    interfaces::buttons::{A, B, Button, Down, Left, Right, Up},
+    registry::{RegisteredResource, Registry},
 };
 
 slint::include_modules!();
@@ -30,7 +30,14 @@ const COLORS: [Color; 6] = [
 ];
 
 type AppButton<R> = RegisteredResource<Box<dyn Button<R>>>;
-type OptionalButton<R> = Option<AppButton<R>>;
+type CubeControls = (
+    Box<dyn Button<Up>>,
+    Box<dyn Button<Down>>,
+    Box<dyn Button<Left>>,
+    Box<dyn Button<Right>>,
+    Box<dyn Button<A>>,
+    Box<dyn Button<B>>,
+);
 
 pub struct CubeGameApp {
     up: AppButton<Up>,
@@ -45,39 +52,20 @@ impl App for CubeGameApp {
     const NAME: &'static str = "Cube Game";
 
     fn can_run(registry: &Registry) -> bool {
-        control_assignment(registry).is_some()
+        registry.has_distinct_set::<CubeControls>()
     }
 
     fn new(registry: &mut Registry) -> Option<Self> {
-        let ids = control_assignment(registry)?;
-        let up = take_button_with_id(registry, ids[0]);
-        let down = take_button_with_id(registry, ids[1]);
-        let left = take_button_with_id(registry, ids[2]);
-        let right = take_button_with_id(registry, ids[3]);
-        let color = take_button_with_id(registry, ids[4]);
-        let exit = take_button_with_id(registry, ids[5]);
+        let (up, down, left, right, color, exit) = registry.take_distinct_set::<CubeControls>()?;
 
-        match (up, down, left, right, color, exit) {
-            (Some(up), Some(down), Some(left), Some(right), Some(color), Some(exit)) => {
-                Some(Self {
-                    up,
-                    down,
-                    left,
-                    right,
-                    color,
-                    exit,
-                })
-            }
-            (up, down, left, right, color, exit) => {
-                return_button(registry, up);
-                return_button(registry, down);
-                return_button(registry, left);
-                return_button(registry, right);
-                return_button(registry, color);
-                return_button(registry, exit);
-                None
-            }
-        }
+        Some(Self {
+            up,
+            down,
+            left,
+            right,
+            color,
+            exit,
+        })
     }
 
     fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
@@ -150,73 +138,5 @@ impl App for CubeGameApp {
         registry.return_resource(self.right);
         registry.return_resource(self.color);
         registry.return_resource(self.exit);
-    }
-}
-
-fn resource_ids<R: ButtonRole>(registry: &Registry) -> Vec<ResourceId> {
-    registry
-        .capabilities::<Box<dyn Button<R>>>()
-        .map(|buttons| buttons.iter().map(RegisteredResource::id).collect())
-        .unwrap_or_default()
-}
-
-fn control_assignment(registry: &Registry) -> Option<Vec<ResourceId>> {
-    let candidates = [
-        resource_ids::<Up>(registry),
-        resource_ids::<Down>(registry),
-        resource_ids::<Left>(registry),
-        resource_ids::<Right>(registry),
-        resource_ids::<A>(registry),
-        resource_ids::<B>(registry),
-    ];
-    let mut assignment = Vec::new();
-    can_assign_distinct(&candidates, 0, &mut assignment).then_some(assignment)
-}
-
-fn can_assign_distinct(
-    candidates: &[Vec<ResourceId>],
-    index: usize,
-    used: &mut Vec<ResourceId>,
-) -> bool {
-    if index == candidates.len() {
-        return true;
-    }
-
-    for id in &candidates[index] {
-        if !used.contains(id) {
-            used.push(*id);
-            if can_assign_distinct(candidates, index + 1, used) {
-                return true;
-            }
-            used.pop();
-        }
-    }
-
-    false
-}
-
-fn take_button_with_id<R: ButtonRole>(
-    registry: &mut Registry,
-    id: ResourceId,
-) -> OptionalButton<R> {
-    let mut others = Vec::new();
-    let button = loop {
-        match registry.take_resource::<Box<dyn Button<R>>>() {
-            Some(button) if button.id() == id => break Some(button),
-            Some(other) => others.push(other),
-            None => break None,
-        }
-    };
-
-    for other in others {
-        registry.return_resource(other);
-    }
-
-    button
-}
-
-fn return_button<R: ButtonRole>(registry: &mut Registry, button: OptionalButton<R>) {
-    if let Some(button) = button {
-        registry.return_resource(button);
     }
 }

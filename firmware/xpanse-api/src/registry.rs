@@ -100,6 +100,27 @@ pub struct Registry {
     next_generated_resource_id: u32,
 }
 
+mod private {
+    pub trait Sealed {}
+}
+
+/// A tuple of different resource types that must use distinct physical ids.
+///
+/// Implementations are provided for tuples containing two through eight
+/// resource types. This trait is sealed and is only intended to be used as the
+/// type parameter to [`Registry::has_distinct_set`] and
+/// [`Registry::take_distinct_set`].
+pub trait DistinctResourceSet: private::Sealed {
+    /// The tuple of registered resources returned for this set.
+    type Taken;
+
+    #[doc(hidden)]
+    fn has_distinct(registry: &Registry) -> bool;
+
+    #[doc(hidden)]
+    fn take_distinct(registry: &mut Registry) -> Option<Self::Taken>;
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum RegistryError {
     SlotMismatch,
@@ -223,27 +244,15 @@ impl Registry {
     /// such as `Button<A>` and `Button<X>`, and must not receive two aliases of
     /// the same physical control.
     pub fn has_distinct2<T: 'static + Send, U: 'static + Send>(&self) -> bool {
-        if TypeId::of::<T>() == TypeId::of::<U>() {
-            return false;
-        }
+        self.has_distinct_set::<(T, U)>()
+    }
 
-        let Some(left) = self
-            .entries
-            .get(&TypeId::of::<CapabilityList<T>>())
-            .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())
-        else {
-            return false;
-        };
-
-        let Some(right) = self
-            .entries
-            .get(&TypeId::of::<CapabilityList<U>>())
-            .and_then(|boxed| boxed.downcast_ref::<CapabilityList<U>>())
-        else {
-            return false;
-        };
-
-        distinct_pair_indices(left, right).is_some()
+    /// Returns whether every resource type in `S` can be allocated with a
+    /// different physical id.
+    ///
+    /// `S` is a tuple containing two through eight different resource types.
+    pub fn has_distinct_set<S: DistinctResourceSet>(&self) -> bool {
+        S::has_distinct(self)
     }
 
     pub fn return_resource<T: 'static + Send>(&mut self, resource: RegisteredResource<T>) {
@@ -330,41 +339,33 @@ impl Registry {
     pub fn take_distinct2<T: 'static + Send, U: 'static + Send>(
         &mut self,
     ) -> Option<(RegisteredResource<T>, RegisteredResource<U>)> {
-        if TypeId::of::<T>() == TypeId::of::<U>() {
-            return None;
-        }
+        self.take_distinct_set::<(T, U)>()
+    }
 
-        let (left_index, right_index) = {
-            let left = self
-                .entries
-                .get(&TypeId::of::<CapabilityList<T>>())
-                .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())?;
+    /// Atomically takes one resource of every type in `S`, each with a
+    /// different physical id.
+    ///
+    /// `S` is a tuple containing two through eight different resource types.
+    /// If no complete distinct assignment exists, the registry is left
+    /// unchanged.
+    pub fn take_distinct_set<S: DistinctResourceSet>(&mut self) -> Option<S::Taken> {
+        S::take_distinct(self)
+    }
 
-            let right = self
-                .entries
-                .get(&TypeId::of::<CapabilityList<U>>())
-                .and_then(|boxed| boxed.downcast_ref::<CapabilityList<U>>())?;
+    fn resource_ids<T: 'static + Send>(&self) -> Option<Vec<ResourceId>> {
+        self.entries
+            .get(&TypeId::of::<CapabilityList<T>>())
+            .and_then(|boxed| boxed.downcast_ref::<CapabilityList<T>>())
+            .map(|list| list.items.iter().map(RegisteredResource::id).collect())
+    }
 
-            distinct_pair_indices(left, right)?
-        };
-
-        let left = self
-            .entries
+    fn take_resource_at<T: 'static + Send>(&mut self, index: usize) -> RegisteredResource<T> {
+        self.entries
             .get_mut(&TypeId::of::<CapabilityList<T>>())
             .and_then(|boxed| boxed.downcast_mut::<CapabilityList<T>>())
-            .expect("left resource list existed while selecting distinct pair")
+            .expect("resource list existed while taking a distinct set")
             .items
-            .remove(left_index);
-
-        let right = self
-            .entries
-            .get_mut(&TypeId::of::<CapabilityList<U>>())
-            .and_then(|boxed| boxed.downcast_mut::<CapabilityList<U>>())
-            .expect("right resource list existed while selecting distinct pair")
-            .items
-            .remove(right_index);
-
-        Some((left, right))
+            .remove(index)
     }
 }
 
@@ -401,17 +402,89 @@ fn distinct_resource_indices<T>(list: &CapabilityList<T>, count: usize) -> Optio
     None
 }
 
-fn distinct_pair_indices<T, U>(
-    left: &CapabilityList<T>,
-    right: &CapabilityList<U>,
-) -> Option<(usize, usize)> {
-    for left_index in (0..left.items.len()).rev() {
-        for right_index in (0..right.items.len()).rev() {
-            if left.items[left_index].id != right.items[right_index].id {
-                return Some((left_index, right_index));
-            }
+fn distinct_assignment(candidates: &[Vec<ResourceId>]) -> Option<Vec<usize>> {
+    fn assign(
+        candidates: &[Vec<ResourceId>],
+        candidate_index: usize,
+        used: &mut Vec<ResourceId>,
+        assignment: &mut Vec<usize>,
+    ) -> bool {
+        if candidate_index == candidates.len() {
+            return true;
         }
+
+        for resource_index in (0..candidates[candidate_index].len()).rev() {
+            let id = candidates[candidate_index][resource_index];
+            if used.contains(&id) {
+                continue;
+            }
+
+            used.push(id);
+            assignment.push(resource_index);
+            if assign(candidates, candidate_index + 1, used, assignment) {
+                return true;
+            }
+            assignment.pop();
+            used.pop();
+        }
+
+        false
     }
 
-    None
+    let mut used = Vec::new();
+    let mut assignment = Vec::new();
+    assign(candidates, 0, &mut used, &mut assignment).then_some(assignment)
 }
+
+fn types_are_distinct(types: &[TypeId]) -> bool {
+    types
+        .iter()
+        .enumerate()
+        .all(|(index, resource_type)| !types[..index].contains(resource_type))
+}
+
+macro_rules! impl_distinct_resource_set {
+    ($($resource:ident),+) => {
+        impl<$($resource: 'static + Send),+> private::Sealed for ($($resource,)+) {}
+
+        impl<$($resource: 'static + Send),+> DistinctResourceSet for ($($resource,)+) {
+            type Taken = ($(RegisteredResource<$resource>,)+);
+
+            fn has_distinct(registry: &Registry) -> bool {
+                if !types_are_distinct(&[$(TypeId::of::<$resource>()),+]) {
+                    return false;
+                }
+
+                let candidates = [$(registry.resource_ids::<$resource>()),+];
+                if candidates.iter().any(Option::is_none) {
+                    return false;
+                }
+                let candidates = candidates.map(Option::unwrap);
+                distinct_assignment(&candidates).is_some()
+            }
+
+            fn take_distinct(registry: &mut Registry) -> Option<Self::Taken> {
+                if !types_are_distinct(&[$(TypeId::of::<$resource>()),+]) {
+                    return None;
+                }
+
+                let candidates = [$(registry.resource_ids::<$resource>()?),+];
+                let assignment = distinct_assignment(&candidates)?;
+                let mut indices = assignment.into_iter();
+                Some(($(
+                    registry.take_resource_at::<$resource>(
+                        indices.next().expect("distinct assignment contains every resource type"),
+                    ),
+                )+))
+            }
+        }
+    };
+}
+
+impl_distinct_resource_set!(T1, T2);
+impl_distinct_resource_set!(T1, T2, T3);
+impl_distinct_resource_set!(T1, T2, T3, T4);
+impl_distinct_resource_set!(T1, T2, T3, T4, T5);
+impl_distinct_resource_set!(T1, T2, T3, T4, T5, T6);
+impl_distinct_resource_set!(T1, T2, T3, T4, T5, T6, T7);
+impl_distinct_resource_set!(T1, T2, T3, T4, T5, T6, T7, T8);
