@@ -7,7 +7,7 @@ use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channe
 use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 use xpanse_api::{
     interfaces::buttons::{A, B, Button, ButtonRole, Down, Up},
-    registry::{RegisteredResource, Registry, ResourceId},
+    registry::{Registry, ResourceLease},
 };
 slint::include_modules!();
 
@@ -135,10 +135,10 @@ fn attach_app_picker(app_picker: &AppPickerUI) {
 }
 
 async fn receive_app_picker_input(
-    select_button: Option<&mut RegisteredResource<Box<dyn Button<A>>>>,
-    cycle_button: Option<&mut RegisteredResource<Box<dyn Button<B>>>>,
-    up_button: Option<&mut RegisteredResource<Box<dyn Button<Up>>>>,
-    down_button: Option<&mut RegisteredResource<Box<dyn Button<Down>>>>,
+    select_button: Option<&mut ResourceLease<Box<dyn Button<A>>>>,
+    cycle_button: Option<&mut ResourceLease<Box<dyn Button<B>>>>,
+    up_button: Option<&mut ResourceLease<Box<dyn Button<Up>>>>,
+    down_button: Option<&mut ResourceLease<Box<dyn Button<Down>>>>,
 ) -> AppPickerInput {
     match select5(
         wait_for_picker_button(select_button, AppPickerInput::Select),
@@ -157,15 +157,21 @@ async fn receive_app_picker_input(
     }
 }
 
-type PickerButton<R> = Option<RegisteredResource<Box<dyn Button<R>>>>;
+type PickerButton<R> = Option<ResourceLease<Box<dyn Button<R>>>>;
+type PickerControls = (
+    Box<dyn Button<A>>,
+    Box<dyn Button<B>>,
+    Box<dyn Button<Up>>,
+    Box<dyn Button<Down>>,
+);
 
 async fn wait_for_picker_button<R: ButtonRole>(
-    button: Option<&mut RegisteredResource<Box<dyn Button<R>>>>,
+    button: Option<&mut ResourceLease<Box<dyn Button<R>>>>,
     input: AppPickerInput,
 ) -> AppPickerInput {
     match button {
         Some(button) => {
-            button.resource.wait_for_pressed().await;
+            button.resource_mut().wait_for_pressed().await;
             input
         }
         None => core::future::pending().await,
@@ -180,37 +186,16 @@ fn take_picker_buttons(
     PickerButton<Up>,
     PickerButton<Down>,
 ) {
-    let mut ids = Vec::new();
-    let select = take_button_with_distinct_id(registry, &mut ids);
-    let cycle = take_button_with_distinct_id(registry, &mut ids);
-    let up = take_button_with_distinct_id(registry, &mut ids);
-    let down = take_button_with_distinct_id(registry, &mut ids);
+    if let Some((select, cycle, up, down)) = registry.take_resource_set::<PickerControls>() {
+        return (Some(select), Some(cycle), Some(up), Some(down));
+    }
+
+    let select = registry.take_resource();
+    let cycle = registry.take_resource();
+    let up = registry.take_resource();
+    let down = registry.take_resource();
 
     (select, cycle, up, down)
-}
-
-fn take_button_with_distinct_id<R: ButtonRole>(
-    registry: &mut Registry,
-    ids: &mut Vec<ResourceId>,
-) -> PickerButton<R> {
-    let mut aliases = Vec::new();
-
-    let button = loop {
-        match registry.take_resource::<Box<dyn Button<R>>>() {
-            Some(button) if !ids.contains(&button.id()) => break Some(button),
-            Some(alias) => aliases.push(alias),
-            None => break None,
-        }
-    };
-
-    for alias in aliases {
-        registry.return_resource(alias);
-    }
-    if let Some(button) = &button {
-        ids.push(button.id());
-    }
-
-    button
 }
 
 fn clear_app_picker_input() {

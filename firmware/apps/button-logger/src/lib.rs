@@ -10,13 +10,13 @@ use slint::ComponentHandle;
 use xpanse_api::{
     app::App,
     interfaces::buttons::{A, Button},
-    registry::{RegisteredResource, Registry},
+    registry::{Registry, ResourceLease},
 };
 
 slint::include_modules!();
 
 pub struct ButtonLoggerApp {
-    button: RegisteredResource<Box<dyn Button<A>>>,
+    button: ResourceLease<Box<dyn Button<A>>>,
 }
 
 impl App for ButtonLoggerApp {
@@ -47,16 +47,16 @@ impl App for ButtonLoggerApp {
 
             let mut count = 0u32;
             loop {
-                self.button.resource.wait_for_pressed().await;
+                self.button.resource_mut().wait_for_pressed().await;
 
                 let mut held_ms = 0;
-                while self.button.resource.is_pressed() && held_ms < 1_000 {
+                while self.button.resource().is_pressed() && held_ms < 1_000 {
                     Timer::after_millis(20).await;
                     held_ms += 20;
                 }
 
                 if held_ms >= 1_000 {
-                    while self.button.resource.is_pressed() {
+                    while self.button.resource().is_pressed() {
                         Timer::after_millis(20).await;
                     }
                     break;

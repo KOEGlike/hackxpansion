@@ -6,7 +6,7 @@ use xpanse_api::{
     gpio_bank::{BankPins, GpioBank},
     interfaces::buttons::{A, B, Down, Left, Right, Up, X, Y, aliased_pin_buttons},
     metadata::{ModuleDetectResistor, ModuleID, ModuleSlot},
-    registry::{Registry, ResourceId},
+    registry::Registry,
 };
 
 pub struct FourButtonDriver;
@@ -35,37 +35,17 @@ impl<G: BankPins> Driver<G> for FourButtonDriver {
         let (button_x, button_left) = aliased_pin_buttons::<X, Left>(button_x_pin.into());
         let (button_y, button_up) = aliased_pin_buttons::<Y, Up>(button_y_pin.into());
 
-        let button_a_id = ResourceId::new(slot, 0);
-        let button_b_id = ResourceId::new(slot, 1);
-        let button_x_id = ResourceId::new(slot, 2);
-        let button_y_id = ResourceId::new(slot, 3);
-
         registry
-            .register_with_id(slot, FourButtonDriver::ID, button_a_id, button_a)
-            .map_err(|_| DriverError::InitFailed)?;
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_a_id, button_down)
-            .map_err(|_| DriverError::InitFailed)?;
-
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_b_id, button_b)
-            .map_err(|_| DriverError::InitFailed)?;
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_b_id, button_right)
-            .map_err(|_| DriverError::InitFailed)?;
-
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_x_id, button_x)
-            .map_err(|_| DriverError::InitFailed)?;
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_x_id, button_left)
-            .map_err(|_| DriverError::InitFailed)?;
-
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_y_id, button_y)
-            .map_err(|_| DriverError::InitFailed)?;
-        registry
-            .register_with_id(slot, FourButtonDriver::ID, button_y_id, button_up)
+            .register_groups(
+                slot,
+                FourButtonDriver::ID,
+                (
+                    (button_a, button_down),
+                    (button_b, button_right),
+                    (button_x, button_left),
+                    (button_y, button_up),
+                ),
+            )
             .map_err(|_| DriverError::InitFailed)?;
 
         let _ = bus_allocator;

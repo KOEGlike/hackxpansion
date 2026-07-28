@@ -12,7 +12,7 @@ use slint::{ComponentHandle, Model, ModelRc, VecModel};
 use xpanse_api::{
     app::App,
     interfaces::buttons::{Button, Down, Left, Right, Up},
-    registry::{RegisteredResource, Registry},
+    registry::{Registry, ResourceLease},
 };
 
 slint::include_modules!();
@@ -22,7 +22,7 @@ const BOARD_HEIGHT: u8 = 13;
 const BOARD_CELLS: usize = BOARD_WIDTH as usize * BOARD_HEIGHT as usize;
 const TICK_INTERVAL: Duration = Duration::from_millis(140);
 
-type AppButton<R> = RegisteredResource<Box<dyn Button<R>>>;
+type AppButton<R> = ResourceLease<Box<dyn Button<R>>>;
 type SnakeControls = (
     Box<dyn Button<Up>>,
     Box<dyn Button<Down>>,
@@ -41,11 +41,11 @@ impl App for SnakeGameApp {
     const NAME: &'static str = "Snake";
 
     fn can_run(registry: &Registry) -> bool {
-        registry.has_distinct_set::<SnakeControls>()
+        registry.has_resource_set::<SnakeControls>()
     }
 
     fn new(registry: &mut Registry) -> Option<Self> {
-        let (up, down, left, right) = registry.take_distinct_set::<SnakeControls>()?;
+        let (up, down, left, right) = registry.take_resource_set::<SnakeControls>()?;
         Some(Self {
             up,
             down,
@@ -75,10 +75,10 @@ impl App for SnakeGameApp {
             }
 
             let game_over = {
-                let up = &mut self.up.resource;
-                let down = &mut self.down.resource;
-                let left = &mut self.left.resource;
-                let right = &mut self.right.resource;
+                let up = self.up.resource_mut();
+                let down = self.down.resource_mut();
+                let left = self.left.resource_mut();
+                let right = self.right.resource_mut();
                 let mut ticker = Ticker::every(TICK_INTERVAL);
                 let mut up_pressed = up.wait_for_pressed();
                 let mut down_pressed = down.wait_for_pressed();
@@ -155,10 +155,10 @@ impl App for SnakeGameApp {
 
             if game_over {
                 let _ = select4(
-                    self.up.resource.wait_for_pressed(),
-                    self.down.resource.wait_for_pressed(),
-                    self.left.resource.wait_for_pressed(),
-                    self.right.resource.wait_for_pressed(),
+                    self.up.resource_mut().wait_for_pressed(),
+                    self.down.resource_mut().wait_for_pressed(),
+                    self.left.resource_mut().wait_for_pressed(),
+                    self.right.resource_mut().wait_for_pressed(),
                 )
                 .await;
             }

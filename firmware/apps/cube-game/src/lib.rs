@@ -11,7 +11,7 @@ use slint::{Color, ComponentHandle};
 use xpanse_api::{
     app::App,
     interfaces::buttons::{A, B, Button, Down, Left, Right, Up},
-    registry::{RegisteredResource, Registry},
+    registry::{Registry, ResourceLease},
 };
 
 slint::include_modules!();
@@ -29,7 +29,7 @@ const COLORS: [Color; 6] = [
     Color::from_rgb_u8(0, 137, 123),
 ];
 
-type AppButton<R> = RegisteredResource<Box<dyn Button<R>>>;
+type AppButton<R> = ResourceLease<Box<dyn Button<R>>>;
 type CubeControls = (
     Box<dyn Button<Up>>,
     Box<dyn Button<Down>>,
@@ -52,11 +52,11 @@ impl App for CubeGameApp {
     const NAME: &'static str = "Cube Game";
 
     fn can_run(registry: &Registry) -> bool {
-        registry.has_distinct_set::<CubeControls>()
+        registry.has_resource_set::<CubeControls>()
     }
 
     fn new(registry: &mut Registry) -> Option<Self> {
-        let (up, down, left, right, color, exit) = registry.take_distinct_set::<CubeControls>()?;
+        let (up, down, left, right, color, exit) = registry.take_resource_set::<CubeControls>()?;
 
         Some(Self {
             up,
@@ -90,12 +90,12 @@ impl App for CubeGameApp {
             'game: loop {
                 let input = select(
                     select6(
-                        self.up.resource.wait_for_pressed(),
-                        self.down.resource.wait_for_pressed(),
-                        self.left.resource.wait_for_pressed(),
-                        self.right.resource.wait_for_pressed(),
-                        self.color.resource.wait_for_pressed(),
-                        self.exit.resource.wait_for_pressed(),
+                        self.up.resource_mut().wait_for_pressed(),
+                        self.down.resource_mut().wait_for_pressed(),
+                        self.left.resource_mut().wait_for_pressed(),
+                        self.right.resource_mut().wait_for_pressed(),
+                        self.color.resource_mut().wait_for_pressed(),
+                        self.exit.resource_mut().wait_for_pressed(),
                     ),
                     Timer::after_millis(REPEAT_INTERVAL_MS),
                 )
@@ -112,10 +112,10 @@ impl App for CubeGameApp {
                     }
                     Either::First(Either6::Sixth(())) => break 'game,
                     Either::Second(()) => {
-                        let horizontal = i32::from(self.right.resource.is_pressed())
-                            - i32::from(self.left.resource.is_pressed());
-                        let vertical = i32::from(self.down.resource.is_pressed())
-                            - i32::from(self.up.resource.is_pressed());
+                        let horizontal = i32::from(self.right.resource().is_pressed())
+                            - i32::from(self.left.resource().is_pressed());
+                        let vertical = i32::from(self.down.resource().is_pressed())
+                            - i32::from(self.up.resource().is_pressed());
                         x = (x + horizontal * STEP).clamp(0, MAX_X);
                         y = (y + vertical * STEP).clamp(0, MAX_Y);
                     }
