@@ -1,44 +1,128 @@
+import "fonts/ShareTechMono-Regular.ttf";
+
 export component AppPickerUI inherits Window {
     in property <[string]> apps;
     in-out property <int> selected-index: -1;
+    property <int> first-visible-index: root.selected-index > 3 ? root.selected-index - 3 : 0;
 
-    Rectangle {
-        width: parent.width;
+    background: #c3cbd4;
+    default-font-family: "Share Tech Mono";
+
+    for _[column] in 8: Rectangle {
+        x: column * 40px;
+        width: 1px;
         height: parent.height;
-        background: #101018;
+        background: #90a1b933;
     }
 
-    VerticalLayout {
+    for _[row] in 6: Rectangle {
+        y: row * 40px;
         width: parent.width;
-        height: parent.height;
-        padding: 10px;
-        spacing: 8px;
+        height: 1px;
+        background: #90a1b933;
+    }
+
+    Rectangle {
+        x: 8px;
+        y: 8px;
+        width: parent.width - 16px;
+        height: 40px;
+        background: #94a3b880;
+        border-width: 3px;
+        border-color: #334155;
 
         Text {
-            text: "Select app";
-            color: #ffffff;
-            font-size: 24px;
-            horizontal-alignment: center;
+            x: 10px;
+            width: 180px;
+            height: parent.height;
+            text: "SELECT APP";
+            color: #334155;
+            font-size: 22px;
+            font-weight: 700;
+            vertical-alignment: center;
         }
 
-        if root.apps.length == 0: Text {
-            text: "No compatible apps";
-            color: #ff8080;
-            font-size: 16px;
-            horizontal-alignment: center;
+        Text {
+            x: 192px;
+            width: parent.width - 202px;
+            height: parent.height;
+            text: "RUNNABLE / " + root.apps.length;
+            color: #475569;
+            font-size: 10px;
+            horizontal-alignment: right;
+            vertical-alignment: center;
         }
+    }
 
-        for app[index] in root.apps: Rectangle {
-            height: 42px;
-            background: index == root.selected-index ? #3f6090 : #263044;
+    Rectangle {
+        x: 8px;
+        y: 55px;
+        width: parent.width - 16px;
+        height: 156px;
+        clip: true;
+
+        if root.apps.length == 0: Rectangle {
+            width: parent.width;
+            height: 155px;
+            background: #fee2e2;
+            border-width: 3px;
+            border-color: #b91c1c;
 
             Text {
-                text: app;
-                color: #ffffff;
-                font-size: 18px;
+                x: 10px;
+                width: parent.width - 20px;
+                height: parent.height;
+                text: "NO COMPATIBLE APPS";
+                color: #7f1d1d;
+                font-size: 16px;
                 horizontal-alignment: center;
                 vertical-alignment: center;
             }
         }
+
+        for app[index] in root.apps: Rectangle {
+            y: (index - root.first-visible-index) * 40px;
+            width: parent.width;
+            height: 36px;
+            background: index == root.selected-index ? #1e293b : #94a3b880;
+            border-width: 3px;
+            border-color: index == root.selected-index ? #1e293b : #334155;
+
+            Text {
+                x: 10px;
+                width: parent.width - 20px;
+                height: parent.height;
+                text: (index == root.selected-index ? "> " : "  ") + app;
+                color: index == root.selected-index ? #ffffff : #334155;
+                font-size: 17px;
+                font-weight: index == root.selected-index ? 700 : 400;
+                vertical-alignment: center;
+            }
+        }
+
+        if root.apps.length > 4: Rectangle {
+            x: parent.width - 3px;
+            width: 3px;
+            height: parent.height;
+            background: #94a3b866;
+
+            Rectangle {
+                y: (156px - 624px / root.apps.length) * root.first-visible-index
+                    / (root.apps.length - 4);
+                width: parent.width;
+                height: 624px / root.apps.length;
+                background: #334155;
+            }
+        }
+    }
+
+    Text {
+        x: 8px;
+        y: 220px;
+        width: parent.width - 16px;
+        text: "UP / DOWN  |  A TO OPEN";
+        color: #475569;
+        font-size: 10px;
+        horizontal-alignment: center;
     }
 }
