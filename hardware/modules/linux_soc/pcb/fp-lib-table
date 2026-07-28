@@ -1,0 +1,5 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "Hackxpansion") (type "KiCad") (uri "${KIPRJMOD}/kicad_lib/Hackxpansion.pretty") (options "") (descr ""))
+	(lib (name "linux_soc") (type "KiCad") (uri "${KIPRJMOD}/linux_soc.pretty") (options "") (descr ""))
+)
