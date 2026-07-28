@@ -69,6 +69,7 @@ four-button-driver = { workspace = true }
 # Apps
 button-logger = { workspace = true }
 cube-game = { workspace = true }
+neon-beat = { workspace = true }
 snake-game = { workspace = true }
 
 [build-dependencies]

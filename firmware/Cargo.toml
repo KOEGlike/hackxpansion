@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["xpanse", "xpanse-api", "drivers/test-driver", "apps/button-logger"]
+members = ["xpanse", "xpanse-api", "drivers/test-driver", "apps/button-logger", "apps/neon-beat"]
 
 [profile.release]
 debug = 2
@@ -98,4 +98,5 @@ four-button-driver = { path = "./drivers/four-button-driver/" }
 # Apps
 button-logger = { path = "./apps/button-logger/" }
 cube-game = { path = "./apps/cube-game/" }
+neon-beat = { path = "./apps/neon-beat/" }
 snake-game = { path = "./apps/snake-game/" }

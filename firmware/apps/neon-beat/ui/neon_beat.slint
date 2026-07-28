@@ -1,0 +1,246 @@
+export struct BeatNote {
+    lane: int,
+    y: int,
+}
+
+export component NeonBeatUI inherits Window {
+    in property <[BeatNote]> notes;
+    in property <int> score: 0;
+    in property <int> combo: 0;
+    in property <int> health: 100;
+    in property <string> judgement: "GET READY";
+    in property <int> judgement-kind: 0;
+    in property <int> active-lane: -1;
+    in property <bool> game-over: false;
+
+    background: #05000d;
+
+    Rectangle {
+        x: 0px;
+        y: 0px;
+        width: parent.width;
+        height: 35px;
+        background: #110520;
+        border-width: 1px;
+        border-color: #ff2bd633;
+    }
+
+    Text {
+        x: 8px;
+        y: 3px;
+        text: "NEON BEAT";
+        color: #ff2bd6;
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+    Text {
+        x: 151px;
+        y: 4px;
+        width: 160px;
+        text: "SCORE " + root.score + "  x" + root.combo;
+        color: #00f5ff;
+        font-size: 13px;
+        font-weight: 700;
+        horizontal-alignment: right;
+    }
+
+    Rectangle {
+        x: 8px;
+        y: 27px;
+        width: 304px;
+        height: 5px;
+        background: #251038;
+        border-width: 1px;
+        border-color: #7c3aed;
+
+        Rectangle {
+            x: 1px;
+            y: 1px;
+            width: root.health * 3px;
+            height: 3px;
+            background: root.health > 50 ? #00f5ff : root.health > 20 ? #ffe600 : #ff3158;
+        }
+    }
+
+    Rectangle {
+        x: 23px;
+        y: 38px;
+        width: 274px;
+        height: 184px;
+        background: #0b0217e6;
+        border-width: 2px;
+        border-color: #7c3aed;
+    }
+
+    for _[row] in 5: Rectangle {
+        x: 25px;
+        y: 51px + row * 39px;
+        width: 270px;
+        height: 1px;
+        background: #00f5ff1f;
+    }
+
+    for _[line] in 5: Rectangle {
+        x: 24px + line * 68px;
+        y: 40px;
+        width: 1px;
+        height: 180px;
+        background: #ff2bd62b;
+    }
+
+    for _[lane] in 4: Rectangle {
+        x: 25px + lane * 68px;
+        y: 40px;
+        width: 67px;
+        height: 180px;
+        background: lane == root.active-lane
+            ? lane == 0 ? #00f5ff1f
+            : lane == 1 ? #ff2bd61f
+            : lane == 2 ? #93ff1f1f
+            : #ff8a001f
+            : #00000000;
+    }
+
+    Rectangle {
+        x: 25px;
+        y: 176px;
+        width: 270px;
+        height: 2px;
+        background: #ffffff66;
+    }
+
+    for _[lane] in 4: Rectangle {
+        x: 31px + lane * 68px;
+        y: 179px;
+        width: 54px;
+        height: 38px;
+        background: lane == 0 ? #00f5ff24
+            : lane == 1 ? #ff2bd624
+            : lane == 2 ? #93ff1f24
+            : #ff8a0024;
+        border-width: 2px;
+        border-color: lane == 0 ? #00f5ff
+            : lane == 1 ? #ff2bd6
+            : lane == 2 ? #93ff1f
+            : #ff8a00;
+        border-radius: 5px;
+
+        Text {
+            width: parent.width;
+            height: parent.height;
+            text: lane == 0 ? "<" : lane == 1 ? "V" : lane == 2 ? "^" : ">";
+            color: lane == 0 ? #00f5ff
+                : lane == 1 ? #ff2bd6
+                : lane == 2 ? #93ff1f
+                : #ff8a00;
+            font-size: 25px;
+            font-weight: 700;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    for note in root.notes: Rectangle {
+        x: 28px + note.lane * 68px;
+        y: note.y * 1px - 3px;
+        width: 60px;
+        height: 40px;
+        background: note.lane == 0 ? #00f5ff24
+            : note.lane == 1 ? #ff2bd624
+            : note.lane == 2 ? #93ff1f24
+            : #ff8a0024;
+        border-radius: 7px;
+
+        Rectangle {
+            x: 3px;
+            y: 3px;
+            width: 54px;
+            height: 34px;
+            background: #10051f;
+            border-width: 3px;
+            border-color: note.lane == 0 ? #00f5ff
+                : note.lane == 1 ? #ff2bd6
+                : note.lane == 2 ? #93ff1f
+                : #ff8a00;
+            border-radius: 4px;
+
+            Text {
+                width: parent.width;
+                height: parent.height;
+                text: note.lane == 0 ? "<" : note.lane == 1 ? "V" : note.lane == 2 ? "^" : ">";
+                color: note.lane == 0 ? #00f5ff
+                    : note.lane == 1 ? #ff2bd6
+                    : note.lane == 2 ? #93ff1f
+                    : #ff8a00;
+                font-size: 23px;
+                font-weight: 700;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    Text {
+        x: 75px;
+        y: 144px;
+        width: 170px;
+        text: root.judgement;
+        color: root.judgement-kind == 1 ? #00f5ff
+            : root.judgement-kind == 2 ? #93ff1f
+            : root.judgement-kind == 3 ? #ff3158
+            : #ffffff99;
+        font-size: root.judgement-kind == 1 ? 22px : 17px;
+        font-weight: 700;
+        horizontal-alignment: center;
+    }
+
+    Text {
+        x: 0px;
+        y: 225px;
+        width: parent.width;
+        text: "120 BPM  //  UP + DOWN: EXIT";
+        color: #a78bfa;
+        font-size: 10px;
+        horizontal-alignment: center;
+    }
+
+    if root.game-over: Rectangle {
+        x: 28px;
+        y: 61px;
+        width: 264px;
+        height: 116px;
+        background: #12031ff2;
+        border-width: 3px;
+        border-color: #ff3158;
+        border-radius: 5px;
+
+        Text {
+            y: 14px;
+            width: parent.width;
+            text: "TRACK FAILED";
+            color: #ff3158;
+            font-size: 25px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            y: 52px;
+            width: parent.width;
+            text: "FINAL SCORE  " + root.score;
+            color: #00f5ff;
+            font-size: 15px;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            y: 82px;
+            width: parent.width;
+            text: "PRESS ANY ARROW TO RETURN";
+            color: #ffffffcc;
+            font-size: 11px;
+            horizontal-alignment: center;
+        }
+    }
+}

@@ -17,6 +17,11 @@ const APP_CATALOG: &[AppDescriptor] = &[
         run: run_app_impl::<cube_game::CubeGameApp>,
     },
     AppDescriptor {
+        name: neon_beat::NeonBeatApp::NAME,
+        can_run: neon_beat::NeonBeatApp::can_run,
+        run: run_app_impl::<neon_beat::NeonBeatApp>,
+    },
+    AppDescriptor {
         name: snake_game::SnakeGameApp::NAME,
         can_run: snake_game::SnakeGameApp::can_run,
         run: run_app_impl::<snake_game::SnakeGameApp>,

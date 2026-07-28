@@ -3707,6 +3707,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "neon-beat"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.1.0",
+ "embassy-futures",
+ "embassy-time",
+ "heapless 0.9.3",
+ "slint",
+ "slint-build",
+ "xpanse-api",
+]
+
+[[package]]
 name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7036,6 +7049,7 @@ dependencies = [
  "libm",
  "log",
  "mipidsi",
+ "neon-beat",
  "panic-probe",
  "portable-atomic",
  "rgb",
