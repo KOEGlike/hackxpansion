@@ -32,6 +32,7 @@ fn main() {
     // consumes.
     println!("cargo:rerun-if-changed=memory.x");
     println!("cargo:rerun-if-changed=ui/app_picker.slint");
+    println!("cargo:rerun-if-changed=ui/fonts/ShareTechMono-Regular.ttf");
 
     println!("cargo:rustc-link-arg-bins=--nmagic");
     println!("cargo:rustc-link-arg-bins=-Tlink.x");
