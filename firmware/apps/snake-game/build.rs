@@ -5,4 +5,5 @@ fn main() {
         .expect("failed to compile snake game UI");
 
     println!("cargo:rerun-if-changed=ui/snake_game.slint");
+    println!("cargo:rerun-if-changed=../../xpanse/ui/fonts/ShareTechMono-Regular.ttf");
 }

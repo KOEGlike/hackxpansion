@@ -5,7 +5,7 @@ extern crate alloc;
 use alloc::{boxed::Box, rc::Rc, vec::Vec};
 use core::{future::Future, pin::Pin};
 
-use embassy_futures::select::{Either5, select4, select5};
+use embassy_futures::select::{Either4, Either5, select4, select5};
 use embassy_time::{Duration, Ticker};
 use heapless::Vec as FixedVec;
 use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel};
@@ -17,7 +17,12 @@ use xpanse_api::{
 
 slint::include_modules!();
 
-const TICK_INTERVAL: Duration = Duration::from_millis(25);
+const LEVEL_TICK_INTERVALS: [Duration; 3] = [
+    Duration::from_millis(80),
+    Duration::from_millis(32),
+    Duration::from_millis(25),
+];
+const LEVEL_BPMS: [i32; 3] = [75, 94, 120];
 const SPAWN_INTERVAL_TICKS: u32 = 10;
 const SPAWN_Y: i16 = 38;
 const TARGET_Y: i16 = 179;
@@ -76,18 +81,47 @@ impl App for NeonBeatApp {
             let note_model = Rc::new(VecModel::from(game.ui_notes()));
             ui.set_notes(ModelRc::from(note_model.clone()));
             update_stats(&ui, &game);
+            ui.set_level(3);
+            ui.set_bpm(LEVEL_BPMS[2]);
 
             if ui.show().is_err() {
                 defmt::error!("NeonBeatApp: failed to show UI");
                 return;
             }
 
+            let Some(level_index) = ({
+                let mut level_index = 2usize;
+                'select: loop {
+                    match select4(
+                        self.up.resource_mut().wait_for_pressed(),
+                        self.down.resource_mut().wait_for_pressed(),
+                        self.left.resource_mut().wait_for_pressed(),
+                        self.right.resource_mut().wait_for_pressed(),
+                    )
+                    .await
+                    {
+                        Either4::First(()) => level_index = level_index.saturating_sub(1),
+                        Either4::Second(()) => level_index = (level_index + 1).min(2),
+                        Either4::Third(()) => break 'select None,
+                        Either4::Fourth(()) => break 'select Some(level_index),
+                    }
+                    ui.set_level(level_index as i32 + 1);
+                    ui.set_bpm(LEVEL_BPMS[level_index]);
+                }
+            }) else {
+                if ui.hide().is_err() {
+                    defmt::error!("NeonBeatApp: failed to hide UI");
+                }
+                return;
+            };
+            ui.set_selecting_level(false);
+
             let game_over = {
                 let up = self.up.resource_mut();
                 let down = self.down.resource_mut();
                 let left = self.left.resource_mut();
                 let right = self.right.resource_mut();
-                let mut ticker = Ticker::every(TICK_INTERVAL);
+                let mut ticker = Ticker::every(LEVEL_TICK_INTERVALS[level_index]);
                 let mut up_pressed = up.wait_for_pressed();
                 let mut down_pressed = down.wait_for_pressed();
                 let mut left_pressed = left.wait_for_pressed();

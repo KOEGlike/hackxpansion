@@ -5,7 +5,7 @@ extern crate alloc;
 use alloc::{boxed::Box, rc::Rc, vec::Vec};
 use core::{future::Future, pin::Pin};
 
-use embassy_futures::select::{Either5, select4, select5};
+use embassy_futures::select::{Either4, Either5, select4, select5};
 use embassy_time::{Duration, Instant, Ticker};
 use heapless::{Deque, Vec as FixedVec};
 use slint::{ComponentHandle, Model, ModelRc, VecModel};
@@ -20,7 +20,11 @@ slint::include_modules!();
 const BOARD_WIDTH: u8 = 20;
 const BOARD_HEIGHT: u8 = 13;
 const BOARD_CELLS: usize = BOARD_WIDTH as usize * BOARD_HEIGHT as usize;
-const TICK_INTERVAL: Duration = Duration::from_millis(140);
+const LEVEL_TICK_INTERVALS: [Duration; 3] = [
+    Duration::from_millis(190),
+    Duration::from_millis(140),
+    Duration::from_millis(95),
+];
 
 type AppButton<R> = ResourceLease<Box<dyn Button<R>>>;
 type SnakeControls = (
@@ -68,18 +72,45 @@ impl App for SnakeGameApp {
             let snake_model = Rc::new(VecModel::from(game.ui_cells()));
             ui.set_snake_cells(ModelRc::from(snake_model.clone()));
             update_ui(&ui, &game);
+            ui.set_level(2);
 
             if ui.show().is_err() {
                 defmt::error!("SnakeGameApp: failed to show UI");
                 return;
             }
 
+            let Some(level_index) = ({
+                let mut level_index = 1usize;
+                'select: loop {
+                    match select4(
+                        self.up.resource_mut().wait_for_pressed(),
+                        self.down.resource_mut().wait_for_pressed(),
+                        self.left.resource_mut().wait_for_pressed(),
+                        self.right.resource_mut().wait_for_pressed(),
+                    )
+                    .await
+                    {
+                        Either4::First(()) => level_index = level_index.saturating_sub(1),
+                        Either4::Second(()) => level_index = (level_index + 1).min(2),
+                        Either4::Third(()) => break 'select None,
+                        Either4::Fourth(()) => break 'select Some(level_index),
+                    }
+                    ui.set_level(level_index as i32 + 1);
+                }
+            }) else {
+                if ui.hide().is_err() {
+                    defmt::error!("SnakeGameApp: failed to hide UI");
+                }
+                return;
+            };
+            ui.set_selecting_level(false);
+
             let game_over = {
                 let up = self.up.resource_mut();
                 let down = self.down.resource_mut();
                 let left = self.left.resource_mut();
                 let right = self.right.resource_mut();
-                let mut ticker = Ticker::every(TICK_INTERVAL);
+                let mut ticker = Ticker::every(LEVEL_TICK_INTERVALS[level_index]);
                 let mut up_pressed = up.wait_for_pressed();
                 let mut down_pressed = down.wait_for_pressed();
                 let mut left_pressed = left.wait_for_pressed();

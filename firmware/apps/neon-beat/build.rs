@@ -5,4 +5,5 @@ fn main() {
         .expect("failed to compile neon beat UI");
 
     println!("cargo:rerun-if-changed=ui/neon_beat.slint");
+    println!("cargo:rerun-if-changed=../../xpanse/ui/fonts/ShareTechMono-Regular.ttf");
 }
