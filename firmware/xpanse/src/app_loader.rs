@@ -26,6 +26,11 @@ const APP_CATALOG: &[AppDescriptor] = &[
         can_run: snake_game::SnakeGameApp::can_run,
         run: run_app_impl::<snake_game::SnakeGameApp>,
     },
+    AppDescriptor {
+        name: nes_emulator::NesEmulatorApp::NAME,
+        can_run: nes_emulator::NesEmulatorApp::can_run,
+        run: run_app_impl::<nes_emulator::NesEmulatorApp>,
+    },
 ];
 
 type AppFuture<'a> = Pin<Box<dyn Future<Output = ()> + 'a>>;

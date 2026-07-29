@@ -71,6 +71,7 @@ button-logger = { workspace = true }
 cube-game = { workspace = true }
 neon-beat = { workspace = true }
 snake-game = { workspace = true }
+nes-emulator = { workspace = true }
 
 [build-dependencies]
 slint-build = { workspace = true }

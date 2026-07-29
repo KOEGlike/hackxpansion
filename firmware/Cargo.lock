@@ -3720,6 +3720,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "nes-emulator"
+version = "0.1.0"
+dependencies = [
+ "defmt 1.1.0",
+ "embassy-futures",
+ "embassy-time",
+ "runes",
+ "xpanse-api",
+]
+
+[[package]]
 name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5025,6 +5036,11 @@ dependencies = [
  "unicode-linebreak",
  "unicode-width 0.2.2",
 ]
+
+[[package]]
+name = "runes"
+version = "0.2.5"
+source = "git+https://github.com/Determinant/runes.git?rev=fd12a0a915ca52e1f65b917feb46f28194328e33#fd12a0a915ca52e1f65b917feb46f28194328e33"
 
 [[package]]
 name = "rustc-hash"
@@ -7050,6 +7066,7 @@ dependencies = [
  "log",
  "mipidsi",
  "neon-beat",
+ "nes-emulator",
  "panic-probe",
  "portable-atomic",
  "rgb",

@@ -30,6 +30,11 @@ static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 
 #[global_allocator]
 static HEAP: Heap = Heap::empty();
+const HEAP_SIZE: usize = if option_env!("NES_ROM").is_some() {
+    256 * 1024
+} else {
+    64 * 1024
+};
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
@@ -40,9 +45,9 @@ fn main() -> ! {
     info!("boot: board resources assigned");
 
     unsafe {
-        embedded_alloc::init!(HEAP, 64 * 1024);
+        embedded_alloc::init!(HEAP, HEAP_SIZE);
     }
-    info!("boot: 64 KiB heap initialized");
+    info!("boot: {} KiB heap initialized", HEAP_SIZE / 1024);
 
     info!("boot: starting core 1");
     spawn_core1(
