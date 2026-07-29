@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-    <a href="https://hackxpansion.dino.icu">Website (currently down)</a>
+    <!--<a href="https://hackxpansion.dino.icu">Website (currently down)</a>-->
     <a href="https://meko.fillout.com/hackxpansion">RSVP</a>
 </h3>
 
@@ -12,7 +12,7 @@
 </h4>
 
 <div align="center">
-    <img src="blender/images/Hero.webp" width="600">
+    <img src="images/Hero.png" width="600">
 </div>
 
 ## Key Features
@@ -30,6 +30,8 @@ I really like the idea of modules, and modular things, and making people work to
 ## PCB
 
 The console has two 4 layer PCBs designed in KiCAD, a main-board and a daughter-board, designed for JLC's basic process. 
+
+![irl pcb without some connectors and swithc](images/IRL-main.jpg)
 
 ### Main-Board
 
@@ -59,8 +61,6 @@ The case is designed in Autodesk Fusion, there are .f3z files in the hardware di
 
 The models have parameters that can be adjusted to fit your needs.
 
-![side view](blender/images/SideView.webp)
-
 ## Shoutouts
 
 Thank you so much for [Simon](https://github.com/NEOgHacking) who helped with the fanout of the RP, and also gave a ton of constructive feedback!!!!
@@ -70,6 +70,8 @@ Thank you so much for [Simon](https://github.com/NEOgHacking) who helped with th
 <img src="Zine.png" alt="magazine page" width="800">
 
 ## BOM for Console
+
+This is for an order of 2 PCBA PCBs.
 
 Also found in a [CSV file](hardware/hackxpansion/BOM.csv). Each component has an LCSC part number attached that can be used to find the component on the LCSC website.
 
