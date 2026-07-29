@@ -20,11 +20,11 @@
 >
 	<div class="flex h-fit w-fit flex-col items-end justify-end gap-0">
 		<div class="flex flex-row gap-4">
-			<form method="post" action={`${resolve('/')}?/signIn`} use:enhance>
+			<!-- <form method="post" action={`${resolve('/')}?/signIn`} use:enhance>
 				<button class="content-box p-2 text-xl hover:content-box-hover active:content-box">
 					Sign In
 				</button>
-			</form>
+			</form> -->
 
 			<a
 				href={resolve('/home/docs')}
