@@ -4,6 +4,8 @@ members = ["xpanse", "xpanse-api", "drivers/test-driver", "apps/button-logger", 
 
 [profile.release]
 debug = 2
+lto = "fat"
+codegen-units = 1
 
 [workspace.dependencies]
 xpanse-api = { path = "./xpanse-api/" }

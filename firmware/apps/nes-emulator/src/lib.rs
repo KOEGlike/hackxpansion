@@ -6,7 +6,7 @@ use alloc::{boxed::Box, vec, vec::Vec};
 use core::{cell::Cell, future::Future, pin::Pin};
 
 use embassy_futures::yield_now;
-use embassy_time::{Duration, Ticker};
+use embassy_time::{Duration, Instant, Ticker};
 use runes::{
     apu::{APU, Speaker},
     cartridge::{BankType, Cartridge, MirrorType},
@@ -31,6 +31,8 @@ include!(concat!(env!("OUT_DIR"), "/rom.rs"));
 const NES_WIDTH: u16 = 256;
 const NES_HEIGHT: u16 = 240;
 const FRAME_INTERVAL: Duration = Duration::from_micros(16_667);
+const DISPLAY_FRAME_DIVISOR: u32 = 2;
+const STATS_FRAME_INTERVAL: u32 = 300;
 const SRAM_SIZE: usize = 0x2000;
 const CHR_BANK_SIZE: usize = 0x2000;
 
@@ -131,6 +133,7 @@ impl App for NesEmulatorApp {
             let mut screen = NesScreen {
                 frame_buffer,
                 frame_ready: &frame_ready,
+                frame_number: 0,
             };
             let mut speaker = SilentSpeaker;
 
@@ -154,6 +157,8 @@ impl App for NesEmulatorApp {
             cpu.powerup();
 
             let mut frame_ticker = Ticker::every(FRAME_INTERVAL);
+            let mut stats_started = Instant::now();
+            let mut stats_frames = 0_u32;
             loop {
                 loop {
                     if cpu.cycle == 0 {
@@ -166,6 +171,16 @@ impl App for NesEmulatorApp {
                 if frame_ready.replace(false) {
                     if input.exit_pressed() {
                         break;
+                    }
+                    stats_frames += 1;
+                    if stats_frames == STATS_FRAME_INTERVAL {
+                        defmt::info!(
+                            "NES: {} frames in {} ms",
+                            stats_frames,
+                            stats_started.elapsed().as_millis()
+                        );
+                        stats_started = Instant::now();
+                        stats_frames = 0;
                     }
                     // A ticker that has fallen behind completes immediately, so it cannot
                     // guarantee that the sibling display future gets polled.
@@ -244,6 +259,7 @@ impl InputPoller for NesInput<'_> {
 struct NesScreen<'a> {
     frame_buffer: IndexedFrameSession<'a>,
     frame_ready: &'a Cell<bool>,
+    frame_number: u32,
 }
 
 impl ppu::Screen for NesScreen<'_> {
@@ -255,7 +271,10 @@ impl ppu::Screen for NesScreen<'_> {
     fn render(&mut self) {}
 
     fn frame(&mut self) {
-        self.frame_buffer.present();
+        self.frame_number = self.frame_number.wrapping_add(1);
+        if self.frame_number.is_multiple_of(DISPLAY_FRAME_DIVISOR) {
+            self.frame_buffer.present();
+        }
         self.frame_ready.set(true);
     }
 }
