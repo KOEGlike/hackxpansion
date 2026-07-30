@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import {
 	AriInboundError,
@@ -212,7 +211,7 @@ async function claimSubmission(projectId: string, userId: string): Promise<Claim
 			})
 			.from(journal)
 			.where(eq(journal.projectId, projectId));
-		const externalId = `${projectId}:${readiness.phase}:${randomUUID()}`;
+		const externalId = projectId;
 
 		await tx
 			.update(project)

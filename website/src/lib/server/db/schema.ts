@@ -25,6 +25,7 @@ import type {
 	OutboundBody,
 	OutboundCollaborator,
 	ReviewField,
+	ReviewJustification,
 	Reviewer
 } from '../ari/outbound';
 
@@ -117,6 +118,7 @@ export const review = pgTable(
     `),
 		noteToMaker: text('note_to_maker'),
 		auditNote: text('audit_note'),
+		justification: jsonb('justification').$type<ReviewJustification | null>(),
 		fields: jsonb('fields').$type<ReviewField[] | null>(),
 		collaborators: jsonb('collaborators').$type<OutboundCollaborator[] | null>(),
 		fraud: jsonb('fraud').$type<FraudReview | null>(),

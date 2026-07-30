@@ -46,6 +46,14 @@ export type ReviewField = {
 	value: unknown;
 };
 
+export type ReviewJustification = {
+	hackatime_projects?: string;
+	hackatime_user_id?: string;
+	lapse_links?: string;
+	technical_features?: string;
+	deflation_reason?: string;
+};
+
 export type OutboundCollaborator = {
 	email: string;
 	name?: string;
@@ -72,6 +80,7 @@ export type OutboundBody = {
 		minutes_breakdown?: MinutesBreakdown;
 		note_to_maker?: string;
 		audit_note?: string;
+		justification?: ReviewJustification;
 		fields?: ReviewField[];
 		reviewer?: Reviewer;
 	};

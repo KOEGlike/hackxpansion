@@ -57,6 +57,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					minutesBreakdown: getMinutesBreakdown(body),
 					noteToMaker: body.review.note_to_maker ?? null,
 					auditNote: body.review.audit_note ?? null,
+					justification: body.review.justification ?? null,
 					fields: body.review.fields ?? null,
 					collaborators: body.collaborators ?? null,
 					fraud: body.fraud ?? null,

@@ -70,7 +70,7 @@ export type SendAriIngestOptions = {
 export type AriIngestResult = {
 	status: number;
 	body: string;
-	alreadyQueued: boolean;
+	duplicate: boolean;
 };
 
 export class AriInboundError extends Error {
@@ -148,12 +148,11 @@ export function buildAriIngestPayload({
 
 export async function sendAriIngest(
 	payload: AriIngestPayload,
-	{ programId, signingSecret, baseUrl = 'https://ari.hackclub.com' }: SendAriIngestOptions
+	{ programId, signingSecret, baseUrl = 'https://webhooks.ari.hackclub.com' }: SendAriIngestOptions
 ): Promise<AriIngestResult> {
 	const rawBody = JSON.stringify(payload);
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
 	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}`;
-	console.log('URL: ', url);
 	const response = await fetchWithTimeout(url, {
 		method: 'POST',
 		headers: {
@@ -164,11 +163,11 @@ export async function sendAriIngest(
 	});
 	const responseBody = await response.text();
 
-	if (response.ok || response.status === 409) {
+	if (response.ok) {
 		return {
 			status: response.status,
 			body: responseBody,
-			alreadyQueued: response.status === 409
+			duplicate: response.status === 200
 		};
 	}
 
@@ -183,7 +182,7 @@ export async function sendAriIngest(
 
 export async function sendAriWithdraw(
 	externalId: string,
-	{ programId, signingSecret, baseUrl = 'https://ari.hackclub.com' }: SendAriIngestOptions
+	{ programId, signingSecret, baseUrl = 'https://webhooks.ari.hackclub.com' }: SendAriIngestOptions
 ): Promise<AriWithdrawResult> {
 	const rawBody = JSON.stringify({ external_id: externalId });
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
