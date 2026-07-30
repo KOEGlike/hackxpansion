@@ -8,10 +8,10 @@ use core::{future::Future, pin::Pin};
 use embassy_futures::select::{Either4, Either5, select4, select5};
 use embassy_time::{Duration, Instant, Ticker};
 use heapless::{Deque, Vec as FixedVec};
-use slint::{ComponentHandle, Model, ModelRc, VecModel};
 use xpanse_api::{
     app::App,
     interfaces::buttons::{Button, Down, Left, Right, Up},
+    reexports::slint::{self, ComponentHandle, Model, ModelRc, VecModel},
     registry::{Registry, ResourceLease},
 };
 

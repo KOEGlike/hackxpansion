@@ -6,10 +6,10 @@ use alloc::boxed::Box;
 use core::{future::Future, pin::Pin};
 
 use embassy_time::Timer;
-use slint::ComponentHandle;
 use xpanse_api::{
     app::App,
     interfaces::buttons::{A, Button},
+    reexports::slint::{self, ComponentHandle},
     registry::{Registry, ResourceLease},
 };
 

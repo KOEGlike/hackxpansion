@@ -3727,7 +3727,6 @@ dependencies = [
  "embassy-futures",
  "embassy-time",
  "runes",
- "slint",
  "xpanse-api",
 ]
 

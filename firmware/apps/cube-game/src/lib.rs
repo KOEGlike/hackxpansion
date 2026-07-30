@@ -7,10 +7,10 @@ use core::{future::Future, pin::Pin};
 
 use embassy_futures::select::{Either, Either6, select, select6};
 use embassy_time::Timer;
-use slint::{Color, ComponentHandle};
 use xpanse_api::{
     app::App,
     interfaces::buttons::{A, B, Button, Down, Left, Right, Up},
+    reexports::slint::{self, Color, ComponentHandle},
     registry::{Registry, ResourceLease},
 };
 

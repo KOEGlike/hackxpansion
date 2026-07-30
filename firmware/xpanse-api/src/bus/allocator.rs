@@ -426,9 +426,9 @@ impl BusAllocator {
     /// Build a PIO-backed SPI bus (async via DMA) on any free PIO state machine.
     pub fn create_spi_pio<TxDma, RxDma, Irq>(
         &mut self,
-        clk: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        mosi: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        miso: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        clk: Peri<'static, impl PioPin>,
+        mosi: Peri<'static, impl PioPin>,
+        miso: Peri<'static, impl PioPin>,
         irq: Irq,
         config: spi::Config,
     ) -> Result<SpiBusHandle, AllocatorError>
@@ -498,9 +498,9 @@ impl BusAllocator {
     ///
     pub fn create_spi_no_hardware<TxDma, RxDma, Irq>(
         &mut self,
-        clk: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        mosi: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        miso: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        clk: Peri<'static, impl PioPin>,
+        mosi: Peri<'static, impl PioPin>,
+        miso: Peri<'static, impl PioPin>,
         irq: Irq,
         config: spi::Config,
     ) -> Result<SpiBusHandle, AllocatorError>
@@ -729,8 +729,8 @@ impl BusAllocator {
     /// PIO UART uses FIFO polling (no DMA required).
     pub fn create_uart_pio(
         &mut self,
-        tx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        rx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        tx: Peri<'static, impl PioPin>,
+        rx: Peri<'static, impl PioPin>,
         baud_rate: u32,
     ) -> Result<UartBusHandle, AllocatorError> {
         crate::bus::uart_pio::PioUartBus::<PIO0, 0, 1>::validate_baud(baud_rate)
@@ -770,8 +770,8 @@ impl BusAllocator {
     /// Returns an error if all fallbacks fail, or there was an error with the configuration.
     pub fn create_uart_no_hardware(
         &mut self,
-        tx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
-        rx: Peri<'static, impl embassy_rp::gpio::Pin + PioPin>,
+        tx: Peri<'static, impl PioPin>,
+        rx: Peri<'static, impl PioPin>,
         baud_rate: u32,
     ) -> Result<UartBusHandle, AllocatorError> {
         crate::bus::uart_pio::PioUartBus::<PIO0, 0, 1>::validate_baud(baud_rate)

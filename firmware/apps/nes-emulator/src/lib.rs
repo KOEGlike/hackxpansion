@@ -17,12 +17,11 @@ use runes::{
     ppu::{self, PPU},
     utils::{Read, Write},
 };
-use slint::platform::software_renderer::Rgb565Pixel;
 use xpanse_api::{
     app::App,
     interfaces::{
         buttons::{A, B, Button, Down, Left, Right, Up, X, Y},
-        video::{Rgb565FrameBuffer, Rgb565FrameSession},
+        video::{Rgb565FrameBuffer, Rgb565FrameSession, Rgb565Pixel},
     },
     registry::{Registry, ResourceLease},
 };

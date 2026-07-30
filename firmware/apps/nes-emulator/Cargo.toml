@@ -12,4 +12,3 @@ defmt = { workspace = true }
 embassy-futures = { workspace = true }
 embassy-time = { workspace = true }
 runes = { git = "https://github.com/Determinant/runes.git", rev = "fd12a0a915ca52e1f65b917feb46f28194328e33" }
-slint = { workspace = true }
