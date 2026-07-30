@@ -17,6 +17,7 @@ import { createProjectJournal, editProjectJournal } from '$lib/server/projects/j
 import { requireUser } from '$lib/server/guards';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
+	if (!locals.user) return {} as never;
 	const user = requireUser(locals);
 	if (!isUuid(params.id)) error(404, 'Project not found');
 

@@ -12,8 +12,18 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	signIn: async ({ url }) => {
-		const callbackURL = new URL(resolve('/home'), url.origin).toString();
+	signIn: async ({ request, url }) => {
+		const formData = await request.formData();
+		const returnTo = formData.get('returnTo');
+		const defaultCallbackURL = new URL(resolve('/home'), url.origin);
+		const requestedCallbackURL =
+			typeof returnTo === 'string' && returnTo.startsWith('/')
+				? new URL(returnTo, url.origin)
+				: defaultCallbackURL;
+		const callbackURL =
+			requestedCallbackURL.origin === url.origin
+				? requestedCallbackURL.toString()
+				: defaultCallbackURL.toString();
 
 		const res = await auth.api.signInWithOAuth2({
 			body: {

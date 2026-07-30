@@ -12,6 +12,7 @@ import { eq, and } from 'drizzle-orm';
 import { resolve } from '$app/paths';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
+	if (!locals.user) return {} as never;
 	const user = requireUser(locals);
 	if (!isUuid(params.id)) error(404, 'Project not found');
 

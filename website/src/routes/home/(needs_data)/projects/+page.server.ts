@@ -11,6 +11,7 @@ import { sumHackatimeMinutes } from '$lib/projects/time';
 import { eq, sql } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
+	if (!locals.user) return {} as never;
 	const currentUser = requireUser(locals);
 
 	const projects = await db

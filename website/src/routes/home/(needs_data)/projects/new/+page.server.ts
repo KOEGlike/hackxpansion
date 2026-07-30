@@ -7,6 +7,7 @@ import { requireUser } from '$lib/server/guards';
 import { resolve } from '$app/paths';
 
 export const load: PageServerLoad = async ({ locals }) => {
+	if (!locals.user) return {} as never;
 	const user = requireUser(locals);
 
 	return loadProjectFormHackatimeProjects(

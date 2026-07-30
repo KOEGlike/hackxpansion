@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { fade } from 'svelte/transition';
-	import { enhance } from '$app/forms';
 
 	type ModeSwitchRoute = '/' | '/simple';
 
