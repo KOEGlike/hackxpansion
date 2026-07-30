@@ -14,3 +14,4 @@ defmt = { workspace = true }
 embedded-io-async = { workspace = true }
 static_cell = { workspace = true }
 libm = { workspace = true }
+slint = { workspace = true }

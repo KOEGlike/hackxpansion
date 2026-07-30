@@ -1,92 +1,118 @@
-//! Direct indexed-color video resources available to apps.
+//! Direct RGB565 video resources available to apps.
 
-use alloc::{boxed::Box, sync::Arc, vec::Vec};
+use alloc::sync::Arc;
 use core::{
     cell::RefCell,
     marker::PhantomData,
-    sync::atomic::{AtomicU8, AtomicU32, Ordering},
+    sync::atomic::{AtomicU32, Ordering},
 };
 
-use embassy_sync::blocking_mutex::CriticalSectionMutex;
+use embassy_sync::blocking_mutex::{CriticalSectionMutex, ThreadModeMutex};
+
+pub use slint::platform::software_renderer::Rgb565Pixel;
 
 static NEXT_FRAME_ID: AtomicU32 = AtomicU32::new(1);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum FrameBufferError {
     InvalidDimensions,
-    EmptyPalette,
 }
 
-struct IndexedFrame {
+struct FrameStorage {
+    pixels: ThreadModeMutex<RefCell<&'static mut [Rgb565Pixel]>>,
+    len: usize,
+    width: u16,
+    height: u16,
+}
+
+struct ActiveFrame {
     id: u32,
     width: u16,
     height: u16,
-    pixels: Box<[AtomicU8]>,
-    palette: &'static [u16],
     revision: AtomicU32,
 }
 
 struct FrameLink {
-    active: CriticalSectionMutex<RefCell<Option<Arc<IndexedFrame>>>>,
+    storage: FrameStorage,
+    active: CriticalSectionMutex<RefCell<Option<Arc<ActiveFrame>>>>,
 }
 
-/// The app-facing indexed-color framebuffer capability stored in the registry.
-pub struct IndexedFrameBuffer {
+/// The app-facing RGB565 framebuffer capability stored in the registry.
+pub struct Rgb565FrameBuffer {
     link: Arc<FrameLink>,
 }
 
-/// The display-task endpoint paired with [`IndexedFrameBuffer`].
-pub struct IndexedFrameDisplay {
+/// The display-task endpoint paired with [`Rgb565FrameBuffer`].
+pub struct Rgb565FrameDisplay {
     link: Arc<FrameLink>,
 }
 
-/// Creates the platform framebuffer resource and its display-task endpoint.
-pub fn indexed_frame_buffer() -> (IndexedFrameBuffer, IndexedFrameDisplay) {
+/// Creates a platform framebuffer resource backed by caller-provided storage.
+pub fn rgb565_frame_buffer(
+    pixels: &'static mut [Rgb565Pixel],
+    width: u16,
+    height: u16,
+) -> Result<(Rgb565FrameBuffer, Rgb565FrameDisplay), FrameBufferError> {
+    let expected_len = usize::from(width)
+        .checked_mul(usize::from(height))
+        .filter(|len| *len > 0)
+        .ok_or(FrameBufferError::InvalidDimensions)?;
+    if pixels.len() != expected_len {
+        return Err(FrameBufferError::InvalidDimensions);
+    }
+
+    let len = pixels.len();
     let link = Arc::new(FrameLink {
+        storage: FrameStorage {
+            pixels: ThreadModeMutex::new(RefCell::new(pixels)),
+            len,
+            width,
+            height,
+        },
         active: CriticalSectionMutex::new(RefCell::new(None)),
     });
-    (
-        IndexedFrameBuffer {
+    Ok((
+        Rgb565FrameBuffer {
             link: Arc::clone(&link),
         },
-        IndexedFrameDisplay { link },
-    )
+        Rgb565FrameDisplay { link },
+    ))
 }
 
-impl IndexedFrameBuffer {
+impl Rgb565FrameBuffer {
     /// Starts a direct-rendering session which remains active until dropped.
     pub fn start(
         &mut self,
         width: u16,
         height: u16,
-        palette: &'static [u16],
-    ) -> Result<IndexedFrameSession<'_>, FrameBufferError> {
+    ) -> Result<Rgb565FrameSession<'_>, FrameBufferError> {
         let len = usize::from(width)
             .checked_mul(usize::from(height))
             .filter(|len| *len > 0)
             .ok_or(FrameBufferError::InvalidDimensions)?;
-        if palette.is_empty() {
-            return Err(FrameBufferError::EmptyPalette);
+        if width > self.link.storage.width
+            || height > self.link.storage.height
+            || len > self.link.storage.len
+        {
+            return Err(FrameBufferError::InvalidDimensions);
         }
 
-        let pixels = (0..len)
-            .map(|_| AtomicU8::new(0))
-            .collect::<Vec<_>>()
-            .into_boxed_slice();
-        let frame = Arc::new(IndexedFrame {
+        let frame = Arc::new(ActiveFrame {
             id: NEXT_FRAME_ID.fetch_add(1, Ordering::Relaxed),
             width,
             height,
-            pixels,
-            palette,
             revision: AtomicU32::new(0),
         });
         self.link
+            .storage
+            .pixels
+            .lock(|pixels| pixels.borrow_mut()[..len].fill(Rgb565Pixel(0)));
+        self.link
             .active
-            .lock(|active| *active.borrow_mut() = Some(frame.clone()));
+            .lock(|active| *active.borrow_mut() = Some(Arc::clone(&frame)));
 
-        Ok(IndexedFrameSession {
-            link: self.link.clone(),
+        Ok(Rgb565FrameSession {
+            link: Arc::clone(&self.link),
             frame,
             resource: PhantomData,
         })
@@ -94,19 +120,22 @@ impl IndexedFrameBuffer {
 }
 
 /// A scoped direct-rendering session borrowed from the registry resource.
-pub struct IndexedFrameSession<'a> {
+pub struct Rgb565FrameSession<'a> {
     link: Arc<FrameLink>,
-    frame: Arc<IndexedFrame>,
-    resource: PhantomData<&'a mut IndexedFrameBuffer>,
+    frame: Arc<ActiveFrame>,
+    resource: PhantomData<&'a mut Rgb565FrameBuffer>,
 }
 
-impl IndexedFrameSession<'_> {
-    pub fn set_pixel(&self, x: u16, y: u16, color: u8) {
+impl Rgb565FrameSession<'_> {
+    pub fn set_pixel(&self, x: u16, y: u16, color: Rgb565Pixel) {
         if x >= self.frame.width || y >= self.frame.height {
             return;
         }
         let index = usize::from(y) * usize::from(self.frame.width) + usize::from(x);
-        self.frame.pixels[index].store(color, Ordering::Relaxed);
+        self.link
+            .storage
+            .pixels
+            .lock(|pixels| pixels.borrow_mut()[index] = color);
     }
 
     /// Makes all pixel writes since the previous call available to the display task.
@@ -115,7 +144,7 @@ impl IndexedFrameSession<'_> {
     }
 }
 
-impl Drop for IndexedFrameSession<'_> {
+impl Drop for Rgb565FrameSession<'_> {
     fn drop(&mut self) {
         self.link.active.lock(|active| {
             let mut active = active.borrow_mut();
@@ -130,7 +159,8 @@ impl Drop for IndexedFrameSession<'_> {
 }
 
 pub struct PresentedFrame {
-    frame: Arc<IndexedFrame>,
+    link: Arc<FrameLink>,
+    frame: Arc<ActiveFrame>,
 }
 
 impl PresentedFrame {
@@ -143,23 +173,19 @@ impl PresentedFrame {
     }
 
     pub fn len(&self) -> usize {
-        self.frame.pixels.len()
+        usize::from(self.frame.width) * usize::from(self.frame.height)
     }
 
     pub fn is_empty(&self) -> bool {
-        self.frame.pixels.is_empty()
+        self.len() == 0
     }
 
-    pub fn pixel(&self, index: usize) -> u8 {
-        self.frame.pixels[index].load(Ordering::Relaxed)
-    }
-
-    pub fn color(&self, index: u8) -> u16 {
-        self.frame
-            .palette
-            .get(usize::from(index))
-            .copied()
-            .unwrap_or(0)
+    pub fn with_pixels<R>(&self, f: impl FnOnce(&[Rgb565Pixel]) -> R) -> R {
+        let len = self.len();
+        self.link
+            .storage
+            .pixels
+            .lock(|pixels| f(&pixels.borrow()[..len]))
     }
 
     pub fn token(&self) -> u64 {
@@ -168,7 +194,7 @@ impl PresentedFrame {
     }
 }
 
-impl IndexedFrameDisplay {
+impl Rgb565FrameDisplay {
     /// Returns the frame currently presented by the app holding the resource.
     pub fn active_frame(&self) -> Option<PresentedFrame> {
         self.link.active.lock(|active| {
@@ -176,7 +202,21 @@ impl IndexedFrameDisplay {
                 .borrow()
                 .as_ref()
                 .cloned()
-                .map(|frame| PresentedFrame { frame })
+                .map(|frame| PresentedFrame {
+                    link: Arc::clone(&self.link),
+                    frame,
+                })
+        })
+    }
+
+    /// Gives the platform mutable access to the shared storage while direct video is inactive.
+    pub fn with_buffer_mut<R>(&self, f: impl FnOnce(&mut [Rgb565Pixel]) -> R) -> Option<R> {
+        if self.link.active.lock(|active| active.borrow().is_some()) {
+            return None;
+        }
+        self.link.storage.pixels.lock(|pixels| {
+            let mut pixels = pixels.borrow_mut();
+            Some(f(&mut pixels))
         })
     }
 }

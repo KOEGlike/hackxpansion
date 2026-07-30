@@ -30,7 +30,7 @@ use xpanse_api::interfaces::video;
 pub use crate::app_picker::{down, left, right, select, up};
 
 static DRIVER_BUFFER: StaticCell<[u8; 512]> = StaticCell::new();
-static SLINT_BUFFER: ConstStaticCell<
+static DISPLAY_BUFFER: ConstStaticCell<
     [Rgb565Pixel; display::WIDTH as usize * display::HIGHT as usize],
 > = ConstStaticCell::new([Rgb565Pixel(0); display::WIDTH as usize * display::HIGHT as usize]);
 
@@ -75,8 +75,15 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         display::HIGHT as u32,
     ));
 
-    let slint_buffer = SLINT_BUFFER.take();
-    let (frame_buffer, frame_display) = video::indexed_frame_buffer();
+    let display_buffer = DISPLAY_BUFFER.take();
+    let (frame_buffer, frame_display) =
+        match video::rgb565_frame_buffer(&mut display_buffer[..], display::WIDTH, display::HIGHT) {
+            Ok(frame_buffer) => frame_buffer,
+            Err(error) => {
+                defmt::error!("ui_core: failed to create framebuffer: {}", error);
+                return;
+            }
+        };
     defmt::info!(
         "ui_core: Slint platform ready at {}x{}",
         display::WIDTH,
@@ -101,7 +108,6 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         let app = drive_ui_until(
             &window,
             &mut disp,
-            &mut slint_buffer[..],
             &frame_display,
             pick_app(&mut registry, &app_picker),
         )
@@ -111,7 +117,6 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
         drive_ui_until(
             &window,
             &mut disp,
-            &mut slint_buffer[..],
             &frame_display,
             run_app(app, &mut registry),
         )
@@ -123,8 +128,7 @@ pub async fn ui_core_task(display_peris: DisplayPeris) {
 async fn drive_ui_until<D, F>(
     window: &MinimalSoftwareWindow,
     disp: &mut D,
-    slint_buffer: &mut [Rgb565Pixel],
-    frame_display: &video::IndexedFrameDisplay,
+    frame_display: &video::Rgb565FrameDisplay,
     future: F,
 ) -> F::Output
 where
@@ -139,7 +143,6 @@ where
             render_ui(
                 window,
                 disp,
-                slint_buffer,
                 frame_display,
                 &mut direct_frame_token,
                 &mut direct_frame_active,
@@ -157,8 +160,7 @@ where
 fn render_ui<D>(
     window: &MinimalSoftwareWindow,
     disp: &mut D,
-    slint_buffer: &mut [Rgb565Pixel],
-    frame_display: &video::IndexedFrameDisplay,
+    frame_display: &video::Rgb565FrameDisplay,
     direct_frame_token: &mut u64,
     direct_frame_active: &mut bool,
 ) where
@@ -175,40 +177,46 @@ fn render_ui<D>(
         return;
     }
 
+    if *direct_frame_active {
+        window.request_redraw();
+    }
     *direct_frame_active = false;
     *direct_frame_token = 0;
     slint::platform::update_timers_and_animations();
 
     window.draw_if_needed(|renderer| {
-        let dirty_region = renderer.render(slint_buffer, display::WIDTH as usize);
-        let mut draw_failed = false;
+        let draw_failed = frame_display
+            .with_buffer_mut(|display_buffer| {
+                let dirty_region = renderer.render(display_buffer, display::WIDTH as usize);
 
-        for (origin, size) in dirty_region.iter() {
-            let x = origin.x as usize;
-            let y = origin.y as usize;
-            let width = size.width as usize;
-            let height = size.height as usize;
-            let pixels = (y..y + height).flat_map(|row| {
-                let start = row * display::WIDTH as usize + x;
-                slint_buffer[start..start + width]
-                    .iter()
-                    .map(slint_rgb565_into_embedded_graphics)
-            });
+                for (origin, size) in dirty_region.iter() {
+                    let x = origin.x as usize;
+                    let y = origin.y as usize;
+                    let width = size.width as usize;
+                    let height = size.height as usize;
+                    let pixels = (y..y + height).flat_map(|row| {
+                        let start = row * display::WIDTH as usize + x;
+                        display_buffer[start..start + width]
+                            .iter()
+                            .map(slint_rgb565_into_embedded_graphics)
+                    });
 
-            if disp
-                .fill_contiguous(
-                    &Rectangle {
-                        top_left: Point::new(origin.x, origin.y),
-                        size: Size::new(size.width, size.height),
-                    },
-                    pixels,
-                )
-                .is_err()
-            {
-                draw_failed = true;
-                break;
-            }
-        }
+                    if disp
+                        .fill_contiguous(
+                            &Rectangle {
+                                top_left: Point::new(origin.x, origin.y),
+                                size: Size::new(size.width, size.height),
+                            },
+                            pixels,
+                        )
+                        .is_err()
+                    {
+                        return true;
+                    }
+                }
+                false
+            })
+            .unwrap_or(false);
 
         if draw_failed {
             defmt::error!("ui_core: failed to draw display frame");
@@ -248,14 +256,16 @@ where
         ((u32::from(display::WIDTH) - width) / 2) as i32,
         ((u32::from(display::HIGHT) - height) / 2) as i32,
     );
-    let pixels = (0..frame.len()).map(|index| {
-        let color = frame.color(frame.pixel(index));
-        Rgb565::from(RawU16::new(color))
-    });
-    if disp
-        .fill_contiguous(&Rectangle::new(origin, Size::new(width, height)), pixels)
+    let draw_failed = frame.with_pixels(|pixels| {
+        disp.fill_contiguous(
+            &Rectangle::new(origin, Size::new(width, height)),
+            pixels
+                .iter()
+                .map(|pixel| Rgb565::from(RawU16::new(pixel.0))),
+        )
         .is_err()
-    {
+    });
+    if draw_failed {
         defmt::error!("ui_core: failed to draw direct framebuffer");
     }
 }

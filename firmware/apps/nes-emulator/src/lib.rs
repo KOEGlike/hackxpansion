@@ -17,11 +17,12 @@ use runes::{
     ppu::{self, PPU},
     utils::{Read, Write},
 };
+use slint::platform::software_renderer::Rgb565Pixel;
 use xpanse_api::{
     app::App,
     interfaces::{
         buttons::{A, B, Button, Down, Left, Right, Up, X, Y},
-        video::{IndexedFrameBuffer, IndexedFrameSession},
+        video::{Rgb565FrameBuffer, Rgb565FrameSession},
     },
     registry::{Registry, ResourceLease},
 };
@@ -46,7 +47,7 @@ const RGB_COLORS: [u32; 64] = [
     0xfeccc5, 0xf7d8a5, 0xe4e594, 0xcfef96, 0xbdf4ab, 0xb3f3cc, 0xb5ebf2, 0xb8b8b8, 0x000000,
     0x000000,
 ];
-const NES_PALETTE: [u16; 64] = rgb565_palette(RGB_COLORS);
+const NES_PALETTE: [Rgb565Pixel; 64] = rgb565_palette(RGB_COLORS);
 
 type AppButton<R> = ResourceLease<Box<dyn Button<R>>>;
 type NesResources = (
@@ -58,7 +59,7 @@ type NesResources = (
     Box<dyn Button<B>>,
     Box<dyn Button<X>>,
     Box<dyn Button<Y>>,
-    IndexedFrameBuffer,
+    Rgb565FrameBuffer,
 );
 
 pub struct NesEmulatorApp {
@@ -70,7 +71,7 @@ pub struct NesEmulatorApp {
     b: AppButton<B>,
     select: AppButton<X>,
     start: AppButton<Y>,
-    frame_buffer: ResourceLease<IndexedFrameBuffer>,
+    frame_buffer: ResourceLease<Rgb565FrameBuffer>,
 }
 
 impl App for NesEmulatorApp {
@@ -118,18 +119,17 @@ impl App for NesEmulatorApp {
             };
             let joystick = stdctl::Joystick::new(&input);
             let frame_ready = Cell::new(false);
-            let frame_buffer =
-                match self
-                    .frame_buffer
-                    .resource_mut()
-                    .start(NES_WIDTH, NES_HEIGHT, &NES_PALETTE)
-                {
-                    Ok(frame_buffer) => frame_buffer,
-                    Err(error) => {
-                        defmt::error!("NES: failed to start framebuffer: {}", error);
-                        return;
-                    }
-                };
+            let frame_buffer = match self
+                .frame_buffer
+                .resource_mut()
+                .start(NES_WIDTH, NES_HEIGHT)
+            {
+                Ok(frame_buffer) => frame_buffer,
+                Err(error) => {
+                    defmt::error!("NES: failed to start framebuffer: {}", error);
+                    return;
+                }
+            };
             let mut screen = NesScreen {
                 frame_buffer,
                 frame_ready: &frame_ready,
@@ -257,15 +257,18 @@ impl InputPoller for NesInput<'_> {
 }
 
 struct NesScreen<'a> {
-    frame_buffer: IndexedFrameSession<'a>,
+    frame_buffer: Rgb565FrameSession<'a>,
     frame_ready: &'a Cell<bool>,
     frame_number: u32,
 }
 
 impl ppu::Screen for NesScreen<'_> {
     fn put(&mut self, x: u8, y: u8, color: u8) {
-        self.frame_buffer
-            .set_pixel(u16::from(x), u16::from(y), color);
+        self.frame_buffer.set_pixel(
+            u16::from(x),
+            u16::from(y),
+            NES_PALETTE[usize::from(color & 0x3f)],
+        );
     }
 
     fn render(&mut self) {}
@@ -423,14 +426,15 @@ impl Cartridge for EmbeddedCart {
     }
 }
 
-const fn rgb565_palette(colors: [u32; 64]) -> [u16; 64] {
-    let mut palette = [0; 64];
+const fn rgb565_palette(colors: [u32; 64]) -> [Rgb565Pixel; 64] {
+    let mut palette = [Rgb565Pixel(0); 64];
     let mut index = 0;
     while index < colors.len() {
         let color = colors[index];
-        palette[index] = (((color >> 19) & 0x1f) << 11
-            | ((color >> 10) & 0x3f) << 5
-            | ((color >> 3) & 0x1f)) as u16;
+        palette[index] = Rgb565Pixel(
+            (((color >> 19) & 0x1f) << 11 | ((color >> 10) & 0x3f) << 5 | ((color >> 3) & 0x1f))
+                as u16,
+        );
         index += 1;
     }
     palette

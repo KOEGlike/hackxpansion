@@ -30,11 +30,7 @@ static EXECUTOR1: StaticCell<Executor> = StaticCell::new();
 
 #[global_allocator]
 static HEAP: Heap = Heap::empty();
-const HEAP_SIZE: usize = if option_env!("NES_ROM").is_some() {
-    256 * 1024
-} else {
-    64 * 1024
-};
+const HEAP_SIZE: usize = 64 * 1024;
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
