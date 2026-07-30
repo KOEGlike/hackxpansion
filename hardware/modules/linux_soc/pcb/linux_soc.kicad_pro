@@ -234,7 +234,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
       "similar_label_and_power": "warning",
@@ -388,7 +388,16 @@
       "sort_asc": true,
       "sort_field": "Reference"
     },
-    "bus_aliases": {},
+    "bus_aliases": {
+      "SD_DATA": [
+        "CLK",
+        "CMD",
+        "DAT0",
+        "DAT1",
+        "DAT2",
+        "DAT3"
+      ]
+    },
     "connection_grid_size": 50.0,
     "drawing": {
       "dashed_lines_dash_length_ratio": 12.0,
@@ -429,7 +438,7 @@
         "uuid": "3110ed2d-1365-46c2-882a-276fac3c0cba"
       }
     ],
-    "used_designators": "L1-2,C1-22,R1-8,#PWR1-27,U1-3,J1-3",
+    "used_designators": "L1-2,C1-24,R1-8,Y1,#PWR1-31,U1-3,J1-3",
     "variants": []
   },
   "sheets": [
@@ -444,6 +453,10 @@
     [
       "aad7590b-a91d-4443-bd3e-7b07e2a23cba",
       "PMIC"
+    ],
+    [
+      "9291378a-fad0-4d3e-bd26-a2bdfef1849f",
+      "SD_CARD"
     ]
   ],
   "text_variables": {},
