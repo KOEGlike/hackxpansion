@@ -6,6 +6,7 @@ import { env } from '$env/dynamic/private';
 import { base } from '$app/paths';
 
 const providerOwnedUserFields = new Set([
+	'isAdmin',
 	'slackId',
 	'verificationStatus',
 	'given_name',

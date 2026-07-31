@@ -51,6 +51,7 @@ export const project = pgTable(
 		tier: projectTier('tier'),
 		currencyPaidOut: integer('currency_paid_out').default(0).notNull(),
 		designCurrencyAwarded: boolean('design_currency_awarded').default(false).notNull(),
+		designApprovedType: projectType('design_approved_type'),
 		buildCurrencyAwarded: boolean('build_currency_awarded').default(false).notNull(),
 		md0: integer('md0'),
 		md1: integer('md1'),
@@ -126,6 +127,60 @@ export const review = pgTable(
 		rawPayload: jsonb('raw_payload').$type<OutboundBody>().notNull()
 	},
 	(table) => [index('review_project_id_idx').on(table.projectId)]
+);
+
+export const shopOrderStatusValues = ['in_queue', 'fulfilled'] as const;
+export const shopOrderStatus = pgEnum('shop_order_status', shopOrderStatusValues);
+
+export const shopItem = pgTable(
+	'shop_item',
+	{
+		id: text('id').primaryKey(),
+		name: text('name').notNull(),
+		description: text('description').notNull(),
+		price: integer('price').notNull(),
+		imageUrl: text('image_url'),
+		requiredModuleDesigns: integer('required_module_designs').default(0).notNull(),
+		requiredAppDesigns: integer('required_app_designs').default(0).notNull(),
+		active: boolean('active').default(true).notNull(),
+		sortOrder: integer('sort_order').default(0).notNull()
+	},
+	(table) => [
+		check('shop_item_price_nonnegative', sql`${table.price} >= 0`),
+		check(
+			'shop_item_requirements_nonnegative',
+			sql`${table.requiredModuleDesigns} >= 0 AND ${table.requiredAppDesigns} >= 0`
+		)
+	]
+);
+
+export const shopOrder = pgTable(
+	'shop_order',
+	{
+		id: uuid('id')
+			.primaryKey()
+			.default(sql`uuidv7()`),
+		status: shopOrderStatus('status').default('in_queue').notNull(),
+		pricePaid: integer('price_paid').notNull(),
+		notes: text('notes'),
+		fulfillmentMessage: text('fulfillment_message'),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		fulfilledAt: timestamp('fulfilled_at'),
+		itemId: text('item_id')
+			.notNull()
+			.references(() => shopItem.id, { onDelete: 'restrict' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		fulfilledByUserId: text('fulfilled_by_user_id').references(() => user.id, {
+			onDelete: 'set null'
+		})
+	},
+	(table) => [
+		index('shop_order_user_id_idx').on(table.userId),
+		index('shop_order_status_created_at_idx').on(table.status, table.createdAt),
+		check('shop_order_price_paid_nonnegative', sql`${table.pricePaid} >= 0`)
+	]
 );
 
 export * from './auth.schema';

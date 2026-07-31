@@ -25,6 +25,13 @@ export const auth = betterAuth({
 				defaultValue: 0,
 				input: false
 			},
+			isAdmin: {
+				type: 'boolean',
+				required: true,
+				defaultValue: false,
+				input: false,
+				returned: false
+			},
 			slackId: {
 				type: 'string',
 				required: true

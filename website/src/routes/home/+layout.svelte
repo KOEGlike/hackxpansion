@@ -36,6 +36,11 @@
 		{ title: 'Project Feed', href: '/home/explore' },
 		{ title: 'Project Matrix', href: '/home/explore/matrix' }
 	] as const;
+	const shopItems = [
+		{ title: 'Browse', href: '/home/shop' },
+		{ title: 'Your Orders', href: '/home/shop/orders' }
+	] as const;
+	const adminItems = [{ title: 'Orders', href: '/home/admin' }] as const;
 
 	function isCurrentPage(href: (typeof items)[number]['href']) {
 		const pathname = resolve(href);
@@ -46,7 +51,11 @@
 	}
 
 	function isExactPage(
-		href: (typeof docsItems)[number]['href'] | (typeof exploreItems)[number]['href']
+		href:
+			| (typeof docsItems)[number]['href']
+			| (typeof exploreItems)[number]['href']
+			| (typeof shopItems)[number]['href']
+			| (typeof adminItems)[number]['href']
 	) {
 		return page.url.pathname === resolve(href);
 	}
@@ -104,6 +113,20 @@
 									{/each}
 								</div>
 							{/if}
+							{#if item.href === '/home/shop' && isCurrentPage(item.href)}
+								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
+									{#each shopItems as shopItem (shopItem.href)}
+										<a
+											href={resolve(shopItem.href)}
+											class="text-lg hover:underline"
+											class:underline={isExactPage(shopItem.href)}
+											aria-current={isExactPage(shopItem.href) ? 'page' : undefined}
+										>
+											{shopItem.title}
+										</a>
+									{/each}
+								</div>
+							{/if}
 							{#if item.href === '/home/explore' && isCurrentPage(item.href)}
 								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
 									{#each exploreItems as exploreItem (exploreItem.href)}
@@ -119,6 +142,29 @@
 								</div>
 							{/if}
 						{/each}
+						{#if data.isAdmin}
+							<a
+								href={resolve('/home/admin')}
+								class="mt-3 text-3xl font-bold hover:underline"
+								class:underline={page.url.pathname.startsWith(resolve('/home/admin'))}
+								aria-current={page.url.pathname === resolve('/home/admin') ? 'page' : undefined}
+							>
+								ADMIN
+							</a>
+							{#if page.url.pathname.startsWith(resolve('/home/admin'))}
+								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
+									{#each adminItems as adminItem (adminItem.href)}
+										<a
+											href={resolve(adminItem.href)}
+											class="text-lg hover:underline"
+											class:underline={isExactPage(adminItem.href)}
+										>
+											{adminItem.title}
+										</a>
+									{/each}
+								</div>
+							{/if}
+						{/if}
 					</nav>
 				</div>
 

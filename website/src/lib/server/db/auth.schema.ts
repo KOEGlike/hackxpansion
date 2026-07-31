@@ -19,7 +19,8 @@ export const user = pgTable(
 		given_name: text('given_name'),
 		yswsEligible: boolean('ysws_eligible').notNull(),
 		pronouns: text('pronouns'),
-		currency: integer('currency').default(0).notNull()
+		currency: integer('currency').default(0).notNull(),
+		isAdmin: boolean('is_admin').default(false).notNull()
 	},
 	(table) => [check('user_currency_nonnegative', sql`${table.currency} >= 0`)]
 );

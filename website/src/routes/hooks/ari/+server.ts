@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				.select({
 					id: project.id,
 					status: project.status,
+					type: project.type,
 					tier: project.tier,
 					userId: project.userId,
 					designCurrencyAwarded: project.designCurrencyAwarded,
@@ -89,7 +90,10 @@ export const POST: RequestHandler = async ({ request }) => {
 							? {
 									currencyPaidOut: sql`${project.currencyPaidOut} + ${payout.amount}`,
 									...(payout.phase === 'design'
-										? { designCurrencyAwarded: true }
+										? {
+												designCurrencyAwarded: true,
+												designApprovedType: activeProject.type
+											}
 										: { buildCurrencyAwarded: true })
 								}
 							: {};
