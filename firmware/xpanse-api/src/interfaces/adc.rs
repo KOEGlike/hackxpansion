@@ -157,7 +157,6 @@ pub async fn read_adc_pin<P: AdcPin>(
 ) -> Result<u16, AdcError> {
     let mutex = adc_mutex().ok_or(AdcError::NotInitialized)?;
     let mut guard = mutex.lock().await;
-    // TODO: remove reborrow
     guard.read_pin_raw(pin.reborrow(), pull).await
 }
 
