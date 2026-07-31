@@ -1,9 +1,18 @@
+//! RP235x PIO UART backend using FIFO polling.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_uart_pio`](crate::bus::allocator::BusAllocator::create_uart_pio).
+//! Unlike the hardware UART, PIO UART consumes no DMA channels.
 use crate::bus::uart::UartError;
 use embassy_rp::Peri;
 use embassy_rp::pio::{Common, PioPin, StateMachine};
 use embassy_rp::pio_programs::uart::{PioUartRx, PioUartRxProgram, PioUartTx, PioUartTxProgram};
 use embassy_time::{Duration, Instant, TICK_HZ, Timer};
 
+/// PIO-backed UART bus implementing the async [`Read`] and [`Write`] traits.
+///
+/// [`Read`]: crate::reexports::embedded_io_async::Read
+/// [`Write`]: crate::reexports::embedded_io_async::Write
 pub struct PioUartBus<'d, PIO: embassy_rp::pio::Instance, const SM_TX: usize, const SM_RX: usize> {
     tx: PioUartTx<'d, PIO, SM_TX>,
     rx: PioUartRx<'d, PIO, SM_RX>,
@@ -18,10 +27,25 @@ pub struct PioUartBus<'d, PIO: embassy_rp::pio::Instance, const SM_TX: usize, co
 impl<'d, PIO: embassy_rp::pio::Instance, const SM_TX: usize, const SM_RX: usize>
     PioUartBus<'d, PIO, SM_TX, SM_RX>
 {
+    /// Validates a baud rate against PIO divider constraints.
+    ///
+    /// Returns [`UartError::InvalidBaudRate`] when `baud_rate` is zero,
+    /// unreachable, or would imply a baud error outside the
+    /// implementation's tolerance.
     pub fn validate_baud(baud_rate: u32) -> Result<(), UartError> {
         baud_parameters(baud_rate).map(|_| ())
     }
 
+    /// Builds a PIO UART from loaded TX/RX programs and two state machines.
+    ///
+    /// `tx_pin` and `rx_pin` must be PIO-capable GPIOs. The loaded programs are
+    /// kept alive for the bus's lifetime to reserve their instruction-memory
+    /// slots.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`UartError::InvalidBaudRate`] if the requested rate is
+    /// unreachable or too inaccurate.
     pub fn new(
         common: &mut Common<'d, PIO>,
         sm_tx: StateMachine<'d, PIO, SM_TX>,
@@ -48,6 +72,7 @@ impl<'d, PIO: embassy_rp::pio::Instance, const SM_TX: usize, const SM_RX: usize>
     }
 }
 
+/// Computes the programmed divider and actual achievable baud rate.
 fn baud_parameters(baud_rate: u32) -> Result<(u32, u64), UartError> {
     let clock = embassy_rp::clocks::clk_sys_freq() as u64;
     let denominator = 8u64.saturating_mul(baud_rate as u64);

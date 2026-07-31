@@ -82,9 +82,7 @@
 				MD1
 			</p>
 			<div class="col-start-1 row-start-2 flex items-center justify-center" aria-hidden="true">
-				<span class="rotate-180 text-base font-bold tracking-wide [writing-mode:vertical-rl]"
-					>MD0</span
-				>
+				<span class="rotate-180 text-base font-bold tracking-wide [vertical-rl]">MD0</span>
 			</div>
 			<div class="col-start-2 row-start-2 max-h-[calc(100vh-18rem)] min-w-0 overflow-auto">
 				<table class="border-separate border-spacing-1 text-xs" onmouseleave={clearHighlight}>

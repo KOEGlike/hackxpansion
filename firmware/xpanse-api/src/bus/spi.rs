@@ -1,7 +1,17 @@
+//! SPI bus abstraction.
+//!
+//! Wraps a concrete backend (hardware, PIO, or bit-banged) behind a single
+//! boxed trait object so that drivers can operate on an `SpiBusHandle`
+//! without knowing which backend was selected.
+//!
+//! [`BusAllocator`](crate::bus::allocator::BusAllocator) is the entry point used to
+//! allocate SPI buses at startup.
+
 use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;
 
+/// Error returned by SPI operations.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum SpiError {
     Overrun,
@@ -35,13 +45,18 @@ impl From<embassy_rp::pio_programs::spi::Error> for SpiError {
     }
 }
 
+/// Backend variant of an [`SpiBusHandle`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum SpiBusVersion {
+    /// Hardware SPI peripheral.
     Hardware,
+    /// PIO-based bit-banged SPI.
     Pio,
+    /// Pure GPIO bit-bang.
     BitBang,
 }
 
+/// Async, trait-object-safe SPI bus.
 pub trait DynSpiBus {
     fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>>;
 
@@ -67,6 +82,7 @@ pub trait DynSpiBus {
     ) -> Pin<Box<dyn Future<Output = Result<(), SpiError>> + 'a>>;
 }
 
+/// Blocking-only SPI bus used by some backends.
 pub trait DynSpiBusBlocking {
     fn flush_blocking(&mut self) -> Result<(), SpiError>;
     fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError>;
@@ -75,9 +91,24 @@ pub trait DynSpiBusBlocking {
     fn transfer_in_place_blocking(&mut self, words: &mut [u8]) -> Result<(), SpiError>;
 }
 
+/// Combined async + blocking trait-object SPI bus.
 pub trait DynSpiBusCombined: DynSpiBus + DynSpiBusBlocking + Send {}
 impl<T: DynSpiBus + DynSpiBusBlocking + Send> DynSpiBusCombined for T {}
 
+/// Owned handle to an async SPI bus.
+///
+/// Dropping this handle does not return its startup resources, so keep it alive
+/// for as long as you need SPI access.
+///
+/// # Example
+///
+/// ```ignore
+/// use xpanse_api::bus::spi::{SpiBusHandle, SpiError};
+///
+/// async fn write_read(bus: &mut SpiBusHandle, tx: &[u8], rx: &mut [u8]) -> Result<(), SpiError> {
+///     bus.transfer(rx, tx).await
+/// }
+/// ```
 #[must_use = "dropping a bus handle does not return its startup resources"]
 pub struct SpiBusHandle {
     inner: Box<dyn DynSpiBusCombined>,
@@ -85,50 +116,62 @@ pub struct SpiBusHandle {
 }
 
 impl SpiBusHandle {
+    /// Wraps a boxed backend and records its [`SpiBusVersion`].
     pub fn new(inner: Box<dyn DynSpiBusCombined>, version: SpiBusVersion) -> Self {
         Self { inner, version }
     }
 
+    /// Returns the backend variant.
     pub fn version(&self) -> SpiBusVersion {
         self.version
     }
 
+    /// Flush the bus.
     pub async fn flush(&mut self) -> Result<(), SpiError> {
         self.inner.flush().await
     }
 
+    /// Write bytes to the bus.
     pub async fn write(&mut self, data: &[u8]) -> Result<(), SpiError> {
         self.inner.write(data).await
     }
 
+    /// Read bytes from the bus (write 0xFF to clocks).
     pub async fn read(&mut self, data: &mut [u8]) -> Result<(), SpiError> {
         self.inner.read(data).await
     }
 
+    /// Write `write` and read `read` simultaneously.
     pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
         self.inner.transfer(read, write).await
     }
 
+    /// Transfer in place: `words` is both written and overwritten with read data.
     pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
         self.inner.transfer_in_place(words).await
     }
 
+    /// Flush the bus (blocking).
     pub fn flush_blocking(&mut self) -> Result<(), SpiError> {
         self.inner.flush_blocking()
     }
 
+    /// Write bytes to the bus (blocking).
     pub fn write_blocking(&mut self, data: &[u8]) -> Result<(), SpiError> {
         self.inner.write_blocking(data)
     }
 
+    /// Read bytes from the bus (blocking).
     pub fn read_blocking(&mut self, data: &mut [u8]) -> Result<(), SpiError> {
         self.inner.read_blocking(data)
     }
 
+    /// Write and read simultaneously (blocking).
     pub fn transfer_blocking(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), SpiError> {
         self.inner.transfer_blocking(read, write)
     }
 
+    /// Transfer in place (blocking).
     pub fn transfer_in_place_blocking(&mut self, words: &mut [u8]) -> Result<(), SpiError> {
         self.inner.transfer_in_place_blocking(words)
     }

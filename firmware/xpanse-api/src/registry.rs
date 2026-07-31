@@ -1,3 +1,39 @@
+//! Exclusive capability registry shared by drivers and apps.
+//!
+//! Drivers register one or more logical capabilities for each physical
+//! resource. Apps lease a capability by concrete Rust type. Leasing any
+//! capability removes its complete physical group, preventing aliases for the
+//! same hardware being used concurrently.
+//!
+//! # Example
+//!
+//! ```ignore
+//! use xpanse_api::{
+//!     metadata::{ModuleDetectResistor, ModuleID, ModuleSlot},
+//!     registry::{Registry, ResourceOrigin},
+//! };
+//!
+//! struct Fire;
+//! struct Confirm;
+//!
+//! let module_id = ModuleID {
+//!     md0: ModuleDetectResistor::R1K5,
+//!     md1: ModuleDetectResistor::R1K6,
+//! };
+//! let mut registry = Registry::new();
+//! registry
+//!     .register_group(ModuleSlot::FrontLeft, module_id, (Fire, Confirm))
+//!     .unwrap();
+//!
+//! let fire = registry.take_resource::<Fire>().unwrap();
+//! assert_eq!(fire.origin(), ResourceOrigin::Module);
+//! assert_eq!(fire.slot(), Some(ModuleSlot::FrontLeft));
+//!
+//! // Confirm aliases the same physical control, so it is unavailable too.
+//! assert!(!registry.has::<Confirm>());
+//! registry.return_resource(fire);
+//! assert!(registry.has::<Confirm>());
+//! ```
 use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
 use alloc::{vec, vec::Vec};
@@ -50,7 +86,9 @@ impl ResourceId {
 /// Describes where a resource group originated.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum ResourceOrigin {
+    /// Resource provided by the base platform rather than an expansion module.
     Platform,
+    /// Resource provided by a detected expansion module.
     Module,
 }
 
@@ -129,22 +167,27 @@ pub struct ResourceLease<T> {
 }
 
 impl<T: 'static> ResourceLease<T> {
+    /// Returns the identifier of the leased physical resource group.
     pub const fn id(&self) -> ResourceId {
         self.group.metadata.id()
     }
 
+    /// Returns whether the resource was registered by the platform or a module.
     pub const fn origin(&self) -> ResourceOrigin {
         self.group.metadata.origin()
     }
 
+    /// Returns the source module's slot, or `None` for platform resources.
     pub const fn slot(&self) -> Option<ModuleSlot> {
         self.group.metadata.slot()
     }
 
+    /// Returns the source module's ID, or `None` for platform resources.
     pub const fn module_id(&self) -> Option<ModuleID> {
         self.group.metadata.module_id()
     }
 
+    /// Borrows the capability selected for this lease.
     pub fn resource(&self) -> &T {
         self.group
             .capabilities
@@ -153,6 +196,7 @@ impl<T: 'static> ResourceLease<T> {
             .expect("resource lease contains its selected capability")
     }
 
+    /// Mutably borrows the capability selected for this lease.
     pub fn resource_mut(&mut self) -> &mut T {
         self.group
             .capabilities
@@ -168,20 +212,24 @@ mod private {
     pub trait ResourceSetSealed {}
 }
 
-/// A tuple of capabilities belonging to one physical resource group.
+/// A tuple of distinct capabilities belonging to one physical
+/// resource group.
 pub trait ResourceGroupCapabilities: private::GroupCapabilitiesSealed {
     #[doc(hidden)]
     fn into_capabilities(self) -> Result<CapabilityMap, RegistryError>;
 }
 
-/// A tuple of physical resource groups.
+/// A tuple of physical resource groups registered together.
 pub trait ResourceGroups: private::ResourceGroupsSealed {
     #[doc(hidden)]
     fn into_groups(self) -> Result<Vec<CapabilityMap>, RegistryError>;
 }
 
-/// A tuple of different resource types that must be allocated atomically.
+/// A tuple of distinct resource types allocated atomically.
+///
+/// Each requested type is assigned to a different physical resource group.
 pub trait ResourceSet: private::ResourceSetSealed {
+    /// Tuple of leases returned when the complete set is acquired.
     type Leases;
 
     #[doc(hidden)]
@@ -192,11 +240,19 @@ pub trait ResourceSet: private::ResourceSetSealed {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
+/// Error returned when a resource group cannot be registered.
 pub enum RegistryError {
+    /// A group contains the same concrete capability type more than once.
     DuplicateCapability,
+    /// A module-local resource ID is already registered for this slot.
     DuplicateResourceId,
 }
 
+/// Collection of available and currently leased physical resource groups.
+///
+/// Registry queries only count currently available groups. A group remains in
+/// the registry while leased, but none of its capabilities can be acquired
+/// until its [`ResourceLease`] is returned.
 pub struct Registry {
     id: u32,
     groups: Vec<ResourceGroupSlot>,
@@ -210,6 +266,10 @@ impl Default for Registry {
 }
 
 impl Registry {
+    /// Creates an empty registry with a unique identity.
+    ///
+    /// The identity prevents a lease from accidentally being returned to a
+    /// different registry.
     pub fn new() -> Self {
         Self {
             id: NEXT_REGISTRY_ID
@@ -241,6 +301,11 @@ impl Registry {
 
     /// Registers several logical capabilities backed by one physical module
     /// resource.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RegistryError::DuplicateCapability`] if the tuple contains a
+    /// concrete capability type more than once.
     pub fn register_group<C: ResourceGroupCapabilities>(
         &mut self,
         slot: ModuleSlot,
@@ -260,6 +325,15 @@ impl Registry {
     }
 
     /// Registers a physical module group with a stable driver-defined local ID.
+    ///
+    /// Local IDs only need to be unique within a module slot. They are useful
+    /// when an app needs to correlate capabilities across boots.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RegistryError::DuplicateCapability`] for duplicate capability
+    /// types or [`RegistryError::DuplicateResourceId`] when `local_id` is
+    /// already registered for `slot`.
     pub fn register_local_group<C: ResourceGroupCapabilities>(
         &mut self,
         slot: ModuleSlot,
@@ -278,6 +352,11 @@ impl Registry {
     }
 
     /// Atomically registers several physical groups from one module.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RegistryError::DuplicateCapability`] if any group repeats a
+    /// concrete capability type.
     pub fn register_groups<G: ResourceGroups>(
         &mut self,
         slot: ModuleSlot,
@@ -312,6 +391,11 @@ impl Registry {
 
     /// Registers several logical capabilities backed by one physical platform
     /// resource.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`RegistryError::DuplicateCapability`] if the tuple contains a
+    /// concrete capability type more than once.
     pub fn register_platform_group<C: ResourceGroupCapabilities>(
         &mut self,
         capabilities: C,
@@ -334,10 +418,12 @@ impl Registry {
             .count()
     }
 
+    /// Returns whether at least one currently available group provides `T`.
     pub fn has<T: 'static + Send>(&self) -> bool {
         self.has_at_least::<T>(1)
     }
 
+    /// Returns whether at least `count` currently available groups provide `T`.
     pub fn has_at_least<T: 'static + Send>(&self, count: usize) -> bool {
         self.resource_count::<T>() >= count
     }
@@ -360,6 +446,8 @@ impl Registry {
     }
 
     /// Atomically leases `count` different groups through capability `T`.
+    ///
+    /// A `count` of zero succeeds with an empty vector.
     pub fn take_resources<T: 'static + Send>(
         &mut self,
         count: usize,
@@ -388,6 +476,11 @@ impl Registry {
     }
 
     /// Returns a lease and makes its complete physical group available again.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the lease came from a different registry or if internal lease
+    /// invariants have been violated.
     pub fn return_resource<T: 'static + Send>(&mut self, lease: ResourceLease<T>) {
         let ResourceLease {
             registry_id,
@@ -439,6 +532,7 @@ impl Registry {
         id
     }
 
+    /// Returns the identifiers of every available group providing `T`.
     fn resource_ids<T: 'static + Send>(&self) -> Vec<ResourceId> {
         let resource_type = TypeId::of::<T>();
         self.groups
@@ -450,6 +544,7 @@ impl Registry {
             .collect()
     }
 
+    /// Leases the group identified by `id` as capability `T`.
     fn take_resource_with_id<T: 'static + Send>(&mut self, id: ResourceId) -> ResourceLease<T> {
         let resource_type = TypeId::of::<T>();
         let index = self
@@ -466,6 +561,7 @@ impl Registry {
         self.take_group_capability(index)
     }
 
+    /// Removes the group at `index` from the available pool and wraps it in a lease.
     fn take_group_capability<T: 'static + Send>(&mut self, index: usize) -> ResourceLease<T> {
         let group = self.groups[index]
             .available
@@ -487,12 +583,15 @@ impl Registry {
     }
 }
 
+/// Inserts a single capability into the registry.
 fn single_capability<T: 'static + Send>(resource: T) -> CapabilityMap {
     let mut capabilities = BTreeMap::new();
     capabilities.insert(TypeId::of::<T>(), Box::new(resource) as Box<dyn Any + Send>);
     capabilities
 }
 
+/// Finds an assignment of distinct resource IDs to requested types, or `None`
+/// if no valid matching exists.
 fn resource_assignment(candidates: &[Vec<ResourceId>]) -> Option<Vec<ResourceId>> {
     fn assign(
         candidates: &[Vec<ResourceId>],
@@ -522,6 +621,7 @@ fn resource_assignment(candidates: &[Vec<ResourceId>]) -> Option<Vec<ResourceId>
     assign(candidates, 0, &mut assignment).then_some(assignment)
 }
 
+/// Returns true when no `TypeId` appears more than once in `types`.
 fn types_are_distinct(types: &[TypeId]) -> bool {
     types
         .iter()

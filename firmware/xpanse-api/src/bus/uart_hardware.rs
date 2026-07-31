@@ -1,3 +1,9 @@
+//! RP235x hardware UART backend using DMA and interrupts.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_uart_hardware`](crate::bus::allocator::BusAllocator::create_uart_hardware).
+//! Reads return at most one byte per call, matching the streaming contract of
+//! all [`UartBusHandle`](crate::bus::uart::UartBusHandle) backends.
 use crate::bus::uart::UartError;
 use embassy_rp::Peri;
 use embassy_rp::dma::{self, ChannelInstance};
@@ -5,11 +11,20 @@ use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::uart::{Async, Config, Instance, InterruptHandler, Uart};
 use embassy_time::{Duration, Timer};
 
+/// DMA-backed RP235x UART bus implementing the async [`Read`] and [`Write`]
+/// traits.
+///
+/// [`Read`]: crate::reexports::embedded_io_async::Read
+/// [`Write`]: crate::reexports::embedded_io_async::Write
 pub struct HardwareUartBus<'d> {
     uart: Uart<'d, Async>,
 }
 
 impl<'d> HardwareUartBus<'d> {
+    /// Validates a UART configuration against the running peripheral clock.
+    ///
+    /// Returns [`UartError::InvalidBaudRate`] when the requested rate falls
+    /// outside the range the RP235x divisor can represent.
     pub fn validate_config(config: &Config) -> Result<(), UartError> {
         let clock = embassy_rp::clocks::clk_peri_freq() as u64;
         let baudrate = config.baudrate as u64;
@@ -20,6 +35,10 @@ impl<'d> HardwareUartBus<'d> {
         Ok(())
     }
 
+    /// Builds a UART bus from a previously validated configuration.
+    ///
+    /// `tx` and `rx` are role-checked against `I` at compile time, and `irq`
+    /// must bind both the UART interrupt and the TX/RX DMA interrupts.
     pub fn new<I, TxDma, RxDma>(
         peri: Peri<'d, I>,
         tx: Peri<'d, impl embassy_rp::uart::TxPin<I> + 'd>,

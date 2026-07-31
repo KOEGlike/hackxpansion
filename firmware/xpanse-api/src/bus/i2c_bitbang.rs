@@ -1,3 +1,7 @@
+//! GPIO bit-banged I2C master backend.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_i2c_bitbang`](crate::bus::allocator::BusAllocator::create_i2c_bitbang).
 use crate::bus::i2c::I2cError;
 use embassy_rp::Peri;
 use embassy_rp::gpio::{Level, OutputOpenDrain};
@@ -36,6 +40,14 @@ impl Drop for BusIdleGuard<'_> {
 }
 
 impl<'d> BitBangI2cBus<'d> {
+    /// Creates a bit-banged I2C master from two GPIO pins and a clock frequency.
+    ///
+    /// Both pins are configured as open-drain outputs with internal pull-ups.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`I2cError::Other`] for a zero frequency or a frequency above
+    /// twice the timer tick rate.
     pub fn new(
         scl: Peri<'d, impl embassy_rp::gpio::Pin>,
         sda: Peri<'d, impl embassy_rp::gpio::Pin>,

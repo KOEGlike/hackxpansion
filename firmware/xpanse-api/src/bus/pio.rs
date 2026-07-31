@@ -552,7 +552,7 @@ fn two_free_sms<PIO: Instance + Send + 'static>(slot: &PioSlot<PIO>) -> Option<(
     }
 }
 
-/// Dispatch over a [`PioAccess`] handle, recovering the typed `Common` and
+/// Dispatch over a `PioAccess` handle, recovering the typed `Common` and
 /// `StateMachine` so a driver can load a custom PIO program.
 ///
 /// The driver provides a **generic** function/closure that works for any

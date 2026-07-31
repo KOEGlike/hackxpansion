@@ -1,0 +1,16 @@
+words = [
+    "AVDD",
+    "DMA",
+    "PIO",
+    "PIO's",
+    "PWM",
+    "UART",
+    "baudrate",
+    "bitbang",
+    "clk",
+    "impls",
+    "mosi",
+    "scl",
+    "sda",
+    "xpanse",
+]

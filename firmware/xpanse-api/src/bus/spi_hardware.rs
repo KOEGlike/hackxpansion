@@ -1,14 +1,27 @@
+//! RP235x hardware SPI backend driven by DMA.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_spi_hardware`](crate::bus::allocator::BusAllocator::create_spi_hardware).
+//!
 use crate::bus::spi::SpiError;
 use embassy_rp::Peri;
 use embassy_rp::dma::{self, ChannelInstance};
 use embassy_rp::interrupt::typelevel::Binding;
 use embassy_rp::spi::{self, Async, Instance, Spi};
 
+/// DMA-backed RP235x SPI bus implementing both
+/// `embedded_hal::spi::SpiBus` and `embedded_hal_async::spi::SpiBus`
+/// for `SpiBusHandle`.
 pub struct HardwareSpiBus<'d, I: Instance> {
     spi: Spi<'d, I, Async>,
 }
 
 impl<'d, I: Instance> HardwareSpiBus<'d, I> {
+    /// Validates a configuration against the running peripheral clock and DMA
+    /// constraints.
+    ///
+    /// Returns [`SpiError::InvalidFrequency`] when the divider ratio falls
+    /// outside the range the RP235x hardware can represent.
     pub fn validate_config(config: &spi::Config) -> Result<(), SpiError> {
         let clock = embassy_rp::clocks::clk_peri_freq() as u64;
         let frequency = config.frequency as u64;

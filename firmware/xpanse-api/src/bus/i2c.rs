@@ -1,20 +1,39 @@
+//! I2C bus abstraction.
+//!
+//! Wraps a concrete backend (hardware, PIO, or bit-banged) behind a single
+//! boxed trait object so that drivers can operate on an `I2cBusHandle`
+//! without knowing which backend was selected.
+//!
+//! [`BusAllocator`](crate::bus::allocator::BusAllocator) is the entry point used to
+//! allocate I2C buses at startup.
+
 use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;
 
 use embedded_hal::i2c::{ErrorKind, Operation, SevenBitAddress};
 
+/// Error returned by I2C operations.
+///
+/// # Example
+///
+/// ```ignore
+/// use xpanse_api::bus::i2c::{I2cBusHandle, I2cError};
+///
+/// async fn read_register(bus: &mut I2cBusHandle, dev: u8, reg: u8) -> Result<u8, I2cError> {
+///     let mut buf = [0u8; 1];
+///     bus.write_read(dev, &[reg], &mut buf).await?;
+///     Ok(buf[0])
+/// }
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum I2cError {
-    /// I2C abort — e.g. NACK, bus stuck.
     Abort,
     ArbitrationLoss,
-    /// Invalid buffer length (zero-length read or write).
     InvalidBufferLength,
-    /// Address out of range.
     AddressOutOfRange,
-    /// The selected backend cannot preserve this operation sequence atomically.
     UnsupportedTransaction,
+    /// Any other error reported by the underlying backend.
     Other,
 }
 
@@ -56,9 +75,13 @@ impl From<embassy_rp::i2c::Error> for I2cError {
     }
 }
 
+/// Backend variant of an [`I2cBusHandle`].
+/// No PIO yet
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum I2cBusVersion {
+    /// Hardware I2C peripheral.
     Hardware,
+    /// Bit-banged via GPIO.
     BitBang,
     // PIO variant reserved for when embassy adds a PIO I2C program.
 }
@@ -93,6 +116,10 @@ pub trait DynI2cBus: Send {
         'op: 'a;
 }
 
+/// Owned handle to an async I2C bus.
+///
+/// Dropping this handle does not return its startup resources, so keep it alive
+/// for as long as you need I2C access.
 #[must_use = "dropping a bus handle does not return its startup resources"]
 pub struct I2cBusHandle {
     inner: Box<dyn DynI2cBus>,
@@ -100,22 +127,27 @@ pub struct I2cBusHandle {
 }
 
 impl I2cBusHandle {
+    /// Wraps a boxed backend and records its [`I2cBusVersion`].
     pub fn new(inner: Box<dyn DynI2cBus>, version: I2cBusVersion) -> Self {
         Self { inner, version }
     }
 
+    /// Returns the backend variant.
     pub fn version(&self) -> I2cBusVersion {
         self.version
     }
 
+    /// Read bytes from a 7-bit address.
     pub async fn read(&mut self, address: u8, read: &mut [u8]) -> Result<(), I2cError> {
         self.inner.read(address, read).await
     }
 
+    /// Write bytes to a 7-bit address.
     pub async fn write(&mut self, address: u8, write: &[u8]) -> Result<(), I2cError> {
         self.inner.write(address, write).await
     }
 
+    /// Write the `write` slice, then read into the `read` slice without releasing the bus.
     pub async fn write_read(
         &mut self,
         address: u8,
@@ -125,6 +157,7 @@ impl I2cBusHandle {
         self.inner.write_read(address, write, read).await
     }
 
+    /// Run a sequence of read/write operations atomically on the bus.
     pub async fn transaction(
         &mut self,
         address: u8,

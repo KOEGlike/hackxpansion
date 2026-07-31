@@ -1,9 +1,19 @@
+//! GPIO bit-banged SPI master backend.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_spi_bitbang`](crate::bus::allocator::BusAllocator::create_spi_bitbang).
+//! No chip-select line is managed here; use `embedded-hal-bus` or similar to
+//! share the bus with a device driver.
 use crate::bus::spi::SpiError;
 use embassy_rp::Peri;
 use embassy_rp::gpio::{Input, Level, Output};
 use embassy_rp::spi::{Config, Phase, Polarity};
 use embassy_time::{Duration, TICK_HZ, Timer};
 
+/// GPIO bit-banged SPI bus using timer-driven delays.
+///
+/// Implements both blocking and asynchronous SPI traits. Supported polarities
+/// and phases are determined by the RP235x GPIO pad capabilities.
 pub struct BitBangSpiBus<'d> {
     clk: Output<'d>,
     mosi: Output<'d>,
@@ -26,6 +36,10 @@ impl Drop for ClockIdleGuard<'_, '_> {
 }
 
 impl<'d> BitBangSpiBus<'d> {
+    /// Validates an SPI configuration against timer constraints.
+    ///
+    /// Returns [`SpiError::InvalidFrequency`] for a zero clock or a clock above
+    /// half the timer tick rate.
     pub fn validate_config(config: &Config) -> Result<(), SpiError> {
         if config.frequency == 0 || config.frequency as u64 > TICK_HZ / 2 {
             return Err(SpiError::InvalidFrequency);
@@ -33,6 +47,11 @@ impl<'d> BitBangSpiBus<'d> {
         Ok(())
     }
 
+    /// Creates a bit-banged SPI master from three GPIO pins and a configuration.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`SpiError::InvalidFrequency`] for an unsupported clock speed.
     pub fn new(
         clk: Peri<'d, impl embassy_rp::gpio::Pin>,
         mosi: Peri<'d, impl embassy_rp::gpio::Pin>,

@@ -1,7 +1,17 @@
+//! UART bus abstraction.
+//!
+//! Wraps a concrete backend (hardware, PIO, or bit-banged) behind a single
+//! boxed trait object so that drivers can operate on a `UartBusHandle`
+//! without knowing which backend was selected.
+//!
+//! [`BusAllocator`](crate::bus::allocator::BusAllocator) is the entry point used to
+//! allocate UART buses at startup.
+
 use alloc::boxed::Box;
 use core::future::Future;
 use core::pin::Pin;
 
+/// Error returned by UART operations.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum UartError {
     BufferFull,
@@ -10,6 +20,7 @@ pub enum UartError {
     Break,
     Parity,
     Framing,
+    /// Any other error reported by the underlying backend.
     Other,
 }
 
@@ -39,13 +50,18 @@ impl From<embassy_rp::uart::Error> for UartError {
     }
 }
 
+/// Backend variant of a [`UartBusHandle`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
 pub enum UartBusVersion {
+    /// Hardware UART peripheral.
     Hardware,
+    /// PIO-based programmable UART.
     Pio,
+    /// Pure GPIO bit-bang.
     BitBang,
 }
 
+/// Trait-object-safe async UART bus.
 pub trait DynUartBus: Send {
     fn write<'a>(
         &'a mut self,
@@ -58,6 +74,10 @@ pub trait DynUartBus: Send {
     fn flush<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = Result<(), UartError>> + 'a>>;
 }
 
+/// Owned handle to an async UART bus.
+///
+/// Dropping this handle does not return its startup resources, so keep it alive
+/// for as long as you need UART access.
 #[must_use = "dropping a bus handle does not return its startup resources"]
 pub struct UartBusHandle {
     inner: Box<dyn DynUartBus>,
@@ -65,10 +85,12 @@ pub struct UartBusHandle {
 }
 
 impl UartBusHandle {
+    /// Wraps a boxed backend and records its [`UartBusVersion`].
     pub fn new(inner: Box<dyn DynUartBus>, version: UartBusVersion) -> Self {
         Self { inner, version }
     }
 
+    /// Returns the backend variant.
     pub fn version(&self) -> UartBusVersion {
         self.version
     }

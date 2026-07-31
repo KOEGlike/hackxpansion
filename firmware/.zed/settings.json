@@ -8,4 +8,12 @@
       },
     },
   },
+  "languages": {
+      "TOML": {
+        "language_servers": [
+          "!codebook",
+          "..."
+        ]
+      }
+    }
 }

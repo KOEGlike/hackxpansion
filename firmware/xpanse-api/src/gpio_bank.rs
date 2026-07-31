@@ -1,3 +1,10 @@
+//! Strongly typed GPIO banks assigned to expansion modules.
+//!
+//! Each bank contains ten GPIOs and three PWM slices. [`BankPins`] records the
+//! fixed hardware roles available on those pins, allowing driver code to remain
+//! generic over the physical module slot while preserving compile-time pin
+//! checks.
+
 #![allow(non_camel_case_types)]
 
 use core::{
@@ -17,6 +24,10 @@ use embassy_rp::{
 
 use crate::bus::allocator::{I2cHw, SpiHw, UartHw};
 
+/// Common bounds required of every GPIO in an expansion bank.
+///
+/// This trait is implemented automatically for compatible RP235x pin types and
+/// is not intended to be implemented by drivers.
 pub trait BasePin:
     RefUnwindSafe
     + Send
@@ -31,7 +42,6 @@ pub trait BasePin:
 {
 }
 
-// Implement BasePin for any type T that implements all these traits
 impl<T> BasePin for T where
     T: RefUnwindSafe
         + Send
@@ -46,38 +56,76 @@ impl<T> BasePin for T where
 {
 }
 
+/// Type-level description of one expansion GPIO bank.
+///
+/// The firmware normally uses the tuple implementation supplied by this crate;
+/// drivers only need a generic `G: BankPins` bound.
 pub trait BankPins {
+    /// Hardware I2C instance connected to GPIO 0 and GPIO 1.
     type I2C: i2c::Instance + 'static + I2cHw;
+    /// Hardware SPI instance connected to GPIO 2 through GPIO 4.
     type SPI: spi::Instance + 'static + SpiHw;
+    /// Hardware UART instance connected to GPIO 5 and GPIO 6.
     type UART: uart::Instance + 'static + UartHw;
+    /// PWM slice connected to GPIO 7 and GPIO 8.
     type PWM_SLICE0: pwm::Slice + 'static;
+    /// PWM slice connected to GPIO 5 and GPIO 6.
     type PWM_SLICE1: pwm::Slice + 'static;
+    /// PWM slice connected to GPIO 2.
     type PWM_SLICE2: pwm::Slice + 'static;
+    /// GPIO 0, usable as I2C SCL.
     type GPIO0: BasePin + i2c::SclPin<Self::I2C>;
+    /// GPIO 1, usable as I2C SDA.
     type GPIO1: BasePin + i2c::SdaPin<Self::I2C>;
+    /// GPIO 2, usable as SPI clock or PWM channel A.
     type GPIO2: BasePin + spi::ClkPin<Self::SPI> + ChannelAPin<Self::PWM_SLICE2>;
+    /// GPIO 3, usable as SPI MISO.
     type GPIO3: BasePin + spi::MisoPin<Self::SPI>;
+    /// GPIO 4, usable as SPI MOSI.
     type GPIO4: BasePin + spi::MosiPin<Self::SPI>;
+    /// GPIO 5, usable as UART TX or PWM channel A.
     type GPIO5: BasePin + uart::TxPin<Self::UART> + ChannelAPin<Self::PWM_SLICE1>;
+    /// GPIO 6, usable as UART RX or PWM channel B.
     type GPIO6: BasePin + uart::RxPin<Self::UART> + ChannelBPin<Self::PWM_SLICE1>;
+    /// GPIO 7, usable as ADC input or PWM channel A.
     type GPIO7: BasePin + AdcChannel + AdcPin + ChannelAPin<Self::PWM_SLICE0>;
+    /// GPIO 8, usable as ADC input or PWM channel B.
     type GPIO8: BasePin + AdcChannel + AdcPin + ChannelBPin<Self::PWM_SLICE0>;
+    /// GPIO 9, available as general-purpose GPIO.
     type GPIO9: BasePin;
 }
 
+/// Owned peripheral tokens for one expansion module slot.
+///
+/// A [`Driver`](crate::driver::Driver) consumes this value during module
+/// initialization. Individual fields can then be moved into GPIO interfaces or
+/// bus constructors.
 pub struct GpioBank<G: BankPins> {
+    /// GPIO 0, with the bank's I2C SCL role.
     pub gpio0: Peri<'static, G::GPIO0>,
+    /// GPIO 1, with the bank's I2C SDA role.
     pub gpio1: Peri<'static, G::GPIO1>,
+    /// GPIO 2, with SPI clock and PWM roles.
     pub gpio2: Peri<'static, G::GPIO2>,
+    /// GPIO 3, with the SPI MISO role.
     pub gpio3: Peri<'static, G::GPIO3>,
+    /// GPIO 4, with the SPI MOSI role.
     pub gpio4: Peri<'static, G::GPIO4>,
+    /// GPIO 5, with UART TX and PWM roles.
     pub gpio5: Peri<'static, G::GPIO5>,
+    /// GPIO 6, with UART RX and PWM roles.
     pub gpio6: Peri<'static, G::GPIO6>,
+    /// GPIO 7, with ADC and PWM roles.
     pub gpio7: Peri<'static, G::GPIO7>,
+    /// GPIO 8, with ADC and PWM roles.
     pub gpio8: Peri<'static, G::GPIO8>,
+    /// GPIO 9, available as general-purpose GPIO.
     pub gpio9: Peri<'static, G::GPIO9>,
+    /// PWM slice shared by GPIO 7 and GPIO 8.
     pub pwm_slice0: Peri<'static, G::PWM_SLICE0>,
+    /// PWM slice shared by GPIO 5 and GPIO 6.
     pub pwm_slice1: Peri<'static, G::PWM_SLICE1>,
+    /// PWM slice connected to GPIO 2.
     pub pwm_slice2: Peri<'static, G::PWM_SLICE2>,
     _phantom: PhantomData<G>,
 }
@@ -174,6 +222,11 @@ impl<
         GPIO9,
     )>
 {
+    /// Builds a bank from the peripheral tokens assigned to one module slot.
+    ///
+    /// This is normally called by platform firmware after splitting the board's
+    /// peripherals. Module drivers receive the completed bank through
+    /// [`Driver::create`](crate::driver::Driver::create).
     pub fn new(
         gpio0: Peri<'static, GPIO0>,
         gpio1: Peri<'static, GPIO1>,

@@ -1,3 +1,10 @@
+//! GPIO button input wrappers.
+//!
+//! Provides logical button roles that drivers can publish through the
+//! [`crate::registry::Registry`] and that apps can wait on for press events.
+//! Each role is a zero-sized marker type; the physical pin is wired to a role
+//! at startup using `pin_button` or `aliased_pin_buttons`.
+
 use alloc::{boxed::Box, sync::Arc};
 use core::future::Future;
 use core::marker::PhantomData;
@@ -14,6 +21,10 @@ mod private {
     pub trait Sealed {}
 }
 
+/// Marker trait for a logical button role (e.g. `A`, `B`, `Up`).
+///
+/// The type itself is zero-sized; it exists only to name a resource slot in the
+/// [`crate::registry::Registry`].
 pub trait ButtonRole: private::Sealed + 'static + Send {}
 
 macro_rules! role {
@@ -28,11 +39,17 @@ macro_rules! role {
 
 role!(A, B, X, Y, Up, Down, Left, Right);
 
+/// Async interface for waiting on a button press and querying its state.
 pub trait Button<R: ButtonRole>: Send {
+    /// Wait until the button transitions to the pressed state.
+    ///
+    /// The returned future resolves once a debounced press is detected.
     fn wait_for_pressed<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
+    /// Returns `true` if the button is currently pressed.
     fn is_pressed(&self) -> bool;
 }
 
+/// A single button backed by one GPIO input.
 pub struct SingleButton<R: ButtonRole> {
     pin: Input<'static>,
     _role: PhantomData<R>,
@@ -50,6 +67,7 @@ impl<R: ButtonRole> SharedButton<R> {
 }
 
 impl<R: ButtonRole> SingleButton<R> {
+    /// Create a `SingleButton` from a GPIO pin configured with a pull-up.
     pub fn new(pin: Peri<'static, AnyPin>) -> Self {
         Self {
             pin: Input::new(pin, Pull::Up),
@@ -102,11 +120,35 @@ impl<R: ButtonRole> Button<R> for SharedButton<R> {
     }
 }
 
+/// Create a boxed [`Button`] of role `R` from a single GPIO pin.
+///
+/// The pin is consumed and configured internally with a pull-up resistor.
+///
+/// # Example
+///
+/// ```ignore
+/// use embassy_rp::gpio::AnyPin;
+/// use embassy_rp::Peri;
+/// use xpanse_api::interfaces::buttons::{A, pin_button};
+/// use xpanse_api::registry::Registry;
+///
+/// # async fn example(
+/// #     pin: Peri<'static, AnyPin>,
+/// #     registry: &mut Registry,
+/// #     slot: xpanse_api::metadata::ModuleSlot,
+/// # ) {
+/// let button = pin_button::<A>(pin);
+/// // registry.register(slot, id, button);
+/// # }
+/// ```
 pub fn pin_button<R: ButtonRole>(pin: Peri<'static, AnyPin>) -> Box<dyn Button<R>> {
     Box::new(SingleButton::<R>::new(pin))
 }
 
 /// Creates two logical button roles backed by one physical GPIO input.
+///
+/// This is useful when a single physical button (e.g. a side button) needs to
+/// serve two roles simultaneously, such as `A` and `Up`.
 pub fn aliased_pin_buttons<R: ButtonRole, Alias: ButtonRole>(
     pin: Peri<'static, AnyPin>,
 ) -> (Box<dyn Button<R>>, Box<dyn Button<Alias>>) {

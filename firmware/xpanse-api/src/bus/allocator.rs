@@ -11,7 +11,7 @@
 //!   implements the role trait for its actual function, so passing `miso` where
 //!   `clk` is expected is a type error.
 //! * Pins can't be paired with the wrong peripheral instance — the role traits
-//!   are parameterised by the instance (`ClkPin<SPI0>` vs `ClkPin<SPI1>`), so an
+//!   are parameterized by the instance (`ClkPin<SPI0>` vs `ClkPin<SPI1>`), so an
 //!   SPI0 pin can't be used with the SPI1 peripheral.
 //! * The backend can't be confused — there are separate `create_*_hardware`,
 //!   `create_*_pio` and `create_*_bitbang` methods. There is no `bool` flag and
@@ -22,13 +22,13 @@
 //!   handed out returns `Err(Exhausted)`.
 //! * PIO state machines are allocated soundly — the `PioManager` keeps every SM
 //!   alive, so all 12 SMs are independently available and no `(block, sm)`
-//!   combination the allocator returns is unbuildable.
+//!   combination the allocator returns is unbuild-able.
 //!
 //! Async SPI (hardware and PIO) requires DMA. Because embassy-rp models each
 //! DMA channel as a distinct type, the caller specifies the channel types
 //! (`TxDma`, `RxDma`) and provides the board's IRQ binding; the allocator
 //! dispenses the matching `Peri` tokens from its pool. PIO UART uses FIFO
-//! polling (no DMA), so [`create_uart`] provides a PIO→BitBang fallback without
+//! polling (no DMA), so [`BusAllocator::create_uart`](crate::bus::allocator::BusAllocator::create_uart) provides a PIO→BitBang fallback without
 //! DMA for baud rates supported by at least one backend.
 
 use embassy_rp::dma::{self, ChannelInstance};
@@ -56,10 +56,12 @@ use crate::bus::uart_bitbang::BitBangUartBus;
 use crate::bus::uart_hardware::HardwareUartBus;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, defmt::Format)]
+/// Startup-time resource allocation error.
 pub enum AllocatorError {
     /// The requested hardware peripheral, DMA channel or PIO state machine is
     /// already in use.
     Exhausted,
+    /// The requested backend, frequency, or pin-role combination is invalid.
     InvalidConfiguration,
 }
 
@@ -71,6 +73,7 @@ impl From<SpiError> for AllocatorError {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
+/// RP235x PIO instances
 pub enum PioBlock {
     Block0 = 0,
     Block1 = 1,
@@ -78,19 +81,26 @@ pub enum PioBlock {
 }
 
 impl PioBlock {
+    /// Every board PIO instance.
     pub const ALL: [PioBlock; 3] = [PioBlock::Block0, PioBlock::Block1, PioBlock::Block2];
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
+/// RP235x PIO state machine index within a block.
 pub enum Sm {
+    /// First state machine in a block.
     Sm0 = 0,
+    /// Second state machine in a block.
     Sm1 = 1,
+    /// Third state machine in a block.
     Sm2 = 2,
+    /// Fourth state machine in a block.
     Sm3 = 3,
 }
 
 impl Sm {
+    /// All state-machine indices within a single PIO block.
     pub const ALL: [Sm; 4] = [Sm::Sm0, Sm::Sm1, Sm::Sm2, Sm::Sm3];
 }
 
@@ -263,7 +273,7 @@ pub struct BusAllocator {
     pio_manager: PioManager,
 }
 
-/// The set of DMA channels the board hands to the allocator. Fields left as
+/// Set of DMA channels the board hands to the allocator. Fields left as
 /// `None` are not owned by the allocator and can't be dispensed.
 pub struct DmaPool {
     pub ch0: Option<Peri<'static, DMA_CH0>>,
@@ -285,7 +295,6 @@ pub struct DmaPool {
 }
 
 impl DmaPool {
-    /// No DMA channels — for boards that don't use async SPI/UART hardware.
     pub const fn none() -> Self {
         Self {
             ch0: None,
@@ -309,6 +318,31 @@ impl DmaPool {
 }
 
 impl BusAllocator {
+    /// Creates an allocator holding every provided peripheral.
+    ///
+    /// Supply `None` for any hardware instance the board does not want to expose
+    /// to drivers. Every PIO block is mandatory because PIO state machines back
+    /// several fallback buses.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use xpanse_api::bus::allocator::{BusAllocator, DmaPool};
+    ///
+    /// let p = embassy_rp::init(Default::default());
+    /// let buses = BusAllocator::new(
+    ///     Some(p.SPI0),
+    ///     Some(p.SPI1),
+    ///     Some(p.I2C0),
+    ///     Some(p.I2C1),
+    ///     Some(p.UART0),
+    ///     Some(p.UART1),
+    ///     DmaPool::none(),
+    ///     p.PIO0,
+    ///     p.PIO1,
+    ///     p.PIO2,
+    /// );
+    /// ```
     pub fn new(
         spi0: Option<Peri<'static, SPI0>>,
         spi1: Option<Peri<'static, SPI1>>,
@@ -350,33 +384,65 @@ impl BusAllocator {
 
     // ── SPI ──────────────────────────────────────────────────────────
 
-    /// Take the hardware SPI peripheral for instance `I`. Returns `Exhausted`
-    /// if it has already been handed out.
+    /// Requests exclusive access to one hardware SPI peripheral.
+    ///
+    /// Returns [`AllocatorError::Exhausted`] if the peripheral has already been
+    /// handed out.
     pub fn request_spi_hardware<I: SpiHw>(&mut self) -> Result<Peri<'static, I>, AllocatorError> {
         I::take_peri(self).ok_or(AllocatorError::Exhausted)
     }
 
-    /// Return a hardware SPI peripheral to the pool.
+    /// Returns a hardware SPI peripheral to the reusable pool.
     pub fn release_spi_hardware<I: SpiHw>(&mut self, peri: Peri<'static, I>) {
         I::return_peri(self, peri);
     }
 
-    /// Take a DMA channel from the pool. Returns `Exhausted` if it has already
-    /// been handed out.
+    /// Requests exclusive access to one DMA channel.
+    ///
+    /// Returns [`AllocatorError::Exhausted`] if the channel has already been
+    /// handed out.
     pub fn request_dma<C: DmaChannel>(&mut self) -> Result<Peri<'static, C>, AllocatorError> {
         C::take_peri(self).ok_or(AllocatorError::Exhausted)
     }
 
-    /// Return a DMA channel to the pool.
+    /// Returns a DMA channel to the reusable pool.
     pub fn release_dma<C: DmaChannel>(&mut self, peri: Peri<'static, C>) {
         C::return_peri(self, peri);
     }
 
-    /// Build a hardware SPI bus backed by DMA (truly async). Pin roles and
+    /// Builds a hardware SPI bus backed by DMA (truly async). Pin roles and
     /// instance are checked at compile time: `clk` must be a `ClkPin<I>`,
     /// `mosi` a `MosiPin<I>`, `miso` a `MisoPin<I>`. The DMA channels are
     /// pulled from the allocator's pool; the IRQ binding is the board's
     /// zero-sized `bind_interrupts!` type.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] for an unsupported SPI
+    /// clock, or if `TxDma` and `RxDma` name the same DMA channel type. Returns
+    /// [`AllocatorError::Exhausted`] if the SPI peripheral or either DMA channel
+    /// is unavailable; in that case already-acquired resources are released.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use embassy_rp::spi;
+    /// use xpanse_api::bus::allocator::BusAllocator;
+    /// use xpanse_api::reexports::embassy_rp::{peripherals::*, interrupt::typelevel::Binding};
+    ///
+    /// embassy_rp::bind_interrupts!(struct Irqs {
+    ///     DMA_CH0 => embassy_rp::dma::InterruptHandler<DMA_CH0>;
+    ///     DMA_CH1 => embassy_rp::dma::InterruptHandler<DMA_CH1>;
+    /// });
+    ///
+    /// fn make_spi(buses: &mut BusAllocator, p: SplitParts) -> SpiBusHandle {
+    ///     buses.create_spi_hardware::<SPI0, DMA_CH0, DMA_CH1, _>(
+    ///         p.gpio2, p.gpio4, p.gpio3, Irqs, spi::Config::default(),
+    ///     )
+    ///     .expect("SPI configured in range")
+    /// }
+    /// # use xpanse_api::bus::spi::SpiBusHandle;
+    /// ```
     pub fn create_spi_hardware<I, TxDma, RxDma, Irq>(
         &mut self,
         clk: Peri<'static, impl ClkPin<I>>,
@@ -423,7 +489,15 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a PIO-backed SPI bus (async via DMA) on any free PIO state machine.
+    /// Builds a PIO-backed SPI bus (async via DMA) on any free PIO state machine.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the clock frequency
+    /// is unsupported, the pins span different GPIO banks, or the requested TX
+    /// and RX DMA channels are the same type. Returns
+    /// [`AllocatorError::Exhausted`] if no matching PIO state machine or DMA
+    /// channel is free; acquired DMA channels are released on failure.
     pub fn create_spi_pio<TxDma, RxDma, Irq>(
         &mut self,
         clk: Peri<'static, impl PioPin>,
@@ -475,7 +549,12 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a bit-banged SPI bus using only GPIO. Invalid frequencies are rejected.
+    /// Builds a bit-banged SPI bus using only GPIO.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] only for an SPI clock
+    /// outside the bit-bang timing range.
     pub fn create_spi_bitbang(
         &mut self,
         clk: Peri<'static, impl embassy_rp::gpio::Pin>,
@@ -493,9 +572,14 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a SPI bus, preferring PIO then bit-bang.
-    /// There is
+    /// Builds a SPI bus that doesn't use hardware, preferring PIO then bit-bang.
     ///
+    /// If PIO cannot be built, any
+    /// PIO SM reservation is released before dropping to a bit-banged bus.
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the frequency is
+    /// unsupported anywhere, or if the requested TX and RX DMA channels are the
+    /// same type.
     pub fn create_spi_no_hardware<TxDma, RxDma, Irq>(
         &mut self,
         clk: Peri<'static, impl PioPin>,
@@ -559,6 +643,16 @@ impl BusAllocator {
         self.create_spi_bitbang(clk, mosi, miso, config)
     }
 
+    /// Builds a SPI bus, preferring hardware then PIO then bit-bang.
+    ///
+    /// Pins must implement both role-checked SPI traits and `PioPin` so a
+    /// PIO fallback remains possible. If hardware SPI cannot be built, DMA
+    /// channels are released before falling back. If PIO cannot be built, any
+    /// PIO SM reservation is released before dropping to a bit-banged bus.
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the frequency is
+    /// unsupported anywhere, or if the requested TX and RX DMA channels are the
+    /// same type.
     pub fn create_spi<I, TxDma, RxDma, Irq>(
         &mut self,
         clk: Peri<'static, impl ClkPin<I> + PioPin>,
@@ -612,20 +706,45 @@ impl BusAllocator {
 
     // ── I2C ──────────────────────────────────────────────────────────
 
-    /// Take the hardware I2C peripheral for instance `I`. There is no PIO or
-    /// bit-bang fallback for I2C yet — request it explicitly.
+    /// Requests exclusive access to one hardware I2C peripheral.
+    ///
+    /// Returns [`AllocatorError::Exhausted`] if the peripheral has already been
+    /// handed out.
     pub fn request_i2c_hardware<I: I2cHw>(&mut self) -> Result<Peri<'static, I>, AllocatorError> {
         I::take_peri(self).ok_or(AllocatorError::Exhausted)
     }
 
-    /// Return a hardware I2C peripheral to the pool.
+    /// Returns a hardware I2C peripheral to the reusable pool.
     pub fn release_i2c_hardware<I: I2cHw>(&mut self, peri: Peri<'static, I>) {
         I::return_peri(self, peri);
     }
 
-    /// Build a hardware I2C bus (async, interrupt-driven — no DMA needed).
-    /// `scl`/`sda` are role-checked against `I` at compile time. The IRQ
-    /// binding is the board's `bind_interrupts!` type for the I2C interrupt.
+    /// Builds a hardware I2C bus (async, interrupt-driven — no DMA needed).
+    ///
+    /// `scl` and `sda` are role-checked against `I` at compile time, and `irq`
+    /// is the board's `bind_interrupts!` type for the I2C interrupt.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the frequency or
+    /// derived clock dividers are out of range, or
+    /// [`AllocatorError::Exhausted`] if the I2C peripheral is unavailable.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use embassy_rp::i2c;
+    /// use xpanse_api::bus::allocator::BusAllocator;
+    ///
+    /// embassy_rp::bind_interrupts!(struct Irqs {
+    ///     I2C0_IRQ => embassy_rp::i2c::InterruptHandler<embassy_rp::peripherals::I2C0>;
+    /// });
+    ///
+    /// let bus = buses.create_i2c_hardware::<embassy_rp::peripherals::I2C0, _>(
+    ///     p.gpio0, p.gpio1, Irqs, i2c::Config::default(),
+    /// )
+    /// .expect("I2C configured in range");
+    /// ```
     pub fn create_i2c_hardware<I, Irq>(
         &mut self,
         scl: Peri<'static, impl i2c::SclPin<I>>,
@@ -648,9 +767,14 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a bit-banged I2C bus using two GPIO pins with open-drain
+    /// Builds a bit-banged I2C bus using two GPIO pins with open-drain
     /// capability. Frequencies outside the timer's range are rejected.
-    /// `scl`/`sda` are role-checked against `I` at compile time.
+    /// `scl` and `sda` may be any GPIO pins; they are not role-checked.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] for a frequency above
+    /// twice the timer tick rate or zero.
     pub fn create_i2c_bitbang(
         &mut self,
         scl: Peri<'static, impl embassy_rp::gpio::Pin>,
@@ -667,18 +791,30 @@ impl BusAllocator {
 
     // ── UART ─────────────────────────────────────────────────────────
 
-    /// Take the hardware UART peripheral for instance `I`.
+    /// Requests exclusive access to one hardware UART peripheral.
+    ///
+    /// Returns [`AllocatorError::Exhausted`] if the peripheral has already been
+    /// handed out.
     pub fn request_uart_hardware<I: UartHw>(&mut self) -> Result<Peri<'static, I>, AllocatorError> {
         I::take_peri(self).ok_or(AllocatorError::Exhausted)
     }
 
-    /// Return a hardware UART peripheral to the pool.
+    /// Returns a hardware UART peripheral to the reusable pool.
     pub fn release_uart_hardware<I: UartHw>(&mut self, peri: Peri<'static, I>) {
         I::return_peri(self, peri);
     }
 
-    /// Build a hardware (DMA) UART bus. `tx`/`rx` are role-checked against `I`
-    /// at compile time. The DMA channels are pulled from the allocator's pool.
+    /// Builds a hardware (DMA) UART bus.
+    ///
+    /// `tx` and `rx` are role-checked against `I` at compile time. The DMA
+    /// channels are pulled from the allocator's pool.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] for an unsupported
+    /// baud rate or if `TxDma` and `RxDma` name the same channel type. Returns
+    /// [`AllocatorError::Exhausted`] if the UART peripheral or a DMA channel is
+    /// unavailable; already-acquired resources are released on failure.
     pub fn create_uart_hardware<I, TxDma, RxDma, Irq>(
         &mut self,
         tx: Peri<'static, impl uart::TxPin<I>>,
@@ -725,8 +861,15 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a PIO-backed UART bus on any two free state machines of one block.
-    /// PIO UART uses FIFO polling (no DMA required).
+    /// Builds a PIO-backed UART bus on any two free state machines of one block.
+    ///
+    /// PIO UART uses FIFO polling and needs no DMA.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the baud rate is
+    /// unsupported or `tx` and `rx` are not in the same GPIO bank. Returns
+    /// [`AllocatorError::Exhausted`] if no PIO state machine pair is free.
     pub fn create_uart_pio(
         &mut self,
         tx: Peri<'static, impl PioPin>,
@@ -745,7 +888,14 @@ impl BusAllocator {
             .ok_or(AllocatorError::Exhausted)
     }
 
-    /// Build a bit-banged UART bus using only GPIO at a representable baud.
+    /// Builds a bit-banged UART bus using only GPIO at a representable baud.
+    ///
+    /// 8-N-1 framing, idle-high TX line, one-byte reads.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] for a baud rate of zero
+    /// or above the timer's maximum.
     pub fn create_uart_bitbang(
         &mut self,
         tx: Peri<'static, impl embassy_rp::gpio::Pin>,
@@ -762,12 +912,18 @@ impl BusAllocator {
         ))
     }
 
-    /// Build a UART bus, preferring PIO then bit-bang. Hardware UART requires
-    /// DMA — request it explicitly with
-    /// [`create_uart_hardware`](Self::create_uart_hardware) or
-    /// [`create_uart`](Self::create_uart).
+    /// Builds a UART bus, preferring PIO then bit-bang.
     ///
-    /// Returns an error if all fallbacks fail, or there was an error with the configuration.
+    /// Hardware UART requires DMA — request it explicitly with
+    /// [`create_uart_hardware`](Self::create_uart_hardware) or
+    /// [`BusAllocator::create_uart`](crate::bus::allocator::BusAllocator::create_uart)(Self::create_uart).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the baud rate is
+    /// unsupported or `tx` and `rx` are not in the same GPIO bank. Returns
+    /// [`AllocatorError::Exhausted`] if PIO state machines are free but all
+    /// fallbacks ultimately fail.
     pub fn create_uart_no_hardware(
         &mut self,
         tx: Peri<'static, impl PioPin>,
@@ -798,10 +954,18 @@ impl BusAllocator {
         self.create_uart_bitbang(tx, rx, baud_rate)
     }
 
-    /// Tries to create a UART bus using hardware UART peripherals and DMA channels, if that fails, falls back to PIO UART,
-    /// if that also fails, falls back to bit-bang UART.
+    /// Builds a UART bus, preferring hardware then PIO then bit-bang.
     ///
-    /// Returns an error if all three fallbacks fail, or there was an error with the configuration.
+    /// Pins must implement both role-checked UART traits and `PioPin` so a
+    /// PIO fallback remains possible. On the hardware failure path, any
+    /// acquired UART peripheral or DMA channel is released before the fallback
+    /// is attempted.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`AllocatorError::InvalidConfiguration`] if the baud rate is
+    /// unsupported or `TxDma` and `RxDma` name the same channel type. Returns
+    /// [`AllocatorError::Exhausted`] if all three backends are unavailable.
     pub fn create_uart<I, TxDma, RxDma, Irq>(
         &mut self,
         tx: Peri<'static, impl uart::TxPin<I> + PioPin>,
@@ -861,15 +1025,19 @@ impl BusAllocator {
 
     // ── PIO ─────────────────────────────────────────────────────────
 
-    /// Hand out one free PIO state machine on any block, together with the
-    /// block's `Common` handle.  Drivers that load custom PIO programs use
-    /// this, then call [`with_pio!`](crate::with_pio!) to dispatch over the
-    /// erased block/SM types.
+    /// Hands out one free PIO state machine on any block, together with the
+    /// block's `Common` handle. Drivers that load custom PIO programs use this,
+    /// then call [`with_pio!`](crate::with_pio!) to dispatch over the erased
+    /// block/SM types.
     ///
-    /// The `Common` borrow is only valid while the returned `PioAccess` is
-    /// alive (i.e. while you hold `&mut BusAllocator`).  Programs loaded via
+    /// The `Common` borrow is only valid while the returned [`crate::bus::pio::PioAccess`] is
+    /// alive (i.e. while you hold `&mut BusAllocator`). Programs loaded via
     /// `Common` produce `'static` handles, so a driver can load a program,
-    /// configure the SM, and keep the results after the borrow ends.
+    /// configure the SM, and then keep the `LoadedProgram` + `StateMachine`
+    /// after the borrow ends.
+    ///
+    /// Returns `None` if every state machine on every block is in use, the pin
+    /// is not a PIO-capable GPIO, or 32 instructions have already been reserved.
     pub fn request_pio<P: PioPin>(
         &mut self,
         pin: &Peri<'static, P>,

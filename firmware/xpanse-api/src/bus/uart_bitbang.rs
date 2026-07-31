@@ -1,8 +1,18 @@
+//! GPIO bit-banged UART backend.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_uart_bitbang`](crate::bus::allocator::BusAllocator::create_uart_bitbang).
+//! 8-N-1 framing is used with an idle-high TX line. Reads return at most one
+//! byte, matching the streaming nature of the other UART backends.
 use crate::bus::uart::UartError;
 use embassy_rp::Peri;
 use embassy_rp::gpio::{Input, Level, Output, Pull};
 use embassy_time::{Duration, TICK_HZ, Timer};
 
+/// GPIO bit-banged UART bus implementing the async [`Read`] and [`Write`] traits.
+///
+/// [`Read`]: crate::reexports::embedded_io_async::Read
+/// [`Write`]: crate::reexports::embedded_io_async::Write
 pub struct BitBangUartBus<'d> {
     tx: Output<'d>,
     rx: Input<'d>,
@@ -18,6 +28,10 @@ impl Drop for TxIdleGuard<'_, '_> {
 }
 
 impl<'d> BitBangUartBus<'d> {
+    /// Validates a baud rate against timer constraints.
+    ///
+    /// Returns [`UartError::InvalidBaudRate`] for a zero baud rate or a rate
+    /// above one quarter of the timer tick frequency.
     pub fn validate_baud(baud_rate: u32) -> Result<(), UartError> {
         if baud_rate == 0 || baud_rate as u64 > TICK_HZ / 4 {
             return Err(UartError::InvalidBaudRate);
@@ -25,6 +39,15 @@ impl<'d> BitBangUartBus<'d> {
         Ok(())
     }
 
+    /// Creates a bit-banged UART from TX/RX GPIO pins and a baud rate.
+    ///
+    /// The TX pin is driven high when idle; the RX pin uses an internal
+    /// pull-up.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`UartError::InvalidBaudRate`] if
+    /// [`validate_baud`](Self::validate_baud) rejects `baud_rate`.
     pub fn new(
         tx: Peri<'d, impl embassy_rp::gpio::Pin>,
         rx: Peri<'d, impl embassy_rp::gpio::Pin>,

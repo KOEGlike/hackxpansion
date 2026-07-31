@@ -1,7 +1,13 @@
-//! Metadata for apps about the drivers, like what physiscal slot the module is in, that the driver uses,
-//! and what type of module is used by the driver
+//! Metadata for apps about the drivers, like what physical slot the module is in, that the driver uses,
+//! and what type of module is used by the driver.
+//!
+//! Module identification is resistor-coded: two detection resistors (`md0` and
+//! `md1`) are read by the ADC at boot. The combination uniquely selects a
+//! [`ModuleID`], which a [`crate::driver::Driver`] matches against its
+//! [`DriverMeta::ID`](crate::driver::DriverMeta::ID) constant.
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
+/// Physical slot that a module is plugged into.
 pub enum ModuleSlot {
     FrontRight,
     FrontLeft,
@@ -9,12 +15,16 @@ pub enum ModuleSlot {
     BackLeft,
 }
 
+/// Resistor-coded module identifier: two 12-bit detection resistor values.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub struct ModuleID {
+    /// Resistor on detection line 0.
     pub md0: ModuleDetectResistor,
+    /// Resistor on detection line 1.
     pub md1: ModuleDetectResistor,
 }
 
+/// Standard E24-series resistor values used for module detection.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, defmt::Format)]
 pub enum ModuleDetectResistor {
     R1K,
@@ -68,10 +78,27 @@ pub enum ModuleDetectResistor {
     R100K,
 }
 
+/// Fixed 10 kΩ pull-down resistor on the module-detection line.
 pub const BOTTOM_RESISTOR: f64 = 10_000.0;
+
+/// Supply voltage (nominal 3.3 V) used for the resistor-divider ADC reading.
 pub const AVDD: f64 = 3.3;
 
 impl ModuleDetectResistor {
+    /// Convert a measured divider voltage back to the closest standard resistor value.
+    ///
+    /// Returns `None` if the voltage is out of range (≤ 0 V or ≥ `AVDD`) or the
+    /// computed resistance falls outside the E24 range.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use xpanse_api::metadata::{ModuleDetectResistor, AVDD, BOTTOM_RESISTOR};
+    ///
+    /// // A 10 kΩ resistor with the 10 kΩ pull-down gives half of AVDD.
+    /// let voltage = AVDD / 2.0;
+    /// assert_eq!(ModuleDetectResistor::from_voltage(voltage), Some(ModuleDetectResistor::R10K));
+    /// ```
     pub fn from_voltage(voltage: f64) -> Option<Self> {
         if !voltage.is_finite() || voltage <= 0.0 || voltage >= AVDD {
             return None;
@@ -138,7 +165,7 @@ const RESISTOR_MAP: &[(f64, ModuleDetectResistor)] = &[
     (33_000.0, ModuleDetectResistor::R33K),
     (36_000.0, ModuleDetectResistor::R36K),
     (39_000.0, ModuleDetectResistor::R39K),
-    (43_000.0, ModuleDetectResistor::R43K),
+    (43_000.0, ModuleDetectResistor::R4K3),
     (47_000.0, ModuleDetectResistor::R47K),
     (51_000.0, ModuleDetectResistor::R51K),
     (56_000.0, ModuleDetectResistor::R56K),

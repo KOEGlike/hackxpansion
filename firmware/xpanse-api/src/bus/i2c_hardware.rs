@@ -1,3 +1,7 @@
+//! RP235x hardware I2C backend, interrupt-driven with no DMA.
+//!
+//! The platform normally constructs these buses through
+//! [`BusAllocator::create_i2c_hardware`](crate::bus::allocator::BusAllocator::create_i2c_hardware).
 use alloc::vec::Vec;
 
 use crate::bus::i2c::I2cError;
@@ -5,11 +9,17 @@ use embassy_rp::Peri;
 use embassy_rp::i2c::{self, Async, Config, I2c, Instance, InterruptHandler};
 use embassy_rp::interrupt::typelevel::Binding;
 
+/// Interrupt-driven RP235x I2C bus implementing
+/// [`embedded_hal_async::i2c::I2c`] for `I2cBusHandle`.
 pub struct HardwareI2cBus<'d, I: Instance> {
     i2c: I2c<'d, I, Async>,
 }
 
 impl<'d, I: Instance> HardwareI2cBus<'d, I> {
+    /// Validates an I2C configuration against the running peripheral clock.
+    ///
+    /// Returns [`I2cError::Other`] when the frequency and derived divider counts
+    /// fall outside the hardware's representable range.
     pub fn validate_config(config: &Config) -> Result<(), I2cError> {
         if config.frequency == 0 || config.frequency > 1_000_000 {
             return Err(I2cError::Other);
@@ -38,6 +48,10 @@ impl<'d, I: Instance> HardwareI2cBus<'d, I> {
         Ok(())
     }
 
+    /// Builds an I2C bus from a previously validated configuration.
+    ///
+    /// `scl` and `sda` are role-checked against `I` at compile time, and `irq`
+    /// is the board's `bind_interrupts!` binding for the I2C interrupt.
     pub fn new<Irq>(
         peri: Peri<'d, I>,
         scl: Peri<'d, impl i2c::SclPin<I> + 'd>,
