@@ -27,6 +27,11 @@
 		{ title: 'Getting Started', href: '/home/docs/quickstart', indent: false },
 		{ title: 'First Card', href: '/home/docs/quickstart/first-card', indent: true },
 		{ title: 'First Driver', href: '/home/docs/quickstart/first-driver', indent: true },
+		{
+			title: 'Basics Of Electronics',
+			href: '/home/docs/quickstart/basics-of-electronics',
+			indent: true
+		},
 		{ title: 'Detailed', href: '/home/docs/detailed', indent: false },
 		{ title: 'Device', href: '/home/docs/detailed/device', indent: true },
 		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
