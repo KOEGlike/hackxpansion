@@ -7,6 +7,7 @@ review integration.
 
 - Node.js 22.12 or newer
 - PostgreSQL 18
+- Docker (user needs to be added to docker user group)
 
 ## Development
 
