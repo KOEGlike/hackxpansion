@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Markdown from '$lib/components/markdown.svelte';
-	import type { PageServerData } from './$types';
+	import type { PageData } from './$types';
 
-	let { data }: { data: PageServerData } = $props();
+	let { data }: { data: NonNullable<PageData> } = $props();
 </script>
 
 <svelte:head>
