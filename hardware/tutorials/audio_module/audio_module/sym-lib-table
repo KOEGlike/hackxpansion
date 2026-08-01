@@ -1,4 +1,4 @@
 (sym_lib_table
 	(version 7)
-	(lib (name "Hackxpansion") (type "KiCad") (uri "${KIPRJMOD}/../../../../kicad_lib/Hackxpansion.kicad_sym") (options "") (descr ""))
+	(lib (name "Hackxpansion") (type "KiCad") (uri "${KIPRJMOD}/kicad_lib/Hackxpansion.kicad_sym") (options "") (descr ""))
 )
