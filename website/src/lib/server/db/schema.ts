@@ -140,18 +140,10 @@ export const shopItem = pgTable(
 		description: text('description').notNull(),
 		price: integer('price').notNull(),
 		imageUrl: text('image_url'),
-		requiredModuleDesigns: integer('required_module_designs').default(0).notNull(),
-		requiredAppDesigns: integer('required_app_designs').default(0).notNull(),
 		active: boolean('active').default(true).notNull(),
 		sortOrder: integer('sort_order').default(0).notNull()
 	},
-	(table) => [
-		check('shop_item_price_nonnegative', sql`${table.price} >= 0`),
-		check(
-			'shop_item_requirements_nonnegative',
-			sql`${table.requiredModuleDesigns} >= 0 AND ${table.requiredAppDesigns} >= 0`
-		)
-	]
+	(table) => [check('shop_item_price_nonnegative', sql`${table.price} >= 0`)]
 );
 
 export const shopOrder = pgTable(

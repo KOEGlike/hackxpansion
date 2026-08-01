@@ -1,31 +1,22 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import CoinIcon from '$lib/components/coin_icon.svelte';
-	import type { ActionData, PageServerData } from './$types';
+	import { HACKXPANSION_CONSOLE } from '$lib/shop/domain';
+	import type { PageServerData } from './$types';
 
-	let { data, form }: { data: PageServerData; form: ActionData } = $props();
+	let { data }: { data: PageServerData } = $props();
 
-	function requirementText(item: PageServerData['items'][number]) {
-		const parts = [];
-		if (item.requiredModuleDesigns > 0) {
-			parts.push(`${item.requiredModuleDesigns} accepted module designs`);
+	function missingApprovalText(item: PageServerData['items'][number]) {
+		const missing = [];
+		if (item.eligibility.missingModuleDesigns > 0) {
+			const count = item.eligibility.missingModuleDesigns;
+			missing.push(`${count} more module${count === 1 ? '' : 's'}`);
 		}
-		if (item.requiredAppDesigns > 0) {
-			parts.push(
-				`${item.requiredAppDesigns} accepted app design${item.requiredAppDesigns === 1 ? '' : 's'}`
-			);
+		if (item.eligibility.missingAppDesigns > 0) {
+			const count = item.eligibility.missingAppDesigns;
+			missing.push(`${count} more app${count === 1 ? '' : 's'}`);
 		}
-		return parts.length > 0 ? parts.join(' and ') : 'No project requirements';
-	}
-
-	function submittedNotes(itemId: string) {
-		return form &&
-			'itemId' in form &&
-			form.itemId === itemId &&
-			'notes' in form &&
-			typeof form.notes === 'string'
-			? form.notes
-			: '';
+		return `Need ${missing.join(' and ')} approved`;
 	}
 </script>
 
@@ -47,39 +38,7 @@
 		{/if}
 	</header>
 
-	{#if form?.message}
-		<p
-			class="border p-3 text-sm"
-			class:border-green-700={form.success}
-			class:bg-green-100={form.success}
-			class:border-red-700={!form.success}
-			class:bg-red-100={!form.success}
-		>
-			{form.message}
-		</p>
-	{/if}
-
-	{#if data.signedIn}
-		<section class="content-box grid gap-4 p-5 sm:grid-cols-2" aria-labelledby="shop-progress">
-			<div>
-				<h2 id="shop-progress" class="text-xl font-bold">Your unlock progress</h2>
-				<p class="mt-1 text-sm text-slate-600">Designs count once Ari accepts them.</p>
-			</div>
-			<div class="grid grid-cols-2 gap-3 text-center">
-				<div class="border border-slate-400 bg-white/40 p-3">
-					<p class="text-2xl font-bold">{data.progress.moduleDesigns}</p>
-					<p class="text-xs uppercase tracking-wide">Modules</p>
-				</div>
-				<div class="border border-slate-400 bg-white/40 p-3">
-					<p class="text-2xl font-bold">{data.progress.appDesigns}</p>
-					<p class="text-xs uppercase tracking-wide">Apps</p>
-				</div>
-			</div>
-		</section>
-	{/if}
-
-	<section aria-labelledby="shop-items" class="flex flex-col gap-4">
-		<h2 id="shop-items" class="text-2xl font-bold">Available items</h2>
+	<section aria-label="Shop items" class="flex flex-col gap-4">
 		{#if data.items.length === 0}
 			<p class="content-box p-5">There are no items in the shop right now.</p>
 		{:else}
@@ -90,7 +49,13 @@
 							class="flex min-h-44 items-center justify-center border-b border-slate-500 bg-slate-800 p-6 text-white"
 						>
 							{#if item.imageUrl}
-								<img src={item.imageUrl} alt="" class="max-h-48 w-full object-contain" />
+								<img
+									src={item.id === HACKXPANSION_CONSOLE.id
+										? asset('/shop/console.png')
+										: item.imageUrl}
+									alt=""
+									class="max-h-48 w-full object-contain"
+								/>
 							{:else}
 								<div class="text-center">
 									<p class="text-5xl font-bold tracking-tight">HX</p>
@@ -107,36 +72,29 @@
 								</p>
 							</div>
 							<p>{item.description}</p>
-							<p class="border-l-2 border-slate-500 pl-3 text-sm text-slate-600">
-								Requires {requirementText(item)}.
-							</p>
 
 							{#if data.signedIn}
-								<form method="post" action="?/order" class="mt-auto flex flex-col gap-3">
-									<input type="hidden" name="itemId" value={item.id} />
-									<label class="flex flex-col gap-1 text-sm font-semibold" for={`notes-${item.id}`}>
-										Notes for the fulfiller <span class="font-normal text-slate-500"
-											>(optional)</span
-										>
-										<textarea
-											id={`notes-${item.id}`}
-											name="notes"
-											rows="3"
-											maxlength="2000"
-											class="border border-slate-700 bg-white/80 p-2 font-normal"
-											value={submittedNotes(item.id)}></textarea>
-									</label>
-									<button
-										class="bg-slate-800 px-4 py-3 font-bold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-										disabled={!item.canOrder}
+								{#if item.canOrder}
+									<a
+										href={resolve(`/home/shop/order/${encodeURIComponent(item.id)}`)}
+										class="mt-auto bg-slate-800 px-4 py-3 text-center font-bold text-white hover:bg-slate-700"
 									>
-										{item.eligibility.eligible
-											? data.balance >= item.price
-												? 'Place order'
-												: `Need ${item.price - data.balance} more currency`
-											: 'Project requirements not met'}
+										Continue to order
+									</a>
+								{:else}
+									<button
+										class="mt-auto cursor-not-allowed bg-slate-400 px-4 py-3 font-bold text-white"
+										disabled
+									>
+										{!item.unlocked
+											? 'Buy a console to unlock'
+											: item.eligibility.eligible
+												? data.balance >= item.price
+													? 'Place order'
+													: `Need ${item.price - data.balance} more currency`
+												: missingApprovalText(item)}
 									</button>
-								</form>
+								{/if}
 							{:else}
 								<form method="post" action={`${resolve('/')}?/signIn`} class="mt-auto">
 									<input type="hidden" name="returnTo" value={resolve('/home/shop')} />

@@ -48,6 +48,15 @@
 						{#if order.notes}
 							<p class="mt-4 text-sm"><strong>Your notes:</strong> {order.notes}</p>
 						{/if}
+						{#if order.status === 'fulfilled'}
+							<p class="mt-4 text-sm text-slate-600">
+								Fulfilled by {order.fulfillerName ??
+									order.fulfilledByUserId ??
+									'an admin'}{order.fulfilledAt
+									? ` on ${dateFormatter.format(order.fulfilledAt)}`
+									: ''}.
+							</p>
+						{/if}
 						{#if order.fulfillmentMessage}
 							<div class="mt-4 border-l-2 border-green-700 bg-green-50 p-3">
 								<p class="text-xs font-bold uppercase text-green-900">Message from the fulfiller</p>

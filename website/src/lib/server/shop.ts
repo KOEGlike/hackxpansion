@@ -1,9 +1,18 @@
-import { and, asc, desc, eq, gte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, ne, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { project, shopItem, shopOrder, user } from '$lib/server/db/schema';
-import { getShopEligibility, type ShopProgress } from '$lib/shop/domain';
+import {
+	getShopEligibility,
+	HACKXPANSION_CONSOLE,
+	isShopItemUnlocked,
+	type ShopProgress
+} from '$lib/shop/domain';
+import type { CatalogItemInput } from '$lib/shop/catalog';
 
 const MAX_NOTE_LENGTH = 2_000;
+const fulfiller = alias(user, 'fulfiller');
 
 export class ShopError extends Error {
 	constructor(
@@ -16,11 +25,11 @@ export class ShopError extends Error {
 }
 
 export async function getShopCatalog(userId?: string) {
-	const [items, progress, balance] = await Promise.all([
+	const [databaseItems, progress, balance, hasConsoleOrder] = await Promise.all([
 		db
 			.select()
 			.from(shopItem)
-			.where(eq(shopItem.active, true))
+			.where(and(eq(shopItem.active, true), ne(shopItem.id, HACKXPANSION_CONSOLE.id)))
 			.orderBy(asc(shopItem.sortOrder), asc(shopItem.name)),
 		userId ? getShopProgress(userId) : Promise.resolve({ moduleDesigns: 0, appDesigns: 0 }),
 		userId
@@ -30,17 +39,32 @@ export async function getShopCatalog(userId?: string) {
 					.where(eq(user.id, userId))
 					.limit(1)
 					.then((rows) => rows[0]?.currency ?? 0)
-			: Promise.resolve(0)
+			: Promise.resolve(0),
+		userId ? hasOrderedConsole(userId) : Promise.resolve(false)
 	]);
+	const items = [HACKXPANSION_CONSOLE, ...databaseItems];
 
 	return {
 		balance,
 		progress,
+		shopUnlocked: hasConsoleOrder,
 		items: items.map((item) => ({
 			...item,
-			eligibility: getShopEligibility(item, progress),
+			requiredModuleDesigns:
+				item.id === HACKXPANSION_CONSOLE.id ? HACKXPANSION_CONSOLE.requiredModuleDesigns : 0,
+			requiredAppDesigns:
+				item.id === HACKXPANSION_CONSOLE.id ? HACKXPANSION_CONSOLE.requiredAppDesigns : 0,
+			eligibility:
+				item.id === HACKXPANSION_CONSOLE.id
+					? getShopEligibility(HACKXPANSION_CONSOLE, progress)
+					: getShopEligibility({ requiredModuleDesigns: 0, requiredAppDesigns: 0 }, progress),
+			unlocked: isShopItemUnlocked(item.id, hasConsoleOrder),
 			canOrder:
-				Boolean(userId) && item.price <= balance && getShopEligibility(item, progress).eligible
+				Boolean(userId) &&
+				item.price <= balance &&
+				isShopItemUnlocked(item.id, hasConsoleOrder) &&
+				(item.id !== HACKXPANSION_CONSOLE.id ||
+					getShopEligibility(HACKXPANSION_CONSOLE, progress).eligible)
 		}))
 	};
 }
@@ -49,24 +73,60 @@ export async function createShopOrder(userId: string, itemId: string, rawNotes: 
 	const notes = optionalNote(rawNotes, 'Notes');
 
 	return db.transaction(async (tx) => {
-		const [item] = await tx
+		const isConsole = itemId === HACKXPANSION_CONSOLE.id;
+		if (isConsole) {
+			await tx
+				.insert(shopItem)
+				.values({
+					id: HACKXPANSION_CONSOLE.id,
+					name: HACKXPANSION_CONSOLE.name,
+					description: HACKXPANSION_CONSOLE.description,
+					price: HACKXPANSION_CONSOLE.price,
+					imageUrl: HACKXPANSION_CONSOLE.imageUrl,
+					active: HACKXPANSION_CONSOLE.active,
+					sortOrder: HACKXPANSION_CONSOLE.sortOrder
+				})
+				.onConflictDoUpdate({
+					target: shopItem.id,
+					set: {
+						name: HACKXPANSION_CONSOLE.name,
+						description: HACKXPANSION_CONSOLE.description,
+						price: HACKXPANSION_CONSOLE.price,
+						imageUrl: HACKXPANSION_CONSOLE.imageUrl,
+						active: HACKXPANSION_CONSOLE.active,
+						sortOrder: HACKXPANSION_CONSOLE.sortOrder
+					}
+				});
+		}
+		const [databaseItem] = await tx
 			.select()
 			.from(shopItem)
-			.where(and(eq(shopItem.id, itemId), eq(shopItem.active, true)))
+			.where(
+				isConsole
+					? eq(shopItem.id, HACKXPANSION_CONSOLE.id)
+					: and(eq(shopItem.id, itemId), eq(shopItem.active, true))
+			)
 			.limit(1)
 			.for('update');
-		if (!item) throw new ShopError(404, 'Shop item not found');
+		if (!databaseItem) throw new ShopError(404, 'Shop item not found');
+		const item = isConsole ? HACKXPANSION_CONSOLE : databaseItem;
 
-		const acceptedDesigns = await tx
-			.select({ type: project.designApprovedType })
-			.from(project)
-			.where(and(eq(project.userId, userId), eq(project.designCurrencyAwarded, true)))
-			.orderBy(asc(project.id))
-			.for('update', { of: project });
-		const progress = countAcceptedDesigns(acceptedDesigns);
-		const eligibility = getShopEligibility(item, progress);
-		if (!eligibility.eligible) {
-			throw new ShopError(422, eligibilityMessage(eligibility));
+		if (isConsole) {
+			const acceptedDesigns = await tx
+				.select({ type: project.designApprovedType })
+				.from(project)
+				.where(and(eq(project.userId, userId), eq(project.designCurrencyAwarded, true)))
+				.orderBy(asc(project.id))
+				.for('update', { of: project });
+			const eligibility = getShopEligibility(
+				HACKXPANSION_CONSOLE,
+				countAcceptedDesigns(acceptedDesigns)
+			);
+			if (!eligibility.eligible) {
+				throw new ShopError(422, eligibilityMessage(eligibility));
+			}
+		} else if (!(await hasOrderedConsole(userId, tx))) {
+			throw new ShopError(422, 'Buy the HackXPansion Console before ordering other shop items.');
 		}
 
 		const [chargedUser] = await tx
@@ -87,24 +147,34 @@ export async function createShopOrder(userId: string, itemId: string, rawNotes: 
 }
 
 export async function getUserShopOrders(userId: string) {
-	return db
+	const orders = await db
 		.select({
 			id: shopOrder.id,
+			itemId: shopOrder.itemId,
 			status: shopOrder.status,
 			pricePaid: shopOrder.pricePaid,
 			notes: shopOrder.notes,
 			fulfillmentMessage: shopOrder.fulfillmentMessage,
 			createdAt: shopOrder.createdAt,
 			fulfilledAt: shopOrder.fulfilledAt,
+			fulfilledByUserId: shopOrder.fulfilledByUserId,
+			fulfillerName: fulfiller.name,
 			itemName: shopItem.name
 		})
 		.from(shopOrder)
 		.innerJoin(shopItem, eq(shopOrder.itemId, shopItem.id))
+		.leftJoin(fulfiller, eq(shopOrder.fulfilledByUserId, fulfiller.id))
 		.where(eq(shopOrder.userId, userId))
 		.orderBy(desc(shopOrder.createdAt));
+	return orders.map((order) => ({
+		...order,
+		itemName: order.itemId === HACKXPANSION_CONSOLE.id ? HACKXPANSION_CONSOLE.name : order.itemName
+	}));
 }
 
 export async function isUserAdmin(userId: string) {
+	await ensureConfiguredAdmin();
+
 	const [row] = await db
 		.select({ isAdmin: user.isAdmin })
 		.from(user)
@@ -117,16 +187,125 @@ export async function requireAdmin(userId: string) {
 	if (!(await isUserAdmin(userId))) throw new ShopError(404, 'Page not found');
 }
 
-export async function getAllShopOrders() {
+export async function getAdminUsers() {
+	const users = await db
+		.select({
+			id: user.id,
+			name: user.name,
+			email: user.email,
+			slackId: user.slackId,
+			isAdmin: user.isAdmin,
+			createdAt: user.createdAt
+		})
+		.from(user)
+		.orderBy(desc(user.isAdmin), asc(user.name), asc(user.email));
+	const configuredAdminUserId = getConfiguredAdminUserId();
+	return users.map((account) => ({
+		...account,
+		isProtectedAdmin: account.id === configuredAdminUserId
+	}));
+}
+
+export async function promoteUserToAdmin(adminUserId: string, targetUserId: string) {
+	await requireAdmin(adminUserId);
+	const [promotedUser] = await db
+		.update(user)
+		.set({ isAdmin: true })
+		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, false)))
+		.returning({ name: user.name });
+	if (promotedUser) return promotedUser;
+
+	const [targetUser] = await db
+		.select({ isAdmin: user.isAdmin })
+		.from(user)
+		.where(eq(user.id, targetUserId))
+		.limit(1);
+	if (!targetUser) throw new ShopError(404, 'User not found.');
+	throw new ShopError(409, 'This user is already an admin.');
+}
+
+export async function demoteUserFromAdmin(adminUserId: string, targetUserId: string) {
+	await requireAdmin(adminUserId);
+	if (targetUserId === getConfiguredAdminUserId()) {
+		throw new ShopError(422, 'The environment-configured admin cannot be demoted.');
+	}
+
+	const [demotedUser] = await db
+		.update(user)
+		.set({ isAdmin: false })
+		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, true)))
+		.returning({ name: user.name });
+	if (demotedUser) return demotedUser;
+
+	const [targetUser] = await db
+		.select({ isAdmin: user.isAdmin })
+		.from(user)
+		.where(eq(user.id, targetUserId))
+		.limit(1);
+	if (!targetUser) throw new ShopError(404, 'User not found.');
+	throw new ShopError(409, 'This user is not an admin.');
+}
+
+export async function getAdminShopItems() {
 	return db
+		.select()
+		.from(shopItem)
+		.where(ne(shopItem.id, HACKXPANSION_CONSOLE.id))
+		.orderBy(asc(shopItem.sortOrder), asc(shopItem.name));
+}
+
+export async function createCatalogItem(adminUserId: string, input: CatalogItemInput) {
+	await requireAdmin(adminUserId);
+	if (input.id === HACKXPANSION_CONSOLE.id) {
+		throw new ShopError(422, 'The HackXPansion Console is managed in code.');
+	}
+
+	const created = await db
+		.insert(shopItem)
+		.values(input)
+		.onConflictDoNothing({ target: shopItem.id })
+		.returning({ id: shopItem.id });
+	if (created.length === 0) throw new ShopError(409, 'An item with this ID already exists.');
+}
+
+export async function updateCatalogItem(
+	adminUserId: string,
+	itemId: string,
+	input: CatalogItemInput
+) {
+	await requireAdmin(adminUserId);
+	if (itemId === HACKXPANSION_CONSOLE.id || input.id !== itemId) {
+		throw new ShopError(422, 'This shop item cannot be edited.');
+	}
+
+	const updated = await db
+		.update(shopItem)
+		.set({
+			name: input.name,
+			description: input.description,
+			price: input.price,
+			imageUrl: input.imageUrl,
+			sortOrder: input.sortOrder,
+			active: input.active
+		})
+		.where(and(eq(shopItem.id, itemId), ne(shopItem.id, HACKXPANSION_CONSOLE.id)))
+		.returning({ id: shopItem.id });
+	if (updated.length === 0) throw new ShopError(404, 'Shop item not found.');
+}
+
+export async function getAllShopOrders() {
+	const orders = await db
 		.select({
 			id: shopOrder.id,
+			itemId: shopOrder.itemId,
 			status: shopOrder.status,
 			pricePaid: shopOrder.pricePaid,
 			notes: shopOrder.notes,
 			fulfillmentMessage: shopOrder.fulfillmentMessage,
 			createdAt: shopOrder.createdAt,
 			fulfilledAt: shopOrder.fulfilledAt,
+			fulfilledByUserId: shopOrder.fulfilledByUserId,
+			fulfillerName: fulfiller.name,
 			itemName: shopItem.name,
 			userName: user.name,
 			userEmail: user.email
@@ -134,10 +313,15 @@ export async function getAllShopOrders() {
 		.from(shopOrder)
 		.innerJoin(shopItem, eq(shopOrder.itemId, shopItem.id))
 		.innerJoin(user, eq(shopOrder.userId, user.id))
+		.leftJoin(fulfiller, eq(shopOrder.fulfilledByUserId, fulfiller.id))
 		.orderBy(
 			sql`CASE WHEN ${shopOrder.status} = 'in_queue' THEN 0 ELSE 1 END`,
 			asc(shopOrder.createdAt)
 		);
+	return orders.map((order) => ({
+		...order,
+		itemName: order.itemId === HACKXPANSION_CONSOLE.id ? HACKXPANSION_CONSOLE.name : order.itemName
+	}));
 }
 
 export async function fulfillShopOrder(adminUserId: string, orderId: string, rawMessage: string) {
@@ -185,6 +369,28 @@ async function getShopProgress(userId: string) {
 		.from(project)
 		.where(and(eq(project.userId, userId), eq(project.designCurrencyAwarded, true)));
 	return countAcceptedDesigns(rows);
+}
+
+async function hasOrderedConsole(userId: string, database: Pick<typeof db, 'select'> = db) {
+	const rows = await database
+		.select({ id: shopOrder.id })
+		.from(shopOrder)
+		.where(and(eq(shopOrder.userId, userId), eq(shopOrder.itemId, HACKXPANSION_CONSOLE.id)))
+		.limit(1);
+	return rows.length > 0;
+}
+
+function getConfiguredAdminUserId() {
+	return env.ADMIN_HACKCLUB_USER_ID?.trim() || null;
+}
+
+async function ensureConfiguredAdmin() {
+	const configuredAdminUserId = getConfiguredAdminUserId();
+	if (!configuredAdminUserId) return;
+	await db
+		.update(user)
+		.set({ isAdmin: true })
+		.where(and(eq(user.id, configuredAdminUserId), eq(user.isAdmin, false)));
 }
 
 function optionalNote(value: string, label: string) {

@@ -43,6 +43,13 @@
       "when": 1785433898647,
       "tag": "0005_flashy_fenris",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785577086149,
+      "tag": "0006_permanent-console",
+      "breakpoints": true
     }
   ]
 }

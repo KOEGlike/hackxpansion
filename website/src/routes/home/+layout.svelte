@@ -45,7 +45,11 @@
 		{ title: 'Browse', href: '/home/shop' },
 		{ title: 'Your Orders', href: '/home/shop/orders' }
 	] as const;
-	const adminItems = [{ title: 'Orders', href: '/home/admin' }] as const;
+	const adminItems = [
+		{ title: 'Orders', href: '/home/admin' },
+		{ title: 'Shop Items', href: '/home/admin/shop' },
+		{ title: 'Users', href: '/home/admin/users' }
+	] as const;
 
 	function isCurrentPage(href: (typeof items)[number]['href']) {
 		const pathname = resolve(href);

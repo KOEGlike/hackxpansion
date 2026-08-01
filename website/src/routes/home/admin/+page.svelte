@@ -77,6 +77,13 @@
 						{:else}
 							<div>
 								<p class="text-xs font-bold uppercase text-slate-500">Fulfillment message</p>
+								<p class="mt-1 text-sm text-slate-600">
+									Fulfilled by {order.fulfillerName ??
+										order.fulfilledByUserId ??
+										'an admin'}{order.fulfilledAt
+										? ` on ${dateFormatter.format(order.fulfilledAt)}`
+										: ''}.
+								</p>
 								<p class="mt-1 whitespace-pre-wrap">
 									{order.fulfillmentMessage ?? 'No message provided.'}
 								</p>

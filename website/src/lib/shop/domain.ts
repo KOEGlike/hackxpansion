@@ -8,6 +8,23 @@ export type ShopProgress = {
 	appDesigns: number;
 };
 
+export const HACKXPANSION_CONSOLE = {
+	id: 'hackxpansion-console',
+	name: 'HackXPansion Console',
+	description:
+		'The main HackXPansion prize: a console built to bring your modules and apps together.',
+	price: 8,
+	imageUrl: '/shop/console.png',
+	requiredModuleDesigns: 4,
+	requiredAppDesigns: 1,
+	active: true,
+	sortOrder: 0
+} as const;
+
+export function isShopItemUnlocked(itemId: string, hasConsoleOrder: boolean) {
+	return itemId === HACKXPANSION_CONSOLE.id || hasConsoleOrder;
+}
+
 export function getShopEligibility(requirements: ShopRequirements, progress: ShopProgress) {
 	const missingModuleDesigns = Math.max(
 		0,
