@@ -70,5 +70,5 @@ Here you can add **Symbols** with pressing `A`, that represent components on you
 
 ![pcb with 4 different buttons](https://cdn.hackclub.com/019fbdec-9993-7841-b994-56fe75f3ede0/image.png)
 
-_The same button symbol use for 4 different buttons
+_The same button symbol used for 4 different buttons
 (Buttons are called SW_Push in KiCAD)_
