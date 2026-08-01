@@ -1,3 +1,34 @@
 # Writing your first driver
 
-Coming soon!
+This guide will teach you how to create a simple driver for a module.
+
+## Experience needed
+
+To understand this guide, you should have read and completed the [First Card](./first-card) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
+
+## Table of contents
+
+:3
+
+## Download software
+
+- **Code Editor** This is needed to write your driver, I recommend VS Code or Zed.
+- **Rust** This is the language that the firmware for hackxpansion is written in. Can be downloaded from [here](https://rust-lang.org/learn/get-started/)
+- **Rust target for RP2354** The basic install of Rust doesn't contain the compilation target for the RP2354. Install by running `rustup target add thumbv8m.main-none-eabihf`.
+- **Picotool** This is needed for flashing firmware onto the hardware. Download from your package manager or from [here](https://github.com/raspberrypi/pico-sdk-tools/releases)
+- **Git:** This is needed to publish your project and download resources. Can be downloaded from your package manager or [here](https://git-scm.com/install/)
+
+## Setup project
+
+In the root of your repo run `cargo new firmware --lib`, this will create a new rust library crate(project)
+
+Your project hierarchy look something like this:
+
+```
+my-module/
+├─ firmware/
+│  ├─ Cargo.toml
+│  ├─ src/
+│  │  ├─ lib.rs
+├─ pcb/
+```
