@@ -24,7 +24,7 @@ This is needed so you can reserve a pair of resistor values. This will come up l
 
 ## Setup project
 
-Download the empty base module from [here](https://download-directory.github.io/?url=https://github.com/KOEGlike/hackxpansion/tree/main/hardware/modules/empty). This will contain everything necessary for your first module of Basic or Advanced dificulty. It includes the librairies necessary to make a hackxpansion module and has the resistor detection already done.
+Download the empty base module from [here](https://download-directory.github.io/?url=https://github.com/KOEGlike/hackxpansion/tree/main/hardware/modules/empty). This will contain everything necessary for your first module of Basic or Advanced difficulty. It includes the libraries necessary to make a hackxpansion module and has the resistor detection already done.
 
 ## How does the console know which module you plugged in?
 
