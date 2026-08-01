@@ -40,7 +40,7 @@ The modules connect with a standard right angle 2x7 2.54mm header, this way you 
 
 ## What size should the modules be?
 
-There is a standard size(check out the cad files), but you don't really need to follow it, the only thing you need to make sure is that it doesn't interfere with other modules, but if really don't want to follow it, you can just go wild.
+There is a standard size(check out the cad files), but you don't really need to follow it, the only thing you need to make sure is that it doesn't interfere with other modules, but if you really don't want to follow it, you can just go wild.
 
 ## Creating a GitHub repo
 
@@ -50,7 +50,7 @@ Read this guide to know what to put int your repo
 
 ## Creating the PCB
 
-There are two main parts to creating a circuit board, the first is creating the schematic, the secund is actually designing the PCB. But first you have to create a KiCAD project.
+There are two main parts to creating a circuit board, the first is creating the schematic, the second is actually designing the PCB. But first you have to create a KiCAD project.
 
 ### Creating the KiCAD project
 
