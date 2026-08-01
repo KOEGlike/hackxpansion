@@ -5,8 +5,6 @@ extern crate alloc;
 use alloc::{boxed::Box, vec, vec::Vec};
 use core::{cell::Cell, future::Future, pin::Pin};
 
-use embassy_futures::yield_now;
-use embassy_time::{Duration, Instant, Ticker};
 use runes::{
     apu::{APU, Speaker},
     cartridge::{BankType, Cartridge, MirrorType},
@@ -22,6 +20,11 @@ use xpanse_api::{
     interfaces::{
         buttons::{A, B, Button, Down, Left, Right, Up, X, Y},
         video::{Rgb565FrameBuffer, Rgb565FrameSession, Rgb565Pixel},
+    },
+    reexports::{
+        defmt,
+        embassy_futures::yield_now,
+        embassy_time::{Duration, Instant, Ticker},
     },
     registry::{Registry, ResourceLease},
 };

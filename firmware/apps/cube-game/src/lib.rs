@@ -5,12 +5,15 @@ extern crate alloc;
 use alloc::boxed::Box;
 use core::{future::Future, pin::Pin};
 
-use embassy_futures::select::{Either, Either6, select, select6};
-use embassy_time::Timer;
 use xpanse_api::{
     app::App,
     interfaces::buttons::{A, B, Button, Down, Left, Right, Up},
-    reexports::slint::{self, Color, ComponentHandle},
+    reexports::{
+        defmt,
+        embassy_futures::select::{Either, Either6, select, select6},
+        embassy_time::Timer,
+        slint::{self, Color, ComponentHandle},
+    },
     registry::{Registry, ResourceLease},
 };
 

@@ -596,8 +596,6 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 name = "button-logger"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-time",
  "slint",
  "slint-build",
  "xpanse-api",
@@ -1053,9 +1051,6 @@ dependencies = [
 name = "cube-game"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-futures",
- "embassy-time",
  "slint",
  "slint-build",
  "xpanse-api",
@@ -3710,9 +3705,6 @@ dependencies = [
 name = "neon-beat"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-futures",
- "embassy-time",
  "heapless 0.9.3",
  "slint",
  "slint-build",
@@ -3723,9 +3715,6 @@ dependencies = [
 name = "nes-emulator"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-futures",
- "embassy-time",
  "runes",
  "xpanse-api",
 ]
@@ -5534,9 +5523,6 @@ dependencies = [
 name = "snake-game"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-futures",
- "embassy-time",
  "heapless 0.9.3",
  "slint",
  "slint-build",
@@ -5791,10 +5777,6 @@ dependencies = [
 name = "test-driver"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-rp",
- "embassy-time",
- "embedded-hal-bus",
  "ti-adc-expander",
  "xpanse-api",
 ]
@@ -6059,10 +6041,6 @@ dependencies = [
 name = "two-button-driver"
 version = "0.1.0"
 dependencies = [
- "defmt 1.1.0",
- "embassy-rp",
- "embassy-time",
- "embedded-hal-bus",
  "xpanse-api",
 ]
 
@@ -7089,11 +7067,13 @@ name = "xpanse-api"
 version = "0.1.0"
 dependencies = [
  "defmt 1.1.0",
+ "embassy-futures",
  "embassy-rp",
  "embassy-sync",
  "embassy-time",
  "embedded-hal 1.0.0",
  "embedded-hal-async",
+ "embedded-hal-bus",
  "embedded-io-async 0.7.0",
  "libm",
  "slint",

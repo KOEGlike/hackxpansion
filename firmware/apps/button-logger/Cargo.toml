@@ -6,9 +6,6 @@ license = "GPL-3.0"
 
 [dependencies]
 xpanse-api = { workspace = true }
-
-embassy-time = { workspace = true }
-defmt = { workspace = true }
 slint = { workspace = true }
 
 [build-dependencies]

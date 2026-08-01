@@ -34,9 +34,13 @@ extern crate alloc;
 /// use xpanse_api::reexports::embedded_hal_async::i2c::I2c;
 /// ```
 pub mod reexports {
+    pub use defmt;
+    pub use embassy_futures;
     pub use embassy_rp;
+    pub use embassy_time;
     pub use embedded_hal;
     pub use embedded_hal_async;
+    pub use embedded_hal_bus;
     pub use embedded_io_async;
     pub use slint;
 }

@@ -5,13 +5,16 @@ extern crate alloc;
 use alloc::{boxed::Box, rc::Rc, vec::Vec};
 use core::{future::Future, pin::Pin};
 
-use embassy_futures::select::{Either4, Either5, select4, select5};
-use embassy_time::{Duration, Ticker};
 use heapless::Vec as FixedVec;
 use xpanse_api::{
     app::App,
     interfaces::buttons::{Button, Down, Left, Right, Up},
-    reexports::slint::{self, ComponentHandle, Model, ModelRc, SharedString, VecModel},
+    reexports::{
+        defmt,
+        embassy_futures::select::{Either4, Either5, select4, select5},
+        embassy_time::{Duration, Ticker},
+        slint::{self, ComponentHandle, Model, ModelRc, SharedString, VecModel},
+    },
     registry::{Registry, ResourceLease},
 };
 

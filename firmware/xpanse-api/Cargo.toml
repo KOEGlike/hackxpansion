@@ -6,11 +6,13 @@ license = "GPL-3.0"
 description = "Shared API for xpanse apps, module drivers, and platform firmware for the hackxpansion console"
 
 [dependencies]
+embassy-futures = { workspace = true }
 embassy-rp = { workspace = true }
 embassy-time = { workspace = true }
 embassy-sync = { workspace = true }
 embedded-hal = { workspace = true }
 embedded-hal-async = { workspace = true }
+embedded-hal-bus = { workspace = true }
 defmt = { workspace = true }
 embedded-io-async = { workspace = true }
 static_cell = { workspace = true }

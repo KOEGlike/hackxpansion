@@ -1,19 +1,22 @@
-use embassy_rp::{
-    gpio::{Level, Output},
-    spi,
-};
-use embassy_time::Delay;
-use embedded_hal_bus::spi::ExclusiveDevice;
-use ti_adc_expander::{Ads7028, AnalogIn};
-
 use xpanse_api::{
     bus::allocator::BusAllocator,
     bus::spi::SpiBusHandle,
     driver::{Driver, DriverError, DriverMeta},
     gpio_bank::{BankPins, GpioBank},
     metadata::{ModuleDetectResistor, ModuleID, ModuleSlot},
+    reexports::{
+        defmt,
+        embassy_rp::{
+            gpio::{Level, Output},
+            spi,
+        },
+        embassy_time::Delay,
+        embedded_hal_bus::spi::ExclusiveDevice,
+    },
     registry::Registry,
 };
+
+use ti_adc_expander::{Ads7028, AnalogIn, OversamplingRatio};
 
 pub struct SpiAdcDriver;
 
@@ -83,7 +86,7 @@ impl<G: BankPins> Driver<G> for SpiAdcDriver {
         let mut adc = Ads7028::new(device);
 
         adc.clear_bor().await.map_err(|_| DriverError::InitFailed)?;
-        adc.set_oversampling(ti_adc_expander::OversamplingRatio::Osr16)
+        adc.set_oversampling(OversamplingRatio::Osr16)
             .await
             .map_err(|_| DriverError::InitFailed)?;
 

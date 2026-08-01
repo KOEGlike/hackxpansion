@@ -6,9 +6,4 @@ license = "GPL-3.0"
 
 [dependencies]
 xpanse-api = { workspace = true }
-
-embassy-rp = { workspace = true }
-embassy-time = { workspace = true }
-embedded-hal-bus = { workspace = true }
 ti-adc-expander = { workspace = true }
-defmt = { workspace = true }
