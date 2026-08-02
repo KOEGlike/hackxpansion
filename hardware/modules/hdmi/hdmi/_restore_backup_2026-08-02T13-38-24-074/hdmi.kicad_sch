@@ -341,143 +341,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(bus
-		(pts
-			(xy 152.4 50.8) (xy 177.8 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "079bbb12-287f-4dde-b108-181571cee1a4")
-	)
-	(bus
-		(pts
-			(xy 152.4 46.99) (xy 177.8 46.99)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "193e3c85-03eb-4d0e-af6a-1572c1d27c65")
-	)
-	(symbol
-		(lib_id "Hackxpansion:Module_Male")
-		(at 59.69 146.05 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "4ec6bc20-20f1-465d-9830-c0ec45dffbe3")
-		(property "Reference" "J3"
-			(at 61.8333 134.62 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" ""
-			(at 59.69 146.05 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x07_P2.54mm_Horizontal"
-			(at 60.96 118.11 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 59.69 146.05 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 59.69 146.05 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "8"
-			(uuid "d0daa072-4621-4ef0-9abc-be4403be97b1")
-		)
-		(pin "14"
-			(uuid "247be0c2-adcd-424e-84f7-e92a9d3ab520")
-		)
-		(pin "3"
-			(uuid "d81d368e-7b06-4b4d-bf16-9605dddf1588")
-		)
-		(pin "6"
-			(uuid "c7347e02-b4e6-4e78-a44b-7ca124fe4e8a")
-		)
-		(pin "7"
-			(uuid "164ddf70-9e3b-45e0-b7b7-e1d608b41db1")
-		)
-		(pin "13"
-			(uuid "2a35e2d6-c7ee-4333-9410-513869fff699")
-		)
-		(pin "11"
-			(uuid "114b905b-a9b8-4953-afe0-e52d7587605a")
-		)
-		(pin "2"
-			(uuid "07459207-21d7-47c6-b15d-7c536360cf57")
-		)
-		(pin "1"
-			(uuid "ccf78b71-8ac7-475b-91ad-1a6c01d4267c")
-		)
-		(pin "12"
-			(uuid "05cd44d8-d923-4f57-b9b0-46ab9ef43a4d")
-		)
-		(pin "10"
-			(uuid "2352c1c0-1a29-4318-ac48-da971091c4a6")
-		)
-		(pin "9"
-			(uuid "b091d4ae-6c00-40ed-8e73-79ce79b5e092")
-		)
-		(pin "5"
-			(uuid "26e525aa-a5ce-4f09-b2a0-f84bcc7174b3")
-		)
-		(pin "4"
-			(uuid "ace3b441-d6eb-465d-9dbf-5618b2ae3928")
-		)
-		(instances
-			(project "hdmi"
-				(path "/a8055f97-0b92-4f0a-bbea-b4ab733d1ae8"
-					(reference "J3")
-					(unit 1)
-				)
-			)
-		)
-	)
 	(symbol
 		(lib_id "Hackxpansion:Module_Male")
 		(at 59.69 118.11 0)
@@ -596,8 +459,8 @@
 		)
 	)
 	(sheet
-		(at 114.3 38.1)
-		(size 38.1 50.8)
+		(at 110.49 40.64)
+		(size 45.72 76.2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -612,7 +475,7 @@
 		)
 		(uuid "57a0775f-edeb-43e3-be00-7721c93c64a2")
 		(property "Sheetname" "SPI-RGB"
-			(at 114.3 37.3884 0)
+			(at 110.49 39.9284 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -623,7 +486,7 @@
 			)
 		)
 		(property "Sheetfile" "SPI-RGB.kicad_sch"
-			(at 114.3 89.4846 0)
+			(at 110.49 117.4246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -631,36 +494,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
-			)
-		)
-		(pin "{RGB_CNTRL}" output
-			(at 152.4 50.8 0)
-			(uuid "e5554e32-5e7e-4b60-b2d9-59ae98156c34")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "{RGB[0..23]}" output
-			(at 152.4 46.99 0)
-			(uuid "489bdb4c-fd3a-46bd-b103-fa7a1bc22b42")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "{SPI_CNTRL}" bidirectional
-			(at 114.3 63.5 180)
-			(uuid "cd08c16f-ed45-4000-868e-f639a4c5af4c")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 			)
 		)
 		(instances
@@ -672,8 +505,8 @@
 		)
 	)
 	(sheet
-		(at 177.8 38.1)
-		(size 38.1 50.8)
+		(at 185.42 46.99)
+		(size 50.8 72.39)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -688,7 +521,7 @@
 		)
 		(uuid "aedea9eb-6853-4efc-9f29-d08db610389e")
 		(property "Sheetname" "RGB-HDMI"
-			(at 177.8 37.3884 0)
+			(at 185.42 46.2784 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -699,7 +532,7 @@
 			)
 		)
 		(property "Sheetfile" "RGB-HDMI.kicad_sch"
-			(at 177.8 89.4846 0)
+			(at 185.42 119.9646 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -707,26 +540,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
-			)
-		)
-		(pin "{RGB[0..23]}" input
-			(at 177.8 46.99 180)
-			(uuid "35e8d152-a0e6-4a7c-bd3a-726e5ed32557")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "{RGB_CNTRL}" input
-			(at 177.8 50.8 180)
-			(uuid "cd9cf86b-333f-49e5-aa7e-1cec93ce59fa")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
 			)
 		)
 		(instances
