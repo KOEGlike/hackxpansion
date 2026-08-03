@@ -75,7 +75,7 @@
 	<div class="flex flex-row h-full gap-3">
 		{#if hidden}
 			<button
-				class="m-3 fixed h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
+				class="fixed z-50 m-3 h-fit content-box border-dashed px-2 hover:underline sm:sticky sm:top-3 sm:left-0 sm:writing-vertical-lr"
 				onclick={() => (hidden = false)}
 				aria-controls="home-sidebar"
 				aria-expanded="false"
@@ -85,7 +85,7 @@
 		{:else}
 			<aside
 				id="home-sidebar"
-				class="fixed flex h-[calc(100%-1.5rem)] w-fit flex-col content-box p-3 sm:sticky sm:top-3 sm:left-0 justify-between my-3 ml-3"
+				class="fixed z-50 my-3 ml-3 flex h-[calc(100%-1.5rem)] w-fit flex-col justify-between p-3 content-box sm:sticky sm:top-3 sm:left-0"
 			>
 				<div class="flex h-fit w-fit flex-col gap-2">
 					<button
@@ -197,7 +197,7 @@
 				{/if}
 			</aside>
 		{/if}
-		<div class="overflow-x-hidden overflow-y-scroll h-full w-full">
+		<div class="h-full w-full overflow-x-hidden overflow-y-scroll pt-6 sm:pt-0">
 			{@render children()}
 		</div>
 	</div>
