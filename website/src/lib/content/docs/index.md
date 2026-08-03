@@ -34,6 +34,10 @@ You must only track a unit of work with one of these, so if you used lapse to re
 
 ## FAQ
 
+### I don't have a 3D printer, how do I print out the shell of my modules
+
+No problem! Just join `#printing-legion` on slack and you can get your models printed by a network of printers all around the world.
+
 ### What is this all about?
 
 Hackxpansion is an event run by Hack Club, a global community of high school hackers. Make four expansion cards, write drivers for them, get funding, and earn a custom console to use them in.

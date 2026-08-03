@@ -6,10 +6,6 @@ This guide will teach you how to get started creating a simple module. You can't
 
 To understand this guide, you should read the [Basics of Electronics](./basics-of-electronics) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
 
-## Table of contents
-
-:3
-
 ## Create a new project on the platform
 
 Navigate to the projects tab in the sidebar and create a new project.
@@ -284,5 +280,51 @@ Then sprinkle some on your PCB then press `B` to fill again
 ![](https://cdn.hackclub.com/019fc7da-6c7a-7464-8744-3666a2020209/image.png)
 
 #### Adding mounting holes
+
+You will somehow need to attach your PCB 3D printed parts
+
+Press `A` to add a new footprint, search for `m2` and select the M2 mounting hole.
+
+Add two of this, and position them at two edges of the board, then press `B` to refill
+
+![](https://cdn.hackclub.com/019fc859-0688-7d82-ad9a-67a01ca44ade/image.png)
+
+You could also add mounting hole symbols in you schematic, assign footprints to them, and then you don't have to add them in the PCB editor, this is actually the recommended way.
+
+#### Exporting a 3D model
+
+Click the `3D Viewer` button in the top bar
+
+![](https://cdn.hackclub.com/019fc85a-b378-74b5-9e43-5eca4da1faa5/image.png)
+
+Here you can view your PCB in 3D.
+
+We need to export it as a `.step` file, this is a file format that all CAD programs accept (like Autodesk Fusion), and is really easy to work with.
+
+Go back to the PCB editor window, go to `File -> Export -> STEP/GLB/BREP`
+
+![](https://cdn.hackclub.com/019fc860-4329-7b8f-909f-b7b3b02beca5/image.png)
+
+Use these settings:
+
+![](https://cdn.hackclub.com/019fc861-2197-7d87-8d6c-d728c11f3fb1/image.png)
+
+And press export!
+
+#### (Bonus) Routing and VIAs
+
+On simple PCBs like this, you can do all of you routing on a single copper layer, but on more complex you need to use the back copper layer while routing.
+
+When you entered routing mode by pressing `X` you can switch layers by pressing `V`, this will prompt you to place a VIA and got the the other layer
+
+![](https://cdn.hackclub.com/019fc865-911b-7eb2-97d1-20ebdb8ece0e/image.png)
+
+## Creating your case
+
+This part of the guide will teach you how to create the case for your module
+
+### Creating a Fusion project
+
+Open Fusion and create a new project
 
 # Work In Progress
