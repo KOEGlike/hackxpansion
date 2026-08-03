@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, gte, ne, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { db } from '$lib/server/db';
+import { account as authAccount } from '$lib/server/db/auth.schema';
 import { project, shopItem, shopOrder, user } from '$lib/server/db/schema';
 import {
 	getShopEligibility,
@@ -11,7 +12,7 @@ import {
 import type { CatalogItemInput } from '$lib/shop/catalog';
 
 const MAX_NOTE_LENGTH = 2_000;
-const CONFIGURED_ADMIN_USER_ID = 'ident!ZVpfLg';
+const CONFIGURED_ADMIN_HACKCLUB_ID = 'ident!ZVpfLg';
 const fulfiller = alias(user, 'fulfiller');
 
 export class ShopError extends Error {
@@ -199,7 +200,7 @@ export async function getAdminUsers() {
 		})
 		.from(user)
 		.orderBy(desc(user.isAdmin), asc(user.name), asc(user.email));
-	const configuredAdminUserId = getConfiguredAdminUserId();
+	const configuredAdminUserId = await getConfiguredAdminUserId();
 	return users.map((account) => ({
 		...account,
 		isProtectedAdmin: account.id === configuredAdminUserId
@@ -226,7 +227,7 @@ export async function promoteUserToAdmin(adminUserId: string, targetUserId: stri
 
 export async function demoteUserFromAdmin(adminUserId: string, targetUserId: string) {
 	await requireAdmin(adminUserId);
-	if (targetUserId === getConfiguredAdminUserId()) {
+	if (targetUserId === (await getConfiguredAdminUserId())) {
 		throw new ShopError(422, 'The configured admin cannot be demoted.');
 	}
 
@@ -380,12 +381,23 @@ async function hasOrderedConsole(userId: string, database: Pick<typeof db, 'sele
 	return rows.length > 0;
 }
 
-function getConfiguredAdminUserId() {
-	return CONFIGURED_ADMIN_USER_ID;
+async function getConfiguredAdminUserId() {
+	const [configuredAccount] = await db
+		.select({ userId: authAccount.userId })
+		.from(authAccount)
+		.where(
+			and(
+				eq(authAccount.providerId, 'hackclub'),
+				eq(authAccount.accountId, CONFIGURED_ADMIN_HACKCLUB_ID)
+			)
+		)
+		.limit(1);
+	return configuredAccount?.userId ?? null;
 }
 
 async function ensureConfiguredAdmin() {
-	const configuredAdminUserId = getConfiguredAdminUserId();
+	const configuredAdminUserId = await getConfiguredAdminUserId();
+	if (!configuredAdminUserId) return;
 	await db
 		.update(user)
 		.set({ isAdmin: true })
