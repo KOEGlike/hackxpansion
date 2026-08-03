@@ -89,7 +89,7 @@
 >
 	<main
 		bind:this={article}
-		class="prose prose-lg mx-auto min-w-0 max-w-4xl p-6 prose-headings:my-2 prose-headings:text-slate-700 prose-headings:underline prose-p:text-slate-700 prose-li:marker:text-slate-700"
+		class="prose prose-lg mx-auto w-full min-w-0 max-w-4xl p-6 prose-headings:my-2 prose-headings:text-slate-700 prose-headings:underline prose-p:text-slate-700 prose-li:marker:text-slate-700"
 	>
 		{@render children()}
 	</main>

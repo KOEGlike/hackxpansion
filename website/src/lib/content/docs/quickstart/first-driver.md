@@ -144,4 +144,12 @@ If you want to do this with a custom resource types, instead of a preexisting in
             .map_err(|_| DriverError::InitFailed)?;
 ```
 
+## Adding your driver to the firmware
+
+After you finished your driver, you have to clone the [hackxpansion repo](https://github.com/KOEGlike/hackxpansion), go in the firmware folder, and add your driver crate as a dependency in the workspace [`Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml), for now it can be a local path
+
+After that you need to add your driver to [`load_driver.rs`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/xpanse/src/load_driver.rs), look at how other drives are added.
+
+Build the project by running `cargo build`, if it compiles, publish you driver crate on [crates.io](https://crates.io), and swap your local path with your driver crate on crates io in the workspace [`Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml) of the hackxpansion firmware, then make a PR to the repo with your newly added driver
+
 # Work In Progress

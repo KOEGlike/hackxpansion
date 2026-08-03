@@ -4,7 +4,7 @@ This is the main docs page of Hackxpansion, where you can learn about the event,
 
 ## How does this work?
 
-Make 4 expansion cards; get a custom handheld console to use them in.
+Design 4 expansion cards; get funding to build them; write app that use these card; get a custom handheld console to use them in/on.
 
 Each card can be in one of three tiers; for each tier of card, you get a different amount of currency.
 
@@ -26,13 +26,17 @@ The most polished/cool modules get added to the shop, will be "mass" produced, a
 
 You have to track you work with 3 options:
 
-- journal your work on the platform
+- journal your work on the platform, read this [guide](https://codex.hackclub.com/shipping/journaling/) on journaling
 - using [Lapse](https://lapse.hackclub.com/) to create a timelapse of your work
 - using [Hackatime](https://hackatime.hackclub.com/) to track your coding in your editors
 
 You must only track a unit of work with one of these, so if you used lapse to record yourself coding, you must not also use hackatime. There is one exception here, you can write journals of work tracked with lapse or hackatime, but you must not report time for them in the journal entry.
 
 ## FAQ
+
+### When do I get the funding for my modules
+
+After your designs get approved, you will get an email/DM on slack with an invite to a HCB card.
 
 ### I don't have a 3D printer, how do I print out the shell of my modules
 

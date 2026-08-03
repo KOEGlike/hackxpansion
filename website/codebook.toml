@@ -1,6 +1,7 @@
 words = [
     "AVDD",
     "DMA",
+    "Effecit",
     "GND",
     "Hackatime",
     "PIO",
@@ -12,6 +13,7 @@ words = [
     "clk",
     "hackxpansion",
     "impls",
+    "journaling",
     "kicad",
     "microcontroller",
     "mosi",
