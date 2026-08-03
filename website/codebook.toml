@@ -1,6 +1,7 @@
 words = [
     "AVDD",
     "DMA",
+    "GND",
     "PIO",
     "PIO's",
     "PWM",
@@ -10,7 +11,10 @@ words = [
     "clk",
     "hackxpansion",
     "impls",
+    "kicad",
+    "microcontroller",
     "mosi",
+    "repo's",
     "scl",
     "sda",
     "xpanse",
