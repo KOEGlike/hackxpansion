@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
+
+	const announcements = [
+		{
+			label: 'Hardware update',
+			title: 'The console prototype arrived, and it works!',
+			description:
+				'The first physical HackXPansion console prototype is here. The display, controls, and app launcher are all up and running.',
+			image: asset('/shop/console.png'),
+			imageAlt: 'HackXPansion console prototype showing its app selection screen'
+		}
+	] as const;
 </script>
 
 <svelte:head>
@@ -24,5 +35,37 @@
 				<p>Learn how HackXPansion works and review the available technical details.</p>
 			</a>
 		</div>
+	</section>
+
+	<section class="flex flex-col gap-4" aria-labelledby="announcements-heading">
+		<h2 id="announcements-heading" class="text-2xl font-bold">Announcements</h2>
+		{#each announcements as announcement (announcement.title)}
+			<article
+				class="content-box grid overflow-hidden md:min-h-96 md:grid-cols-[minmax(0,1fr)_20rem]"
+			>
+				<div class="flex flex-col gap-6 p-6 sm:p-8">
+					<p class="text-sm font-bold uppercase tracking-widest text-slate-600">
+						{announcement.label} // Online
+					</p>
+					<div>
+						<h3 class="max-w-xl text-4xl leading-none font-bold sm:text-5xl">
+							{announcement.title}
+						</h3>
+						<p class="mt-5 max-w-xl text-lg leading-relaxed text-slate-700">
+							{announcement.description}
+						</p>
+					</div>
+				</div>
+				<div
+					class="flex h-80 items-center justify-center border-t-3 border-slate-700 p-4 md:h-auto md:border-t-0 md:border-l-3"
+				>
+					<img
+						src={announcement.image}
+						alt={announcement.imageAlt}
+						class="h-full w-full object-contain"
+					/>
+				</div>
+			</article>
+		{/each}
 	</section>
 </main>
