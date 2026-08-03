@@ -325,6 +325,8 @@ This part of the guide will teach you how to create the case for your module
 
 ### Creating a Fusion project
 
-Open Fusion and create a new project
+Open Fusion and create a new folder called `My Module` or smth similar, upload the step file that you exported of your PCB and then create a new `Hybrid Design` in that folder.
 
 # Work In Progress
+
+For now look at the [example](https://szekelymikokollegium2.autodesk360.com/g/shares/SH28cd1QT2badd0ea72b21236d76e5e5ca90)

@@ -1,6 +1,6 @@
 # Hackxpansion documentation
 
-This is the main docs page of Hackxpansion, where you can learn about the event, hardware and firmware. If you have any more questions ask in the `#hackxpansion` Hack Club slack channel.
+This is the main docs page of Hackxpansion, where you can learn about the event, hardware and firmware. If you have any more questions ask in the `#hackxpansion` slack channel.
 
 ## How does this work?
 
