@@ -12,13 +12,6 @@
 	>
 		{landingContent.hero.subtitle}
 	</p>
-	<a
-		href="https://meko.fillout.com/hackxpansion"
-		target="_blank"
-		rel="noopener noreferrer"
-		class="w-fit text-xl font-semibold text-slate-700/80 hover:text-slate-700 hover:underline"
-		>Sign Up</a
-	>
 </div>
 <div class="mb-[11vh] flex flex-col items-center justify-center sm:mb-[6vh]">
 	<Scroll extraclass="h-11 w-fit fill-slate-700" />
