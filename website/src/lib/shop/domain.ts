@@ -10,9 +10,9 @@ export type ShopProgress = {
 
 export const HACKXPANSION_CONSOLE = {
 	id: 'hackxpansion-console',
-	name: 'HackXPansion Console',
+	name: 'Hackxpansion Console',
 	description:
-		'The main HackXPansion prize: a console built to bring your modules and apps together.',
+		'The main Hackxpansion prize: a console built to bring your modules and apps together.',
 	price: 8,
 	imageUrl: '/shop/console.png',
 	requiredModuleDesigns: 4,

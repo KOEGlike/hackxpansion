@@ -8,14 +8,14 @@
 </script>
 
 <svelte:head>
-	<title>Users | HackXPansion Admin</title>
+	<title>Users | Hackxpansion Admin</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-6xl flex-col gap-8 p-6 text-slate-800">
 	<header>
 		<p class="text-sm font-bold uppercase tracking-widest text-slate-500">Admin</p>
 		<h1 class="text-4xl font-bold">Users</h1>
-		<p class="text-slate-600">Grant admin access to existing HackXPansion users.</p>
+		<p class="text-slate-600">Grant admin access to existing Hackxpansion users.</p>
 	</header>
 
 	{#if form?.message}

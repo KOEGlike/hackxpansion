@@ -1,6 +1,6 @@
-# HackXPansion documentation
+# Hackxpansion documentation
 
-This is the main docs page of HackXPansion, where you can learn about the event, hardware and firmware. If you have any more questions ask in the `#hackxpansion` Hack Club slack channel.
+This is the main docs page of Hackxpansion, where you can learn about the event, hardware and firmware. If you have any more questions ask in the `#hackxpansion` Hack Club slack channel.
 
 ## How does this work?
 
@@ -36,7 +36,7 @@ You must only track a unit of work with one of these, so if you used lapse to re
 
 ### What is this all about?
 
-HackXPansion is an event run by Hack Club, a global community of high school hackers. Make four expansion cards, write drivers for them, get funding, and earn a custom console to use them in.
+Hackxpansion is an event run by Hack Club, a global community of high school hackers. Make four expansion cards, write drivers for them, get funding, and earn a custom console to use them in.
 
 ### Where do I get started?
 

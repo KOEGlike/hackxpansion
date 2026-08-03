@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.title} · HackXPansion</title>
+	<title>{data.title} · Hackxpansion</title>
 </svelte:head>
 
 <Markdown text={data.content} prose={false} />

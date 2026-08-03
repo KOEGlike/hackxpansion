@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>Shop | HackXPansion</title>
+	<title>Shop | Hackxpansion</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">

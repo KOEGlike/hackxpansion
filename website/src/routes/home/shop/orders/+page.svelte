@@ -8,11 +8,11 @@
 </script>
 
 <svelte:head>
-	<title>Your orders | HackXPansion</title>
+	<title>Your orders | Hackxpansion</title>
 </svelte:head>
 
 {#if !data.signedIn}
-	<AccountRequired message="You need an account to view your HackXPansion orders." />
+	<AccountRequired message="You need an account to view your Hackxpansion orders." />
 {:else}
 	<main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">
 		<header>

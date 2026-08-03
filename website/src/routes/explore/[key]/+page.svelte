@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.project.title} | HackXPansion</title>
+	<title>{data.project.title} | Hackxpansion</title>
 	<meta
 		name="description"
 		content={data.project.description ?? `A project by ${data.project.makerName}`}

@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>Project Matrix | HackXPansion</title>
+	<title>Project Matrix | Hackxpansion</title>
 </svelte:head>
 
 <main class="flex min-w-0 flex-col gap-6 p-6 text-slate-800">

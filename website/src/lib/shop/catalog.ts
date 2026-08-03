@@ -45,7 +45,7 @@ export function parseCatalogItem(values: CatalogItemFormValues): CatalogItemInpu
 		);
 	}
 	if (id === HACKXPANSION_CONSOLE.id) {
-		throw new CatalogItemValidationError('The HackXPansion Console is managed in code.');
+		throw new CatalogItemValidationError('The Hackxpansion Console is managed in code.');
 	}
 	if (!name || name.length > MAX_NAME_LENGTH) {
 		throw new CatalogItemValidationError(`Name must be 1-${MAX_NAME_LENGTH} characters.`);

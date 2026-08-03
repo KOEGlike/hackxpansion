@@ -127,7 +127,7 @@ export async function createShopOrder(userId: string, itemId: string, rawNotes: 
 				throw new ShopError(422, eligibilityMessage(eligibility));
 			}
 		} else if (!(await hasOrderedConsole(userId, tx))) {
-			throw new ShopError(422, 'Buy the HackXPansion Console before ordering other shop items.');
+			throw new ShopError(422, 'Buy the Hackxpansion Console before ordering other shop items.');
 		}
 
 		const [chargedUser] = await tx
@@ -258,7 +258,7 @@ export async function getAdminShopItems() {
 export async function createCatalogItem(adminUserId: string, input: CatalogItemInput) {
 	await requireAdmin(adminUserId);
 	if (input.id === HACKXPANSION_CONSOLE.id) {
-		throw new ShopError(422, 'The HackXPansion Console is managed in code.');
+		throw new ShopError(422, 'The Hackxpansion Console is managed in code.');
 	}
 
 	const created = await db

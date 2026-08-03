@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Orders | HackXPansion Admin</title>
+	<title>Orders | Hackxpansion Admin</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-6xl flex-col gap-8 p-6 text-slate-800">

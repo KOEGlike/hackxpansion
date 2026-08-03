@@ -3,13 +3,13 @@
 </script>
 
 <svelte:head>
-	<title>Settings | HackXPansion</title>
+	<title>Settings | Hackxpansion</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-5xl flex-col gap-8 p-6 text-slate-800">
 	<header>
 		<h1 class="text-4xl font-bold">Settings</h1>
-		<p class="text-slate-600">Manage your HackXPansion account and project information.</p>
+		<p class="text-slate-600">Manage your Hackxpansion account and project information.</p>
 	</header>
 
 	<section aria-labelledby="project-settings" class="content-box p-5">

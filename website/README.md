@@ -1,4 +1,4 @@
-# HackXPansion Website
+# Hackxpansion Website
 
 SvelteKit website for the landing page, documentation, authenticated project tracking, and Ari
 review integration.

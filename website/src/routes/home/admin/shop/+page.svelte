@@ -45,7 +45,7 @@
 </script>
 
 <svelte:head>
-	<title>Shop Items | HackXPansion Admin</title>
+	<title>Shop Items | Hackxpansion Admin</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-6xl flex-col gap-8 p-6 text-slate-800">
@@ -54,7 +54,7 @@
 		<h1 class="text-4xl font-bold">Shop items</h1>
 		<p class="text-slate-600">Add and edit items that unlock after a console purchase.</p>
 		<p class="mt-2 text-sm text-slate-500">
-			The HackXPansion Console is permanent and managed in code, so it cannot be edited here.
+			The Hackxpansion Console is permanent and managed in code, so it cannot be edited here.
 		</p>
 	</header>
 

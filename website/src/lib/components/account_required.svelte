@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 
 	let {
-		message = 'You need an account to view this page and manage your HackXPansion projects.'
+		message = 'You need an account to view this page and manage your Hackxpansion projects.'
 	}: { message?: string } = $props();
 	let returnTo = $derived(`${page.url.pathname}${page.url.search}`);
 </script>

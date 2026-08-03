@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-	<title>Order {data.item.name} | HackXPansion</title>
+	<title>Order {data.item.name} | Hackxpansion</title>
 </svelte:head>
 
 <main class="mx-auto flex max-w-3xl flex-col gap-6 p-6 text-slate-800">
