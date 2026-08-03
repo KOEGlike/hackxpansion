@@ -2,6 +2,7 @@ words = [
     "AVDD",
     "DMA",
     "GND",
+    "Hackatime",
     "PIO",
     "PIO's",
     "PWM",
@@ -17,6 +18,7 @@ words = [
     "repo's",
     "scl",
     "sda",
+    "timelapse",
     "xpanse",
     "xpanse",
 ]
