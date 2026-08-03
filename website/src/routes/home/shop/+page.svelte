@@ -101,7 +101,7 @@
 									<button
 										class="w-full bg-slate-800 px-4 py-3 font-bold text-white hover:bg-slate-700"
 									>
-										Sign in to order
+										Sign In/Up
 									</button>
 								</form>
 							{/if}

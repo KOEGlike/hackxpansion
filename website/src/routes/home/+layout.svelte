@@ -194,6 +194,20 @@
 							</form>
 						</div>
 					</section>
+				{:else}
+					<form
+						method="post"
+						action={`${resolve('/')}?/signIn`}
+						aria-label="Account"
+						class="w-full"
+					>
+						<input type="hidden" name="returnTo" value={`${page.url.pathname}${page.url.search}`} />
+						<button
+							class="content-box w-full cursor-pointer px-4 py-3 font-bold transition-colors hover:bg-slate-700 hover:text-white"
+						>
+							Sign In/Up
+						</button>
+					</form>
 				{/if}
 			</aside>
 		{/if}
