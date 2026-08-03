@@ -1,3 +1,3 @@
 # Helpful Resources
 
-- [Hack Club Codex](https://codex.hackclub.com/) is a collection of general hardware event guides and tips about hardware project, and a must read
+- [Hack Club Codex](https://codex.hackclub.com/) is a collection of general hardware event guides and tips for hardware projects, and a must read
