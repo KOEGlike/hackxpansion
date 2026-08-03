@@ -5,6 +5,7 @@ describe('Markdown rendering', () => {
 	it('syntax highlights language-tagged code fences', () => {
 		const html = renderMarkdown('```rust\nfn main() {}\n```');
 
+		expect(html).toContain('<pre class="highlighted-code">');
 		expect(html).toContain('class="hljs language-rust"');
 		expect(html).toContain('<span class="hljs-keyword">fn</span>');
 		expect(html).toContain('<span class="hljs-title function_">main</span>');

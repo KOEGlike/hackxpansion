@@ -10,3 +10,15 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- content is sanitized immediately above -->
 	{@html html}
 </div>
+
+<style>
+	:global(pre.highlighted-code) {
+		background: #0d1117;
+		padding: 0;
+	}
+
+	:global(pre.highlighted-code > code.hljs) {
+		border: 0;
+		margin: 0;
+	}
+</style>

@@ -36,7 +36,7 @@ renderer.code = (token) => {
 	if (!language || !hljs.getLanguage(language)) return renderPlainCode(token);
 
 	const highlighted = hljs.highlight(token.text, { language, ignoreIllegals: true }).value;
-	return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+	return `<pre class="highlighted-code"><code class="hljs language-${language}">${highlighted}</code></pre>`;
 };
 
 const markdown = new Marked({ renderer });
