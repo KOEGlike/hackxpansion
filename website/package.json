@@ -65,6 +65,7 @@
 		"@opentelemetry/api": "^1.9.1",
 		"better-auth": "^1.6.23",
 		"drizzle-orm": "^0.45.2",
+		"highlight.js": "^11.11.1",
 		"isomorphic-dompurify": "^3.19.0",
 		"marked": "^18.0.6",
 		"postgres": "^3.4.9"

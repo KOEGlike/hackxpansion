@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { marked } from 'marked';
-	import DOMPurify from 'isomorphic-dompurify';
+	import { renderMarkdown } from '$lib/markdown';
+	import 'highlight.js/styles/github-dark.css';
 
 	let { text, prose = true }: { text: string; prose?: boolean } = $props();
-	let html = $derived(DOMPurify.sanitize(marked.parse(text, { async: false }) as string));
+	let html = $derived(renderMarkdown(text));
 </script>
 
 <div class:prose class:prose-sm={prose} class:prose-slate={prose} class:max-w-none={prose}>
