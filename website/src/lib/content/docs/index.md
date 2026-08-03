@@ -4,6 +4,8 @@ This is the main docs page of HackXPansion, where you can learn about the event,
 
 ## How does this work?
 
+First join the `#hackxpansion` channel on slack!!
+
 Make 4 expansion cards; get a custom handheld console to use them in.
 
 Each card can be in one of three tiers; for each tier of card, you get a different amount of currency.
