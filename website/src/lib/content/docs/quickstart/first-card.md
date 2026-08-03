@@ -4,7 +4,7 @@ This guide will teach you how to get started creating a simple module. You can't
 
 ## Experience needed
 
-To understand this guide, you should read the [Basics of Electronics](./basics-of-electronics) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
+To understand this guide, you should read the [Basics of Electronics](./basics-of-electronics) guide. If you don't understand something, google is your best friend. If you have any further questions just ask in `#hackxpansion`
 
 ## Create a new project on the platform
 
