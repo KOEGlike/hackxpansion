@@ -24,7 +24,7 @@ The most polished/cool modules get added to the shop, will be "mass" produced, a
 
 ### Tracking work
 
-You have to track you work with 3 options:
+You have to track your work with 3 options:
 
 - journal your work on the platform, read this [guide](https://codex.hackclub.com/shipping/journaling/) on journaling
 - using [Lapse](https://lapse.hackclub.com/) to create a timelapse of your work

@@ -2,7 +2,7 @@
 
 Okay, you’ve designed your project digitally\! Congrats\! Before approving your projects, they need to meet our requirements.
 
-There are three key areas of our Design Submission Requirements:
+There are two key areas of our Design Submission Requirements:
 
 1. A good README
 2. Fully completed design

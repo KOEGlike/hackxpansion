@@ -32,7 +32,7 @@ When creating a project on the platform you'll get assigned these two resistor v
 
 ## What connector do the modules use?
 
-The modules uses a standard right angle 2x7 2.54mm header, this way you don't even need to make a pcb to create a new modules, just use a pref board, or you can just plug in breadboard cables.
+The modules uses a standard right angle 2x7 2.54mm header, this way you don't even need to make a pcb to create a new modules, just use a perfboard, or you can just plug in breadboard cables.
 
 ## What size should the modules be?
 
