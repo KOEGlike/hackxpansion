@@ -22,7 +22,7 @@ export function isModuleResistor(value: number): value is ModuleResistor {
 export function formatResistor(ohms: number): string {
 	if (ohms >= 1000) {
 		const kilo = ohms / 1000;
-		return `${kilo}k`;
+		return Number.isInteger(kilo) ? `${kilo}k` : `${kilo}`.replace('.', 'k');
 	}
 	return `${ohms}`;
 }

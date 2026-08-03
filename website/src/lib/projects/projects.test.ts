@@ -6,7 +6,7 @@ import {
 	getNextProjectSubmission,
 	getProjectStatusAfterAriEvent
 } from './lifecycle';
-import { E24_RESISTOR_VALUES, findNextAvailableResistorPair } from './resistors';
+import { E24_RESISTOR_VALUES, findNextAvailableResistorPair, formatResistor } from './resistors';
 import { getProjectSubmissionReadiness } from './submission';
 import { sumHackatimeMinutes } from './time';
 import {
@@ -119,6 +119,12 @@ describe('journal validation', () => {
 });
 
 describe('project utilities', () => {
+	it('formats resistor values with the multiplier as the decimal separator', () => {
+		expect(formatResistor(1100)).toBe('1k1');
+		expect(formatResistor(1200)).toBe('1k2');
+		expect(formatResistor(10000)).toBe('10k');
+	});
+
 	it('allocates the first unused resistor pair', () => {
 		const first = E24_RESISTOR_VALUES[0];
 		const second = E24_RESISTOR_VALUES[1];
