@@ -2,7 +2,14 @@ import type { ProjectStatus, ProjectTier, ProjectType } from './domain';
 import { getNextProjectSubmission, type ProjectReviewPhase } from './lifecycle';
 
 export type ProjectSubmissionChangeField =
-	'status' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'hackatimeProjects' | 'demoUrl' | 'tier';
+	| 'status'
+	| 'yswsEligibility'
+	| 'description'
+	| 'repoUrl'
+	| 'thumbnailUrl'
+	| 'hackatimeProjects'
+	| 'demoUrl'
+	| 'tier';
 
 export type ProjectSubmissionChange = {
 	field: ProjectSubmissionChangeField;
@@ -28,7 +35,8 @@ export type ProjectForReadiness = {
 };
 
 export function getProjectSubmissionReadiness(
-	project: ProjectForReadiness
+	project: ProjectForReadiness,
+	yswsEligible = true
 ): ProjectSubmissionReadiness {
 	const nextSubmission = getNextProjectSubmission(project.status);
 
@@ -46,6 +54,12 @@ export function getProjectSubmissionReadiness(
 		phase: nextSubmission.phase,
 		requireTier: true
 	});
+	if (!yswsEligible) {
+		changes.unshift({
+			field: 'yswsEligibility',
+			message: 'Confirm your YSWS eligibility through Hack Club Auth.'
+		});
+	}
 
 	return {
 		canSubmit: changes.length === 0,

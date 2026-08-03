@@ -4,6 +4,7 @@
 	import JournalEditor from '$lib/components/journal_editor.svelte';
 	import Markdown from '$lib/components/markdown.svelte';
 	import CoinIcon from '$lib/components/coin_icon.svelte';
+	import YswsEligibilityNotice from '$lib/components/ysws_eligibility_notice.svelte';
 	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
 	import { isValidJournalDuration } from '$lib/projects/journal';
 	import type { ActionData, PageServerData } from './$types';
@@ -175,6 +176,10 @@
 			{/if}
 		</div>
 	</header>
+
+	{#if !data.yswsEligible}
+		<YswsEligibilityNotice />
+	{/if}
 
 	{#if form?.message}
 		<p

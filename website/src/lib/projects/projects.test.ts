@@ -103,6 +103,16 @@ describe('submission readiness', () => {
 			message: 'Add a demo URL before build review.'
 		});
 	});
+
+	it('blocks review submission for users who are not YSWS eligible', () => {
+		const readiness = getProjectSubmissionReadiness(readyProject, false);
+
+		expect(readiness.canSubmit).toBe(false);
+		expect(readiness.changes).toContainEqual({
+			field: 'yswsEligibility',
+			message: 'Confirm your YSWS eligibility through Hack Club Auth.'
+		});
+	});
 });
 
 describe('journal validation', () => {

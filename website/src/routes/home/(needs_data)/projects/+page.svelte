@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
 	import CoinIcon from '$lib/components/coin_icon.svelte';
+	import YswsEligibilityNotice from '$lib/components/ysws_eligibility_notice.svelte';
 	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
 	import { formatResistor as formatResistorValue } from '$lib/projects/resistors';
 	import type { ActionData, PageServerData } from './$types';
@@ -41,6 +42,9 @@
 		<p class="border border-amber-700 bg-amber-100 p-3 text-sm text-amber-950">
 			{data.hackatimeError} Project totals currently include journals only.
 		</p>
+	{/if}
+	{#if !data.yswsEligible}
+		<YswsEligibilityNotice />
 	{/if}
 
 	<section class="flex flex-col gap-4">

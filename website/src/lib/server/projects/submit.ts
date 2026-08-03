@@ -46,6 +46,7 @@ type ProjectForSubmission = {
 	makerEmail: string;
 	makerName: string;
 	makerSlackId: string;
+	makerYswsEligible: boolean;
 };
 
 type ClaimedSubmission = {
@@ -71,7 +72,11 @@ export async function canSubmit({
 	projectId,
 	userId
 }: SubmitProjectToAriOptions): Promise<ProjectSubmissionReadiness> {
-	return getProjectSubmissionReadiness(await getProjectForSubmission(projectId, userId));
+	const projectForSubmission = await getProjectForSubmission(projectId, userId);
+	return getProjectSubmissionReadiness(
+		projectForSubmission,
+		projectForSubmission.makerYswsEligible
+	);
 }
 
 export async function submitProjectToAri({
@@ -193,10 +198,17 @@ async function claimSubmission(projectId: string, userId: string): Promise<Claim
 			throw new ProjectSubmissionError(404, 'Project not found');
 		}
 
-		const readiness = getProjectSubmissionReadiness(projectForSubmission);
+		const readiness = getProjectSubmissionReadiness(
+			projectForSubmission,
+			projectForSubmission.makerYswsEligible
+		);
 		if (!readiness.canSubmit || !readiness.phase || !readiness.waitingStatus) {
 			throw new ProjectSubmissionError(
-				readiness.changes.some((change) => change.field === 'status') ? 409 : 422,
+				readiness.changes.some((change) => change.field === 'yswsEligibility')
+					? 403
+					: readiness.changes.some((change) => change.field === 'status')
+						? 409
+						: 422,
 				`Project cannot be submitted to Ari: ${readiness.changes
 					.map((change) => change.message)
 					.join(' ')}`
@@ -273,7 +285,8 @@ const projectForSubmissionFields = {
 	md1: project.md1,
 	makerEmail: user.email,
 	makerName: user.name,
-	makerSlackId: user.slackId
+	makerSlackId: user.slackId,
+	makerYswsEligible: user.yswsEligible
 };
 
 function getAriConfig() {
