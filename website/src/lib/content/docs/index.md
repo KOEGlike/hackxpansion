@@ -1,10 +1,8 @@
 # HackXPansion documentation
 
-This is the main docs page of HackXPansion, where you can learn about the event, hardware and firmware
+This is the main docs page of HackXPansion, where you can learn about the event, hardware and firmware. If you have any more questions ask in the `#hackxpansion` Hack Club slack channel.
 
 ## How does this work?
-
-First join the `#hackxpansion` channel on slack!!
 
 Make 4 expansion cards; get a custom handheld console to use them in.
 
