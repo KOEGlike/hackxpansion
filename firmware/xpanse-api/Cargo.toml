@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name = "xpanse-api"
-version = "0.1.1"
+version = "0.1.2"
 license = "GPL-3.0"
 description = "Shared API for xpanse apps, module drivers, and platform firmware for the hackxpansion console"
 documentation = "https://docs.rs/xpanse-api"
