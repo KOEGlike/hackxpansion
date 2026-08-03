@@ -6,7 +6,7 @@ import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
 import { genericOAuth } from 'better-auth/plugins';
 import { base } from '$app/paths';
-import { fetchWithTimeout } from '$lib/server/http';
+import { fetchHackClubProfile, mapHackClubProfile } from '$lib/server/hackclub-profile';
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
@@ -51,6 +51,11 @@ export const auth = betterAuth({
 			pronouns: {
 				type: 'string',
 				required: false
+			},
+			profileCheckedAt: {
+				type: 'date',
+				required: false,
+				returned: false
 			}
 		}
 	},
@@ -64,44 +69,9 @@ export const auth = betterAuth({
 					clientSecret: env.HACKCLUB_CLIENT_SECRET,
 					overrideUserInfo: true,
 					scopes: ['openid', 'email', 'name', 'profile', 'verification_status', 'slack_id'],
-					getUserInfo: async (tokens) => {
-						const res = await fetchWithTimeout('https://auth.hackclub.com/oauth/userinfo', {
-							headers: {
-								Authorization: `Bearer ${tokens.accessToken}`
-							}
-						});
-
-						if (!res.ok) return null;
-
-						const data = await res.json();
-						let slackData = {};
-
-						try {
-							const slackResponse = await fetchWithTimeout(
-								`https://cachet.dunkirk.sh/users/${encodeURIComponent(data.slack_id)}`
-							);
-							if (slackResponse.ok) slackData = await slackResponse.json();
-						} catch {
-							// Cachet enriches the profile but must not make OAuth unavailable.
-						}
-
-						return {
-							...slackData,
-							...data
-						};
-					},
-					mapProfileToUser: (profile) => ({
-						id: profile.sub,
-						name: profile.name,
-						email: profile.email,
-						emailVerified: profile.email_verified === true,
-						image: profile.imageUrl,
-						slackId: profile.slack_id,
-						verificationStatus: profile.verification_status,
-						given_name: profile.given_name,
-						yswsEligible: profile.ysws_eligible === true,
-						pronouns: profile.pronouns
-					})
+					getUserInfo: (tokens) =>
+						tokens.accessToken ? fetchHackClubProfile(tokens.accessToken) : Promise.resolve(null),
+					mapProfileToUser: (profile) => mapHackClubProfile(profile)
 				}
 			]
 		}),

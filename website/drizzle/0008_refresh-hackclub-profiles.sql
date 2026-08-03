@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "profile_checked_at" timestamp;

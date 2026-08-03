@@ -19,6 +19,7 @@ export const user = pgTable(
 		given_name: text('given_name'),
 		yswsEligible: boolean('ysws_eligible').notNull(),
 		pronouns: text('pronouns'),
+		profileCheckedAt: timestamp('profile_checked_at'),
 		currency: integer('currency').default(0).notNull(),
 		isAdmin: boolean('is_admin').default(false).notNull()
 	},

@@ -4,6 +4,7 @@ import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { env } from '$env/dynamic/private';
 import { base } from '$app/paths';
+import { syncHackClubProfileIfStale } from '$lib/server/profile-sync';
 
 const providerOwnedUserFields = new Set([
 	'isAdmin',
@@ -11,7 +12,12 @@ const providerOwnedUserFields = new Set([
 	'verificationStatus',
 	'given_name',
 	'yswsEligible',
-	'pronouns'
+	'pronouns',
+	'name',
+	'email',
+	'emailVerified',
+	'image',
+	'profileCheckedAt'
 ]);
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -39,7 +45,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	if (session) {
 		event.locals.session = session.session;
-		event.locals.user = session.user;
+		event.locals.user = {
+			...session.user,
+			...(await syncHackClubProfileIfStale(session.user.id, request.headers))
+		};
 	}
 
 	return svelteKitHandler({ event, resolve, auth, building });
