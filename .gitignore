@@ -1,3 +1,5 @@
 *.DS_Store
 
 hardware/modules/hdmi/hdmi/.history
+
+hardware/modules/linux_soc/pcb/.history
