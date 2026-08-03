@@ -4,6 +4,8 @@ name = "xpanse-api"
 version = "0.1.1"
 license = "GPL-3.0"
 description = "Shared API for xpanse apps, module drivers, and platform firmware for the hackxpansion console"
+documentation = "https://docs.rs/xpanse-api"
+repository = "https://github.com/KOEGlike/hackxpansion"
 
 [dependencies]
 embassy-futures = { workspace = true }
