@@ -197,7 +197,7 @@
 				{/if}
 			</aside>
 		{/if}
-		<div class="h-full w-full overflow-x-hidden overflow-y-scroll pt-6 sm:pt-0">
+		<div class="h-full w-full overflow-x-hidden overflow-y-scroll pt-6 sm:pt-0" data-page-scroll>
 			{@render children()}
 		</div>
 	</div>
