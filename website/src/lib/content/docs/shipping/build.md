@@ -8,6 +8,10 @@ Similar to submitting your design, we have a list of **minimum requirements**, m
 
 Submitting your build still requires you to meet all the requirements of submitting for design. You can find those [here](./design).
 
+## PR your driver/app into the main repo
+
+Check out on how to do this for app [here](../quickstart/first-app#adding-your-app-to-the-firmware) and for drivers [here](../quickstart/first-driver#adding-your-driver-to-the-firmware).
+
 ## Show your project, now built IRL
 
 At minimum, you should include in your README:
