@@ -13,7 +13,7 @@ export const load = (({ params }) => {
 	const content =
 		documentModules[`${documentRoot}${requestedPath}.md`] ??
 		documentModules[`${documentRoot}${requestedPath}/index.md`];
-	if (!content) error(404, 'Documentation page not found');
+	if (content === undefined) error(404, 'Documentation page not found');
 
 	const title = content.match(/^#\s+(.+)$/m)?.[1] ?? 'Documentation';
 	return { content, title };

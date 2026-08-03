@@ -1,7 +1,7 @@
 export const landingContent = {
 	hero: {
 		title: 'Hackxpansion',
-		subtitle: 'Make 4 expansion cards, get a custom console to use them in!'
+		subtitle: 'Design 4 expansion cards, build them for free, get a custom console to use them in!'
 	},
 	steps: [
 		{

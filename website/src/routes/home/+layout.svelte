@@ -27,6 +27,7 @@
 		{ title: 'Getting Started', href: '/home/docs/quickstart', indent: false },
 		{ title: 'First Card', href: '/home/docs/quickstart/first-card', indent: true },
 		{ title: 'First Driver', href: '/home/docs/quickstart/first-driver', indent: true },
+		{ title: 'First App', href: '/home/docs/quickstart/first-app', indent: true },
 		{
 			title: 'Basics Of Electronics',
 			href: '/home/docs/quickstart/basics-of-electronics',
@@ -35,7 +36,11 @@
 		{ title: 'Detailed', href: '/home/docs/detailed', indent: false },
 		{ title: 'Device', href: '/home/docs/detailed/device', indent: true },
 		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
-		{ title: 'API', href: '/home/docs/detailed/api', indent: true }
+		{ title: 'API', href: '/home/docs/detailed/api', indent: true },
+		{ title: 'Shipping', href: '/home/docs/shipping', indent: false },
+		{ title: 'Design', href: '/home/docs/shipping/design', indent: true },
+		{ title: 'Build', href: '/home/docs/shipping/build', indent: true },
+		{ title: 'Helpful Resources', href: '/home/docs/helpful-resources', indent: false }
 	] as const;
 	const exploreItems = [
 		{ title: 'Project Feed', href: '/home/explore' },

@@ -1,6 +1,6 @@
 # Designing your first module
 
-This guide will teach you how to get started creating a simple module. You can't copy this guide one to one, you have to put you own twist on it.
+This guide will teach you how to get started creating a simple module. You can't copy this guide one to one, you have to put you own twist on it, and is not meant for copying.
 
 ## Experience needed
 
@@ -32,17 +32,17 @@ When creating a project on the platform you'll get assigned these two resistor v
 
 ## What connector do the modules use?
 
-The modules connect with a standard right angle 2x7 2.54mm header, this way you don't even need to make a pcb to create new modules, just use a pref board, or you can just plug in dupont cables.
+The modules uses a standard right angle 2x7 2.54mm header, this way you don't even need to make a pcb to create a new modules, just use a pref board, or you can just plug in breadboard cables.
 
 ## What size should the modules be?
 
-There is a standard size(check out the cad files), but you don't really need to follow it, the only thing you need to make sure is that it doesn't interfere with other modules, but if you really don't want to follow it, you can just go wild.
+There is a standard size (check out the [cad files](https://szekelymikokollegium2.autodesk360.com/g/shares/SH28cd1QT2badd0ea72b21236d76e5e5ca90)), but you don't really need to follow it, the only thing you need to make sure is that it doesn't interfere with other modules, but if you really don't want to follow it, you can just go wild.
 
 ## Creating a GitHub repo
 
-You need this to publish project so everyone can see it. Teaching you Git and GitHub is not in the scope of this guide, but here is a good video.
+You need this to publish project so everyone can see it. Teaching you Git and GitHub is not in the scope of this guide, but here is a good [guide](https://docs.github.com/en/get-started/start-your-journey/git-and-github-learning-resources).
 
-Read this guide to know what to put int your repo
+Read this [guide](../shipping/design) to know what to put int your repo
 
 ## Creating the PCB
 
@@ -50,13 +50,13 @@ There are two main parts to creating a circuit board, the first is creating the 
 
 ### Creating the KiCAD project
 
-After cloning your repo, you should create new KiCAD project in the repo's folder called something like `pcb` or smth similar.
+After cloning your repo, you should create a new KiCAD project in the repo's folder called something like `pcb` or smth similar.
 
 ![create new project icon](https://cdn.hackclub.com/019fbdce-a866-7b94-a82b-d5fc920c8773/image.png)
 
 ### Importing libraries
 
-This is allows you to use pre-made symbols and footprints, click on `Preference` in the main KiCAD page
+This allows you to use pre-made symbols and footprints, click on `Preference` in the main KiCAD page
 
 ![KiCAD preferences](https://cdn.hackclub.com/019fc721-fdda-79e5-8c61-73eef75fe66d/image.png)
 
@@ -72,7 +72,7 @@ If you put the downloaded library into your repo's folder, the process is identi
 
 #### Footprint library
 
-Now you should clock on `Manage Footprint Libraries`, the steps are the same as for the symbol library, but instead of selecting the `Hackxpansion.kicad_sym` file, you should select `Hackxpansion.pretty` folder.
+Now you should click on `Manage Footprint Libraries`, the steps are the same as for the symbol library, but instead of selecting the `Hackxpansion.kicad_sym` file, you should select `Hackxpansion.pretty` folder.
 
 ### Creating the schematic
 
@@ -82,7 +82,7 @@ To start editing the schematic of your KiCAD project just click on the `Schemati
 
 #### What is a symbol?
 
-Here you can add **Symbols** with pressing `A`, that represent components on your PCB, they have all the pins that the "real" components have that will actually go on the circuit board, but they don't describe how the footprint will look on the PCB, this is because a button most of the time has 2 pins, so a common symbol can be used, but they are not same size and shape, so multiple footprints are needed.
+Here you can add **Symbols** with pressing `A`, that represent components on your PCB, they have all the pins that the "real" components have, that will actually go on the circuit board, but they don't describe how the footprint will look on the PCB, this is because a button most of the time has 2 pins, so a common symbol can be used, but buttons are not same size and shape, so multiple footprints are needed.
 
 ![schematic with the same 4 button symbols](https://cdn.hackclub.com/019fbdec-97b4-7472-8f79-a49d930a930b/image.png)
 
@@ -101,19 +101,19 @@ Next you should add the symbol for the Hackxpansion male module connector, simpl
 
 Each modules needs two resistors, so we need to add symbols for them, simply search `resistor` and choose the `R` symbol.
 
-After adding one, simply select it and copy-past it to make another one. Select one and press `M` to move them.
+After adding one, simply select it and copy-paste it to make another one. You can move them by selecting them and pressing `M`.
 
 ![resistors and male module](https://cdn.hackclub.com/019fc741-0a80-7428-a382-5314fd52f6c7/image.png)
 
-These resistors currently don't have any value attached to them, we can change this by double clicking on `R` or by clicking on the body of the resistor and pressing `E` and changing the `Value` field. Change one of the resistor's value to your to your project's MD0 and the other to to MD1 (you can get these values from the project page of the website)
+These resistors currently don't have any value attached to them, we can change this by double clicking on `R` or by clicking on the body of the resistor and pressing `E` and changing the `Value` field. Change one of the resistor's value your project's MD0 and the other to to MD1 (you can get these values from the project page of the website)
 
 ![](https://cdn.hackclub.com/019fc75d-be00-7cf2-bbad-9941d079b570/image.png)
 
-Now you need to connect the bottom pin of the resistor with the value of `MD0` to the `MD0` pin on the `Module_Male` symbol, and the resistor with the value of `MD1` to the `MD1` pin on the symbol. You can simply click on the little circle on the bottom of the resistor and connect connect the wire to the symbol.
+Now you need to connect the bottom pin of the resistor with the value of `MD0` to the `MD0` pin on the `Module_Male` symbol, and the resistor with the value of `MD1` to the `MD1` pin on the symbol. You can simply click on the little circle on the bottom of the resistor and connect the wire to the symbol.
 
 The top pin of the resistors should be connected to the `3V3` pin on the module symbol, which supplies power at 3.3 volts. This completes our voltage divider.
 
-Here is how your schematic should look like currently:
+Here is how your schematic should be looking like:
 
 ![](https://cdn.hackclub.com/019fc75c-e397-73e3-9e86-f0022c9a62d2/image.png)
 
@@ -133,9 +133,9 @@ For a module this simple our current setup is totally fine, but if your module h
 
 ##### Power Symbols
 
-Press `P` to open the power symbol selector menu and search for `+3V3` (yes there are negative voltages too) and place down the symbol some where, also search for `GND` and place that down somewhere.
+Press `P` to open the power symbol selector menu and search for `+3V3` (yes there are negative voltages too) and place down the symbol somewhere, also search for `GND` and place that down somewhere.
 
-Power always flows from top to bottom, so the arrow of the `+3v3` symbol should always point up, and the arrow of `GND` should pint downwards.
+Power always flows from top to bottom, so the arrow of the `+3v3` symbol should always point up, and the arrow of `GND` should always point downwards.
 
 Next, disconnect the top part of the resistor from the `3V3` pin of the module symbol, by selecting one or multiple wires and pressing `Delete` on you keyboard. Now connect the pin of the `+3V3` symbol to the `3V3` pin of the module symbol. Copy-paste the `+3V3` power symbol and connect it to the two top pins of the resistor. Here is how it should look:
 
@@ -175,7 +175,7 @@ Click on the `No Connect Flag` icon on the right sidebar or press `Q`, and place
 
 #### Assigning footprint
 
-As mentioned in [What is a symbol?](#what-is-a-symbol) a symbol can have multiple footprints on the footprints, so we need to specify which one we want to use.
+As mentioned in [What is a symbol?](#what-is-a-symbol) a symbol can have multiple types of footprints assigned to it, so we need to specify which one we want to use.
 
 Click on the `Assign Footprints` icon in the top bar:
 ![assign footprint button](https://cdn.hackclub.com/019fc7a3-a57a-77df-ab2d-a5b91dd95bb2/image.png)
@@ -229,7 +229,7 @@ Now all our components should show up:
 
 The part of the module that is shaded in is the outline of the PCB, every component should go in there.
 
-You may also notice some blue lines, these show that connections that we need to make.
+You may also notice some blue lines, these show the connections that we need to make.
 
 #### Layout
 
@@ -241,7 +241,7 @@ Here is the layout I went with, but you could do anything:
 
 #### Connecting components
 
-Now that we have all our components laid out, it's time to connect them. Every component had several pads, currently they are red, if you click on one (that doesn't have an `x` on it, which mean it's NC) and press `X` you start **routing**, now a one/few pads will be highlighted that you need to connect, simply click and route to the highlighted pads.
+Now that we have all our components laid out, it's time to connect them. Every component has several pads, they are red, because they are all on the front layer, if you click on one (that doesn't have an `x` on it, which mean it's NC) and press `X` you start **routing**, now a one/few pads will be highlighted that you need to connect to, simply click and route to the highlighted pads.
 
 Here is mine:
 
@@ -249,7 +249,7 @@ Here is mine:
 
 #### Adding a ground fill
 
-You may notice that most of your PCB is empty/there is no copper on it, our design will work, but it's bad for manufacturing, so we need to add a ground fill by pressing the `Draw Filled Zone button` on the right sidebar, and click somewhere outside your PCB
+You may notice that most of your PCB is empty/there is no copper on it, our design will work, but it's bad for manufacturing and signal integrity, so we need to add a ground fill by pressing the `Draw Filled Zone button` on the right sidebar, and click somewhere outside your PCB
 
 ![](https://cdn.hackclub.com/019fc7d7-c962-78d7-99ea-4b757f6e1b87/image.png)
 
@@ -269,7 +269,7 @@ Then press `B` to fill:
 
 VIAs are used to connect two or more different layers of a PCB, they work by drilling a small hole in the PCB, and filling that with copper.
 
-We need VIAs to connect the ground pours on both of your layers, other wise we will have signal integrity problems (on a PCB as simple as ours, it will not be a problem, but it's best practice)
+We need VIAs to connect the ground pours on both of our layers, otherwise we will have signal integrity problems (on a PCB as simple as ours, it will not be a problem, but it's best practice)
 
 Click on the `Place VIA` button on the right sidebar
 
@@ -326,6 +326,8 @@ This part of the guide will teach you how to create the case for your module
 ### Creating a Fusion project
 
 Open Fusion and create a new folder called `My Module` or smth similar, upload the step file that you exported of your PCB and then create a new `Hybrid Design` in that folder.
+
+Then drag your uploaded pcb model into the newly created hybrid design.
 
 # Work In Progress
 
