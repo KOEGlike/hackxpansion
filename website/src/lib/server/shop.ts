@@ -1,6 +1,5 @@
 import { and, asc, desc, eq, gte, ne, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
-import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { project, shopItem, shopOrder, user } from '$lib/server/db/schema';
 import {
@@ -12,6 +11,7 @@ import {
 import type { CatalogItemInput } from '$lib/shop/catalog';
 
 const MAX_NOTE_LENGTH = 2_000;
+const CONFIGURED_ADMIN_USER_ID = 'ident!ZVpfLg';
 const fulfiller = alias(user, 'fulfiller');
 
 export class ShopError extends Error {
@@ -227,7 +227,7 @@ export async function promoteUserToAdmin(adminUserId: string, targetUserId: stri
 export async function demoteUserFromAdmin(adminUserId: string, targetUserId: string) {
 	await requireAdmin(adminUserId);
 	if (targetUserId === getConfiguredAdminUserId()) {
-		throw new ShopError(422, 'The environment-configured admin cannot be demoted.');
+		throw new ShopError(422, 'The configured admin cannot be demoted.');
 	}
 
 	const [demotedUser] = await db
@@ -381,12 +381,11 @@ async function hasOrderedConsole(userId: string, database: Pick<typeof db, 'sele
 }
 
 function getConfiguredAdminUserId() {
-	return env.ADMIN_HACKCLUB_USER_ID?.trim() || null;
+	return CONFIGURED_ADMIN_USER_ID;
 }
 
 async function ensureConfiguredAdmin() {
 	const configuredAdminUserId = getConfiguredAdminUserId();
-	if (!configuredAdminUserId) return;
 	await db
 		.update(user)
 		.set({ isAdmin: true })
