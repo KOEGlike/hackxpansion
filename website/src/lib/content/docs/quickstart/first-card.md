@@ -254,7 +254,9 @@ Here is mine:
 
 #### Adding a ground fill
 
-You may have noticed that most of your PCB is empty, there's not a lot of copper on it. Your design will work, but it's bad for manufacturing and signal integrity. Add a Ground Fill by pressing the Draw Filled Zone button on the right sidebar, then click somewhere outside of your PCB.
+You may have noticed that most of your PCB is empty, there's not a lot of copper on it. Your design will work, but it's bad for manufacturing and signal integrity. Watch [this](https://youtu.be/R3w4Go1s1hM?si=J2GRukJI-MTfpDRr) video if you want to learn more.
+
+Add a Ground Fill by pressing the Draw Filled Zone button on the right sidebar, then click somewhere outside of your PCB.
 
 ![](https://cdn.hackclub.com/019fc7d7-c962-78d7-99ea-4b757f6e1b87/image.png)
 

@@ -172,4 +172,15 @@
 	:global(.prose code) {
 		border-radius: 0;
 	}
+
+	:global(.prose table) {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	:global(.prose :is(th, td)) {
+		border: 1px solid rgb(100 116 139);
+		background: transparent;
+		padding: 0.5rem 0.75rem;
+	}
 </style>

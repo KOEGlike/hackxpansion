@@ -35,6 +35,7 @@
 		},
 		{ title: 'Detailed', href: '/home/docs/detailed', indent: false },
 		{ title: 'Device', href: '/home/docs/detailed/device', indent: true },
+		{ title: 'Pinout', href: '/home/docs/detailed/pinout', indent: true },
 		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
 		{ title: 'API', href: '/home/docs/detailed/api', indent: true },
 		{ title: 'Shipping', href: '/home/docs/shipping', indent: false },
