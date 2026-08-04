@@ -69,7 +69,7 @@ export async function submitProjectAction(projectId: string, userId: string) {
 		const result = await submitProjectToAri({ projectId, userId });
 		return {
 			success: true,
-			message: `Submitted ${result.phase} review to Ari.`,
+			message: `Submitted for ${result.phase} review.`,
 			projectId
 		};
 	} catch (error) {
@@ -80,7 +80,7 @@ export async function submitProjectAction(projectId: string, userId: string) {
 export async function withdrawProjectAction(projectId: string, userId: string) {
 	try {
 		await withdrawProjectFromAri({ projectId, userId });
-		return { success: true, message: 'Project withdrawn from Ari review.', projectId };
+		return { success: true, message: 'Project withdrawn from review.', projectId };
 	} catch (error) {
 		return projectReviewActionFailure(error, projectId);
 	}
@@ -105,10 +105,17 @@ export async function handleJournalAction(
 }
 
 function projectReviewActionFailure(error: unknown, projectId: string) {
-	if (error instanceof ProjectSubmissionError || error instanceof AriInboundError) {
+	if (error instanceof ProjectSubmissionError) {
 		return fail(error.status, {
 			success: false,
 			message: error.message,
+			projectId
+		});
+	}
+	if (error instanceof AriInboundError) {
+		return fail(error.status, {
+			success: false,
+			message: 'The review service could not process this request. Please try again.',
 			projectId
 		});
 	}

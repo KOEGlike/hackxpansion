@@ -19,7 +19,7 @@
 
 	{#if !data.canEdit}
 		<div class="border border-amber-500 bg-amber-100 p-3 text-sm text-amber-950">
-			This project can't be edited while it's waiting for Ari review.
+			This project can't be edited while it's waiting for review.
 		</div>
 	{/if}
 

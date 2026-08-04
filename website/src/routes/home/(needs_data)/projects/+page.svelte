@@ -23,7 +23,7 @@
 	<header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
 		<div>
 			<h1 class="text-4xl font-bold">Projects</h1>
-			<p class="text-slate-600">Create a project, fill in the basics, then submit it to Ari.</p>
+			<p class="text-slate-600">Create a project, fill in the basics, then submit it for review.</p>
 		</div>
 		<a
 			href={resolve('/home/projects/new')}

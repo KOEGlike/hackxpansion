@@ -156,7 +156,7 @@ export async function editProject({ projectId, userId, input }: EditProjectOptio
 		if (!canEditProject(existingProject.status)) {
 			throw new ProjectMutationError(
 				409,
-				'Project cannot be edited while it is waiting for Ari review'
+				'Project cannot be edited while it is waiting for review'
 			);
 		}
 

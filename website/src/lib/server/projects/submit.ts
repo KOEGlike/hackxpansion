@@ -122,7 +122,7 @@ export async function submitProjectToAri({
 
 		throw new ProjectSubmissionError(
 			503,
-			'Ari did not confirm the submission. The project remains under review to prevent a duplicate submission.'
+			'The submission could not be confirmed. The project remains under review to prevent a duplicate submission.'
 		);
 	}
 }
@@ -150,12 +150,12 @@ export async function withdrawProjectFromAri({
 		if (row.status !== 'waiting_design' && row.status !== 'waiting_build') {
 			throw new ProjectSubmissionError(
 				409,
-				'Project can only be withdrawn while it is waiting for Ari review'
+				'Project can only be withdrawn while it is waiting for review'
 			);
 		}
 		const activeAriExternalId = row.activeAriExternalId;
 		if (!activeAriExternalId) {
-			throw new ProjectSubmissionError(409, 'The active Ari submission could not be identified');
+			throw new ProjectSubmissionError(409, 'The active review submission could not be identified');
 		}
 
 		return { status: row.status, activeAriExternalId };
@@ -209,7 +209,7 @@ async function claimSubmission(projectId: string, userId: string): Promise<Claim
 					: readiness.changes.some((change) => change.field === 'status')
 						? 409
 						: 422,
-				`Project cannot be submitted to Ari: ${readiness.changes
+				`Project cannot be submitted: ${readiness.changes
 					.map((change) => change.message)
 					.join(' ')}`
 			);
@@ -291,10 +291,10 @@ const projectForSubmissionFields = {
 
 function getAriConfig() {
 	if (!env.ARI_PROGRAM_ID) {
-		throw new ProjectSubmissionError(500, 'Ari is not configured');
+		throw new ProjectSubmissionError(500, 'Project submissions are temporarily unavailable');
 	}
 	if (!env.ARI_IN_SECRET) {
-		throw new ProjectSubmissionError(500, 'Ari is not configured');
+		throw new ProjectSubmissionError(500, 'Project submissions are temporarily unavailable');
 	}
 	return {
 		programId: env.ARI_PROGRAM_ID,

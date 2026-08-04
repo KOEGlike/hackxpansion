@@ -105,7 +105,7 @@ export function getSubmissionRequirementChanges({
 			field: 'demoUrl',
 			message:
 				type === 'app'
-					? 'Apps are software - add a demo URL before submitting to Ari.'
+					? 'Apps are software - add a demo URL before submitting for review.'
 					: 'Add a demo URL before build review.'
 		});
 	}
