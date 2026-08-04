@@ -16,6 +16,7 @@
 	import StepHeading from '$lib/components/step_heading.svelte';
 	import { landingContent } from '$lib/content/content';
 	import Footer from '$lib/components/footer.svelte';
+	import Faq from '$lib/components/faq.svelte';
 
 	const scrollPerFrame = 25;
 	let frameCanvas = $state<HTMLCanvasElement | undefined>(undefined);
@@ -31,13 +32,13 @@
 	});
 
 	let currentFrameImage = $derived($preloadedFrames[current_frame]);
+	const animationScrollDistance = (imageCount - 1) * scrollPerFrame;
 	let scrollProgress = $derived.by(() => {
 		if (!scrollY.current || imageCount <= 1) {
 			return 0;
 		}
 
-		const maxScroll = (imageCount - 1) * scrollPerFrame;
-		const progress = scrollY.current / maxScroll;
+		const progress = scrollY.current / animationScrollDistance;
 		return Math.max(0, Math.min(progress, 1));
 	});
 
@@ -145,95 +146,77 @@
 		/>
 	</div>
 {:else}
-	<div
-		class="overflow-y-scroll"
-		style="height: calc({imageCount * scrollPerFrame}px + 100vh)"
-	></div>
-	<div class="fixed inset-0 w-full" style="height: 100lvh;">
-		<canvas
-			bind:this={frameCanvas}
-			class="absolute inset-0 z-0 h-full w-full"
-			aria-label="scroll animation"
-		></canvas>
+	<TopBar href="/simple" />
+	<div class="relative" style:height={`calc(${animationScrollDistance}px + 100lvh)`}>
+		<div class="sticky top-0 w-full overflow-hidden" style="height: 100lvh;">
+			<canvas
+				bind:this={frameCanvas}
+				class="absolute inset-0 z-0 h-full w-full"
+				aria-label="scroll animation"
+			></canvas>
 
-		<div class="relative z-10 h-full w-full">
-			<div
-				class="pointer-events-none fixed inset-0 z-10 flex h-screen w-screen flex-col items-center justify-end p-10 pb-20 sm:pb-10"
-			>
-				<div class="h-fit w-full flex-col items-center-safe justify-start">
-					<div
-						class="z-10 h-1 origin-left bg-slate-400 transition-transform duration-30 ease-linear will-change-transform"
-						style:transform={`scaleX(${scrollProgress})`}
-					></div>
-				</div>
-			</div>
-
-			<TopBar href="/simple" />
-
-			<!-- Title -->
-			{#if isCurrentFrame(0)}
+			<div class="relative z-10 h-full w-full">
 				<div
-					class="flex h-full w-full flex-col items-center justify-between gap-0"
-					transition:fade={{ duration: 100 }}
+					class="pointer-events-none absolute inset-0 z-10 flex h-screen w-screen flex-col items-center justify-end p-10 pb-20 sm:pb-10"
 				>
-					<LandingSection />
-				</div>
-			{/if}
-
-			<!-- Step 1 -->
-			{#if isCurrentFrame(1)}
-				<div class={frameStepContainers[0]} transition:fade={{ duration: 100 }}>
-					{@render animatedStep(0)}
-				</div>
-			{/if}
-
-			<!-- Step 2 -->
-			{#if isCurrentFrame(2)}
-				<div class={frameStepContainers[1]} transition:fade={{ duration: 100 }}>
-					<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
-						<img class="landing-step-image" src={`${asset('/ferris.webp')}`} alt="ferris" />
-						{@render animatedStep(1)}
+					<div class="h-fit w-full flex-col items-center-safe justify-start">
+						<div
+							class="z-10 h-1 origin-left bg-slate-400 transition-transform duration-30 ease-linear will-change-transform"
+							style:transform={`scaleX(${scrollProgress})`}
+						></div>
 					</div>
 				</div>
-			{/if}
 
-			<!-- Step 3 -->
-			{#if isCurrentFrame(3)}
-				<div class={frameStepContainers[2]} transition:fade={{ duration: 100 }}>
-					{@render animatedStep(2)}
-				</div>
-			{/if}
+				<!-- Title -->
+				{#if isCurrentFrame(0)}
+					<div
+						class="flex h-full w-full flex-col items-center justify-between gap-0"
+						transition:fade={{ duration: 100 }}
+					>
+						<LandingSection />
+					</div>
+				{/if}
 
-			<!-- Step 4 -->
-			{#if isCurrentFrame(4)}
-				<div class={frameStepContainers[3]} transition:fade={{ duration: 100 }}>
-					<StepHeading
-						title={landingContent.steps[3].title}
-						description={landingContent.steps[3].description}
-						extraClass={frameStepClasses[3]}
-						descriptionVisible={isCurrentFrame(5)}
-					/>
+				<!-- Step 1 -->
+				{#if isCurrentFrame(1)}
+					<div class={frameStepContainers[0]} transition:fade={{ duration: 100 }}>
+						{@render animatedStep(0)}
+					</div>
+				{/if}
 
-					{#if isCurrentFrame(5)}
-						<button
-							class="mb-25 p-3 text-3xl text-slate-600/80 underline hover:text-slate-600 active:text-slate-700"
-							onclick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-							transition:fade={{ duration: 100 }}
-						>
-							Go Up
-						</button>
-					{/if}
-				</div>
-			{/if}
+				<!-- Step 2 -->
+				{#if isCurrentFrame(2)}
+					<div class={frameStepContainers[1]} transition:fade={{ duration: 100 }}>
+						<div class="flex flex-col items-center justify-center gap-10 sm:flex-row">
+							<img class="landing-step-image" src={`${asset('/ferris.webp')}`} alt="ferris" />
+							{@render animatedStep(1)}
+						</div>
+					</div>
+				{/if}
 
-			<!-- Footer -->
-			{#if isCurrentFrame(5)}
-				<div class="pointer-events-auto absolute right-0 bottom-0 w-full">
-					<Footer />
-				</div>
-			{/if}
+				<!-- Step 3 -->
+				{#if isCurrentFrame(3)}
+					<div class={frameStepContainers[2]} transition:fade={{ duration: 100 }}>
+						{@render animatedStep(2)}
+					</div>
+				{/if}
+
+				<!-- Step 4 -->
+				{#if isCurrentFrame(4)}
+					<div class={frameStepContainers[3]} transition:fade={{ duration: 100 }}>
+						<StepHeading
+							title={landingContent.steps[3].title}
+							description={landingContent.steps[3].description}
+							extraClass={frameStepClasses[3]}
+							descriptionVisible={isCurrentFrame(5)}
+						/>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
+	<Faq />
+	<Footer showGoUp />
 {/if}
 
 <style>

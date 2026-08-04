@@ -4,6 +4,7 @@
 	import TopBar from '$lib/components/top_bar.svelte';
 	import StepRow from '$lib/components/step_row.svelte';
 	import Footer from '$lib/components/footer.svelte';
+	import Faq from '$lib/components/faq.svelte';
 	import { landingContent } from '$lib/content/content';
 
 	const simpleSteps = landingContent.steps.map((step, index) => {
@@ -38,4 +39,5 @@
 		/>
 	{/each}
 </main>
+<Faq />
 <Footer />
