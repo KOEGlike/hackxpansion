@@ -91,19 +91,22 @@
 		{:else}
 			<aside
 				id="home-sidebar"
-				class="fixed z-50 my-3 ml-3 flex h-[calc(100%-1.5rem)] w-fit flex-col justify-between p-3 content-box sm:sticky sm:top-3 sm:left-0"
+				class="fixed z-50 my-3 ml-3 flex h-[calc(100%-1.5rem)] w-fit flex-col justify-between gap-2 overflow-hidden p-3 content-box sm:sticky sm:top-3 sm:left-0"
 			>
-				<div class="flex h-fit w-fit flex-col gap-2">
+				<div class="flex min-h-0 w-fit flex-1 flex-col gap-2">
 					<button
-						class="w-fit hover:underline"
+						class="w-fit shrink-0 hover:underline"
 						onclick={() => (hidden = true)}
 						aria-controls="home-sidebar"
 						aria-expanded="true"
 					>
 						Close
 					</button>
-					<hr />
-					<nav aria-label="Account navigation" class="flex flex-col gap-1">
+					<hr class="shrink-0" />
+					<nav
+						aria-label="Account navigation"
+						class="flex min-h-0 flex-col gap-1 overflow-x-hidden overflow-y-auto pr-2"
+					>
 						{#each items as item (item.href)}
 							<a
 								href={resolve(item.href)}
@@ -184,7 +187,7 @@
 				</div>
 
 				{#if data.user}
-					<section aria-label="Account" class="flex flex-row gap-2">
+					<section aria-label="Account" class="flex shrink-0 flex-row gap-2">
 						<img src={data.user.image} alt="" class="size-20" />
 						<div class="flex flex-col py-3 justify-between">
 							<p class="text-xl">{data.user.name}</p>
@@ -205,7 +208,7 @@
 						method="post"
 						action={`${resolve('/')}?/signIn`}
 						aria-label="Account"
-						class="w-full"
+						class="w-full shrink-0"
 					>
 						<input type="hidden" name="returnTo" value={`${page.url.pathname}${page.url.search}`} />
 						<button
