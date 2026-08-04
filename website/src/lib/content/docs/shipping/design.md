@@ -27,6 +27,7 @@ If they have to open even a single file, your README is not doing its job. At mi
 
 2\. Add images\! A picture is worth a thousand words. Include:
 
+- [x] The VERY FIRST thing in your README should be a decent looking picture to actually intrigue people. People are lazy and don't read unless they're motivated
 - [x] Screenshots of a full 3D model of your project fully assembled
 - [x] Screenshots of your PCB with components
 - [x] Anything else that makes it clear what your project is and what it’s for
