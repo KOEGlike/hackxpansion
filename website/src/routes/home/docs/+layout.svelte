@@ -89,7 +89,7 @@
 >
 	<main
 		bind:this={article}
-		class="prose prose-lg mx-auto w-full min-w-0 max-w-4xl p-6 prose-headings:my-2 prose-headings:text-slate-700 prose-headings:underline prose-p:text-slate-700 prose-li:marker:text-slate-700"
+		class="prose prose-lg mx-auto w-full min-w-0 max-w-4xl p-6 prose-headings:my-2 prose-headings:text-slate-700 prose-p:text-slate-700 prose-li:marker:text-slate-700"
 	>
 		{@render children()}
 	</main>
@@ -142,13 +142,11 @@
 	:global(.prose h5) {
 		font-size: 1.25rem;
 		font-weight: 600;
-		text-decoration-line: underline;
 	}
 
 	:global(.prose h6) {
 		font-size: 1.125rem;
 		font-weight: 600;
-		text-decoration-line: underline;
 	}
 
 	:global(.prose :is(h1, h2, h3, h4, h5, h6)) {

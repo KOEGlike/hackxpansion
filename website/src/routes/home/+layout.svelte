@@ -100,9 +100,9 @@
 		{:else}
 			<aside
 				id="home-sidebar"
-				class="fixed z-50 my-3 ml-3 flex h-[calc(100%-1.5rem)] w-fit flex-col justify-between gap-2 overflow-hidden p-3 content-box sm:sticky sm:top-3 sm:left-0"
+				class="fixed left-3 z-50 my-3 box-border flex h-[calc(100%-1.5rem)] w-80 max-w-[calc(100vw-1.5rem)] shrink-0 flex-col justify-between gap-2 overflow-hidden p-3 content-box sm:sticky sm:top-3 sm:left-0 sm:ml-3"
 			>
-				<div class="flex min-h-0 w-fit flex-1 flex-col gap-2">
+				<div class="flex min-h-0 min-w-0 w-full flex-1 flex-col gap-2">
 					<button
 						class="w-fit shrink-0 hover:underline"
 						onclick={() => (hidden = true)}
@@ -111,10 +111,10 @@
 					>
 						Close
 					</button>
-					<hr class="shrink-0" />
+					<hr class="w-full shrink-0" />
 					<nav
 						aria-label="Account navigation"
-						class="flex min-h-0 flex-col gap-1 overflow-x-hidden overflow-y-auto pr-2"
+						class="flex min-h-0 min-w-0 w-full flex-col gap-1 overflow-x-hidden overflow-y-auto pr-2"
 					>
 						{#each items as item (item.href)}
 							<a
@@ -126,11 +126,11 @@
 								{item.title}
 							</a>
 							{#if item.href === '/home/docs' && isCurrentPage(item.href)}
-								<div class="ml-2 flex flex-col border-l border-slate-400 pl-3">
+								<div class="ml-2 min-w-0 flex flex-col border-l border-slate-400 pl-3">
 									{#each docsItems as docsItem (docsItem.href)}
 										<a
 											href={resolve(docsItem.href)}
-											class="text-lg hover:underline"
+											class="min-w-0 break-words text-lg hover:underline"
 											class:ml-4={docsItem.indent}
 											class:underline={isExactPage(docsItem.href)}
 											aria-current={isExactPage(docsItem.href) ? 'page' : undefined}
