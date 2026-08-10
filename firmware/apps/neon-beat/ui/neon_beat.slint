@@ -6,6 +6,9 @@ export struct BeatNote {
 }
 
 export component NeonBeatUI inherits Window {
+    width: 320px;
+    height: 240px;
+
     in property <[BeatNote]> notes;
     in property <int> score: 0;
     in property <int> combo: 0;

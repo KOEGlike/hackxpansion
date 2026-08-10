@@ -1,6 +1,9 @@
 import "fonts/ShareTechMono-Regular.ttf";
 
 export component AppPickerUI inherits Window {
+    width: 320px;
+    height: 240px;
+
     in property <[string]> apps;
     in-out property <int> selected-index: -1;
     property <int> first-visible-index: root.selected-index > 3 ? root.selected-index - 3 : 0;

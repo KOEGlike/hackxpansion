@@ -6,6 +6,9 @@ export struct SnakeCell {
 }
 
 export component SnakeGameUI inherits Window {
+    width: 320px;
+    height: 240px;
+
     in property <[SnakeCell]> snake-cells;
     in property <int> food-x: -1;
     in property <int> food-y: -1;
