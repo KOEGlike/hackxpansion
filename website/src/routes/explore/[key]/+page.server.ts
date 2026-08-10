@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { project, user } from '$lib/server/db/schema';
+import { journal, project, user } from '$lib/server/db/schema';
 import { isUuid } from '$lib/projects/domain';
 import { parseResistorPairSlug } from '$lib/projects/explore';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const resistorPair = parseResistorPairSlug(params.key);
@@ -43,5 +43,17 @@ export const load: PageServerLoad = async ({ params }) => {
 		.limit(1);
 
 	if (!publicProject) error(404, 'Project not found');
-	return { project: publicProject };
+
+	const journals = await db
+		.select({
+			id: journal.id,
+			createdAt: journal.createdAt,
+			durationInMinutes: journal.durationInMinutes,
+			text: journal.text
+		})
+		.from(journal)
+		.where(eq(journal.projectId, publicProject.id))
+		.orderBy(desc(journal.createdAt));
+
+	return { project: publicProject, journals };
 };

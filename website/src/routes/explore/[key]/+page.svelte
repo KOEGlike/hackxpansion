@@ -2,11 +2,14 @@
 	import { resolve } from '$app/paths';
 	import CoinIcon from '$lib/components/coin_icon.svelte';
 	import GridBg from '$lib/components/grid_bg.svelte';
+	import Markdown from '$lib/components/markdown.svelte';
 	import ProjectStatusBadge from '$lib/components/project_status_badge.svelte';
+	import { formatMinutes } from '$lib/projects/domain';
 	import { formatResistor } from '$lib/projects/resistors';
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
+	const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' });
 </script>
 
 <svelte:head>
@@ -110,5 +113,31 @@
 				</div>
 			</div>
 		</article>
+
+		<section class="flex flex-col gap-4" aria-labelledby="project-journals">
+			<div>
+				<h2 id="project-journals" class="text-2xl font-bold">Journals</h2>
+				<p class="text-sm text-slate-600">Follow the progress behind this project.</p>
+			</div>
+
+			{#if data.journals.length === 0}
+				<p class="content-box p-5">No journal entries have been published yet.</p>
+			{:else}
+				{#each data.journals as entry (entry.id)}
+					<article class="content-box p-5">
+						<header class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+							<h3 class="font-bold">{formatMinutes(entry.durationInMinutes)}</h3>
+							<time
+								datetime={new Date(entry.createdAt).toISOString()}
+								class="text-xs text-slate-500"
+							>
+								{dateFormatter.format(new Date(entry.createdAt))}
+							</time>
+						</header>
+						<Markdown text={entry.text} />
+					</article>
+				{/each}
+			{/if}
+		</section>
 	</main>
 </div>
