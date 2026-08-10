@@ -22,6 +22,25 @@
 			}[event] ?? event
 		);
 	}
+
+	function humanizeKey(key: string) {
+		return key.replaceAll('_', ' ').replace(/^./, (character) => character.toUpperCase());
+	}
+
+	function objectEntries(value: object | null | undefined) {
+		return Object.entries(value ?? {});
+	}
+
+	function formatValue(value: unknown) {
+		if (value === null || value === undefined || value === '') return 'Not provided';
+		if (typeof value === 'string') return value;
+		if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+		return JSON.stringify(value, null, 2);
+	}
+
+	function formatJson(value: unknown) {
+		return JSON.stringify(value, null, 2) ?? String(value);
+	}
 </script>
 
 <svelte:head>
@@ -192,28 +211,184 @@
 				<article class="content-box p-5">
 					<div class="flex flex-wrap items-start justify-between gap-3">
 						<div>
-							<h3 class="text-lg font-bold">{reviewLabel(review.event)}</h3>
+							<div class="flex flex-wrap items-center gap-2">
+								<h3 class="text-xl font-bold">{reviewLabel(review.event)}</h3>
+								{#if review.rawPayload.decision}
+									<span class="bg-slate-200 px-2 py-0.5 text-xs font-bold uppercase">
+										{review.rawPayload.decision}
+									</span>
+								{/if}
+							</div>
 							<p class="text-xs text-slate-500">ARI ID: {review.ariId}</p>
 						</div>
 						<p class="text-sm text-slate-600">
 							{dateFormatter.format(new Date(review.receivedAt))}
 						</p>
 					</div>
-					<div class="mt-4 grid gap-4 md:grid-cols-2">
-						<div>
-							<p class="text-xs font-bold uppercase text-slate-500">Note to maker</p>
-							<p class="mt-1 whitespace-pre-wrap">{review.noteToMaker ?? 'No note provided.'}</p>
+
+					<section class="mt-5" aria-label="Review identifiers">
+						<dl class="grid gap-x-5 gap-y-2 text-sm sm:grid-cols-[auto_1fr_auto_1fr]">
+							<dt class="font-bold">Review record</dt>
+							<dd class="min-w-0 break-all">{review.id}</dd>
+							<dt class="font-bold">Delivery ID</dt>
+							<dd class="min-w-0 break-all">{review.deliveryId}</dd>
+							<dt class="font-bold">External ID</dt>
+							<dd class="min-w-0 break-all">{review.rawPayload.external_id}</dd>
+							<dt class="font-bold">Event</dt>
+							<dd>{review.rawPayload.event}</dd>
+							<dt class="font-bold">Maker email</dt>
+							<dd class="min-w-0 break-all">{review.rawPayload.maker.email}</dd>
+							<dt class="font-bold">Maker Slack ID</dt>
+							<dd>{review.rawPayload.maker.slack_id ?? 'Not provided'}</dd>
+							<dt class="font-bold">Reviewer email</dt>
+							<dd class="min-w-0 break-all">{review.reviewer?.email ?? 'Not provided'}</dd>
+							<dt class="font-bold">Reviewer Slack ID</dt>
+							<dd>{review.reviewer?.slack_id ?? 'Not provided'}</dd>
+						</dl>
+					</section>
+
+					<section class="mt-5 grid gap-4 md:grid-cols-2" aria-label="Review notes">
+						<div class="border border-slate-300 bg-white/40 p-4">
+							<h4 class="text-xs font-bold uppercase text-slate-500">Note to maker</h4>
+							<p class="mt-2 whitespace-pre-wrap">{review.noteToMaker ?? 'No note provided.'}</p>
 						</div>
-						<div>
-							<p class="text-xs font-bold uppercase text-slate-500">Audit details</p>
-							<p class="mt-1 whitespace-pre-wrap">{review.auditNote ?? 'No audit note.'}</p>
-							<p class="mt-2 text-sm text-slate-600">
-								Approved time: {formatMinutes(review.approvedMinutes ?? 0)}
-								{#if review.reviewer}
-									· Reviewer: {review.reviewer.email}{/if}
+						<div class="border border-slate-300 bg-white/40 p-4">
+							<h4 class="text-xs font-bold uppercase text-slate-500">Audit note</h4>
+							<p class="mt-2 whitespace-pre-wrap">
+								{review.auditNote ?? 'No audit note provided.'}
 							</p>
 						</div>
-					</div>
+					</section>
+
+					<section class="mt-5" aria-labelledby={`time-${review.id}`}>
+						<h4 id={`time-${review.id}`} class="text-lg font-bold">Approved time</h4>
+						<div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+							<div class="border border-slate-300 bg-white/40 p-3">
+								<p class="text-xs uppercase text-slate-500">Total</p>
+								<p class="text-lg font-bold">{formatMinutes(review.approvedMinutes ?? 0)}</p>
+							</div>
+							{#if review.minutesBreakdown}
+								{#each objectEntries(review.minutesBreakdown) as [source, minutes] (source)}
+									<div class="border border-slate-300 bg-white/40 p-3">
+										<p class="text-xs uppercase text-slate-500">{humanizeKey(source)}</p>
+										<p class="text-lg font-bold">{formatMinutes(Number(minutes))}</p>
+									</div>
+								{/each}
+							{:else}
+								<p class="self-center text-sm text-slate-600 sm:col-span-2 lg:col-span-4">
+									No time breakdown was provided.
+								</p>
+							{/if}
+						</div>
+					</section>
+
+					<section class="mt-5" aria-labelledby={`justification-${review.id}`}>
+						<h4 id={`justification-${review.id}`} class="text-lg font-bold">Justification</h4>
+						{#if review.justification && objectEntries(review.justification).length > 0}
+							<dl class="mt-3 grid gap-3 md:grid-cols-2">
+								{#each objectEntries(review.justification) as [key, value] (key)}
+									<div class="border border-slate-300 bg-white/40 p-3">
+										<dt class="text-xs font-bold uppercase text-slate-500">{humanizeKey(key)}</dt>
+										<dd class="mt-1 whitespace-pre-wrap break-words">{formatValue(value)}</dd>
+									</div>
+								{/each}
+							</dl>
+						{:else}
+							<p class="mt-2 text-sm text-slate-600">No justification was provided.</p>
+						{/if}
+					</section>
+
+					<section class="mt-5" aria-labelledby={`fields-${review.id}`}>
+						<h4 id={`fields-${review.id}`} class="text-lg font-bold">Reviewed fields</h4>
+						{#if review.fields && review.fields.length > 0}
+							<div class="mt-3 grid gap-3 md:grid-cols-2">
+								{#each review.fields as field, index (`${field.key}:${index}`)}
+									<div class="border border-slate-300 bg-white/40 p-3">
+										<div class="flex flex-wrap items-baseline justify-between gap-2">
+											<h5 class="font-bold">{field.label}</h5>
+											<p class="text-xs text-slate-500">{field.key} · {field.type}</p>
+										</div>
+										<p class="mt-2 whitespace-pre-wrap break-words font-mono text-sm">
+											{formatValue(field.value)}
+										</p>
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<p class="mt-2 text-sm text-slate-600">No reviewed fields were provided.</p>
+						{/if}
+					</section>
+
+					<section class="mt-5" aria-labelledby={`collaborators-${review.id}`}>
+						<h4 id={`collaborators-${review.id}`} class="text-lg font-bold">Collaborators</h4>
+						{#if review.collaborators && review.collaborators.length > 0}
+							<div class="mt-3 grid gap-3 md:grid-cols-2">
+								{#each review.collaborators as collaborator (collaborator.email)}
+									<div class="border border-slate-300 bg-white/40 p-3">
+										<h5 class="font-bold">{collaborator.name ?? collaborator.email}</h5>
+										{#if collaborator.name}
+											<p class="text-sm text-slate-600">{collaborator.email}</p>
+										{/if}
+										<dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+											<dt class="font-bold">Slack ID</dt>
+											<dd>{collaborator.slack_id ?? 'Not provided'}</dd>
+											<dt class="font-bold">Hackatime ID</dt>
+											<dd>{collaborator.hackatime_id ?? 'Not provided'}</dd>
+											<dt class="font-bold">Approved minutes</dt>
+											<dd>{collaborator.approved_minutes ?? 'Not provided'}</dd>
+											<dt class="font-bold">Approved hours</dt>
+											<dd>{collaborator.approved_hours ?? 'Not provided'}</dd>
+										</dl>
+										{#if collaborator.minutes_breakdown}
+											<div class="mt-3 border-t border-slate-300 pt-2 text-sm">
+												{#each objectEntries(collaborator.minutes_breakdown) as [source, minutes] (source)}
+													<p>{humanizeKey(source)}: {formatMinutes(Number(minutes))}</p>
+												{/each}
+											</div>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<p class="mt-2 text-sm text-slate-600">No collaborators were included.</p>
+						{/if}
+					</section>
+
+					<section class="mt-5" aria-labelledby={`fraud-${review.id}`}>
+						<h4 id={`fraud-${review.id}`} class="text-lg font-bold">Fraud review</h4>
+						{#if review.fraud}
+							<p class="mt-2">
+								Verdict:
+								<span class="font-bold uppercase">{review.fraud.verdict}</span>
+							</p>
+							{#if review.fraud.checks.length > 0}
+								<div class="mt-3 grid gap-3 md:grid-cols-2">
+									{#each review.fraud.checks as check, index (`${check.email}:${index}`)}
+										<div class="border border-slate-300 bg-white/40 p-3">
+											<h5 class="font-bold">{check.email}</h5>
+											<p class="text-sm text-slate-600">
+												Slack ID: {check.slack_id ?? 'Not provided'} · Trust score: {check.trust_score}
+											</p>
+											<p class="mt-2 whitespace-pre-wrap">{check.justification}</p>
+										</div>
+									{/each}
+								</div>
+							{:else}
+								<p class="mt-2 text-sm text-slate-600">No fraud checks were included.</p>
+							{/if}
+						{:else}
+							<p class="mt-2 text-sm text-slate-600">No fraud review was included.</p>
+						{/if}
+					</section>
+
+					<details class="mt-5 border border-slate-500 bg-slate-900 text-slate-100">
+						<summary class="cursor-pointer px-4 py-3 font-bold hover:bg-slate-800">
+							View raw JSON
+						</summary>
+						<pre class="max-h-[32rem] overflow-auto border-t border-slate-600 p-4 text-xs"><code
+								>{formatJson(review.rawPayload)}</code
+							></pre>
+					</details>
 				</article>
 			{/each}
 		{/if}

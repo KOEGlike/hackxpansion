@@ -70,7 +70,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 				minutesBreakdown: review.minutesBreakdown,
 				noteToMaker: review.noteToMaker,
 				auditNote: review.auditNote,
-				reviewer: review.reviewer
+				justification: review.justification,
+				fields: review.fields,
+				collaborators: review.collaborators,
+				fraud: review.fraud,
+				reviewer: review.reviewer,
+				rawPayload: review.rawPayload
 			})
 			.from(review)
 			.where(eq(review.projectId, params.id))
