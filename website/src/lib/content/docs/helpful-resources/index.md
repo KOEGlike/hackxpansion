@@ -17,3 +17,5 @@
 ## Firmware
 
 - [Rust Book](https://rust-book.cs.brown.edu/) This is the **Official** way to learn the rust language. It's pretty good
+
+- [Slint Docs](https://docs.slint.dev/latest/docs/slint/) This is the go to place for Slint docs (who would have guessed)

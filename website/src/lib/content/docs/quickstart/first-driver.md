@@ -4,7 +4,7 @@ This guide will teach you how to create a simple driver for a module.
 
 ## Experience needed
 
-To understand this guide, you should have lite programming experience and have read and completed the [First Card](./first-card) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
+To understand this guide, you should have lite programming experience and have read/completed the [First Card](./first-card) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
 
 ## Download software
 
@@ -12,7 +12,6 @@ To understand this guide, you should have lite programming experience and have r
 - **Rust** This is the language that the firmware for hackxpansion is written in. Can be downloaded from [here](https://rust-lang.org/learn/get-started/)
 - **Rust target for RP2354** The basic install of Rust doesn't contain the compilation target for the RP2354. Install by running `rustup target add thumbv8m.main-none-eabihf`.
 - **Picotool** This is needed for flashing firmware onto the hardware. Download from your package manager or from [here](https://github.com/raspberrypi/pico-sdk-tools/releases)
-- **Git:** This is needed to publish your project and download resources. Can be downloaded from your package manager or [here](https://git-scm.com/install/)
 
 ## Crash course on Rust
 
@@ -22,9 +21,9 @@ One of the main features of Rust is the `Barrow Checker`, which prevents you fro
 
 This guide will not teach you Rust, there are already existing guides/tutorials which can explain the language far better than I could. Check out the [`Helpful Resources`](../helpful-resouces) guide for links to the rust book and other helpful stuff.
 
-## Setup your project
+## Setup your rust project
 
-In the root of your repo run `cargo new firmware --lib`, this will create a new rust library crate(project)
+In the root of your module repo run `cargo new firmware --lib`, this will create a new rust library crate(project)
 
 Your project hierarchy should look something like this:
 
@@ -152,10 +151,47 @@ In this example we register 4 groups, each having two buttons, if one is taken o
 
 ## Adding your driver to the firmware
 
-After you finished your driver, you have to fork and clone the [hackxpansion repo](https://github.com/KOEGlike/hackxpansion), go in the firmware folder, and add your driver crate as a dependency in the workspace [`Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml), for now it can be a local path
+Adding a driver is really easy. Here are the steps:
 
-After that you need to add your driver to [`load_driver.rs`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/xpanse/src/load_driver.rs), look at how other drives are added.
+1. Fork and clone the [hackxpansion repo](https://github.com/KOEGlike/hackxpansion) if you haven't already.
+2. Go into the `firmware` folder.
+3. Add your driver crate as a local workspace dependency under `# Drivers` in [`firmware/Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml). The path should point to the `firmware` folder in your local module repo while you are testing it:
 
-Build the project by running `cargo build`, if it compiles, publish you driver crate on [crates.io](https://crates.io), and swap your local path with your driver crate on crates io in the workspace [`Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml) of the hackxpansion firmware, then make a PR to the repo with your newly added driver
+```toml
+my-driver = { path = "../../my-module-repo/firmware" } # This could also be a local path
+```
 
-# Work In Progress
+4. Add the workspace dependency under `# Drivers` in [`firmware/xpanse/Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/xpanse/Cargo.toml):
+
+```toml
+my-driver = { workspace = true }
+```
+
+5. Add a match arm for your driver in [`load_driver.rs`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/xpanse/src/load_driver.rs), following the existing drivers:
+
+```rust
+Some(id) if id == my_driver::MyDriver::ID => {
+    match my_driver::MyDriver::create(bank, slot, registry, bus).await {
+        Ok(()) => defmt::info!("My driver initialized in {:?}", slot),
+        Err(error) => {
+            defmt::error!("My driver init failed in {:?}: {:?}", slot, error)
+        }
+    }
+}
+```
+
+Rust crate names use underscores in code, so a crate named `my-driver` in `Cargo.toml` is imported as `my_driver`.
+
+6. Build the firmware by running `cargo build` from the `firmware` folder.
+7. Fix any compilation errors, then publish your driver crate on [crates.io](https://crates.io).
+8. Replace the local path dependency in `firmware/Cargo.toml` with the version published on crates.io:
+
+```toml
+my-driver = "0.1.0"
+```
+
+9. Run `cargo build` again to make sure the firmware builds with the published crate.
+10. Make a PR to the hackxpansion repo with your driver dependency and `load_driver.rs` match arm.
+11. When your module and console arrive, test the driver on the real hardware and fix any bugs.
+12. Publish a new version of your driver on crates.io if fixes are needed.
+13. Make another PR to the hackxpansion repo with the bumped driver version.

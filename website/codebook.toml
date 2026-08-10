@@ -8,6 +8,7 @@ words = [
     "PIO's",
     "PWM",
     "Pinout",
+    "Slint",
     "UART",
     "baudrate",
     "bitbang",
