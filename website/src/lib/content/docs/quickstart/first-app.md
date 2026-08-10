@@ -4,29 +4,29 @@ This guide will teach you how to create a simple app that uses some buttons.
 
 ## Experience needed
 
-To understand this guide, you should have lite programming experience and have read/completed the [First Driver](./first-driver) guide. If you don't understand something google is your best friend. If you have any further questions just ask in `#hackxpansion`
+To understand this guide, you should have a little programming experience and have read or completed the [First Driver](./first-driver) guide. If you don't understand something, Google is your best friend. If you have any further questions, just ask in `#hackxpansion`.
 
 ## Download software
 
-- **Slint Extension** This adds syntax highlight and a live preview to the UI framework.
+- **Slint Extension** This adds syntax highlighting and a live preview to the UI framework.
 
-- All other software needed for [First Driver](./first-driver)
+- All other software needed for the [First Driver](./first-driver) guide.
 
-## Setup your app repo
+## Set up your app repo
 
-Generally you should create a new repo for your apps, because they generally should be driver independent (for example your app that uses an A button shouldn't care about which button module u plugged in as long as it has an A button).
+Generally, you should create a new repo for your apps, because they generally should be driver-independent (for example, your app that uses an A button shouldn't care about which button module you plug in as long as it has an A button).
 
-Once you created your repo on GitHub and cloned it to your local machine, you should run `cargo init --lib .` in your repo directory. This is the same as `cargo new --lib` from the driver guide, but it doesn't create a new dir, instead it uses the one that you are currently in.
+Once you have created your repo on GitHub and cloned it to your local machine, you should run `cargo init --lib .` in your repo directory. This is the same as `cargo new --lib` from the driver guide, but it doesn't create a new directory. Instead, it uses the one that you are currently in.
 
 ## Include dependencies
 
-You have to add `xpanse-api` and `slint` as dependency, simply run `cargo add xpanse-api slint` in your firmware directory. You also need a build time dependency for slint, run `cargo add slint-build --build`. These add all the stuff that is needed for creating a basic app to the project. These commands added a new entries in `Cargo.toml`.
+You have to add `xpanse-api` and `slint` as dependencies. Simply run `cargo add xpanse-api slint` in your app directory. You also need a build-time dependency for Slint. Run `cargo add slint-build --build`. These add all the stuff that is needed for creating a basic app to your project. These commands add new entries in `Cargo.toml`.
 
-If your app uses drivers that add non standard resources to the registry, you also have to add those crates as a dependency who expose these types.
+If your app uses drivers that add non-standard resources to the registry, you also have to add those crates as dependencies that expose these types.
 
 ## UI
 
-For the UI we will use Slint.
+For the UI, we will use Slint.
 
 For more detailed docs on Slint, check out the [official Slint docs](https://docs.slint.dev/latest/docs/slint/).
 
@@ -34,18 +34,18 @@ For more detailed docs on Slint, check out the [official Slint docs](https://doc
 
 Your app has two options to put stuff on the screen:
 
-- The first is direct video, where your app directly writes the colors of pixels to the screen, with no middle man. This is very useful for emulators, or if you want to write your own render. But this option is very cumbersome to use for simple UI apps.
-- The secund option is [Slint](https://slint.dev/), a very powerful UI framework. Slint is very similar to JS UI frameworks, like React or Svelte: you can define components, style elements very easily, built in reactivity.
+- The first is direct video, where your app directly writes the colors of pixels to the screen, with no middleman. This is very useful for emulators, or if you want to write your own renderer. But this option is very cumbersome to use for simple UI apps.
+- The second option is [Slint](https://slint.dev/), a very powerful UI framework. Slint is very similar to JS UI frameworks, like React or Svelte: you can define components, style elements very easily, and use built-in reactivity.
 
-One of the very nifty things about Slint is that it has a live preview, so you can see how your app will look, even before you get your console. In the embedded word this is not a given, so this is a luxury feature. I'll cover later on how to use this.
+One of the very nifty things about Slint is that it has a live preview, so you can see how your app will look even before you get your console. In the embedded world, this is not a given, so this is a luxury feature. I'll cover later on how to use this.
 
 ### Creating a `.slint` file
 
-Slint uses `.slint` files to define UI. So, create a dir called `ui` in the root of your repo, and inside that a file called `ui.slint` or smth similar.
+Slint uses `.slint` files to define UI. So, create a directory called `ui` in the root of your repo, and inside that, a file called `ui.slint` or something similar.
 
-### Setting up build script
+### Setting up a build script
 
-But we have to tell the rust compiler to use these `.slint` files, so we gotta add a build script.
+But we have to tell the Rust compiler to use these `.slint` files, so we have to add a build script.
 
 Simply create a `build.rs` file in the root of your repo, and paste this into it:
 
@@ -60,9 +60,9 @@ fn main() {
 }
 ```
 
-If you didn't use `ui.slint` for your slint file, simple replace `ui.slint` with the name you choose.
+If you didn't use `ui.slint` for your Slint file, simply replace `ui.slint` with the name you chose.
 
-Currently this is how your repo should look like:
+Currently, this is what your repo should look like:
 
 ```
 my-app-repo/
@@ -74,18 +74,18 @@ my-app-repo/
 │  ├─ ui.slint
 ```
 
-### Creating basic UI
+### Creating a basic UI
 
-In this section I will explain a basic `.slint` file that displays how many times a button has been pressed.
+In this section, I will explain a basic `.slint` file that displays how many times a button has been pressed.
 
 ```slint
 // For your app to use your UI, it has to export a component that inherits Window
 export component ButtonLoggerUI inherits Window {
-    // These are the dimension of the physical screen
+    // These are the dimensions of the physical screen
     width: 320px;
     height: 240px;
 
-    // This is a reactive proprety that we will set from our app's logic code
+    // This is a reactive property that we will set from our app's logic code
     in-out property <int> count: 0;
 
     // White BG
@@ -102,7 +102,7 @@ export component ButtonLoggerUI inherits Window {
         alignment: center;
 
         Text {
-            // Displaying the reactive count proprety
+            // Displaying the reactive count property
             text: "Clicks: " + root.count;
             color: #008000;
             horizontal-alignment: center;
@@ -118,9 +118,9 @@ export component ButtonLoggerUI inherits Window {
 }
 ```
 
-### Using live preview
+### Using the live preview
 
-_This feature is only available in VSC_
+_This feature is only available in VS Code_
 
 Open your `.slint` file and click `Show Preview` above your exported component. And voila:
 
@@ -128,9 +128,9 @@ Open your `.slint` file and click `Show Preview` above your exported component. 
 
 ## Business Logic
 
-Now that you are done with the UI, it's time to actually use it in a app.
+Now that you are done with the UI, it's time to actually use it in an app.
 
-This is how a basic `lib.rs` of an app should look like, I added comments to explain it:
+This is what a basic `lib.rs` of an app should look like. I added comments to explain it:
 
 ```rust
 #![no_std]
@@ -155,18 +155,18 @@ use xpanse_api::{
 // This will include all the components that we define in `.slint` files
 slint::include_modules!();
 
-// Every app is a struct, that has all the resources that it needs inside it
+// Every app is a struct that has all the resources that it needs inside it
 pub struct ButtonLoggerApp {
     button: ResourceLease<Box<dyn Button<A>>>,
 }
 
-// Every app needs to impl the App trait
+// Every app needs to implement the App trait
 impl App for ButtonLoggerApp {
     // This will be the display name in the app list
     const NAME: &'static str = "Button Logger";
 
     // This function checks if the registry has all
-    // the resources that this app *needs* to run. Like controls/buttons
+    // the resources that this app *needs* to run, like controls/buttons.
     //
     // And if it can run, it will be added to the app list
     fn can_run(registry: &Registry) -> bool {
@@ -174,12 +174,12 @@ impl App for ButtonLoggerApp {
         registry.has::<Box<dyn Button<A>>>()
     }
 
-    // This function takes all the resources that the app needs,
+    // This function takes all the resources that the app needs
     // and creates a new app instance if everything is successful
     //
     // This function can try to take resources that the app
-    // doesn't *need* to run. Like a game can run without sound,
-    // but not without buttons
+    // doesn't *need* to run. For example, a game can run without sound,
+    // but not without buttons.
     fn new(registry: &mut Registry) -> Option<Self> {
         // We try to take an A button
         let button = registry.take_resource::<Box<dyn Button<A>>>()?;
@@ -188,7 +188,7 @@ impl App for ButtonLoggerApp {
 
     // This is where the actual app runs
     fn run<'a>(&'a mut self) -> Pin<Box<dyn Future<Output = ()> + 'a>> {
-        // We need a Box cuz of rust async trait stuff
+        // We need a Box because of Rust's async trait requirements
         Box::pin(async move {
             // We try to create an instance of our exported component
             let ui = match ButtonLoggerUI::new() {
@@ -210,7 +210,7 @@ impl App for ButtonLoggerApp {
                 // We wait until the button is pressed
                 self.button.resource_mut().wait_for_pressed().await;
 
-                // We count for how many ms was the button held
+                // We count how many milliseconds the button was held
                 let mut held_ms = 0;
                 while self.button.resource().is_pressed() && held_ms < 1_000 {
                     Timer::after_millis(20).await;
@@ -225,7 +225,7 @@ impl App for ButtonLoggerApp {
                     break;
                 }
 
-                // If the press was shorter than 1000ms, we add 1 to `count`
+                // If the press was shorter than 1,000 ms, we add 1 to `count`
                 count += 1;
                 // Slint automatically generates `set_` functions for reactive variables
                 ui.set_count(count as i32);
@@ -233,14 +233,14 @@ impl App for ButtonLoggerApp {
                 defmt::info!("button A pressed (count: {})", count);
             }
 
-            // Hide the ui when the app exits
+            // Hide the UI when the app exits
             if ui.hide().is_err() {
                 defmt::error!("ButtonLoggerApp: failed to hide UI");
             }
         })
     }
 
-    // Since we took a button from the registry
+    // Since we took a button from the registry,
     // we should also give it back
     fn release(self, registry: &mut Registry) {
         registry.return_resource(self.button);
@@ -250,14 +250,14 @@ impl App for ButtonLoggerApp {
 
 ## Adding your app to the firmware
 
-If you followed the driver guide you should already have a fork and local clone of the main hackxpansion repo. Adding an app is almost the exact process as adding a driver. Here are the steps:
+If you followed the driver guide, you should already have a fork and local clone of the main hackxpansion repo. Adding an app is almost the exact process as adding a driver. Here are the steps:
 
 1. Fork and clone the [hackxpansion repo](https://github.com/KOEGlike/hackxpansion) if you haven't already.
 2. Go into the `firmware` folder.
 3. Add your app crate as a local workspace dependency under `# Apps` in [`firmware/Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/Cargo.toml). The path should point to your local app repo while you are testing it:
 
 ```toml
-my-app = { path = "../../my-app" } # This also could be an absolute path
+my-app = { path = "../../my-app" } # This could also be an absolute path
 ```
 
 4. Add the workspace dependency under `# Apps` in [`firmware/xpanse/Cargo.toml`](https://github.com/KOEGlike/hackxpansion/blob/main/firmware/xpanse/Cargo.toml):
