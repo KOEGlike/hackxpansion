@@ -72,7 +72,7 @@
 	></textarea>
 	<div
 		hidden={tab !== 'preview'}
-		class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm"
+		class="min-h-16 border border-slate-700 bg-white/40 px-3 py-2 text-sm"
 	>
 		{#if text.trim()}
 			<Markdown {text} />

@@ -289,7 +289,7 @@
 								{#each objectEntries(review.justification) as [key, value] (key)}
 									<div class="border border-slate-300 bg-white/40 p-3">
 										<dt class="text-xs font-bold uppercase text-slate-500">{humanizeKey(key)}</dt>
-										<dd class="mt-1 whitespace-pre-wrap break-words">{formatValue(value)}</dd>
+										<dd class="mt-1 whitespace-pre-wrap wrap-break-word">{formatValue(value)}</dd>
 									</div>
 								{/each}
 							</dl>
@@ -308,7 +308,7 @@
 											<h5 class="font-bold">{field.label}</h5>
 											<p class="text-xs text-slate-500">{field.key} · {field.type}</p>
 										</div>
-										<p class="mt-2 whitespace-pre-wrap break-words font-mono text-sm">
+										<p class="mt-2 whitespace-pre-wrap wrap-break-word font-mono text-sm">
 											{formatValue(field.value)}
 										</p>
 									</div>
@@ -385,7 +385,7 @@
 						<summary class="cursor-pointer px-4 py-3 font-bold hover:bg-slate-800">
 							View raw JSON
 						</summary>
-						<pre class="max-h-[32rem] overflow-auto border-t border-slate-600 p-4 text-xs"><code
+						<pre class="max-h-128 overflow-auto border-t border-slate-600 p-4 text-xs"><code
 								>{formatJson(review.rawPayload)}</code
 							></pre>
 					</details>
