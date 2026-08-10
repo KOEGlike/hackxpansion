@@ -62,21 +62,22 @@
 	</div>
 
 	<input type="hidden" name="text" value={text} />
-	{#if tab === 'write'}
-		<textarea
-			id={`${idPrefix}-text`}
-			rows="3"
-			required
-			bind:value={text}
-			class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
-		></textarea>
-	{:else}
-		<div class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm">
-			{#if text.trim()}
-				<Markdown {text} />
-			{:else}
-				<span class="text-slate-500">Nothing to preview.</span>
-			{/if}
-		</div>
-	{/if}
+	<textarea
+		id={`${idPrefix}-text`}
+		rows="3"
+		required
+		hidden={tab !== 'write'}
+		bind:value={text}
+		class="w-full border border-slate-700 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+	></textarea>
+	<div
+		hidden={tab !== 'preview'}
+		class="min-h-[4rem] border border-slate-700 bg-white/40 px-3 py-2 text-sm"
+	>
+		{#if text.trim()}
+			<Markdown {text} />
+		{:else}
+			<span class="text-slate-500">Nothing to preview.</span>
+		{/if}
+	</div>
 </div>
