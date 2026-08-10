@@ -53,6 +53,7 @@
 	] as const;
 	const adminItems = [
 		{ title: 'Orders', href: '/home/admin' },
+		{ title: 'Projects', href: '/home/admin/projects' },
 		{ title: 'Shop Items', href: '/home/admin/shop' },
 		{ title: 'Users', href: '/home/admin/users' }
 	] as const;
@@ -73,6 +74,14 @@
 			| (typeof adminItems)[number]['href']
 	) {
 		return page.url.pathname === resolve(href);
+	}
+
+	function isAdminPage(href: (typeof adminItems)[number]['href']) {
+		const pathname = resolve(href);
+		return (
+			page.url.pathname === pathname ||
+			(href !== '/home/admin' && page.url.pathname.startsWith(`${pathname}/`))
+		);
 	}
 </script>
 
@@ -175,7 +184,8 @@
 										<a
 											href={resolve(adminItem.href)}
 											class="text-lg hover:underline"
-											class:underline={isExactPage(adminItem.href)}
+											class:underline={isAdminPage(adminItem.href)}
+											aria-current={isAdminPage(adminItem.href) ? 'page' : undefined}
 										>
 											{adminItem.title}
 										</a>
