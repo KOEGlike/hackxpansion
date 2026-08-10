@@ -3,12 +3,12 @@ import { resolve } from '$app/paths';
 import type { Actions, PageServerLoad } from './$types';
 import { requireUser } from '$lib/server/guards';
 import {
+	AdminError,
 	demoteUserFromAdmin,
 	getAdminUsers,
 	promoteUserToAdmin,
-	requireAdmin,
-	ShopError
-} from '$lib/server/shop';
+	requireAdmin
+} from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) error(404, 'Page not found');
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		await requireAdmin(locals.user.id);
 		return { users: await getAdminUsers() };
 	} catch (caught) {
-		if (caught instanceof ShopError) error(caught.status, caught.message);
+		if (caught instanceof AdminError) error(caught.status, caught.message);
 		throw caught;
 	}
 };
@@ -35,7 +35,7 @@ export const actions: Actions = {
 			const promotedUser = await promoteUserToAdmin(currentUser.id, userId);
 			return { success: true, message: `${promotedUser.name} is now an admin.` };
 		} catch (caught) {
-			if (caught instanceof ShopError) {
+			if (caught instanceof AdminError) {
 				return fail(caught.status, { success: false, message: caught.message, userId });
 			}
 			console.error('[admin/users] Unexpected promotion error', caught);
@@ -54,7 +54,7 @@ export const actions: Actions = {
 		try {
 			demotedUser = await demoteUserFromAdmin(currentUser.id, userId);
 		} catch (caught) {
-			if (caught instanceof ShopError) {
+			if (caught instanceof AdminError) {
 				return fail(caught.status, { success: false, message: caught.message, userId });
 			}
 			console.error('[admin/users] Unexpected demotion error', caught);

@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { isUserAdmin } from '$lib/server/shop';
+import { isUserAdmin } from '$lib/server/admin';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	return {

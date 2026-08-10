@@ -3,7 +3,7 @@ import { desc, eq, sql } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { journal, project, review, user } from '$lib/server/db/schema';
-import { requireAdmin, ShopError } from '$lib/server/shop';
+import { AdminError, requireAdmin } from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) error(404, 'Page not found');
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	try {
 		await requireAdmin(locals.user.id);
 	} catch (caught) {
-		if (caught instanceof ShopError) error(caught.status, caught.message);
+		if (caught instanceof AdminError) error(caught.status, caught.message);
 		throw caught;
 	}
 

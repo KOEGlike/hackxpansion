@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, ne, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { requireAdmin } from '$lib/server/admin';
 import { db } from '$lib/server/db';
-import { account as authAccount } from '$lib/server/db/auth.schema';
 import { project, shopItem, shopOrder, user } from '$lib/server/db/schema';
 import {
 	getShopEligibility,
@@ -12,7 +12,6 @@ import {
 import type { CatalogItemInput } from '$lib/shop/catalog';
 
 const MAX_NOTE_LENGTH = 2_000;
-const CONFIGURED_ADMIN_HACKCLUB_ID = 'ident!ZVpfLg';
 const fulfiller = alias(user, 'fulfiller');
 
 export class ShopError extends Error {
@@ -173,80 +172,6 @@ export async function getUserShopOrders(userId: string) {
 	}));
 }
 
-export async function isUserAdmin(userId: string) {
-	await ensureConfiguredAdmin();
-
-	const [row] = await db
-		.select({ isAdmin: user.isAdmin })
-		.from(user)
-		.where(eq(user.id, userId))
-		.limit(1);
-	return row?.isAdmin === true;
-}
-
-export async function requireAdmin(userId: string) {
-	if (!(await isUserAdmin(userId))) throw new ShopError(404, 'Page not found');
-}
-
-export async function getAdminUsers() {
-	const users = await db
-		.select({
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			slackId: user.slackId,
-			isAdmin: user.isAdmin,
-			createdAt: user.createdAt
-		})
-		.from(user)
-		.orderBy(desc(user.isAdmin), asc(user.name), asc(user.email));
-	const configuredAdminUserId = await getConfiguredAdminUserId();
-	return users.map((account) => ({
-		...account,
-		isProtectedAdmin: account.id === configuredAdminUserId
-	}));
-}
-
-export async function promoteUserToAdmin(adminUserId: string, targetUserId: string) {
-	await requireAdmin(adminUserId);
-	const [promotedUser] = await db
-		.update(user)
-		.set({ isAdmin: true })
-		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, false)))
-		.returning({ name: user.name });
-	if (promotedUser) return promotedUser;
-
-	const [targetUser] = await db
-		.select({ isAdmin: user.isAdmin })
-		.from(user)
-		.where(eq(user.id, targetUserId))
-		.limit(1);
-	if (!targetUser) throw new ShopError(404, 'User not found.');
-	throw new ShopError(409, 'This user is already an admin.');
-}
-
-export async function demoteUserFromAdmin(adminUserId: string, targetUserId: string) {
-	await requireAdmin(adminUserId);
-	if (targetUserId === (await getConfiguredAdminUserId())) {
-		throw new ShopError(422, 'The configured admin cannot be demoted.');
-	}
-
-	const [demotedUser] = await db
-		.update(user)
-		.set({ isAdmin: false })
-		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, true)))
-		.returning({ name: user.name });
-	if (demotedUser) return demotedUser;
-
-	const [targetUser] = await db
-		.select({ isAdmin: user.isAdmin })
-		.from(user)
-		.where(eq(user.id, targetUserId))
-		.limit(1);
-	if (!targetUser) throw new ShopError(404, 'User not found.');
-	throw new ShopError(409, 'This user is not an admin.');
-}
-
 export async function getAdminShopItems() {
 	return db
 		.select()
@@ -327,15 +252,9 @@ export async function getAllShopOrders() {
 
 export async function fulfillShopOrder(adminUserId: string, orderId: string, rawMessage: string) {
 	const fulfillmentMessage = optionalNote(rawMessage, 'Fulfillment message');
+	await requireAdmin(adminUserId);
 
 	return db.transaction(async (tx) => {
-		const [admin] = await tx
-			.select({ isAdmin: user.isAdmin })
-			.from(user)
-			.where(eq(user.id, adminUserId))
-			.limit(1);
-		if (!admin?.isAdmin) throw new ShopError(404, 'Page not found');
-
 		const [order] = await tx
 			.select({ id: shopOrder.id, status: shopOrder.status })
 			.from(shopOrder)
@@ -379,29 +298,6 @@ async function hasOrderedConsole(userId: string, database: Pick<typeof db, 'sele
 		.where(and(eq(shopOrder.userId, userId), eq(shopOrder.itemId, HACKXPANSION_CONSOLE.id)))
 		.limit(1);
 	return rows.length > 0;
-}
-
-async function getConfiguredAdminUserId() {
-	const [configuredAccount] = await db
-		.select({ userId: authAccount.userId })
-		.from(authAccount)
-		.where(
-			and(
-				eq(authAccount.providerId, 'hackclub'),
-				eq(authAccount.accountId, CONFIGURED_ADMIN_HACKCLUB_ID)
-			)
-		)
-		.limit(1);
-	return configuredAccount?.userId ?? null;
-}
-
-async function ensureConfiguredAdmin() {
-	const configuredAdminUserId = await getConfiguredAdminUserId();
-	if (!configuredAdminUserId) return;
-	await db
-		.update(user)
-		.set({ isAdmin: true })
-		.where(and(eq(user.id, configuredAdminUserId), eq(user.isAdmin, false)));
 }
 
 function optionalNote(value: string, label: string) {

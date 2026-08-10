@@ -1,10 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { AdminError, requireAdmin } from '$lib/server/admin';
 import { requireUser } from '$lib/server/guards';
 import {
 	createCatalogItem,
 	getAdminShopItems,
-	requireAdmin,
 	ShopError,
 	updateCatalogItem
 } from '$lib/server/shop';
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		await requireAdmin(locals.user.id);
 		return { items: await getAdminShopItems() };
 	} catch (caught) {
-		if (caught instanceof ShopError) error(caught.status, caught.message);
+		if (caught instanceof AdminError) error(caught.status, caught.message);
 		throw caught;
 	}
 };
@@ -89,7 +89,7 @@ function catalogItemFailure(
 			values
 		});
 	}
-	if (caught instanceof ShopError) {
+	if (caught instanceof AdminError || caught instanceof ShopError) {
 		return fail(caught.status, {
 			success: false,
 			message: caught.message,

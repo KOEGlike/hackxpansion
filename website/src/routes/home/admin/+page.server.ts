@@ -1,7 +1,8 @@
 import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { fulfillShopOrder, getAllShopOrders, requireAdmin, ShopError } from '$lib/server/shop';
+import { AdminError, requireAdmin } from '$lib/server/admin';
 import { requireUser } from '$lib/server/guards';
+import { fulfillShopOrder, getAllShopOrders, ShopError } from '$lib/server/shop';
 import { isUuid } from '$lib/projects/domain';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -11,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		await requireAdmin(locals.user.id);
 		return { orders: await getAllShopOrders() };
 	} catch (caught) {
-		if (caught instanceof ShopError) error(caught.status, caught.message);
+		if (caught instanceof AdminError) error(caught.status, caught.message);
 		throw caught;
 	}
 };
@@ -31,7 +32,7 @@ export const actions: Actions = {
 			await fulfillShopOrder(currentUser.id, orderId, message);
 			return { success: true, message: 'Order marked as fulfilled.' };
 		} catch (caught) {
-			if (caught instanceof ShopError) {
+			if (caught instanceof AdminError || caught instanceof ShopError) {
 				return fail(caught.status, { success: false, message: caught.message, orderId });
 			}
 			console.error('[shop/admin] Unexpected fulfillment error', caught);

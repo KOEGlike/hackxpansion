@@ -2,9 +2,9 @@ import { error } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { isUuid } from '$lib/projects/domain';
+import { AdminError, requireAdmin } from '$lib/server/admin';
 import { db } from '$lib/server/db';
 import { journal, project, review, user } from '$lib/server/db/schema';
-import { requireAdmin, ShopError } from '$lib/server/shop';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	if (!locals.user) error(404, 'Page not found');
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	try {
 		await requireAdmin(locals.user.id);
 	} catch (caught) {
-		if (caught instanceof ShopError) error(caught.status, caught.message);
+		if (caught instanceof AdminError) error(caught.status, caught.message);
 		throw caught;
 	}
 
