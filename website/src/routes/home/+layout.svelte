@@ -37,6 +37,10 @@
 		{ title: 'Device', href: '/home/docs/detailed/device', indent: true },
 		{ title: 'Pinout', href: '/home/docs/detailed/pinout', indent: true },
 		{ title: 'Card', href: '/home/docs/detailed/card', indent: true },
+		{ title: 'USB', href: '/home/docs/detailed/usb', indent: true },
+		{ title: 'ADC', href: '/home/docs/detailed/adc', indent: true },
+		{ title: 'PWM', href: '/home/docs/detailed/pwm', indent: true },
+		{ title: 'Backlight', href: '/home/docs/detailed/backlight', indent: true },
 		{ title: 'API', href: '/home/docs/detailed/api', indent: true },
 		{ title: 'Shipping', href: '/home/docs/shipping', indent: false },
 		{ title: 'Design', href: '/home/docs/shipping/design', indent: true },
@@ -66,14 +70,8 @@
 		);
 	}
 
-	function isExactPage(
-		href:
-			| (typeof docsItems)[number]['href']
-			| (typeof exploreItems)[number]['href']
-			| (typeof shopItems)[number]['href']
-			| (typeof adminItems)[number]['href']
-	) {
-		return page.url.pathname === resolve(href);
+	function isExactPage(pathname: string) {
+		return page.url.pathname === pathname;
 	}
 
 	function isAdminPage(href: (typeof adminItems)[number]['href']) {
@@ -130,10 +128,10 @@
 									{#each docsItems as docsItem (docsItem.href)}
 										<a
 											href={resolve(docsItem.href)}
-											class="min-w-0 break-words text-lg hover:underline"
+											class="min-w-0 wrap-break-word text-lg hover:underline"
 											class:ml-4={docsItem.indent}
-											class:underline={isExactPage(docsItem.href)}
-											aria-current={isExactPage(docsItem.href) ? 'page' : undefined}
+											class:underline={isExactPage(resolve(docsItem.href))}
+											aria-current={isExactPage(resolve(docsItem.href)) ? 'page' : undefined}
 										>
 											{docsItem.title}
 										</a>
@@ -146,8 +144,8 @@
 										<a
 											href={resolve(shopItem.href)}
 											class="text-lg hover:underline"
-											class:underline={isExactPage(shopItem.href)}
-											aria-current={isExactPage(shopItem.href) ? 'page' : undefined}
+											class:underline={isExactPage(resolve(shopItem.href))}
+											aria-current={isExactPage(resolve(shopItem.href)) ? 'page' : undefined}
 										>
 											{shopItem.title}
 										</a>
@@ -160,8 +158,8 @@
 										<a
 											href={resolve(exploreItem.href)}
 											class="text-lg hover:underline"
-											class:underline={isExactPage(exploreItem.href)}
-											aria-current={isExactPage(exploreItem.href) ? 'page' : undefined}
+											class:underline={isExactPage(resolve(exploreItem.href))}
+											aria-current={isExactPage(resolve(exploreItem.href)) ? 'page' : undefined}
 										>
 											{exploreItem.title}
 										</a>

@@ -20,7 +20,7 @@ This is needed so you can reserve a pair of resistor values. This will come up l
 
 ## Setup project
 
-Download the Hackxpansion KiCAD library from [here](https://download-directory.github.io/?url=https://github.com/KOEGlike/hackxpansion/tree/main/hardware/kicad_lib). This will contain everything necessary for your first module of Basic or Advanced difficulty. It includes the libraries necessary to make a Hackxpansion module. Create a new folder and put it somewhere like `Documents` or in your repo, and move the downloaded library into it, so you can easily access it later.
+Download the Hackxpansion KiCAD library from [here](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2FKOEGlike%2Fhackxpansion%2Ftree%2Fmain%2Fkicad_lib). This will contain everything necessary for your first module of Basic or Advanced difficulty. It includes the libraries necessary to make a Hackxpansion module. Create a new folder and put it somewhere like `Documents` or in your repo, and move the downloaded library into it, so you can easily access it later.
 
 ## How does the console know which module you plugged in?
 
