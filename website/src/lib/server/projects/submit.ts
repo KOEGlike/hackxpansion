@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { randomUUID } from 'node:crypto';
 import {
 	AriInboundError,
 	buildAriIngestPayload,
@@ -8,7 +9,7 @@ import {
 	type AriWithdrawResult
 } from '$lib/server/ari/inbound';
 import { db } from '$lib/server/db';
-import { journal, project, user } from '$lib/server/db/schema';
+import { journal, project, projectSubmissionFeedback, user } from '$lib/server/db/schema';
 import { trackForProjectType, type ProjectReviewPhase } from '$lib/projects/lifecycle';
 import {
 	getProjectSubmissionReadiness,
@@ -17,10 +18,17 @@ import {
 import type { ProjectStatus, ProjectTier, ProjectType } from '$lib/projects/domain';
 import { formatResistor } from '$lib/projects/resistors';
 import { and, eq } from 'drizzle-orm';
+import { inferGithubUsername, type UserSubmissionProfile } from '$lib/profile';
+import type { ProjectSubmissionFeedbackInput } from '$lib/server/projects/feedback';
 
 export type SubmitProjectToAriOptions = {
 	projectId: string;
 	userId: string;
+};
+
+type SubmitProjectInput = SubmitProjectToAriOptions & {
+	profile: UserSubmissionProfile;
+	feedback: ProjectSubmissionFeedbackInput;
 };
 
 export type SubmitProjectToAriResult = {
@@ -81,10 +89,12 @@ export async function canSubmit({
 
 export async function submitProjectToAri({
 	projectId,
-	userId
-}: SubmitProjectToAriOptions): Promise<SubmitProjectToAriResult> {
+	userId,
+	profile,
+	feedback
+}: SubmitProjectInput): Promise<SubmitProjectToAriResult> {
 	const config = getAriConfig();
-	const claim = await claimSubmission(projectId, userId);
+	const claim = await claimSubmission(projectId, userId, profile, feedback);
 
 	try {
 		const payload = buildAriIngestPayload({
@@ -184,7 +194,12 @@ export async function withdrawProjectFromAri({
 	return { projectId, status: updatedProject.status, ari };
 }
 
-async function claimSubmission(projectId: string, userId: string): Promise<ClaimedSubmission> {
+async function claimSubmission(
+	projectId: string,
+	userId: string,
+	profile: UserSubmissionProfile,
+	feedback: ProjectSubmissionFeedbackInput
+): Promise<ClaimedSubmission> {
 	return db.transaction(async (tx) => {
 		const [projectForSubmission] = await tx
 			.select(projectForSubmissionFields)
@@ -223,8 +238,29 @@ async function claimSubmission(projectId: string, userId: string): Promise<Claim
 			})
 			.from(journal)
 			.where(eq(journal.projectId, projectId));
-		const externalId = projectId;
+		const externalId = `${projectId}:${readiness.phase}:${randomUUID()}`;
+		const submissionProfile = {
+			...profile,
+			githubUsername: profile.githubUsername ?? inferGithubUsername(projectForSubmission.repoUrl)
+		};
 
+		await tx.update(user).set(submissionProfile).where(eq(user.id, userId));
+		await tx.insert(projectSubmissionFeedback).values({
+			...feedback,
+			...submissionProfile,
+			projectRepoUrl: projectForSubmission.repoUrl,
+			projectDemoUrl: projectForSubmission.demoUrl,
+			projectThumbnailUrl: projectForSubmission.thumbnailUrl,
+			projectDescription: projectForSubmission.description,
+			makerName: projectForSubmission.makerName,
+			makerGivenName: projectForSubmission.makerGivenName,
+			makerEmail: projectForSubmission.makerEmail,
+			makerSlackId: projectForSubmission.makerSlackId,
+			phase: readiness.phase,
+			ariExternalId: externalId,
+			projectId,
+			userId
+		});
 		await tx
 			.update(project)
 			.set({
@@ -245,17 +281,25 @@ async function claimSubmission(projectId: string, userId: string): Promise<Claim
 }
 
 async function releaseFailedSubmission(claim: ClaimedSubmission, userId: string) {
-	await db
-		.update(project)
-		.set({ status: claim.previousStatus, activeAriExternalId: null })
-		.where(
-			and(
-				eq(project.id, claim.project.id),
-				eq(project.userId, userId),
-				eq(project.status, claim.waitingStatus),
-				eq(project.activeAriExternalId, claim.externalId)
+	await db.transaction(async (tx) => {
+		const rolledBack = await tx
+			.update(project)
+			.set({ status: claim.previousStatus, activeAriExternalId: null })
+			.where(
+				and(
+					eq(project.id, claim.project.id),
+					eq(project.userId, userId),
+					eq(project.status, claim.waitingStatus),
+					eq(project.activeAriExternalId, claim.externalId)
+				)
 			)
-		);
+			.returning({ id: project.id });
+		if (rolledBack.length > 0) {
+			await tx
+				.delete(projectSubmissionFeedback)
+				.where(eq(projectSubmissionFeedback.ariExternalId, claim.externalId));
+		}
+	});
 }
 
 async function getProjectForSubmission(projectId: string, userId: string) {
@@ -285,6 +329,7 @@ const projectForSubmissionFields = {
 	md1: project.md1,
 	makerEmail: user.email,
 	makerName: user.name,
+	makerGivenName: user.given_name,
 	makerSlackId: user.slackId,
 	makerYswsEligible: user.yswsEligible
 };

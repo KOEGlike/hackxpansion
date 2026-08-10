@@ -167,12 +167,13 @@
 						Withdraw
 					</button>
 				</form>
-			{:else if data.readiness.canSubmit}
-				<form method="post" action="?/submit">
-					<button class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700">
-						Submit {data.readiness.phase ?? 'for'} review
-					</button>
-				</form>
+			{:else if data.readiness.canSubmit && data.readiness.phase}
+				<a
+					href={resolve(`/home/projects/${data.project.id}/submit`)}
+					class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700"
+				>
+					Submit {data.readiness.phase} review
+				</a>
 			{/if}
 		</div>
 	</header>

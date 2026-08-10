@@ -101,16 +101,17 @@
 										Withdraw
 									</button>
 								</form>
+							{:else if project.readiness.canSubmit && project.readiness.phase}
+								<a
+									href={resolve(`/home/projects/${project.id}/submit`)}
+									class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700"
+								>
+									Submit {project.readiness.phase} review
+								</a>
 							{:else}
-								<form method="post" action="?/submit">
-									<input type="hidden" name="projectId" value={project.id} />
-									<button
-										class=" bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-										disabled={!project.readiness.canSubmit}
-									>
-										Submit {project.readiness.phase ?? 'to'} review
-									</button>
-								</form>
+								<button class="bg-slate-400 px-4 py-2 text-sm text-white" disabled>
+									Submit to review
+								</button>
 							{/if}
 						</div>
 					</div>

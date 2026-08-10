@@ -8,11 +8,7 @@ import { getProjectSubmissionReadiness } from '$lib/projects/submission';
 import { isUuid } from '$lib/projects/domain';
 import { sumHackatimeMinutes } from '$lib/projects/time';
 import { getUserHackatimeProjectsWithStats } from '$lib/server/hackatime';
-import {
-	handleJournalAction,
-	submitProjectAction,
-	withdrawProjectAction
-} from '$lib/server/projects/actions';
+import { handleJournalAction, withdrawProjectAction } from '$lib/server/projects/actions';
 import { createProjectJournal, editProjectJournal } from '$lib/server/projects/journals';
 import { requireUser } from '$lib/server/guards';
 
@@ -114,12 +110,6 @@ export const actions: Actions = {
 				input
 			});
 		});
-	},
-
-	submit: async ({ locals, params }) => {
-		const user = requireUser(locals);
-		if (!isUuid(params.id)) return fail(404, { success: false, message: 'Project not found.' });
-		return submitProjectAction(params.id, user.id);
 	},
 
 	withdraw: async ({ locals, params }) => {

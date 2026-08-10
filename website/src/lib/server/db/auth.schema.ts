@@ -20,6 +20,13 @@ export const user = pgTable(
 		yswsEligible: boolean('ysws_eligible').notNull(),
 		pronouns: text('pronouns'),
 		profileCheckedAt: timestamp('profile_checked_at'),
+		githubUsername: text('github_username'),
+		addressLine1: text('address_line_1'),
+		addressLine2: text('address_line_2'),
+		addressCity: text('address_city'),
+		addressRegion: text('address_region'),
+		addressPostalCode: text('address_postal_code'),
+		addressCountry: text('address_country'),
 		currency: integer('currency').default(0).notNull(),
 		isAdmin: boolean('is_admin').default(false).notNull()
 	},

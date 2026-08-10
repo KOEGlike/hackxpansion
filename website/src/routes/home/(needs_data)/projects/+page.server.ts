@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { project, journal, review } from '$lib/server/db/schema';
 import { getUserHackatimeProjectsWithStats } from '$lib/server/hackatime';
-import { submitProjectAction, withdrawProjectAction } from '$lib/server/projects/actions';
+import { withdrawProjectAction } from '$lib/server/projects/actions';
 import { requireUser } from '$lib/server/guards';
 import { getProjectSubmissionReadiness } from '$lib/projects/submission';
 import { isUuid } from '$lib/projects/domain';
@@ -89,17 +89,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	submit: async ({ locals, request }) => {
-		const user = requireUser(locals);
-		const formData = await request.formData();
-		const projectId = stringFromForm(formData, 'projectId');
-
-		if (!isUuid(projectId)) {
-			return fail(400, { success: false, message: 'A valid project ID is required.' });
-		}
-
-		return submitProjectAction(projectId, user.id);
-	},
 	withdraw: async ({ locals, request }) => {
 		const user = requireUser(locals);
 		const formData = await request.formData();

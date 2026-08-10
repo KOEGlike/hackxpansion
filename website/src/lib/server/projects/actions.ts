@@ -13,6 +13,16 @@ import {
 	withdrawProjectFromAri
 } from '$lib/server/projects/submit';
 import {
+	projectSubmissionFeedbackFormValues,
+	projectSubmissionFeedbackFromForm,
+	ProjectSubmissionFeedbackError
+} from '$lib/server/projects/feedback';
+import {
+	userProfileFormValues,
+	userProfileInputFromForm,
+	UserProfileValidationError
+} from '$lib/server/user-profile';
+import {
 	journalInputFromForm,
 	JournalMutationError,
 	type JournalInput
@@ -64,16 +74,29 @@ export async function handleProjectFormAction({
 	}
 }
 
-export async function submitProjectAction(projectId: string, userId: string) {
+export async function submitProjectAction(projectId: string, userId: string, formData: FormData) {
+	const values = {
+		...userProfileFormValues(formData),
+		...projectSubmissionFeedbackFormValues(formData)
+	};
+
 	try {
-		const result = await submitProjectToAri({ projectId, userId });
+		const profile = userProfileInputFromForm(formData, { requireAddress: true });
+		const feedback = projectSubmissionFeedbackFromForm(formData);
+		const result = await submitProjectToAri({ projectId, userId, profile, feedback });
 		return {
 			success: true,
 			message: `Submitted for ${result.phase} review.`,
 			projectId
 		};
 	} catch (error) {
-		return projectReviewActionFailure(error, projectId);
+		if (
+			error instanceof UserProfileValidationError ||
+			error instanceof ProjectSubmissionFeedbackError
+		) {
+			return fail(422, { success: false, message: error.message, projectId, values });
+		}
+		return projectReviewActionFailure(error, projectId, values);
 	}
 }
 
@@ -104,22 +127,28 @@ export async function handleJournalAction(
 	}
 }
 
-function projectReviewActionFailure(error: unknown, projectId: string) {
+function projectReviewActionFailure(
+	error: unknown,
+	projectId: string,
+	values?: Record<string, string>
+) {
 	if (error instanceof ProjectSubmissionError) {
 		return fail(error.status, {
 			success: false,
 			message: error.message,
-			projectId
+			projectId,
+			values
 		});
 	}
 	if (error instanceof AriInboundError) {
 		return fail(error.status, {
 			success: false,
 			message: 'The review service could not process this request. Please try again.',
-			projectId
+			projectId,
+			values
 		});
 	}
 
 	console.error('[projects] Unexpected Ari action error', error);
-	return fail(500, { success: false, message: 'Something went wrong.', projectId });
+	return fail(500, { success: false, message: 'Something went wrong.', projectId, values });
 }

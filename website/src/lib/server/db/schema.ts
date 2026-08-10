@@ -28,6 +28,7 @@ import type {
 	ReviewJustification,
 	Reviewer
 } from '../ari/outbound';
+import type { ProjectReviewPhase } from '../../projects/lifecycle';
 
 export const projectStatus = pgEnum('project_status', projectStatusValues);
 
@@ -97,6 +98,50 @@ export const journal = pgTable(
 	]
 );
 
+export const projectSubmissionFeedback = pgTable(
+	'project_submission_feedback',
+	{
+		id: uuid('id')
+			.primaryKey()
+			.default(sql`uuidv7()`),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		phase: text('phase').$type<ProjectReviewPhase>().notNull(),
+		nps: integer('nps').notNull(),
+		howDidYouHear: text('how_did_you_hear'),
+		whatAreWeDoingWell: text('what_are_we_doing_well'),
+		howCanWeImprove: text('how_can_we_improve'),
+		githubUsername: text('github_username'),
+		addressLine1: text('address_line_1'),
+		addressLine2: text('address_line_2'),
+		addressCity: text('address_city'),
+		addressRegion: text('address_region'),
+		addressPostalCode: text('address_postal_code'),
+		addressCountry: text('address_country'),
+		projectRepoUrl: text('project_repo_url'),
+		projectDemoUrl: text('project_demo_url'),
+		projectThumbnailUrl: text('project_thumbnail_url'),
+		projectDescription: text('project_description'),
+		makerName: text('maker_name').notNull(),
+		makerGivenName: text('maker_given_name'),
+		makerEmail: text('maker_email').notNull(),
+		makerSlackId: text('maker_slack_id').notNull(),
+		ariExternalId: text('ari_external_id').notNull(),
+		projectId: uuid('project_id')
+			.notNull()
+			.references(() => project.id, { onDelete: 'cascade' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' })
+	},
+	(table) => [
+		uniqueIndex('project_submission_feedback_ari_external_id_uniq').on(table.ariExternalId),
+		index('project_submission_feedback_project_id_idx').on(table.projectId),
+		index('project_submission_feedback_user_id_idx').on(table.userId),
+		check('project_submission_feedback_nps_range', sql`${table.nps} BETWEEN 0 AND 10`),
+		check('project_submission_feedback_phase', sql`${table.phase} IN ('design', 'build')`)
+	]
+);
+
 export const reviewEvent = pgEnum('review_event', reviewEventTypeValues);
 
 export const review = pgTable(
@@ -124,7 +169,8 @@ export const review = pgTable(
 		collaborators: jsonb('collaborators').$type<OutboundCollaborator[] | null>(),
 		fraud: jsonb('fraud').$type<FraudReview | null>(),
 		reviewer: jsonb('reviewer').$type<Reviewer | null>(),
-		rawPayload: jsonb('raw_payload').$type<OutboundBody>().notNull()
+		rawPayload: jsonb('raw_payload').$type<OutboundBody>().notNull(),
+		airtableRecordId: text('airtable_record_id')
 	},
 	(table) => [index('review_project_id_idx').on(table.projectId)]
 );

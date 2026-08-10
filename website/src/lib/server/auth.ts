@@ -56,6 +56,40 @@ export const auth = betterAuth({
 				type: 'date',
 				required: false,
 				returned: false
+			},
+			githubUsername: {
+				type: 'string',
+				required: false
+			},
+			addressLine1: {
+				type: 'string',
+				required: false,
+				returned: false
+			},
+			addressLine2: {
+				type: 'string',
+				required: false,
+				returned: false
+			},
+			addressCity: {
+				type: 'string',
+				required: false,
+				returned: false
+			},
+			addressRegion: {
+				type: 'string',
+				required: false,
+				returned: false
+			},
+			addressPostalCode: {
+				type: 'string',
+				required: false,
+				returned: false
+			},
+			addressCountry: {
+				type: 'string',
+				required: false,
+				returned: false
 			}
 		}
 	},
