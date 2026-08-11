@@ -159,6 +159,9 @@
 	/>
 
 	<div class="md:col-span-2">
+		<p class="mb-2 text-sm font-semibold">
+			Hackatime projects <span class="font-normal text-slate-500">(optional)</span>
+		</p>
 		{#each unavailableSelectedProjects as projectName (projectName)}
 			<input type="hidden" name="hackatimeProjects" value={projectName} {disabled} />
 		{/each}

@@ -2,14 +2,7 @@ import type { ProjectStatus, ProjectTier, ProjectType } from './domain';
 import { getNextProjectSubmission, type ProjectReviewPhase } from './lifecycle';
 
 export type ProjectSubmissionChangeField =
-	| 'status'
-	| 'yswsEligibility'
-	| 'description'
-	| 'repoUrl'
-	| 'thumbnailUrl'
-	| 'hackatimeProjects'
-	| 'demoUrl'
-	| 'tier';
+	'status' | 'yswsEligibility' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'demoUrl' | 'tier';
 
 export type ProjectSubmissionChange = {
 	field: ProjectSubmissionChangeField;
@@ -77,7 +70,6 @@ export function getSubmissionRequirementChanges({
 	repoUrl,
 	demoUrl,
 	thumbnailUrl,
-	hackatimeProjects,
 	requireTier
 }: Omit<ProjectForReadiness, 'status'> & {
 	phase: ProjectReviewPhase;
@@ -93,12 +85,6 @@ export function getSubmissionRequirementChanges({
 	}
 	if (!hasText(thumbnailUrl)) {
 		changes.push({ field: 'thumbnailUrl', message: 'Add a thumbnail URL.' });
-	}
-	if (!hackatimeProjects?.some((name) => hasText(name))) {
-		changes.push({
-			field: 'hackatimeProjects',
-			message: 'Add at least one Hackatime project.'
-		});
 	}
 	if ((phase === 'build' || type === 'app') && !hasText(demoUrl)) {
 		changes.push({

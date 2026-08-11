@@ -88,6 +88,15 @@ describe('submission readiness', () => {
 		});
 	});
 
+	it('does not require a Hackatime project', () => {
+		expect(getProjectSubmissionReadiness({ ...readyProject, hackatimeProjects: [] })).toMatchObject(
+			{
+				canSubmit: true,
+				changes: []
+			}
+		);
+	});
+
 	it('reports a missing app demo only once', () => {
 		const readiness = getProjectSubmissionReadiness({ ...readyProject, type: 'app' });
 		expect(readiness.changes.filter((change) => change.field === 'demoUrl')).toHaveLength(1);
