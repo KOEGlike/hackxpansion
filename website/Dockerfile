@@ -2,12 +2,12 @@ FROM node:22-bookworm-slim AS dependencies
 
 WORKDIR /app
 
-COPY website/package.json website/package-lock.json website/svelte.config.js ./
+COPY package.json package-lock.json svelte.config.js ./
 RUN npm ci
 
 FROM dependencies AS source
 
-COPY website/ .
+COPY . .
 
 FROM source AS migrate
 

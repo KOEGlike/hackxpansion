@@ -1,8 +1,7 @@
 services:
   app:
     build:
-      context: ..
-      dockerfile: Dockerfile
+      context: .
       args:
         BASE_PATH: ${BASE_PATH:-}
     restart: always
@@ -32,8 +31,7 @@ services:
 
   migrate:
     build:
-      context: ..
-      dockerfile: Dockerfile
+      context: .
       target: migrate
     restart: 'no'
     environment:
