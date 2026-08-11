@@ -23,44 +23,50 @@ export async function syncHackClubProfileIfStale(userId: string, headers: Header
 	if (!claimedUser) return null;
 
 	try {
-		const { accessToken } = await auth.api.getAccessToken({
-			headers,
-			body: { providerId: 'hackclub' }
-		});
-		const profile = await fetchHackClubProfile(accessToken);
-		if (!profile) throw new Error('Hack Club userinfo request failed');
-
-		const mapped = mapHackClubProfile(profile);
-		const [updatedUser] = await db
-			.update(user)
-			.set({
-				name: mapped.name,
-				email: mapped.email?.toLowerCase(),
-				emailVerified: mapped.emailVerified,
-				image: mapped.image,
-				slackId: mapped.slackId,
-				verificationStatus: mapped.verificationStatus,
-				given_name: mapped.given_name,
-				yswsEligible: mapped.yswsEligible,
-				pronouns: mapped.pronouns
-			})
-			.where(eq(user.id, userId))
-			.returning({
-				name: user.name,
-				email: user.email,
-				emailVerified: user.emailVerified,
-				image: user.image,
-				slackId: user.slackId,
-				verificationStatus: user.verificationStatus,
-				given_name: user.given_name,
-				yswsEligible: user.yswsEligible,
-				pronouns: user.pronouns,
-				updatedAt: user.updatedAt
-			});
-
-		return updatedUser ?? null;
+		return await refreshHackClubProfile(userId, headers);
 	} catch (error) {
 		console.warn('Could not refresh Hack Club profile', error);
 		return null;
 	}
+}
+
+export async function refreshHackClubProfile(userId: string, headers: Headers) {
+	const { accessToken } = await auth.api.getAccessToken({
+		headers,
+		body: { providerId: 'hackclub' }
+	});
+	const profile = await fetchHackClubProfile(accessToken);
+	if (!profile) throw new Error('Hack Club userinfo request failed');
+
+	const mapped = mapHackClubProfile(profile);
+	const [updatedUser] = await db
+		.update(user)
+		.set({
+			name: mapped.name,
+			email: mapped.email?.toLowerCase(),
+			emailVerified: mapped.emailVerified,
+			image: mapped.image,
+			slackId: mapped.slackId,
+			verificationStatus: mapped.verificationStatus,
+			given_name: mapped.given_name,
+			yswsEligible: mapped.yswsEligible,
+			pronouns: mapped.pronouns,
+			profileCheckedAt: mapped.profileCheckedAt
+		})
+		.where(eq(user.id, userId))
+		.returning({
+			name: user.name,
+			email: user.email,
+			emailVerified: user.emailVerified,
+			image: user.image,
+			slackId: user.slackId,
+			verificationStatus: user.verificationStatus,
+			given_name: user.given_name,
+			yswsEligible: user.yswsEligible,
+			pronouns: user.pronouns,
+			updatedAt: user.updatedAt
+		});
+
+	if (!updatedUser) throw new Error('Local user no longer exists');
+	return updatedUser;
 }

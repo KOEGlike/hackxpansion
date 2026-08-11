@@ -33,7 +33,7 @@
 			These details are used to pre-fill project review submissions.
 		</p>
 
-		{#if form?.message}
+		{#if form && 'profileSuccess' in form}
 			<p
 				class="mt-4 border p-3 text-sm"
 				class:border-green-700={form.profileSuccess}
@@ -122,6 +122,34 @@
 			<div class="sm:col-span-2">
 				<button class="bg-slate-800 px-4 py-2 text-white hover:bg-slate-700">Save details</button>
 			</div>
+		</form>
+	</section>
+
+	<section aria-labelledby="hack-club-profile" class="content-box p-5">
+		<h2 id="hack-club-profile" class="text-2xl font-bold">Hack Club profile</h2>
+		<p class="mt-2 text-slate-600">
+			Refresh your local name, email, Slack account, verification status, and YSWS eligibility from
+			Hack Club.
+		</p>
+
+		{#if form && 'hackClubProfileSuccess' in form}
+			<p
+				class="mt-4 border p-3 text-sm"
+				class:border-green-700={form.hackClubProfileSuccess}
+				class:bg-green-100={form.hackClubProfileSuccess}
+				class:text-green-900={form.hackClubProfileSuccess}
+				class:border-red-700={!form.hackClubProfileSuccess}
+				class:bg-red-100={!form.hackClubProfileSuccess}
+				class:text-red-900={!form.hackClubProfileSuccess}
+			>
+				{form.message}
+			</p>
+		{/if}
+
+		<form method="post" action="?/refreshHackClubProfile" class="mt-4">
+			<button class="border border-slate-800 px-4 py-2 hover:bg-slate-800 hover:text-white">
+				Refresh Hack Club profile
+			</button>
 		</form>
 	</section>
 
