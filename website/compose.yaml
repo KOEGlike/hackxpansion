@@ -1,12 +1,13 @@
 services:
   db:
     image: postgres:18
+    profiles: [local]
     restart: always
     ports:
       - 127.0.0.1:5432:5432
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local}
       POSTGRES_DB: local
     volumes:
       - pgdata:/var/lib/postgresql
@@ -26,7 +27,7 @@ services:
     ports:
       - 127.0.0.1:${APP_PORT:-3000}:3000
     environment:
-      DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/local
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-${DATABASE_URL:?Set DATABASE_URL}}
       ORIGIN: ${COMPOSE_ORIGIN:-http://localhost:3000}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
       HACKCLUB_CLIENT_SECRET: ${HACKCLUB_CLIENT_SECRET:?Set HACKCLUB_CLIENT_SECRET}
@@ -45,6 +46,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+        required: false
       migrate:
         condition: service_completed_successfully
 
@@ -54,10 +56,11 @@ services:
       target: migrate
     restart: 'no'
     environment:
-      DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/local
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-${DATABASE_URL:?Set DATABASE_URL}}
     depends_on:
       db:
         condition: service_healthy
+        required: false
 
 volumes:
   pgdata:
