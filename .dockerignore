@@ -1,0 +1,14 @@
+*
+!Dockerfile
+!website/
+!website/**
+
+website/.svelte-kit
+website/build
+website/node_modules
+
+website/.env
+website/.env.*
+!website/.env.example
+
+website/npm-debug.log*
