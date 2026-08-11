@@ -18,7 +18,7 @@ Each card can be in one of three tiers; for each tier of card, you get a differe
 
 You also get 1-3 currency per app that you make; the payout is based on complexity, just like with the modules.
 
-To get a console, you have to have at least 8 currency, 4 modules' design accepted and an app/apps that use at least 4 of your modules.
+To get a console, you have to have at least 7 currency, 4 modules' design accepted and an app/apps that use at least 4 of your modules.
 
 The most polished/cool modules get added to the shop, will be "mass" produced, and can be bought with currency.
 

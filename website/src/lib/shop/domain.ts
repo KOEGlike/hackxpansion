@@ -13,7 +13,7 @@ export const HACKXPANSION_CONSOLE = {
 	name: 'Hackxpansion Console',
 	description:
 		'The main Hackxpansion prize: a console built to bring your modules and apps together.',
-	price: 8,
+	price: 7,
 	imageUrl: '/shop/console.png',
 	requiredModuleDesigns: 4,
 	requiredAppDesigns: 1,

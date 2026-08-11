@@ -4,7 +4,7 @@ import { getShopEligibility, HACKXPANSION_CONSOLE, isShopItemUnlocked } from './
 describe('shop eligibility', () => {
 	it('requires four accepted module designs and one accepted app design for the console', () => {
 		expect(HACKXPANSION_CONSOLE).toMatchObject({
-			price: 8,
+			price: 7,
 			requiredModuleDesigns: 4,
 			requiredAppDesigns: 1
 		});
