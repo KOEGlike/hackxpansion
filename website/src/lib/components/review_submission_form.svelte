@@ -116,8 +116,14 @@
 
 	<fieldset class="flex flex-col gap-2">
 		<legend class="font-bold"
-			>How likely are you to recommend Hackxpansion? <span class="text-red-700">*</span></legend
+			>How likely are you to recommend Hackxpansion to a friend? <span class="text-red-700">*</span
+			></legend
 		>
+		<span class="font-normal text-slate-500 flex flex-row justify-between">
+			<div>Never: 1-6</div>
+			<div>Maybe: 7-8</div>
+			<div>Likely: 9-10</div>
+		</span>
 		<div class="grid grid-cols-6 gap-1 sm:grid-cols-11">
 			{#each Array.from({ length: 11 }, (_, score) => score) as score (score)}
 				<label
@@ -133,9 +139,6 @@
 					{score}
 				</label>
 			{/each}
-		</div>
-		<div class="flex justify-between text-xs text-slate-500">
-			<span>Not likely</span><span>Extremely likely</span>
 		</div>
 	</fieldset>
 
