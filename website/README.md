@@ -62,12 +62,14 @@ and the application stack can be started with `npm run compose:up`.
 The optional local PostgreSQL service is kept in `compose.db.yaml` and is not part of production
 deployments. Start it separately with `npm run db:start`.
 
-The app is served at `http://localhost:3000` by default. Set `APP_PORT` to change the host port and
-`ORIGIN` to the app's public origin, for example:
+The app is served at `http://localhost:3000` by default. Set `APP_PORT` to change the host port:
 
 ```sh
-APP_PORT=8080 ORIGIN=https://example.com docker compose up --build -d
+APP_PORT=8080 docker compose up --build -d
 ```
+
+Set `ORIGIN` to the public application URL in the runtime environment when deploying the Docker
+image.
 
 Generate and commit a new migration with `npm run db:generate` whenever the schema changes.
 
