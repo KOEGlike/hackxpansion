@@ -17,7 +17,7 @@ database and apply the current Drizzle schema:
 ```sh
 npm install
 npm run db:start
-npm run db:push
+npm run db:migrate
 ```
 
 Then start SvelteKit:
@@ -45,7 +45,8 @@ proxy in front of the Node process for TLS and configure it to forward the origi
 
 ### Docker Compose
 
-Configure `.env`, including `POSTGRES_PASSWORD`, then build and start the stack:
+Configure `.env`, including the managed PostgreSQL `DATABASE_URL`, then build and start the
+application stack:
 
 ```sh
 docker compose up --build -d
@@ -54,9 +55,12 @@ docker compose up --build -d
 For a Portainer Git stack, configure the variables from `.env.example` in Portainer's stack
 environment instead. The ignored local `.env` file is not required inside the deployment checkout.
 
-The one-shot `migrate` service applies pending Drizzle migrations after PostgreSQL becomes healthy.
-The app starts only after migration succeeds. Migrations can also be run manually with
-`npm run compose:migrate`, and the full stack can be started with `npm run compose:up`.
+The one-shot `migrate` service applies pending Drizzle migrations to `DATABASE_URL`. The app starts
+only after migration succeeds. Migrations can also be run manually with `npm run compose:migrate`,
+and the application stack can be started with `npm run compose:up`.
+
+The optional local PostgreSQL service is kept in `compose.db.yaml` and is not part of production
+deployments. Start it separately with `npm run db:start`.
 
 The app is served at `http://localhost:3000` by default. Set `APP_PORT` to change the host port and
 `COMPOSE_ORIGIN` to the app's public origin, for example:

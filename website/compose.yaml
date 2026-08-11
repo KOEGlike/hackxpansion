@@ -1,22 +1,4 @@
 services:
-  db:
-    image: postgres:18
-    profiles: [local]
-    restart: always
-    ports:
-      - 127.0.0.1:5432:5432
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local}
-      POSTGRES_DB: local
-    volumes:
-      - pgdata:/var/lib/postgresql
-    healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   app:
     build:
       context: .
@@ -44,9 +26,6 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
     depends_on:
-      db:
-        condition: service_healthy
-        required: false
       migrate:
         condition: service_completed_successfully
 
@@ -57,10 +36,3 @@ services:
     restart: 'no'
     environment:
       DATABASE_URL: ${COMPOSE_DATABASE_URL:-${DATABASE_URL:?Set DATABASE_URL}}
-    depends_on:
-      db:
-        condition: service_healthy
-        required: false
-
-volumes:
-  pgdata:
