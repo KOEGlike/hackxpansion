@@ -10,11 +10,7 @@ import {
 } from '$lib/server/ari/outbound';
 import { db } from '$lib/server/db';
 import { project, projectSubmissionFeedback, review, user } from '$lib/server/db/schema';
-import {
-	createYswsProjectSubmission,
-	formatAriOverrideHoursJustification,
-	type YswsProjectApproval
-} from '$lib/server/airtable';
+import { createYswsProjectSubmission, type YswsProjectApproval } from '$lib/server/airtable';
 import { getApprovalCurrencyPayout, getProjectStatusAfterAriEvent } from '$lib/projects/lifecycle';
 import { isUuid } from '$lib/projects/domain';
 import { env } from '$env/dynamic/private';
@@ -224,10 +220,8 @@ export const POST: RequestHandler = async ({ request }) => {
 							}
 						: null,
 					approvedMinutes: sumApprovedMinutes(minutesBreakdown),
-					overrideHoursJustification: formatAriOverrideHoursJustification(
-						body.review.justification,
-						body.review.audit_note
-					)
+					justification: body.review.justification ?? null,
+					auditNote: body.review.audit_note ?? null
 				};
 			}
 

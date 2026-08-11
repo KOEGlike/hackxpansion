@@ -25,7 +25,12 @@ const fields = {
 	country: 'fldWG0CPuWoSiszSy',
 	postalCode: 'fld6vnS8HvtcUsbet',
 	overrideHours: 'fldsq64DaIPVrhe4e',
-	overrideHoursJustification: 'fldScjPJRcrBYgRAp'
+	hackatimeProjects: 'fldn65GYnm7Q8mfNE',
+	hackatimeUserId: 'fldVpkqS5o87dqbFq',
+	lapseLinks: 'fldjALcVM1u7150Dq',
+	technicalFeatures: 'fld0HvqTvcI429CFa',
+	deflationReason: 'fldxnLY7qf46rqQYS',
+	additionalJustification: 'fldp3XWKJjES72fWM'
 } as const;
 
 export type YswsProjectApproval = {
@@ -55,7 +60,8 @@ export type YswsProjectApproval = {
 		howCanWeImprove: string | null;
 	} | null;
 	approvedMinutes: number | null;
-	overrideHoursJustification: string | null;
+	justification: ReviewJustification | null;
+	auditNote: string | null;
 };
 
 type AirtableFieldValue = string | number | Array<{ url: string }>;
@@ -90,9 +96,20 @@ export function buildYswsProjectSubmissionFields(approval: YswsProjectApproval) 
 	}
 	setIfPresent(
 		airtableFields,
-		fields.overrideHoursJustification,
-		approval.overrideHoursJustification
+		fields.hackatimeProjects,
+		approval.justification?.hackatime_projects
 	);
+	setIfPresent(airtableFields, fields.hackatimeUserId, approval.justification?.hackatime_user_id);
+	setIfPresent(airtableFields, fields.lapseLinks, approval.justification?.lapse_links);
+	setIfPresent(
+		airtableFields,
+		fields.technicalFeatures,
+		approval.justification?.technical_features
+	);
+	setIfPresent(airtableFields, fields.deflationReason, approval.justification?.deflation_reason);
+	if (!Object.values(approval.justification ?? {}).some((value) => value?.trim())) {
+		setIfPresent(airtableFields, fields.additionalJustification, approval.auditNote?.trim());
+	}
 
 	return airtableFields;
 }
@@ -128,13 +145,6 @@ export async function createYswsProjectSubmission(
 		throw new Error('Airtable project submission response did not include a record ID');
 	}
 	return recordId;
-}
-
-export function formatAriOverrideHoursJustification(
-	justification: ReviewJustification | null | undefined,
-	auditNote: string | null | undefined
-) {
-	return justification ? JSON.stringify(justification) : auditNote?.trim() || null;
 }
 
 function setIfPresent(

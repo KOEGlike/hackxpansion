@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
 	buildYswsProjectSubmissionFields,
 	createYswsProjectSubmission,
-	formatAriOverrideHoursJustification,
 	type YswsProjectApproval
 } from './airtable';
 
@@ -33,7 +32,14 @@ const approval: YswsProjectApproval = {
 		howCanWeImprove: null
 	},
 	approvedMinutes: 90,
-	overrideHoursJustification: '{"technical_features":"Custom protocol"}'
+	justification: {
+		hackatime_projects: 'project 7/20/2026-7/22/2026',
+		hackatime_user_id: '594',
+		lapse_links: 'https://lapse.example.com/one, https://lapse.example.com/two',
+		technical_features: 'Custom protocol',
+		deflation_reason: 'Existing libraries reduced implementation time.'
+	},
+	auditNote: 'Fallback reviewer explanation'
 };
 
 afterEach(() => vi.unstubAllGlobals());
@@ -50,8 +56,16 @@ describe('YSWS Project Submission Airtable export', () => {
 			fld42yfP0pnyc6JqR: 'Fast reviews',
 			fldZDzHxDOZdiq04y: '1815-12-10',
 			fldsq64DaIPVrhe4e: 1.5,
-			fldScjPJRcrBYgRAp: '{"technical_features":"Custom protocol"}'
+			fldn65GYnm7Q8mfNE: 'project 7/20/2026-7/22/2026',
+			fldVpkqS5o87dqbFq: '594',
+			fldjALcVM1u7150Dq: 'https://lapse.example.com/one, https://lapse.example.com/two',
+			fld0HvqTvcI429CFa: 'Custom protocol',
+			fldxnLY7qf46rqQYS: 'Existing libraries reduced implementation time.'
 		});
+		expect(result).not.toHaveProperty('fldScjPJRcrBYgRAp');
+		expect(result).not.toHaveProperty('fldp3XWKJjES72fWM');
+		expect(result).not.toHaveProperty('fldNqi8wSWq5eeDlT');
+		expect(result).not.toHaveProperty('fldqEsuO4Kley6aDy');
 		expect(Object.keys(result)).not.toContain('fldiuBloMaAPjZDZN');
 		expect(Object.keys(result)).not.toContain('fld90tsdUWyDSaSYq');
 		expect(Object.keys(result)).not.toContain('fldtfd5xKCpxbLG4V');
@@ -63,13 +77,17 @@ describe('YSWS Project Submission Airtable export', () => {
 		expect(result).not.toHaveProperty('fldsq64DaIPVrhe4e');
 	});
 
-	it('uses the Ari audit note when structured justification is absent', () => {
-		expect(formatAriOverrideHoursJustification(null, ' Reviewer explanation ')).toBe(
-			'Reviewer explanation'
-		);
-		expect(
-			formatAriOverrideHoursJustification({ technical_features: 'Custom protocol' }, 'Fallback')
-		).toBe('{"technical_features":"Custom protocol"}');
+	it('uses additional justification for an audit-note-only review', () => {
+		const result = buildYswsProjectSubmissionFields({
+			...approval,
+			justification: null,
+			auditNote: ' Reviewer explanation '
+		});
+
+		expect(result).toHaveProperty('fldp3XWKJjES72fWM', 'Reviewer explanation');
+		expect(result).not.toHaveProperty('fldScjPJRcrBYgRAp');
+		expect(result).not.toHaveProperty('fldNqi8wSWq5eeDlT');
+		expect(result).not.toHaveProperty('fldqEsuO4Kley6aDy');
 	});
 
 	it('posts one record to the existing YSWS Project Submission table', async () => {
