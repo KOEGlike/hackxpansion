@@ -43,27 +43,23 @@ ORIGIN=https://example.com HOST=127.0.0.1 PORT=3000 npm start
 Set `BASE_PATH` while building when the server is mounted below the origin root. Place a reverse
 proxy in front of the Node process for TLS and configure it to forward the original host and protocol.
 
-### Docker Compose
+Set `DATABASE_URL` to the managed PostgreSQL URL. If the deployment platform reserves or overrides
+`DATABASE_URL`, set `APP_DATABASE_URL` instead; it takes precedence for migrations and the app.
 
-Configure the deployment platform's runtime environment, including the managed PostgreSQL
-`DATABASE_URL`, then build and start the application stack:
+Deploy production from the root `Dockerfile`. The container applies pending Drizzle migrations
+before starting the server, serializing concurrent starts with a PostgreSQL advisory lock.
+
+## Local Docker Compose
+
+Configure `.env`, then build and start the app and local PostgreSQL database:
 
 ```sh
 docker compose up --build -d
 ```
 
-If the deployment platform reserves or overrides `DATABASE_URL`, set `APP_DATABASE_URL` to the
-managed PostgreSQL URL instead. It takes precedence for both migrations and the application.
-
-For a Portainer Git stack, configure the variables from `.env.example` in Portainer's stack
-environment instead. The ignored local `.env` file is not required inside the deployment checkout.
-
 The application container applies pending Drizzle migrations before starting the server. Concurrent
 starts are serialized with a PostgreSQL advisory lock. The application stack can be started with
 `npm run compose:up`.
-
-The optional local PostgreSQL service is kept in `compose.db.yaml` and is not part of production
-deployments. Start it separately with `npm run db:start`.
 
 The app is served at `http://localhost:3000` by default. Set `APP_PORT` to change the host port:
 

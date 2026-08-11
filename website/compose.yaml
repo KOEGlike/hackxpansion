@@ -1,9 +1,51 @@
 services:
+  db:
+    image: postgres:18
+    restart: always
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: local
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   app:
     build:
       context: ..
       dockerfile: Dockerfile
+      args:
+        BASE_PATH: ${BASE_PATH:-}
     restart: always
     init: true
     ports:
       - 127.0.0.1:${APP_PORT:-3000}:3000
+    environment:
+      DATABASE_URL: postgres://root:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/local
+      ORIGIN: ${ORIGIN:-http://localhost:3000}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
+      HACKCLUB_CLIENT_SECRET: ${HACKCLUB_CLIENT_SECRET:?Set HACKCLUB_CLIENT_SECRET}
+      HACKCLUB_CLIENT_ID: ${HACKCLUB_CLIENT_ID:?Set HACKCLUB_CLIENT_ID}
+      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN:?Set SLACK_BOT_TOKEN}
+      ADMIN_HACKCLUB_USER_ID: ${ADMIN_HACKCLUB_USER_ID:-}
+      ARI_PROGRAM_ID: ${ARI_PROGRAM_ID:-}
+      ARI_BASE_URL: ${ARI_BASE_URL:-https://webhooks.ari.hackclub.com}
+      ARI_IN_SECRET: ${ARI_IN_SECRET:-}
+      ARI_OUT_SECRET: ${ARI_OUT_SECRET:-}
+      AIRTABLE_PAC: ${AIRTABLE_PAC:-}
+      HACKATIME_START_DATE: ${HACKATIME_START_DATE:-}
+      HACKATIME_END_DATE: ${HACKATIME_END_DATE:-}
+      HOST: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
