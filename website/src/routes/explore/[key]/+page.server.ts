@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			md0: project.md0,
 			md1: project.md1,
 			currencyPaidOut: project.currencyPaidOut,
-			makerName: user.name,
+			makerName: user.displayName,
 			makerImage: user.image
 		})
 		.from(project)

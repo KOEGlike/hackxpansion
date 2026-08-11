@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			activeAriExternalId: project.activeAriExternalId,
 			hackatimeProjects: project.hackatime_projects,
 			userId: project.userId,
-			ownerName: user.name,
+			ownerName: user.displayName,
 			ownerEmail: user.email,
 			ownerSlackId: user.slackId,
 			ownerImage: user.image,

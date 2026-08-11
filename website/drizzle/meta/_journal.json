@@ -71,6 +71,13 @@
       "when": 1786397282045,
       "tag": "0009_parallel_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1786464817976,
+      "tag": "0010_display-name",
+      "breakpoints": true
     }
   ]
 }

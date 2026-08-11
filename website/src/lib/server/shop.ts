@@ -158,7 +158,7 @@ export async function getUserShopOrders(userId: string) {
 			createdAt: shopOrder.createdAt,
 			fulfilledAt: shopOrder.fulfilledAt,
 			fulfilledByUserId: shopOrder.fulfilledByUserId,
-			fulfillerName: fulfiller.name,
+			fulfillerName: fulfiller.displayName,
 			itemName: shopItem.name
 		})
 		.from(shopOrder)
@@ -231,9 +231,9 @@ export async function getAllShopOrders() {
 			createdAt: shopOrder.createdAt,
 			fulfilledAt: shopOrder.fulfilledAt,
 			fulfilledByUserId: shopOrder.fulfilledByUserId,
-			fulfillerName: fulfiller.name,
+			fulfillerName: fulfiller.displayName,
 			itemName: shopItem.name,
-			userName: user.name,
+			userName: user.displayName,
 			userEmail: user.email
 		})
 		.from(shopOrder)

@@ -128,8 +128,8 @@
 	<section aria-labelledby="hack-club-profile" class="content-box p-5">
 		<h2 id="hack-club-profile" class="text-2xl font-bold">Hack Club profile</h2>
 		<p class="mt-2 text-slate-600">
-			Refresh your local name, email, Slack account, verification status, and YSWS eligibility from
-			Hack Club.
+			Refresh your local Hack Club fields. Display name and profile image come directly from Slack;
+			email, verification status, and YSWS eligibility come from Hack Club Auth.
 		</p>
 
 		{#if form && 'hackClubProfileSuccess' in form}

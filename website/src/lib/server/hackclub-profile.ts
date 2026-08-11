@@ -1,16 +1,15 @@
 import { fetchWithTimeout } from '$lib/server/http';
 
 const HACKCLUB_USERINFO_URL = 'https://auth.hackclub.com/oauth/userinfo';
-const CACHET_USER_URL = 'https://cachet.dunkirk.sh/users';
+const SLACK_USERINFO_URL = 'https://slack.com/api/users.info';
 
 type HackClubProfile = Record<string, unknown> & {
 	id: string;
-	name: string;
 	email: string;
 	emailVerified: boolean;
 };
 
-export async function fetchHackClubProfile(accessToken: string): Promise<HackClubProfile | null> {
+async function fetchHackClubUserInfo(accessToken: string) {
 	const response = await fetchWithTimeout(HACKCLUB_USERINFO_URL, {
 		headers: { Authorization: `Bearer ${accessToken}` }
 	});
@@ -19,33 +18,63 @@ export async function fetchHackClubProfile(accessToken: string): Promise<HackClu
 	const data = await response.json();
 	if (!isRecord(data)) return null;
 
-	const slackId = optionalString(data.slack_id);
-	if (!slackId) return normalizeProfile(data);
+	return data;
+}
 
-	try {
-		const slackResponse = await fetchWithTimeout(
-			`${CACHET_USER_URL}/${encodeURIComponent(slackId)}`
-		);
-		if (!slackResponse.ok) return normalizeProfile(data);
+export async function fetchHackClubRealName(accessToken: string) {
+	const data = await fetchHackClubUserInfo(accessToken);
+	const realName = data && optionalString(data.name)?.trim();
+	if (!realName) throw new Error('Hack Club profile did not include a real name');
+	return realName;
+}
 
-		const slackData = await slackResponse.json();
-		return normalizeProfile(isRecord(slackData) ? { ...slackData, ...data } : data);
-	} catch {
-		// Cachet enriches the profile but must not make authentication or refresh unavailable.
-		return normalizeProfile(data);
+export async function fetchHackClubProfile(
+	accessToken: string,
+	slackBotToken: string | undefined
+): Promise<HackClubProfile | null> {
+	const data = await fetchHackClubUserInfo(accessToken);
+	const profile = data && normalizeProfile(data);
+	if (!profile) return null;
+
+	const slackId = optionalString(profile.slack_id);
+	if (!slackId) throw new Error('Hack Club profile did not include a Slack ID');
+	if (!slackBotToken) throw new Error('SLACK_BOT_TOKEN is not configured');
+
+	const url = new URL(SLACK_USERINFO_URL);
+	url.searchParams.set('user', slackId);
+	const slackResponse = await fetchWithTimeout(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${slackBotToken}`
+		},
+		body: JSON.stringify({ user: slackId })
+	});
+	if (!slackResponse.ok) throw new Error(`Slack users.info failed (${slackResponse.status})`);
+
+	const slackData = await slackResponse.json();
+	if (!isRecord(slackData) || slackData.ok !== true || !isRecord(slackData.user)) {
+		throw new Error('Slack users.info returned an invalid response');
 	}
+	const slackProfile = slackData.user.profile;
+	if (!isRecord(slackProfile)) throw new Error('Slack users.info omitted the user profile');
+
+	return {
+		...profile,
+		slack_display_name: optionalString(slackProfile.display_name)?.trim() || slackId,
+		slack_image_512: optionalString(slackProfile.image_512) ?? null
+	};
 }
 
 export function mapHackClubProfile(profile: Record<string, unknown>, checkedAt = new Date()) {
 	return {
 		id: optionalString(profile.sub),
-		name: optionalString(profile.name),
+		name: optionalString(profile.slack_display_name) ?? optionalString(profile.slack_id),
 		email: optionalString(profile.email),
 		emailVerified: profile.email_verified === true,
-		image: optionalString(profile.imageUrl),
+		image: optionalString(profile.slack_image_512) ?? null,
 		slackId: optionalString(profile.slack_id),
 		verificationStatus: optionalString(profile.verification_status),
-		given_name: optionalString(profile.given_name),
 		yswsEligible: profile.ysws_eligible === true,
 		pronouns: optionalString(profile.pronouns),
 		profileCheckedAt: checkedAt
@@ -54,16 +83,19 @@ export function mapHackClubProfile(profile: Record<string, unknown>, checkedAt =
 
 function normalizeProfile(profile: Record<string, unknown>): HackClubProfile | null {
 	const id = optionalString(profile.sub) ?? optionalString(profile.id);
-	const name = optionalString(profile.name);
 	const email = optionalString(profile.email);
-	if (!id || !name || !email) return null;
+	if (!id || !email) return null;
 
 	return {
-		...profile,
 		id,
-		name,
+		sub: id,
 		email,
-		emailVerified: profile.email_verified === true
+		emailVerified: profile.email_verified === true,
+		email_verified: profile.email_verified === true,
+		slack_id: optionalString(profile.slack_id),
+		verification_status: optionalString(profile.verification_status),
+		ysws_eligible: profile.ysws_eligible === true,
+		pronouns: optionalString(profile.pronouns)
 	};
 }
 

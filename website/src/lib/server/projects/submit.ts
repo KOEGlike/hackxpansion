@@ -52,7 +52,7 @@ type ProjectForSubmission = {
 	md0: number | null;
 	md1: number | null;
 	makerEmail: string;
-	makerName: string;
+	makerDisplayName: string;
 	makerSlackId: string;
 	makerYswsEligible: boolean;
 };
@@ -105,7 +105,7 @@ export async function submitProjectToAri({
 			},
 			maker: {
 				email: claim.project.makerEmail,
-				name: claim.project.makerName,
+				name: claim.project.makerDisplayName,
 				slackId: claim.project.makerSlackId
 			},
 			journals: claim.journals,
@@ -252,8 +252,6 @@ async function claimSubmission(
 			projectDemoUrl: projectForSubmission.demoUrl,
 			projectThumbnailUrl: projectForSubmission.thumbnailUrl,
 			projectDescription: projectForSubmission.description,
-			makerName: projectForSubmission.makerName,
-			makerGivenName: projectForSubmission.makerGivenName,
 			makerEmail: projectForSubmission.makerEmail,
 			makerSlackId: projectForSubmission.makerSlackId,
 			phase: readiness.phase,
@@ -328,8 +326,7 @@ const projectForSubmissionFields = {
 	md0: project.md0,
 	md1: project.md1,
 	makerEmail: user.email,
-	makerName: user.name,
-	makerGivenName: user.given_name,
+	makerDisplayName: user.displayName,
 	makerSlackId: user.slackId,
 	makerYswsEligible: user.yswsEligible
 };

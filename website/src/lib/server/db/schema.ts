@@ -121,8 +121,6 @@ export const projectSubmissionFeedback = pgTable(
 		projectDemoUrl: text('project_demo_url'),
 		projectThumbnailUrl: text('project_thumbnail_url'),
 		projectDescription: text('project_description'),
-		makerName: text('maker_name').notNull(),
-		makerGivenName: text('maker_given_name'),
 		makerEmail: text('maker_email').notNull(),
 		makerSlackId: text('maker_slack_id').notNull(),
 		ariExternalId: text('ari_external_id').notNull(),

@@ -5,7 +5,7 @@ export const user = pgTable(
 	'user',
 	{
 		id: text('id').primaryKey(),
-		name: text('name').notNull(),
+		displayName: text('display_name').notNull(),
 		email: text('email').notNull().unique(),
 		emailVerified: boolean('email_verified').default(false).notNull(),
 		image: text('image'),
@@ -16,7 +16,6 @@ export const user = pgTable(
 			.notNull(),
 		slackId: text('slack_id').notNull(),
 		verificationStatus: text('verification_status').notNull(),
-		given_name: text('given_name'),
 		yswsEligible: boolean('ysws_eligible').notNull(),
 		pronouns: text('pronouns'),
 		profileCheckedAt: timestamp('profile_checked_at'),

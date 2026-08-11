@@ -17,7 +17,20 @@ export const auth = betterAuth({
 	account: {
 		encryptOAuthTokens: true
 	},
+	databaseHooks: {
+		account: {
+			create: {
+				before: async (account) => ({ data: { ...account, idToken: null } })
+			},
+			update: {
+				before: async (account) => ({ data: { ...account, idToken: null } })
+			}
+		}
+	},
 	user: {
+		fields: {
+			name: 'displayName'
+		},
 		additionalFields: {
 			currency: {
 				type: 'number',
@@ -39,10 +52,6 @@ export const auth = betterAuth({
 			verificationStatus: {
 				type: 'string',
 				required: true
-			},
-			given_name: {
-				type: 'string',
-				required: false
 			},
 			yswsEligible: {
 				type: 'boolean',
@@ -104,7 +113,9 @@ export const auth = betterAuth({
 					overrideUserInfo: true,
 					scopes: ['openid', 'email', 'name', 'profile', 'verification_status', 'slack_id'],
 					getUserInfo: (tokens) =>
-						tokens.accessToken ? fetchHackClubProfile(tokens.accessToken) : Promise.resolve(null),
+						tokens.accessToken
+							? fetchHackClubProfile(tokens.accessToken, env.SLACK_BOT_TOKEN)
+							: Promise.resolve(null),
 					mapProfileToUser: (profile) => mapHackClubProfile(profile)
 				}
 			]

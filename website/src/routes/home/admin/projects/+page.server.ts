@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 				type: project.type,
 				tier: project.tier,
 				currencyPaidOut: project.currencyPaidOut,
-				ownerName: user.name,
+				ownerName: user.displayName,
 				ownerEmail: user.email
 			})
 			.from(project)

@@ -19,6 +19,7 @@ import { getApprovalCurrencyPayout, getProjectStatusAfterAriEvent } from '$lib/p
 import { isUuid } from '$lib/projects/domain';
 import { env } from '$env/dynamic/private';
 import { and, eq, isNull, sql } from 'drizzle-orm';
+import { fetchHackClubRealName } from '$lib/server/hackclub-real-name';
 
 export const POST: RequestHandler = async ({ request }) => {
 	if (!env.ARI_OUT_SECRET) {
@@ -58,8 +59,6 @@ export const POST: RequestHandler = async ({ request }) => {
 					projectDemoUrl: projectSubmissionFeedback.projectDemoUrl,
 					projectThumbnailUrl: projectSubmissionFeedback.projectThumbnailUrl,
 					projectDescription: projectSubmissionFeedback.projectDescription,
-					makerName: projectSubmissionFeedback.makerName,
-					makerGivenName: projectSubmissionFeedback.makerGivenName,
 					makerEmail: projectSubmissionFeedback.makerEmail,
 					makerSlackId: projectSubmissionFeedback.makerSlackId
 				})
@@ -159,6 +158,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 
 			let airtableApproval: YswsProjectApproval | null = null;
+			let airtableUserId: string | null = null;
 			if (body.event === 'review.approved' && !existingReview.airtableRecordId) {
 				const approvalProject =
 					activeProject ??
@@ -171,6 +171,7 @@ export const POST: RequestHandler = async ({ request }) => {
 							.limit(1)
 					)[0];
 				if (!approvalProject) throw new Error('Could not load the approved project');
+				airtableUserId = approvalProject.userId;
 				airtableApproval = {
 					ariApprovalDeliveryId: headers.delivery_id,
 					project: {
@@ -188,10 +189,8 @@ export const POST: RequestHandler = async ({ request }) => {
 							: approvalProject.description
 					},
 					maker: {
-						name: submissionFeedback ? submissionFeedback.makerName : approvalProject.makerName,
-						givenName: submissionFeedback
-							? submissionFeedback.makerGivenName
-							: approvalProject.makerGivenName,
+						name: approvalProject.makerDisplayName,
+						givenName: null,
 						email: submissionFeedback ? submissionFeedback.makerEmail : approvalProject.makerEmail,
 						githubUsername: submissionFeedback
 							? submissionFeedback.githubUsername
@@ -236,13 +235,18 @@ export const POST: RequestHandler = async ({ request }) => {
 				projectStatus,
 				currencyAwarded,
 				stale: !activeProject,
-				airtableApproval
+				airtableApproval,
+				airtableUserId
 			};
 		});
 
-		if (result.airtableApproval) {
+		if (result.airtableApproval && result.airtableUserId) {
+			const realName = await fetchHackClubRealName(result.airtableUserId);
 			const airtableRecordId = await createYswsProjectSubmission(
-				result.airtableApproval,
+				{
+					...result.airtableApproval,
+					maker: { ...result.airtableApproval.maker, name: realName, givenName: null }
+				},
 				env.AIRTABLE_PAC
 			);
 			await db
@@ -281,8 +285,7 @@ const approvalProjectFields = {
 	demoUrl: project.demoUrl,
 	thumbnailUrl: project.thumbnailUrl,
 	description: project.description,
-	makerName: user.name,
-	makerGivenName: user.given_name,
+	makerDisplayName: user.displayName,
 	makerEmail: user.email,
 	makerSlackId: user.slackId,
 	makerGithubUsername: user.githubUsername,

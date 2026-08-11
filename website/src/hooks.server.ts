@@ -10,7 +10,7 @@ const providerOwnedUserFields = new Set([
 	'isAdmin',
 	'slackId',
 	'verificationStatus',
-	'given_name',
+	'displayName',
 	'yswsEligible',
 	'pronouns',
 	'name',

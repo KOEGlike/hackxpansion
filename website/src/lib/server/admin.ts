@@ -34,14 +34,14 @@ export async function getAdminUsers() {
 	const users = await db
 		.select({
 			id: user.id,
-			name: user.name,
+			name: user.displayName,
 			email: user.email,
 			slackId: user.slackId,
 			isAdmin: user.isAdmin,
 			createdAt: user.createdAt
 		})
 		.from(user)
-		.orderBy(desc(user.isAdmin), asc(user.name), asc(user.email));
+		.orderBy(desc(user.isAdmin), asc(user.displayName), asc(user.email));
 	const configuredAdminUserId = await getConfiguredAdminUserId();
 	return users.map((account) => ({
 		...account,
@@ -55,7 +55,7 @@ export async function promoteUserToAdmin(adminUserId: string, targetUserId: stri
 		.update(user)
 		.set({ isAdmin: true })
 		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, false)))
-		.returning({ name: user.name });
+		.returning({ name: user.displayName });
 	if (promotedUser) return promotedUser;
 
 	const [targetUser] = await db
@@ -77,7 +77,7 @@ export async function demoteUserFromAdmin(adminUserId: string, targetUserId: str
 		.update(user)
 		.set({ isAdmin: false })
 		.where(and(eq(user.id, targetUserId), eq(user.isAdmin, true)))
-		.returning({ name: user.name });
+		.returning({ name: user.displayName });
 	if (demotedUser) return demotedUser;
 
 	const [targetUser] = await db
