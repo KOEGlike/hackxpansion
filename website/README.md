@@ -58,9 +58,9 @@ managed PostgreSQL URL instead. It takes precedence for both migrations and the 
 For a Portainer Git stack, configure the variables from `.env.example` in Portainer's stack
 environment instead. The ignored local `.env` file is not required inside the deployment checkout.
 
-The one-shot `migrate` service applies pending Drizzle migrations to `DATABASE_URL`. The app starts
-only after migration succeeds. Migrations can also be run manually with `npm run compose:migrate`,
-and the application stack can be started with `npm run compose:up`.
+The application container applies pending Drizzle migrations before starting the server. Concurrent
+starts are serialized with a PostgreSQL advisory lock. The application stack can be started with
+`npm run compose:up`.
 
 The optional local PostgreSQL service is kept in `compose.db.yaml` and is not part of production
 deployments. Start it separately with `npm run db:start`.

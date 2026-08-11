@@ -7,13 +7,3 @@ services:
     init: true
     ports:
       - 127.0.0.1:${APP_PORT:-3000}:3000
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
-
-  migrate:
-    build:
-      context: ..
-      dockerfile: Dockerfile
-      target: migrate
-    restart: 'no'

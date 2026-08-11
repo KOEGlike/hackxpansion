@@ -9,11 +9,6 @@ FROM dependencies AS source
 
 COPY website/ .
 
-FROM source AS migrate
-
-USER node
-CMD ["npm", "run", "db:migrate"]
-
 FROM source AS build
 
 ARG BASE_PATH=""
@@ -37,8 +32,10 @@ ENV NODE_ENV=production \
 
 COPY --from=build --chown=node:node /app/build ./build
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/drizzle ./drizzle
+COPY --from=build --chown=node:node /app/scripts/migrate.mjs ./scripts/migrate.mjs
 
 USER node
 EXPOSE 3000
 
-CMD ["node", "build"]
+CMD ["sh", "-c", "node scripts/migrate.mjs && exec node build"]
