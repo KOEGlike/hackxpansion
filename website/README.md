@@ -52,6 +52,9 @@ Configure the deployment platform's runtime environment, including the managed P
 docker compose up --build -d
 ```
 
+If the deployment platform reserves or overrides `DATABASE_URL`, set `APP_DATABASE_URL` to the
+managed PostgreSQL URL instead. It takes precedence for both migrations and the application.
+
 For a Portainer Git stack, configure the variables from `.env.example` in Portainer's stack
 environment instead. The ignored local `.env` file is not required inside the deployment checkout.
 
