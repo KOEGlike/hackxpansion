@@ -49,6 +49,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					whatAreWeDoingWell: projectSubmissionFeedback.whatAreWeDoingWell,
 					howCanWeImprove: projectSubmissionFeedback.howCanWeImprove,
 					githubUsername: projectSubmissionFeedback.githubUsername,
+					birthday: projectSubmissionFeedback.birthday,
 					addressLine1: projectSubmissionFeedback.addressLine1,
 					addressLine2: projectSubmissionFeedback.addressLine2,
 					addressCity: projectSubmissionFeedback.addressCity,
@@ -195,6 +196,7 @@ export const POST: RequestHandler = async ({ request }) => {
 						githubUsername: submissionFeedback
 							? submissionFeedback.githubUsername
 							: approvalProject.makerGithubUsername,
+						birthday: submissionFeedback?.birthday ?? approvalProject.makerBirthday,
 						addressLine1: submissionFeedback
 							? submissionFeedback.addressLine1
 							: approvalProject.makerAddressLine1,
@@ -289,6 +291,7 @@ const approvalProjectFields = {
 	makerEmail: user.email,
 	makerSlackId: user.slackId,
 	makerGithubUsername: user.githubUsername,
+	makerBirthday: user.birthday,
 	makerAddressLine1: user.addressLine1,
 	makerAddressLine2: user.addressLine2,
 	makerAddressCity: user.addressCity,

@@ -78,6 +78,13 @@
       "when": 1786464817976,
       "tag": "0010_display-name",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1786475151947,
+      "tag": "0011_real_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }

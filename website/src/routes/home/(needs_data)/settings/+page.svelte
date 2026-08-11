@@ -60,6 +60,16 @@
 				/>
 			</label>
 			<label class="flex flex-col gap-1 text-sm font-semibold sm:col-span-2">
+				Birthday
+				<input
+					type="date"
+					name="birthday"
+					value={value('birthday')}
+					autocomplete="bday"
+					class="border border-slate-500 bg-white p-2 font-normal"
+				/>
+			</label>
+			<label class="flex flex-col gap-1 text-sm font-semibold sm:col-span-2">
 				Address line 1
 				<input
 					name="addressLine1"

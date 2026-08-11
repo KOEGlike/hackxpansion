@@ -81,7 +81,10 @@ export async function submitProjectAction(projectId: string, userId: string, for
 	};
 
 	try {
-		const profile = userProfileInputFromForm(formData, { requireAddress: true });
+		const profile = userProfileInputFromForm(formData, {
+			requireAddress: true,
+			requireBirthday: true
+		});
 		const feedback = projectSubmissionFeedbackFromForm(formData);
 		const result = await submitProjectToAri({ projectId, userId, profile, feedback });
 		return {

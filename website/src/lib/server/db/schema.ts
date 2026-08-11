@@ -10,7 +10,8 @@ import {
 	boolean,
 	uniqueIndex,
 	index,
-	check
+	check,
+	date
 } from 'drizzle-orm/pg-core';
 import { user } from './auth.schema';
 import {
@@ -111,6 +112,7 @@ export const projectSubmissionFeedback = pgTable(
 		whatAreWeDoingWell: text('what_are_we_doing_well'),
 		howCanWeImprove: text('how_can_we_improve'),
 		githubUsername: text('github_username'),
+		birthday: date('birthday'),
 		addressLine1: text('address_line_1'),
 		addressLine2: text('address_line_2'),
 		addressCity: text('address_city'),

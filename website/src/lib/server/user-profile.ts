@@ -16,6 +16,7 @@ export async function getUserSubmissionProfile(userId: string): Promise<UserSubm
 	const [profile] = await db
 		.select({
 			githubUsername: user.githubUsername,
+			birthday: user.birthday,
 			addressLine1: user.addressLine1,
 			addressLine2: user.addressLine2,
 			addressCity: user.addressCity,
@@ -34,6 +35,7 @@ export async function getUserSubmissionProfile(userId: string): Promise<UserSubm
 export function userProfileFormValues(formData: FormData): UserProfileFormValues {
 	return {
 		githubUsername: stringFromForm(formData, 'githubUsername'),
+		birthday: stringFromForm(formData, 'birthday'),
 		addressLine1: stringFromForm(formData, 'addressLine1'),
 		addressLine2: stringFromForm(formData, 'addressLine2'),
 		addressCity: stringFromForm(formData, 'addressCity'),
@@ -45,11 +47,12 @@ export function userProfileFormValues(formData: FormData): UserProfileFormValues
 
 export function userProfileInputFromForm(
 	formData: FormData,
-	options: { requireAddress?: boolean; repoUrl?: string | null } = {}
+	options: { requireAddress?: boolean; requireBirthday?: boolean; repoUrl?: string | null } = {}
 ): UserSubmissionProfile {
 	const values = userProfileFormValues(formData);
 	const profile = {
 		githubUsername: optionalValue(values.githubUsername, 39, 'GitHub username'),
+		birthday: birthdayValue(values.birthday),
 		addressLine1: optionalValue(values.addressLine1, 200, 'Address line 1'),
 		addressLine2: optionalValue(values.addressLine2, 200, 'Address line 2'),
 		addressCity: optionalValue(values.addressCity, 100, 'City'),
@@ -74,6 +77,9 @@ export function userProfileInputFromForm(
 			'Address line 1, city, ZIP or postal code, and country are required.'
 		);
 	}
+	if (options.requireBirthday && !profile.birthday) {
+		throw new UserProfileValidationError('Birthday is required.');
+	}
 
 	return profile;
 }
@@ -88,6 +94,39 @@ function optionalValue(value: string, maxLength: number, label: string) {
 		throw new UserProfileValidationError(`${label} must be ${maxLength} characters or fewer.`);
 	}
 	return normalized || null;
+}
+
+function birthdayValue(value: string) {
+	const normalized = value.trim();
+	if (!normalized) return null;
+
+	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(normalized);
+	if (!match) throw new UserProfileValidationError('Enter a valid birthday.');
+
+	const [, yearText, monthText, dayText] = match;
+	const year = Number(yearText);
+	const month = Number(monthText);
+	const day = Number(dayText);
+	const date = new Date(Date.UTC(year, month - 1, day));
+	if (
+		date.getUTCFullYear() !== year ||
+		date.getUTCMonth() !== month - 1 ||
+		date.getUTCDate() !== day
+	) {
+		throw new UserProfileValidationError('Enter a valid birthday.');
+	}
+
+	const now = new Date();
+	const today = [
+		now.getUTCFullYear(),
+		String(now.getUTCMonth() + 1).padStart(2, '0'),
+		String(now.getUTCDate()).padStart(2, '0')
+	].join('-');
+	if (normalized > today) {
+		throw new UserProfileValidationError('Birthday cannot be in the future.');
+	}
+
+	return normalized;
 }
 
 function stringFromForm(formData: FormData, key: string) {

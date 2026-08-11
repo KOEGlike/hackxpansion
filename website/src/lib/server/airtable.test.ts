@@ -19,6 +19,7 @@ const approval: YswsProjectApproval = {
 		givenName: 'Ada',
 		email: 'ada@example.com',
 		githubUsername: 'maker',
+		birthday: '1815-12-10',
 		addressLine1: '1 Computing Lane',
 		addressLine2: null,
 		addressCity: 'London',
@@ -47,6 +48,7 @@ describe('YSWS Project Submission Airtable export', () => {
 			fldgkMOj2Z7mIRQOf: 'Ada',
 			fldNIZ92JkP1LDwRf: 'Lovelace',
 			fld06k5l0hQ0J305G: 'Fast reviews',
+			fldumPZ3ZeVQsXJBi: '1815-12-10',
 			fld2k6dVonmsKgDNW: 1.5,
 			fldrOZoVZRIcmCBfx: '{"technical_features":"Custom protocol"}'
 		});

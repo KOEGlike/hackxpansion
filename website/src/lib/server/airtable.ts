@@ -17,6 +17,7 @@ const fields = {
 	screenshot: 'fld8mmY3tnlZJMmfk',
 	description: 'fldu7Fw7JOizdt47X',
 	githubUsername: 'fldbGNYyTAy0SyJ4y',
+	birthday: 'fldumPZ3ZeVQsXJBi',
 	addressLine1: 'fldycjBo3aVe8MDN7',
 	addressLine2: 'fldb3DEjlMdPKXxXt',
 	city: 'fldEMkpQlc1EMKtKH',
@@ -40,6 +41,7 @@ export type YswsProjectApproval = {
 		givenName: string | null;
 		email: string;
 		githubUsername: string | null;
+		birthday: string | null;
 		addressLine1: string | null;
 		addressLine2: string | null;
 		addressCity: string | null;
@@ -76,6 +78,7 @@ export function buildYswsProjectSubmissionFields(approval: YswsProjectApproval) 
 	}
 	setIfPresent(airtableFields, fields.description, approval.project.description);
 	setIfPresent(airtableFields, fields.githubUsername, approval.maker.githubUsername);
+	setIfPresent(airtableFields, fields.birthday, approval.maker.birthday);
 	setIfPresent(airtableFields, fields.addressLine1, approval.maker.addressLine1);
 	setIfPresent(airtableFields, fields.addressLine2, approval.maker.addressLine2);
 	setIfPresent(airtableFields, fields.city, approval.maker.addressCity);

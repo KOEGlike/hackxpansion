@@ -70,6 +70,12 @@ export const auth = betterAuth({
 				type: 'string',
 				required: false
 			},
+			birthday: {
+				type: 'string',
+				required: false,
+				input: false,
+				returned: false
+			},
 			addressLine1: {
 				type: 'string',
 				required: false,

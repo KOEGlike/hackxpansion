@@ -1,5 +1,14 @@
 import { relations, sql } from 'drizzle-orm';
-import { pgTable, text, timestamp, boolean, integer, index, check } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	text,
+	timestamp,
+	boolean,
+	integer,
+	index,
+	check,
+	date
+} from 'drizzle-orm/pg-core';
 
 export const user = pgTable(
 	'user',
@@ -20,6 +29,7 @@ export const user = pgTable(
 		pronouns: text('pronouns'),
 		profileCheckedAt: timestamp('profile_checked_at'),
 		githubUsername: text('github_username'),
+		birthday: date('birthday'),
 		addressLine1: text('address_line_1'),
 		addressLine2: text('address_line_2'),
 		addressCity: text('address_city'),

@@ -1,5 +1,6 @@
 export type UserSubmissionProfile = {
 	githubUsername: string | null;
+	birthday: string | null;
 	addressLine1: string | null;
 	addressLine2: string | null;
 	addressCity: string | null;

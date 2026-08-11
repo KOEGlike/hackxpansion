@@ -47,6 +47,18 @@
 		/>
 	</label>
 
+	<label class="flex flex-col gap-1 text-sm font-semibold">
+		Birthday
+		<input
+			type="date"
+			name="birthday"
+			value={value('birthday', profile.birthday)}
+			autocomplete="bday"
+			required
+			class="border border-slate-500 bg-white p-2 font-normal"
+		/>
+	</label>
+
 	<div class="grid gap-3 sm:grid-cols-2">
 		<label class="flex flex-col gap-1 text-sm font-semibold sm:col-span-2">
 			Address line 1
