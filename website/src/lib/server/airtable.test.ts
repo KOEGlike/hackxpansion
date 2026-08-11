@@ -43,24 +43,24 @@ describe('YSWS Project Submission Airtable export', () => {
 		const result = buildYswsProjectSubmissionFields(approval);
 
 		expect(result).toMatchObject({
-			fld12zdbAe80iobHt: 'delivery-1',
-			fldZ8lCUe3xTbJQKv: 'https://github.com/maker/project',
-			fldgkMOj2Z7mIRQOf: 'Ada',
-			fldNIZ92JkP1LDwRf: 'Lovelace',
-			fld06k5l0hQ0J305G: 'Fast reviews',
-			fldumPZ3ZeVQsXJBi: '1815-12-10',
-			fld2k6dVonmsKgDNW: 1.5,
-			fldrOZoVZRIcmCBfx: '{"technical_features":"Custom protocol"}'
+			fldnLm94WfcThZPhe: 'delivery-1',
+			fldZMQYvlbUXYVHVd: 'https://github.com/maker/project',
+			fldbZc8K4GdCWhBD6: 'Ada',
+			fldVDeiribxpXYeSC: 'Lovelace',
+			fld42yfP0pnyc6JqR: 'Fast reviews',
+			fldZDzHxDOZdiq04y: '1815-12-10',
+			fldsq64DaIPVrhe4e: 1.5,
+			fldScjPJRcrBYgRAp: '{"technical_features":"Custom protocol"}'
 		});
-		expect(Object.keys(result)).not.toContain('fld7pC22CeqrQzarB');
-		expect(Object.keys(result)).not.toContain('fldb2Z8SvkOENIH1t');
-		expect(Object.keys(result)).not.toContain('fldAkUNw8Dt6CwMLu');
-		expect(Object.keys(result)).not.toContain('flddwQLjcMKNFSBFM');
+		expect(Object.keys(result)).not.toContain('fldiuBloMaAPjZDZN');
+		expect(Object.keys(result)).not.toContain('fld90tsdUWyDSaSYq');
+		expect(Object.keys(result)).not.toContain('fldtfd5xKCpxbLG4V');
+		expect(Object.keys(result)).not.toContain('fld2SYcRNyUm57GjH');
 	});
 
 	it('omits the hours override when Ari did not provide approved time', () => {
 		const result = buildYswsProjectSubmissionFields({ ...approval, approvedMinutes: null });
-		expect(result).not.toHaveProperty('fld2k6dVonmsKgDNW');
+		expect(result).not.toHaveProperty('fldsq64DaIPVrhe4e');
 	});
 
 	it('uses the Ari audit note when structured justification is absent', () => {
@@ -84,7 +84,7 @@ describe('YSWS Project Submission Airtable export', () => {
 			'recAirtableRecord'
 		);
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe('https://api.airtable.com/v0/appdl599Ct1mJBIrV/tblU7lrTNTaSG6bk0');
+		expect(url).toBe('https://api.airtable.com/v0/appdl599Ct1mJBIrV/tblRSGunS3aJP94zf');
 		expect(new Headers(init.headers).get('Authorization')).toBe('Bearer pat-secret');
 		expect(init.method).toBe('PATCH');
 		const body = JSON.parse(String(init.body));

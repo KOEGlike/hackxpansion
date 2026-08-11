@@ -2,30 +2,30 @@ import { fetchWithTimeout } from '$lib/server/http';
 import type { ReviewJustification } from '$lib/server/ari/outbound';
 
 const YSWS_BASE_ID = 'appdl599Ct1mJBIrV';
-const YSWS_PROJECT_SUBMISSION_TABLE_ID = 'tblU7lrTNTaSG6bk0';
+const YSWS_PROJECT_SUBMISSION_TABLE_ID = 'tblRSGunS3aJP94zf';
 
 const fields = {
-	ariApprovalDeliveryId: 'fld12zdbAe80iobHt',
-	codeUrl: 'fldZ8lCUe3xTbJQKv',
-	playableUrl: 'fldws5mWl0rCqRNOB',
-	howDidYouHear: 'fldtINraIoJagxVkl',
-	whatAreWeDoingWell: 'fld06k5l0hQ0J305G',
-	howCanWeImprove: 'fldGz5uGOuz3xkj7z',
-	firstName: 'fldgkMOj2Z7mIRQOf',
-	lastName: 'fldNIZ92JkP1LDwRf',
-	email: 'fldJv0Dln4PapsPEy',
-	screenshot: 'fld8mmY3tnlZJMmfk',
-	description: 'fldu7Fw7JOizdt47X',
-	githubUsername: 'fldbGNYyTAy0SyJ4y',
-	birthday: 'fldumPZ3ZeVQsXJBi',
-	addressLine1: 'fldycjBo3aVe8MDN7',
-	addressLine2: 'fldb3DEjlMdPKXxXt',
-	city: 'fldEMkpQlc1EMKtKH',
-	region: 'fldpG0RbnrL8Ek0TA',
-	country: 'fldirNvUK5cbUVEiC',
-	postalCode: 'flds0GzB57y15zwDB',
-	overrideHours: 'fld2k6dVonmsKgDNW',
-	overrideHoursJustification: 'fldrOZoVZRIcmCBfx'
+	ariApprovalDeliveryId: 'fldnLm94WfcThZPhe',
+	codeUrl: 'fldZMQYvlbUXYVHVd',
+	playableUrl: 'fldh32ZKusdegrNnP',
+	howDidYouHear: 'fldCSc0z6y7xYPFqO',
+	whatAreWeDoingWell: 'fld42yfP0pnyc6JqR',
+	howCanWeImprove: 'fldJmKi07TjsZDGxm',
+	firstName: 'fldbZc8K4GdCWhBD6',
+	lastName: 'fldVDeiribxpXYeSC',
+	email: 'flda2DAyT7FVCEjtL',
+	screenshot: 'fldMLTCto2rm172cn',
+	description: 'fldCHa09hsRg4vrff',
+	githubUsername: 'fldOzznkZN4s0J38X',
+	birthday: 'fldZDzHxDOZdiq04y',
+	addressLine1: 'fldjpIXY9mLnuwfer',
+	addressLine2: 'fldgXGgX61VSCd0W3',
+	city: 'fldEiMDCo4bOp5mw5',
+	region: 'fldMqWBcBuDaHGb42',
+	country: 'fldWG0CPuWoSiszSy',
+	postalCode: 'fld6vnS8HvtcUsbet',
+	overrideHours: 'fldsq64DaIPVrhe4e',
+	overrideHoursJustification: 'fldScjPJRcrBYgRAp'
 } as const;
 
 export type YswsProjectApproval = {
