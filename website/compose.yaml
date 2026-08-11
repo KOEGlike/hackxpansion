@@ -3,28 +3,10 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-      args:
-        BASE_PATH: ${BASE_PATH:-}
     restart: always
     init: true
     ports:
       - 127.0.0.1:${APP_PORT:-3000}:3000
-    environment:
-      DATABASE_URL: ${COMPOSE_DATABASE_URL:-${DATABASE_URL:?Set DATABASE_URL}}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
-      HACKCLUB_CLIENT_SECRET: ${HACKCLUB_CLIENT_SECRET:?Set HACKCLUB_CLIENT_SECRET}
-      HACKCLUB_CLIENT_ID: ${HACKCLUB_CLIENT_ID:?Set HACKCLUB_CLIENT_ID}
-      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN:?Set SLACK_BOT_TOKEN}
-      ADMIN_HACKCLUB_USER_ID: ${ADMIN_HACKCLUB_USER_ID:-}
-      ARI_PROGRAM_ID: ${ARI_PROGRAM_ID:-}
-      ARI_BASE_URL: ${ARI_BASE_URL:-https://webhooks.ari.hackclub.com}
-      ARI_IN_SECRET: ${ARI_IN_SECRET:-}
-      ARI_OUT_SECRET: ${ARI_OUT_SECRET:-}
-      AIRTABLE_PAC: ${AIRTABLE_PAC:-}
-      HACKATIME_START_DATE: ${HACKATIME_START_DATE:-}
-      HACKATIME_END_DATE: ${HACKATIME_END_DATE:-}
-      HOST: 0.0.0.0
-      PORT: 3000
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -35,5 +17,3 @@ services:
       dockerfile: Dockerfile
       target: migrate
     restart: 'no'
-    environment:
-      DATABASE_URL: ${COMPOSE_DATABASE_URL:-${DATABASE_URL:?Set DATABASE_URL}}

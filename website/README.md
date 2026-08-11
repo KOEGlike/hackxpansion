@@ -45,8 +45,8 @@ proxy in front of the Node process for TLS and configure it to forward the origi
 
 ### Docker Compose
 
-Configure `.env`, including the managed PostgreSQL `DATABASE_URL`, then build and start the
-application stack:
+Configure the deployment platform's runtime environment, including the managed PostgreSQL
+`DATABASE_URL`, then build and start the application stack:
 
 ```sh
 docker compose up --build -d
