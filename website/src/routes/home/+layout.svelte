@@ -58,6 +58,7 @@
 	const adminItems = [
 		{ title: 'Orders', href: '/home/admin' },
 		{ title: 'Projects', href: '/home/admin/projects' },
+		{ title: 'Submissions', href: '/home/admin/submissions' },
 		{ title: 'Shop Items', href: '/home/admin/shop' },
 		{ title: 'Users', href: '/home/admin/users' }
 	] as const;
