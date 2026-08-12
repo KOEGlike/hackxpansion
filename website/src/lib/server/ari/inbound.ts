@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import type { ProjectReviewPhase } from '$lib/projects/lifecycle';
 import { getSubmissionRequirementChanges } from '$lib/projects/submission';
 import { fetchWithTimeout } from '$lib/server/http';
+import { currentRequestId } from '$lib/server/request-context';
 
 export type InboundEvidence = 'commits' | 'elapsed' | 'devlog';
 export type InboundTrack = 'software' | 'hardware';
@@ -153,6 +154,10 @@ export async function sendAriIngest(
 	const rawBody = JSON.stringify(payload);
 	const signature = createHmac('sha256', signingSecret).update(rawBody).digest('hex');
 	const url = `${baseUrl.replace(/\/$/, '')}/api/ingest/${programId}`;
+	console.info('[ari/ingest] Temporary outbound request JSON', {
+		requestId: currentRequestId(),
+		body: rawBody
+	});
 	const response = await fetchWithTimeout(url, {
 		method: 'POST',
 		headers: {
