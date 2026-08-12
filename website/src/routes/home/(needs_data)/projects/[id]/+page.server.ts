@@ -79,7 +79,10 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			totalJournalMinutes: Number(stats?.totalJournalMinutes ?? 0),
 			journalCount: Number(stats?.journalCount ?? 0)
 		},
-		readiness: getProjectSubmissionReadiness(existingProject, user.yswsEligible),
+		readiness: getProjectSubmissionReadiness(
+			{ ...existingProject, journalCount: Number(stats?.journalCount ?? 0) },
+			user.yswsEligible
+		),
 		yswsEligible: user.yswsEligible,
 		canEdit: canEditProject(existingProject.status),
 		hackatime: {

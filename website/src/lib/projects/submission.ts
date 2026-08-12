@@ -2,7 +2,14 @@ import type { ProjectStatus, ProjectTier, ProjectType } from './domain';
 import { getNextProjectSubmission, type ProjectReviewPhase } from './lifecycle';
 
 export type ProjectSubmissionChangeField =
-	'status' | 'yswsEligibility' | 'description' | 'repoUrl' | 'thumbnailUrl' | 'demoUrl' | 'tier';
+	| 'status'
+	| 'yswsEligibility'
+	| 'activity'
+	| 'description'
+	| 'repoUrl'
+	| 'thumbnailUrl'
+	| 'demoUrl'
+	| 'tier';
 
 export type ProjectSubmissionChange = {
 	field: ProjectSubmissionChangeField;
@@ -25,6 +32,7 @@ export type ProjectForReadiness = {
 	demoUrl: string | null;
 	thumbnailUrl: string | null;
 	hackatimeProjects: string[] | null;
+	journalCount: number;
 };
 
 export function getProjectSubmissionReadiness(
@@ -70,12 +78,22 @@ export function getSubmissionRequirementChanges({
 	repoUrl,
 	demoUrl,
 	thumbnailUrl,
+	hackatimeProjects,
+	journalCount,
 	requireTier
 }: Omit<ProjectForReadiness, 'status'> & {
 	phase: ProjectReviewPhase;
 	requireTier: boolean;
 }): ProjectSubmissionChange[] {
 	const changes: ProjectSubmissionChange[] = [];
+	const hasHackatimeProject = hackatimeProjects?.some((name) => name.trim().length > 0) ?? false;
+
+	if (journalCount < 1 && !hasHackatimeProject) {
+		changes.push({
+			field: 'activity',
+			message: 'Add at least one journal entry or Hackatime project.'
+		});
+	}
 
 	if (!hasText(description)) {
 		changes.push({ field: 'description', message: 'Add a project description.' });

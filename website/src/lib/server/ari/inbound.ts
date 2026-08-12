@@ -105,6 +105,7 @@ export function buildAriIngestPayload({
 		demoUrl: project.demoUrl,
 		thumbnailUrl: project.thumbnailUrl,
 		hackatimeProjects,
+		journalCount: journals.length,
 		requireTier: false
 	});
 

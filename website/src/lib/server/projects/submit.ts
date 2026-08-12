@@ -17,7 +17,7 @@ import {
 } from '$lib/projects/submission';
 import type { ProjectStatus, ProjectTier, ProjectType } from '$lib/projects/domain';
 import { formatResistor } from '$lib/projects/resistors';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { inferGithubUsername, type UserSubmissionProfile } from '$lib/profile';
 import type { ProjectSubmissionFeedbackInput } from '$lib/server/projects/feedback';
 
@@ -82,8 +82,12 @@ export async function canSubmit({
 	userId
 }: SubmitProjectToAriOptions): Promise<ProjectSubmissionReadiness> {
 	const projectForSubmission = await getProjectForSubmission(projectId, userId);
+	const [journalStats] = await db
+		.select({ journalCount: sql<number>`COUNT(${journal.id})` })
+		.from(journal)
+		.where(eq(journal.projectId, projectId));
 	return getProjectSubmissionReadiness(
-		projectForSubmission,
+		{ ...projectForSubmission, journalCount: Number(journalStats?.journalCount ?? 0) },
 		projectForSubmission.makerYswsEligible
 	);
 }
@@ -221,8 +225,16 @@ async function claimSubmission(
 			throw new ProjectSubmissionError(404, 'Project not found');
 		}
 
+		const projectJournals = await tx
+			.select({
+				createdAt: journal.createdAt,
+				durationInMinutes: journal.durationInMinutes,
+				text: journal.text
+			})
+			.from(journal)
+			.where(eq(journal.projectId, projectId));
 		const readiness = getProjectSubmissionReadiness(
-			projectForSubmission,
+			{ ...projectForSubmission, journalCount: projectJournals.length },
 			projectForSubmission.makerYswsEligible
 		);
 		if (!readiness.canSubmit || !readiness.phase || !readiness.waitingStatus) {
@@ -238,14 +250,6 @@ async function claimSubmission(
 			);
 		}
 
-		const projectJournals = await tx
-			.select({
-				createdAt: journal.createdAt,
-				durationInMinutes: journal.durationInMinutes,
-				text: journal.text
-			})
-			.from(journal)
-			.where(eq(journal.projectId, projectId));
 		const externalId = `${projectId}:${readiness.phase}:${randomUUID()}`;
 		const submissionProfile = {
 			...profile,

@@ -1,11 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
 import type { Actions, PageServerLoad } from './$types';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { isUuid } from '$lib/projects/domain';
 import { getProjectSubmissionReadiness } from '$lib/projects/submission';
 import { db } from '$lib/server/db';
-import { project } from '$lib/server/db/schema';
+import { journal, project } from '$lib/server/db/schema';
 import { requireUser } from '$lib/server/guards';
 import { submitProjectAction } from '$lib/server/projects/actions';
 import { getUserSubmissionProfile } from '$lib/server/user-profile';
@@ -33,10 +33,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		.limit(1);
 
 	if (!existingProject) error(404, 'Project not found');
+	const [journalStats] = await db
+		.select({ journalCount: sql<number>`COUNT(${journal.id})` })
+		.from(journal)
+		.where(eq(journal.projectId, params.id));
 
 	return {
 		project: existingProject,
-		readiness: getProjectSubmissionReadiness(existingProject, user.yswsEligible),
+		readiness: getProjectSubmissionReadiness(
+			{ ...existingProject, journalCount: Number(journalStats?.journalCount ?? 0) },
+			user.yswsEligible
+		),
 		profile: await getUserSubmissionProfile(user.id)
 	};
 };

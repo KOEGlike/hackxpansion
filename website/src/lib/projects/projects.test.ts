@@ -24,7 +24,8 @@ const readyProject = {
 	repoUrl: 'https://example.com/repo',
 	demoUrl: null,
 	thumbnailUrl: 'https://example.com/image.webp',
-	hackatimeProjects: ['project-one']
+	hackatimeProjects: ['project-one'],
+	journalCount: 0
 };
 
 describe('project domain validation', () => {
@@ -88,13 +89,27 @@ describe('submission readiness', () => {
 		});
 	});
 
-	it('does not require a Hackatime project', () => {
-		expect(getProjectSubmissionReadiness({ ...readyProject, hackatimeProjects: [] })).toMatchObject(
-			{
-				canSubmit: true,
-				changes: []
-			}
-		);
+	it('accepts a journal instead of a Hackatime project', () => {
+		expect(
+			getProjectSubmissionReadiness({ ...readyProject, hackatimeProjects: [], journalCount: 1 })
+		).toMatchObject({
+			canSubmit: true,
+			changes: []
+		});
+	});
+
+	it('requires a journal or Hackatime project', () => {
+		const readiness = getProjectSubmissionReadiness({
+			...readyProject,
+			hackatimeProjects: [],
+			journalCount: 0
+		});
+
+		expect(readiness.canSubmit).toBe(false);
+		expect(readiness.changes).toContainEqual({
+			field: 'activity',
+			message: 'Add at least one journal entry or Hackatime project.'
+		});
 	});
 
 	it('reports a missing app demo only once', () => {
