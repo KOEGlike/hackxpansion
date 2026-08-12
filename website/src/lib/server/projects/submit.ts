@@ -69,9 +69,10 @@ type ClaimedSubmission = {
 export class ProjectSubmissionError extends Error {
 	constructor(
 		readonly status: number,
-		message: string
+		message: string,
+		options?: ErrorOptions
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'ProjectSubmissionError';
 	}
 }
@@ -126,13 +127,20 @@ export async function submitProjectToAri({
 		};
 	} catch (error) {
 		if (error instanceof AriInboundError) {
-			await releaseFailedSubmission(claim, userId);
+			try {
+				await releaseFailedSubmission(claim, userId);
+			} catch (rollbackError) {
+				throw new ProjectSubmissionError(500, 'Could not roll back the rejected submission.', {
+					cause: new AggregateError([error, rollbackError], 'Ari rejection and rollback failure')
+				});
+			}
 			throw error;
 		}
 
 		throw new ProjectSubmissionError(
 			503,
-			'The submission could not be confirmed. The project remains under review to prevent a duplicate submission.'
+			'The submission could not be confirmed. The project remains under review to prevent a duplicate submission.',
+			{ cause: error }
 		);
 	}
 }

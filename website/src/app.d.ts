@@ -1,4 +1,5 @@
 import type { auth } from '$lib/server/auth';
+import type { InternalErrorDetails } from '$lib/server/error-logging';
 
 type AuthSession = typeof auth.$Infer.Session;
 
@@ -9,6 +10,8 @@ declare global {
 		interface Locals {
 			user?: AuthSession['user'];
 			session?: AuthSession['session'];
+			requestId?: string;
+			internalError?: InternalErrorDetails;
 		}
 
 		// interface Error {}

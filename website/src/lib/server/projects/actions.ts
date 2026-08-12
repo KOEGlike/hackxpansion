@@ -22,6 +22,8 @@ import {
 	userProfileInputFromForm,
 	UserProfileValidationError
 } from '$lib/server/user-profile';
+import { internalErrorDetails, upstreamResponseExcerpt } from '$lib/server/error-logging';
+import { currentRequestId } from '$lib/server/request-context';
 import {
 	journalInputFromForm,
 	JournalMutationError,
@@ -136,6 +138,15 @@ function projectReviewActionFailure(
 	values?: Record<string, string>
 ) {
 	if (error instanceof ProjectSubmissionError) {
+		if (error.status >= 500) {
+			console.error('[projects/review] Internal submission error', {
+				requestId: currentRequestId(),
+				status: error.status,
+				error: internalErrorDetails(error.cause ?? error)
+			});
+			const ariError = findAriInboundError(error.cause);
+			if (ariError) logAriRejection(ariError);
+		}
 		return fail(error.status, {
 			success: false,
 			message: error.message,
@@ -144,6 +155,7 @@ function projectReviewActionFailure(
 		});
 	}
 	if (error instanceof AriInboundError) {
+		logAriRejection(error);
 		return fail(error.status, {
 			success: false,
 			message: 'The review service could not process this request. Please try again.',
@@ -154,4 +166,24 @@ function projectReviewActionFailure(
 
 	console.error('[projects] Unexpected Ari action error', error);
 	return fail(500, { success: false, message: 'Something went wrong.', projectId, values });
+}
+
+function logAriRejection(error: AriInboundError) {
+	console.error('[ari/review] Ari rejected the request', {
+		requestId: currentRequestId(),
+		status: error.status,
+		response: upstreamResponseExcerpt(error.responseBody)
+	});
+}
+
+function findAriInboundError(error: unknown): AriInboundError | null {
+	if (error instanceof AriInboundError) return error;
+	if (error instanceof AggregateError) {
+		for (const item of error.errors) {
+			const found = findAriInboundError(item);
+			if (found) return found;
+		}
+	}
+	if (error instanceof Error && error.cause) return findAriInboundError(error.cause);
+	return null;
 }
