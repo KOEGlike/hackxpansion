@@ -1,6 +1,7 @@
-import { error } from '@sveltejs/kit';
-import { desc, eq } from 'drizzle-orm';
-import type { PageServerLoad } from './$types';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { resolve } from '$app/paths';
+import { and, desc, eq, notInArray } from 'drizzle-orm';
+import type { Actions, PageServerLoad } from './$types';
 import { isUuid } from '$lib/projects/domain';
 import { AdminError, requireAdmin } from '$lib/server/admin';
 import { db } from '$lib/server/db';
@@ -91,4 +92,48 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 			totalJournalMinutes: journals.reduce((total, entry) => total + entry.durationInMinutes, 0)
 		}
 	};
+};
+
+export const actions: Actions = {
+	delete: async ({ locals, params }) => {
+		if (!locals.user) {
+			return fail(404, { success: false, message: 'Page not found' });
+		}
+		if (!isUuid(params.id)) {
+			return fail(400, { success: false, message: 'A valid project ID is required.' });
+		}
+
+		try {
+			await requireAdmin(locals.user.id);
+			const [deletedProject] = await db
+				.delete(project)
+				.where(
+					and(
+						eq(project.id, params.id),
+						notInArray(project.status, ['waiting_design', 'waiting_build'])
+					)
+				)
+				.returning({ id: project.id });
+
+			if (deletedProject) redirect(303, resolve('/home/admin/projects'));
+
+			const [existingProject] = await db
+				.select({ status: project.status })
+				.from(project)
+				.where(eq(project.id, params.id))
+				.limit(1);
+			if (!existingProject) {
+				return fail(404, { success: false, message: 'Project not found.' });
+			}
+			return fail(409, {
+				success: false,
+				message: 'Withdraw this project from ARI before deleting it.'
+			});
+		} catch (caught) {
+			if (caught instanceof AdminError) {
+				return fail(caught.status, { success: false, message: caught.message });
+			}
+			throw caught;
+		}
+	}
 };
