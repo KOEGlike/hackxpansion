@@ -91,7 +91,7 @@ export function getSubmissionRequirementChanges({
 			field: 'demoUrl',
 			message:
 				type === 'app'
-					? 'Apps are software - add a demo URL before submitting for review.'
+					? 'Add a url to a video of the slint live preview to the demo URL - use #cdn'
 					: 'Add a demo URL before build review.'
 		});
 	}
