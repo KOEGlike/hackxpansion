@@ -24,7 +24,9 @@
 	{:else}
 		<section class="grid gap-4 lg:grid-cols-2" aria-label="All projects">
 			{#each data.projects as project (project.id)}
-				<article class="content-box flex flex-col gap-4 p-5">
+				<article
+					class="content-box group relative flex cursor-pointer flex-col gap-4 p-5 transition duration-150 hover:-translate-y-0.5 hover:bg-slate-400/70 hover:shadow-lg"
+				>
 					<div class="flex min-w-0 gap-4">
 						{#if project.thumbnailUrl}
 							<img
@@ -35,7 +37,10 @@
 						{/if}
 						<div class="min-w-0">
 							<h2 class="truncate text-xl font-bold">
-								<a href={resolve(`/home/admin/projects/${project.id}`)} class="hover:underline">
+								<a
+									href={resolve(`/home/admin/projects/${project.id}`)}
+									class="after:absolute after:inset-0 focus:outline-none focus-visible:after:ring-2 focus-visible:after:ring-slate-800 focus-visible:after:ring-offset-2 group-hover:underline"
+								>
 									{project.title}
 								</a>
 							</h2>

@@ -54,7 +54,9 @@
 			<p class=" border border-slate-500 bg-white/40 p-4">No projects yet.</p>
 		{:else}
 			{#each data.projects as project (project.id)}
-				<article class="content-box p-5">
+				<article
+					class="content-box group relative cursor-pointer p-5 transition duration-150 hover:-translate-y-0.5 hover:bg-slate-400/70 hover:shadow-lg"
+				>
 					<div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
 						<div class="flex gap-4">
 							{#if project.thumbnailUrl}
@@ -67,7 +69,9 @@
 
 							<div>
 								<h3 class="text-xl font-bold">
-									<a href={resolve(`/home/projects/${project.id}`)} class="hover:underline"
+									<a
+										href={resolve(`/home/projects/${project.id}`)}
+										class="after:absolute after:inset-0 focus:outline-none focus-visible:after:ring-2 focus-visible:after:ring-slate-800 focus-visible:after:ring-offset-2 group-hover:underline"
 										>{project.title}</a
 									>
 								</h3>
@@ -85,7 +89,7 @@
 							</div>
 						</div>
 
-						<div class="flex items-center gap-2">
+						<div class="relative z-10 flex items-center gap-2">
 							<a
 								href={resolve(`/home/projects/${project.id}/edit`)}
 								class="border border-slate-800 px-4 py-2 text-sm hover:bg-slate-800 hover:text-white"
@@ -116,7 +120,7 @@
 						</div>
 					</div>
 
-					<div class="mt-4 flex flex-row gap-4">
+					<div class="relative z-10 mt-4 flex flex-row gap-4">
 						{#if project.repoUrl}
 							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 							<a class="underline" href={project.repoUrl} target="_blank" rel="noreferrer">Repo</a>
