@@ -6,7 +6,7 @@
 	import CoinIcon from '$lib/components/coin_icon.svelte';
 	import YswsEligibilityNotice from '$lib/components/ysws_eligibility_notice.svelte';
 	import { formatMinutes, isWaitingForReview } from '$lib/projects/domain';
-	import { isValidJournalDuration } from '$lib/projects/journal';
+	import { hasMarkdownImage, isValidJournalDuration } from '$lib/projects/journal';
 	import type { ActionData, PageServerData } from './$types';
 
 	let { data, form }: { data: PageServerData; form: ActionData } = $props();
@@ -284,11 +284,14 @@
 								bind:text={textInput}
 								bind:tab={journalTab}
 							/>
-							<div class="flex justify-end">
+							<div class="flex flex-col items-end gap-1">
+								{#if !hasMarkdownImage(textInput)}
+									<p class="text-xs text-red-700">You need at least one image</p>
+								{/if}
 								<button
 									type="submit"
 									class="bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-									disabled={!isValidJournalDuration(durationInput) || !textInput.trim()}
+									disabled={!isValidJournalDuration(durationInput) || !hasMarkdownImage(textInput)}
 								>
 									Log entry
 								</button>
@@ -345,7 +348,8 @@
 										<button
 											type="submit"
 											class="bg-slate-800 px-3 py-1.5 text-sm text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-											disabled={!isValidJournalDuration(editDuration) || !editText.trim()}
+											disabled={!isValidJournalDuration(editDuration) ||
+												!hasMarkdownImage(editText)}
 										>
 											Save
 										</button>

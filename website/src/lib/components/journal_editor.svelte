@@ -60,6 +60,9 @@
 			</button>
 		</div>
 	</div>
+	<p class="mb-2 text-xs font-semibold text-slate-600">
+		MarkDown is supported!! For images use #cdn on slack
+	</p>
 
 	<input type="hidden" name="text" value={text} />
 	<textarea

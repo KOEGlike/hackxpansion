@@ -2,7 +2,11 @@ import { db } from '$lib/server/db';
 import { journal, project } from '$lib/server/db/schema';
 import { canEditProject } from '$lib/projects/lifecycle';
 import { isUuid } from '$lib/projects/domain';
-import { isValidJournalDuration, MAX_JOURNAL_DURATION_MINUTES } from '$lib/projects/journal';
+import {
+	hasMarkdownImage,
+	isValidJournalDuration,
+	MAX_JOURNAL_DURATION_MINUTES
+} from '$lib/projects/journal';
 import { and, eq } from 'drizzle-orm';
 
 export type JournalInput = {
@@ -38,6 +42,9 @@ export function journalInputFromForm(formData: FormData): JournalInput {
 
 	if (typeof textValue !== 'string' || !textValue.trim()) {
 		throw new JournalMutationError(400, 'Journal text is required.');
+	}
+	if (!hasMarkdownImage(textValue)) {
+		throw new JournalMutationError(400, 'Add at least one image using Markdown.');
 	}
 
 	return { durationInMinutes, text: textValue.trim() };

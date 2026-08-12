@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isProjectTier, isProjectType, isWaitingForReview } from './domain';
-import { isValidJournalDuration, MAX_JOURNAL_DURATION_MINUTES } from './journal';
+import { hasMarkdownImage, isValidJournalDuration, MAX_JOURNAL_DURATION_MINUTES } from './journal';
 import {
 	getApprovalCurrencyPayout,
 	getNextProjectSubmission,
@@ -134,6 +134,14 @@ describe('journal validation', () => {
 		expect(isValidJournalDuration('12minutes')).toBe(false);
 		expect(isValidJournalDuration('1e3')).toBe(false);
 		expect(isValidJournalDuration(String(MAX_JOURNAL_DURATION_MINUTES + 1))).toBe(false);
+	});
+
+	it('requires a Markdown image with an HTTP source', () => {
+		expect(hasMarkdownImage('Progress\n\n![PCB](https://cdn.hackclub.com/board.png)')).toBe(true);
+		expect(hasMarkdownImage('![PCB](<https://cdn.hackclub.com/board.png>)')).toBe(true);
+		expect(hasMarkdownImage('https://cdn.hackclub.com/board.png')).toBe(false);
+		expect(hasMarkdownImage('![PCB](javascript:alert(1))')).toBe(false);
+		expect(hasMarkdownImage('No image yet')).toBe(false);
 	});
 });
 
