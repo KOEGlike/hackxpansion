@@ -45,8 +45,36 @@ describe('Ari ingest', () => {
 			external_id: 'project:design:delivery',
 			track: 'hardware',
 			hackatime_projects: ['card-firmware'],
-			journals: [{ at: '2026-07-30T12:00:00.000Z', minutes: 45, text: 'Built it' }]
+			journals: [{ at: '2026-07-30', minutes: 45, text: 'Built it' }]
 		});
+		expect(typeof result.journals?.[0].minutes).toBe('number');
+	});
+
+	it('sends journals using Ari date, numeric minutes, and text fields', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(new Response('{"status":"accepted"}', { status: 202 }));
+		vi.stubGlobal('fetch', fetchMock);
+		const payloadWithJournals: AriIngestPayload = {
+			...payload,
+			journals: [
+				{ at: '2026-06-01', minutes: 90, text: 'Tide tables parsed' },
+				{ at: '2026-06-02', minutes: 45, text: 'Clock face render' }
+			]
+		};
+
+		await sendAriIngest(payloadWithJournals, {
+			programId: 'program-id',
+			signingSecret: 'secret'
+		});
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		const sentPayload = JSON.parse(String(init.body));
+
+		expect(sentPayload.journals).toEqual([
+			{ at: '2026-06-01', minutes: 90, text: 'Tide tables parsed' },
+			{ at: '2026-06-02', minutes: 45, text: 'Clock face render' }
+		]);
+		expect(typeof sentPayload.journals[0].minutes).toBe('number');
 	});
 
 	it('uses the webhook host and signs the exact request body', async () => {

@@ -117,7 +117,7 @@ export function buildAriIngestPayload({
 	const ariJournals = journals
 		.filter((entry) => entry.durationInMinutes > 0)
 		.map((entry) => ({
-			at: entry.createdAt.toISOString(),
+			at: entry.createdAt.toISOString().slice(0, 10),
 			minutes: entry.durationInMinutes,
 			text: entry.text
 		}));
