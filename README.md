@@ -1,3 +1,7 @@
+> [!CAUTION]
+> This repo has been moved to [hackclub/hackxpansion](https://github.com/hackclub/hackxpansion)
+
+
 <h1 align="center">
     Hackxpansion
 </h1>
