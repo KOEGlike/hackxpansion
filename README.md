@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-    <a href="https://hackxpansion.koeg.dev">Website</a>
+    <a href="https://hackxpansion.hackclub.com">Website</a>
     <br/>
     <a href="https://meko.fillout.com/hackxpansion">RSVP</a>
 </h3>
